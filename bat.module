@@ -1,0 +1,1122 @@
+<?php
+
+/**
+ * @file
+ * Provides basic underlying functionality and configuration options used
+ * by all BAT modules
+ */
+
+
+
+/**
+ * Implements hook_permission().
+ */
+function bat_permission() {
+  $permissions = array(
+    'configure BAT settings' => array(
+      'title' => t('Configure BAT'),
+      'description' => t('Allows users to manage site-wide BAT configurations.'),
+      'restrict access' => TRUE,
+    ),
+  );
+
+  return $permissions;
+}
+
+/**
+ * Implements hook_libraries_info().
+ */
+function bat_libraries_info() {
+  $libraries['moment'] = array(
+    'name' => 'Moment',
+    'vendor url' => 'http://momentjs.com',
+    'download url' => 'http://momentjs.com/downloads/moment.min.js',
+    'version arguments' => array(
+      'file' => 'moment.min.js',
+      // 2.10.6
+      'pattern' => '/(\d+\.\d+\.\d)/',
+    ),
+    'files' => array(
+      'js' => array(
+        'moment.min.js',
+      ),
+    ),
+    'variants' => array(
+      'minified' => array(
+        'files' => array(
+          'js' => array(
+            'moment.min.js',
+          ),
+        ),
+      ),
+      'source' => array(
+        'files' => array(
+          'js' => array(
+            'moment.js',
+          ),
+        ),
+      ),
+    ),
+  );
+
+  $libraries['fullcalendar'] = array(
+    'name' => 'Full Calendar',
+    'vendor url' => 'http://fullcalendar.io',
+    'download url' => 'https://github.com/arshaw/fullcalendar/releases/download/v2.4.0/fullcalendar-2.4.0.zip',
+    'version arguments' => array(
+      'file' => 'fullcalendar.js',
+      // 2.4.0
+      'pattern' => '/v(\d+\.\d+\.\d)/',
+      'lines' => 3,
+    ),
+    'files' => array(
+      'js' => array(
+        'fullcalendar.js',
+        'gcal.js',
+      ),
+      'css' => array(
+        'fullcalendar.css',
+      ),
+    ),
+    'variants' => array(
+      'minified' => array(
+        'files' => array(
+          'js' => array(
+            'fullcalendar.min.js',
+            'gcal.js',
+          ),
+          'css' => array(
+            'fullcalendar.min.css',
+          ),
+        ),
+        'dependencies' => array('moment (>=2.10.6)'),
+      ),
+      'source' => array(
+        'files' => array(
+          'js' => array(
+            'fullcalendar.js',
+            'gcal.js',
+          ),
+          'css' => array(
+            'fullcalendar.css',
+          ),
+        ),
+        'dependencies' => array('moment (>=2.10.6)'),
+      ),
+    ),
+  );
+
+  $libraries['fullcalendar_scheduler'] = array(
+    'name' => 'Fullcalendar Scheduler',
+    'vendor url' => 'http://fullcalendar.io',
+    'download url' => 'https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.0.2/fullcalendar-scheduler-1.0.2.zip',
+    'version arguments' => array(
+      'file' => 'scheduler.min.js',
+      // 1.0.2
+      'pattern' => '/(\d+\.\d+\.\d)/',
+    ),
+    'files' => array(
+      'js' => array(
+        'scheduler.min.js',
+      ),
+    ),
+    'variants' => array(
+      'minified' => array(
+        'files' => array(
+          'js' => array(
+            'scheduler.min.js',
+          ),
+          'css' => array(
+            'scheduler.min.css',
+          ),
+        ),
+        'dependencies' => array('moment (>=2.10.6)', 'fullcalendar (>=2.4.0)'),
+      ),
+      'source' => array(
+        'files' => array(
+          'js' => array(
+            'scheduler.js',
+          ),
+          'css' => array(
+            'scheduler.css',
+          ),
+        ),
+        'dependencies' => array('moment (>=2.10.6)', 'fullcalendar (>=2.4.0)'),
+      ),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
+ * Checks if the FullCalendar Library is loaded.
+ *
+ * @return bool
+ *   A boolean indicating the FullCalendar status.
+ */
+function bat_fullcalendar_loaded() {
+  if (bat_library_loaded('fullcalendar', 'minified')) {
+    return TRUE;
+  }
+  else {
+    // Alert the authorized user/administrator to the abscence of the library.
+    drupal_set_message(t('The FullCalendar Library could not be found.
+                          Please check the installation instructions and the <a href="@status">Status Report</a>. Make sure
+                          to clear cache after updating settings and/or library locations.',
+      array('@status' => url('admin/reports/status'))), 'warning');
+    return FALSE;
+  }
+}
+
+function bat_fullcalendar_scheduler_loaded() {
+  if (bat_library_loaded('fullcalendar_scheduler', 'source')) {
+    return TRUE;
+  }
+  else {
+    // Alert the authorized user/administrator to the abscence of the library.
+    drupal_set_message(t('The FullCalendar Scheduler Library could not be found.
+                          Please check the installation instructions and the <a href="@status">Status Report</a>. Make sure
+                          to clear cache after updating settings and/or library locations.',
+      array('@status' => url('admin/reports/status'))), 'warning');
+    return FALSE;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bat_theme() {
+  return array(
+    'bat_three_month_calendar' => array(
+      'template' => 'bat_three_month_calendar',
+      'variables' => array(
+        'url' => NULL,
+        'form' => NULL,
+        'year' => NULL,
+        'month' => NULL,
+        'link_options' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Helper function to check if a library is loaded properly or not.
+ *
+ * @return bool
+ *   Boolean indicating if the library is properly loaded or not.
+ */
+function bat_library_loaded($name, $variant = NULL) {
+  return ($library = libraries_load($name, $variant)) && !empty($library['loaded']);
+}
+
+/**
+ * Generic access control for bookable entities.
+ *
+ * @param string $op
+ *   The operation being performed. One of 'view', 'update', 'create' or
+ *   'delete'.
+ * @param object $entity
+ *   Optionally an entity to check access for. If no entity is given, it will be
+ *   determined whether access is allowed for all entities of the given type.
+ * @param object $account
+ *   The user to check for. Leave it to NULL to check for the global user.
+ * @param string $entity_type
+ *   The entity type of the entity to check for.
+ *
+ * @return bool
+ *   Boolean indicating whether the user is granted or not.
+ *
+ * @see entity_access()
+ */
+function bat_entity_access($op, $entity, $account, $entity_type) {
+  $rights = &drupal_static(__FUNCTION__, array());
+  global $user;
+  $account = isset($account) ? $account : $user;
+  $entity_info = entity_get_info($entity_type);
+
+  // $entity may be either an object or a entity type. Since entity types cannot
+  // be an integer, use either nid or type as the static cache id.
+  $cid = is_object($entity) ? $entity->{$entity_info['entity keys']['id']} : $entity;
+
+  // If we are creating a new entity make sure we set the type so permissions get
+  // applied
+  if ($op == 'create' && $cid == '') {
+    $cid = $entity->type;
+  }
+
+  // If we've already checked access for this node, user and op, return from
+  // cache.
+  if (isset($rights[$account->uid][$cid][$op])) {
+    return $rights[$account->uid][$cid][$op];
+  }
+
+  // Grant generic administrator level access.
+  if (user_access('bypass ' . $entity_type . ' entities access', $account)) {
+    $rights[$account->uid][$cid][$op] = TRUE;
+    return TRUE;
+  }
+
+  if ($op == 'view') {
+    if (isset($entity)) {
+      // When trying to figure out access to an entity, query the base table
+      // using our access control tag.
+      if (!empty($entity_info['access arguments']['access tag']) && module_implements('query_' . $entity_info['access arguments']['access tag'] . '_alter')) {
+        $query = db_select($entity_info['base table']);
+        $query->addExpression('1');
+        $result = (bool) $query
+          ->addTag($entity_info['access arguments']['access tag'])
+          ->addMetaData('account', $account)
+          ->condition($entity_info['entity keys']['id'], $entity->{$entity_info['entity keys']['id']})
+          ->range(0, 1)
+          ->execute()
+          ->fetchField();
+        $rights[$account->uid][$cid][$op] = $result;
+        return $result;
+      }
+      else {
+        $rights[$account->uid][$cid][$op] = TRUE;
+        return TRUE;
+      }
+    }
+    else {
+      $access = user_access('view any ' . $entity_type . ' entity', $account);
+      $rights[$account->uid][$cid][$op] = $access;
+      return $access;
+    }
+  }
+  else {
+    // First grant access to the entity for the specified operation if no other
+    // module denies it and at least one other module says to grant access.
+    $access_results = module_invoke_all('bat_entity_access', $op, $entity, $account, $entity_type);
+
+    if (in_array(FALSE, $access_results, TRUE)) {
+      $rights[$account->uid][$cid][$op] = FALSE;
+      return FALSE;
+    }
+    elseif (in_array(TRUE, $access_results, TRUE)) {
+      $rights[$account->uid][$cid][$op] = TRUE;
+      return TRUE;
+    }
+
+    // Grant access based on entity type and bundle specific permissions with
+    // special handling for the create operation since the entity passed in will
+    // be initialized without ownership.
+    if ($op == 'create') {
+      // Assuming an entity was passed in and we know its bundle key, perform
+      // the entity type and bundle-level access checks.
+      if (isset($entity) && !empty($entity_info['entity keys']['bundle'])) {
+        $access = user_access('create ' . $entity_type . ' entities', $account) || user_access('create ' . $entity_type . ' entities of bundle ' . $entity->{$entity_info['entity keys']['bundle']}, $account);
+        $rights[$account->uid][$cid][$op] = $access;
+        return $access;
+      }
+      else {
+        // Otherwise perform an entity type-level access check.
+        $access = user_access('create ' . $entity_type . ' entities', $account);
+        $rights[$account->uid][$cid][$op] = $access;
+        return $access;
+      }
+    }
+    else {
+      // Finally perform checks for the rest of operations. Begin by
+      // extracting the bundle name from the entity if available.
+      $bundle_name = '';
+
+      if (isset($entity) && !empty($entity_info['entity keys']['bundle'])) {
+        $bundle_name = $entity->{$entity_info['entity keys']['bundle']};
+      }
+
+      // For the delete and delete operations, first perform the entity type and
+      // bundle-level access check for any entity.
+      if (user_access($op . ' any ' . $entity_type . ' entity', $account) ||
+        user_access($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name, $account)) {
+        $rights[$account->uid][$cid][$op] = TRUE;
+        return TRUE;
+      }
+
+      // Then check an authenticated user's access to delete his own entities.
+      if ($account->uid && !empty($entity_info['access arguments']['user key']) && isset($entity->{$entity_info['access arguments']['user key']}) && $entity->{$entity_info['access arguments']['user key']} == $account->uid) {
+        if (user_access($op . ' own ' . $entity_type . ' entities', $account) ||
+          user_access($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name, $account)) {
+          $rights[$account->uid][$cid][$op] = TRUE;
+          return TRUE;
+        }
+      }
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Return permission names for a given entity type.
+ */
+function bat_entity_access_permissions($entity_type) {
+  $entity_info = entity_get_info($entity_type);
+  $labels = $entity_info['permission labels'];
+
+  $permissions = array();
+
+  // General 'bypass' permission.
+  $permissions['bypass ' . $entity_type . ' entities access'] = array(
+    'title' => t('Bypass access to @entity_type', array('@entity_type' => $labels['plural'])),
+    'description' => t('Allows users to perform any action on @entity_type.', array('@entity_type' => $labels['plural'])),
+    'restrict access' => TRUE,
+  );
+
+  // Generic create and edit permissions.
+  $permissions['create ' . $entity_type . ' entities'] = array(
+    'title' => t('Create @entity_type of any type', array('@entity_type' => $labels['plural'])),
+  );
+  if (!empty($entity_info['access arguments']['user key'])) {
+    $permissions['view own ' . $entity_type . ' entities'] = array(
+      'title' => t('View own @entity_type of any type', array('@entity_type' => $labels['plural'])),
+    );
+  }
+  $permissions['view any ' . $entity_type . ' entity'] = array(
+    'title' => t('View any @entity_type of any type', array('@entity_type' => $labels['singular'])),
+    'restrict access' => TRUE,
+  );
+  if (!empty($entity_info['access arguments']['user key'])) {
+    $permissions['update own ' . $entity_type . ' entities'] = array(
+      'title' => t('Edit own @entity_type of any type', array('@entity_type' => $labels['plural'])),
+    );
+  }
+  $permissions['update any ' . $entity_type . ' entity'] = array(
+    'title' => t('Edit any @entity_type of any type', array('@entity_type' => $labels['singular'])),
+    'restrict access' => TRUE,
+  );
+  if (!empty($entity_info['access arguments']['user key'])) {
+    $permissions['delete own ' . $entity_type . ' entities'] = array(
+      'title' => t('Delete own @entity_type of any type', array('@entity_type' => $labels['plural'])),
+    );
+  }
+  $permissions['delete any ' . $entity_type . ' entity'] = array(
+    'title' => t('Delete any @entity_type of any type', array('@entity_type' => $labels['singular'])),
+    'restrict access' => TRUE,
+  );
+
+  // Per-bundle create and edit permissions.
+  if (!empty($entity_info['entity keys']['bundle'])) {
+    foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
+      $permissions['create ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+        'title' => t('Create %bundle @entity_type', array('@entity_type' => $labels['plural'], '%bundle' => $bundle_info['label'])),
+      );
+      if (!empty($entity_info['access arguments']['user key'])) {
+        $permissions['view own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+          'title' => t('View own %bundle @entity_type', array('@entity_type' => $labels['plural'], '%bundle' => $bundle_info['label'])),
+        );
+      }
+      $permissions['view any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
+        'title' => t('View any %bundle @entity_type', array('@entity_type' => $labels['singular'], '%bundle' => $bundle_info['label'])),
+        'restrict access' => TRUE,
+      );
+      if (!empty($entity_info['access arguments']['user key'])) {
+        $permissions['update own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+          'title' => t('Edit own %bundle @entity_type', array('@entity_type' => $labels['plural'], '%bundle' => $bundle_info['label'])),
+        );
+      }
+      $permissions['update any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
+        'title' => t('Edit any %bundle @entity_type', array('@entity_type' => $labels['singular'], '%bundle' => $bundle_info['label'])),
+        'restrict access' => TRUE,
+      );
+      if (!empty($entity_info['access arguments']['user key'])) {
+        $permissions['delete own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+          'title' => t('Delete own %bundle @entity_type', array('@entity_type' => $labels['plural'], '%bundle' => $bundle_info['label'])),
+        );
+      }
+      $permissions['delete any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
+        'title' => t('Delete any %bundle @entity_type', array('@entity_type' => $labels['singular'], '%bundle' => $bundle_info['label'])),
+        'restrict access' => TRUE,
+      );
+    }
+  }
+
+  return $permissions;
+}
+
+/**
+ * Generic implementation of hook_query_alter() for bookable entities.
+ */
+function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL, $account = NULL, $op = 'view') {
+  global $user;
+
+  // Read the account from the query if available or current user by default.
+  if (!isset($account) && !$account = $query->getMetaData('account')) {
+    $account = $user;
+  }
+
+  // Do not apply any conditions for users with administrative view permissions.
+  if (user_access('bypass ' . $entity_type . ' access', $account)
+    || user_access($op . ' any ' . $entity_type . ' entity', $account)) {
+    return;
+  }
+
+  // Get the entity type info array for the current access check and prepare a
+  // conditions object.
+  $entity_info = entity_get_info($entity_type);
+
+  // If a base table wasn't specified, attempt to read it from the query if
+  // available, look for a table in the query's tables array that matches the
+  // base table of the given entity type, or just default to the first table.
+  if (!isset($base_table) && !$base_table = $query->getMetaData('base_table')) {
+    // Initialize the base table to the first table in the array. If a table can
+    // not be found that matches the entity type's base table, this will result
+    // in an invalid query if the first table is not the table we expect,
+    // forcing the caller to actually properly pass a base table in that case.
+    $tables = $query->getTables();
+    reset($tables);
+    $base_table = key($tables);
+
+    foreach ($tables as $table_info) {
+      if (!($table_info instanceof SelectQueryInterface)) {
+        // If this table matches the entity type's base table, use its table
+        // alias as the base table for the purposes of bundle and ownership
+        // access checks.
+        if ($table_info['table'] == $entity_info['base table']) {
+          $base_table = $table_info['alias'];
+        }
+      }
+    }
+  }
+
+  // Prepare an OR container for conditions. Conditions will be added that seek
+  // to grant access, meaning any particular type of permission check may grant
+  // access even if none of the others apply. At the end of this function, if no
+  // conditions have been added to the array, a condition will be added that
+  // always returns FALSE (1 = 0).
+  $conditions = db_or();
+
+  // Perform bundle specific permission checks for the specified entity type.
+  // In the event that the user has permission to view every bundle of the given
+  // entity type, $really_restricted will remain FALSE, indicating that it is
+  // safe to exit this function without applying any additional conditions. If
+  // the user only had such permission for a subset of the defined bundles,
+  // conditions representing those access checks would still be added.
+  $really_restricted = FALSE;
+
+  // Loop over every possible bundle for the given entity type.
+  foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
+    // If the user has access to operation entities of the current bundle...
+    if (user_access($op  . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name, $account)) {
+      // Add a condition granting access if the entity specified by the view
+      // query is of the same bundle.
+      $conditions->condition($base_table . '.' . $entity_info['entity keys']['bundle'], $bundle_name);
+    }
+    elseif ($account->uid && !empty($entity_info['access arguments']['user key']) && user_access($op  . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name, $account)) {
+      // Add an AND condition group that grants access if the entity specified
+      // by the view query matches the same bundle and belongs to the user.
+      $conditions->condition(db_and()
+        ->condition($base_table . '.' . $entity_info['entity keys']['bundle'], $bundle_name)
+        ->condition($base_table . '.' . $entity_info['access arguments']['user key'], $account->uid)
+      );
+    }
+  }
+
+  // If the given entity type has a user ownership key...
+  if (!empty($entity_info['access arguments']['user key'])) {
+    // Perform 'operation own' access control for the entity in the query if the
+    // user is authenticated.
+    if ($account->uid && user_access($op  . ' own ' . $entity_type . ' entities', $account)) {
+      $conditions->condition($base_table . '.' . $entity_info['access arguments']['user key'], $account->uid);
+    }
+  }
+
+  // Prepare an array of condition alter hooks to invoke and an array of context
+  // data for the current query.
+  $hooks = array(
+    'bat_entity_access_' . $op . '_condition_' . $entity_type,
+    'bat_entity_access_' . $op . '_condition',
+  );
+
+  $context = array(
+    'account' => $account,
+    'entity_type' => $entity_type,
+    'base_table' => $base_table,
+  );
+
+  // Allow other modules to add conditions to the array as necessary.
+  drupal_alter($hooks, $conditions, $context);
+
+  // If we have more than one condition based on the entity access permissions
+  // and any hook implementations...
+  if (count($conditions)) {
+    // Add the conditions to the query.
+    $query->condition($conditions);
+  }
+  else {
+    // Otherwise, since we don't have any possible conditions to match against,
+    // we falsify this query. View checks are access grants, not access denials.
+    $query->where('1 = 0');
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter()
+ *
+ * This ensures that this hook is called after entity translation's alter hook.
+ */
+function bat_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'form_alter' && isset($implementations['bat'])) {
+    $group = $implementations['bat'];
+    unset($implementations['bat']);
+    $implementations['bat'] = $group;
+  }
+}
+
+/**
+ * Returns the available price options for booking_unit options field.
+ */
+function bat_price_options_options() {
+  return array(
+    BAT_ADD => t('Add to price'),
+    BAT_ADD_DAILY => t('Add to price per night'),
+    BAT_SUB => t('Subtract from price'),
+    BAT_SUB_DAILY => t('Subtract from price per night'),
+    BAT_REPLACE => t('Replace price'),
+    BAT_INCREASE => t('Increase price by % amount'),
+    BAT_DECREASE => t('Decrease price by % amount'),
+  );
+}
+
+/**
+ * Utility function that returns the last day of each month given a year.
+ *
+ * @param int $year
+ *   The year to get the end of month dates for
+ *
+ * @return array
+ *   An array keyed by months
+ */
+function bat_end_of_month_dates($year) {
+  $end_of_month_dates = array();
+
+  for ($i = 1; $i <= 12; $i++) {
+    $end_of_month_dates[$i] = date("t", mktime(0, 0, 0, $i, 1, $year));
+  }
+
+  return $end_of_month_dates;
+}
+
+/**
+ * Utility function to create two related datepickers.
+ *
+ * We have a few forms that need a start and end date field
+ * and we need to apply the same javascript to these forms in order to have a
+ * specific consistent behaviour and groups the form elements and javascript
+ * injection in one place.
+ *
+ * @param int $year
+ * @param int $month
+ *
+ * @return array
+ *   The array holding the field definitions
+ */
+function bat_date_range_fields($year = NULL, $month = NULL) {
+  $date_range_fields = array();
+
+  // Create unique ids and selectors for each picker.
+  $start_date_id = drupal_html_id('datepicker-start-date');
+  $start_date_selector = '#' . $start_date_id . ' .form-text';
+
+  $end_date_id = drupal_html_id('datepicker-end-date');
+  $end_date_selector = '#' . $start_date_id . ' .form-text';
+
+  // Specify the default datepicker parameters (see date_popup_element_info())
+  $datepicker_options = array(
+    'dateFormat' => 'dd/mm/yy',
+    // Limit bookings to X days in advance, depending on the
+    // chosen configuration in your BAT installation, defaults
+    // to one day in advance.
+    'minDate' => '+' . variable_get('bat_booking_start_date', 1) . 'd',
+  );
+
+  if ($year && $month) {
+    // Calculate min and max dates of the specified year/month.
+    $date = new DateTime();
+    $date->setDate($year, $month, 01);
+    $min_date = $date->format('d/m/Y');
+    $date->modify('last day of this month');
+    $max_date = $date->format('d/m/Y');
+    $datepicker_options += array(
+      'minDate' => $min_date,
+      'maxDate' => $max_date,
+      'defaultDate' => $min_date,
+      'numberOfMonths' => 1,
+    );
+  }
+  else {
+    $datepicker_options += array(
+      'minDate' => '+' . variable_get('bat_booking_start_date', 1) . 'd',
+    );
+  }
+
+  $date_range_fields['bat_start_date'] = array(
+    '#prefix' => '<div class="form-wrapper bat-date-range"><div class="start-date" id="' . $start_date_id . '">',
+    '#suffix' => '</div>',
+    '#type' => 'date_popup',
+    '#title' => variable_get_value('bat_arrival_date'),
+    '#date_type' => DATE_DATETIME,
+    '#date_format' => 'd/m/Y',
+    '#date_increment' => 1,
+    '#date_year_range' => '-1:+3',
+    // Default parameters defined above, with an additional parameter
+    // linking to the jQuery selector for the end datepicker.
+    '#datepicker_options' => array_merge($datepicker_options, array('endDateSelector' => $end_date_selector)),
+    '#required' => TRUE,
+  );
+
+  $date_range_fields['bat_end_date'] = array(
+    '#prefix' => '<div class="end-date" id="' . $end_date_id . '">',
+    '#suffix' => '</div></div>',
+    '#type' => 'date_popup',
+    '#title' => variable_get_value('bat_departure_date'),
+    '#date_type' => DATE_DATETIME,
+    '#date_format' => 'd/m/Y',
+    '#date_increment' => 1,
+    '#date_year_range' => '-1:+3',
+    // Default parameters defined above, with an additional parameter
+    // parameter linking to the jQuery selector for the start datepicker.
+    '#datepicker_options' => array_merge($datepicker_options, array('startDateSelector' => $start_date_selector)),
+    '#required' => TRUE,
+    '#attached' => array(
+      'css' => array(
+        drupal_get_path('module', 'bat') . '/css/bat_date_range_fields.css',
+      ),
+      'js' => array(
+        drupal_get_path('module', 'bat') . '/js/bat_date_popup.js',
+        array(
+          'data' => array(
+            'bat' => array(
+              'batStartYear' => $year,
+              'batStartMonth' => $month,
+              'batBookingStartDay' => variable_get('bat_booking_start_date', 1),
+              'batDateFormat' => 'dd/mm/yy',
+
+              // Here we create a listing of all datepickers registered on the
+              // current page. This is available for use in your own custom
+              // jQuery scripts as Drupal.settings.bat.datepickers.
+              'datepickers' => array(
+                $start_date_selector => array(
+                  'endDateSelector' => $end_date_selector,
+                ),
+              ),
+            ),
+          ),
+          'type' => 'setting',
+        ),
+      ),
+    ),
+  );
+
+  return $date_range_fields;
+}
+
+/**
+ * Given a form_state locate the start/end dates in the input array and
+ * instantiate and return DateTime objects.
+ */
+function bat_form_input_get_start_end_dates($form_state) {
+  // If form_state['values']['bat_X_date'] is not set it is an empty array
+  // hence the need to check and set values so that _constructor below will not
+  // fail.
+  if (is_array($form_state['values']['bat_start_date'])) {
+    if ($form_state['values']['bat_start_date']['date'] == '') {
+      $start = new DateTime();
+    }
+    else {
+      $start = new DateTime($form_state['values']['bat_start_date']['date'] . ' ' . $form_state['values']['bat_start_date']['time']);
+    }
+  }
+  else {
+    $start = new DateTime($form_state['values']['bat_start_date']);
+  }
+
+  if (is_array($form_state['values']['bat_end_date'])) {
+    if ($form_state['values']['bat_end_date']['date'] == '') {
+      $end = new DateTime();
+    }
+    else {
+      $end = new DateTime($form_state['values']['bat_end_date']['date'] . ' ' . $form_state['values']['bat_end_date']['time']);
+    }
+  }
+  else {
+    $end = new DateTime($form_state['values']['bat_end_date']);
+  }
+
+  return array($start, $end);
+}
+
+/**
+ * Given a form_state locate the start/end dates in the values array and
+ * instantiate and return DateTime objects.
+ */
+function bat_form_values_get_start_end_dates($form_state) {
+  // As values dates has a format of year-month-day that is one of the default
+  // expected formats there is no need to explicit define format.
+  // http://www.php.net/manual/en/datetime.formats.date.php
+  $start_date = $form_state['values']['bat_start_date'];
+  $end_date = $form_state['values']['bat_end_date'];
+
+  // If the input format is numeric we assume that is a unixtime seconds format.
+  if (is_numeric($start_date) && is_numeric($end_date)) {
+    // The @ indicate DateTime that the format is unixtime.
+    $start_date = '@' . $start_date;
+    $end_date = '@' . $end_date;
+  }
+
+  $start = new DateTime($start_date);
+  $end = new DateTime($end_date);
+
+  return array($start, $end);
+}
+
+/**
+ * Validation callback that could be reused in all the forms that need to
+ * validate dates. End date must be greater than start date.
+ */
+function bat_form_start_end_dates_validate($form, &$form_state) {
+  list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
+  $today_greater = FALSE;
+  $single_day_bookings = FALSE;
+  // Skip if no dates are provided.
+  if (empty($start_date) || empty($end_date)) {
+    form_set_error('date_range', t('Please choose dates.'));
+    return;
+  }
+
+  // In case that this value is set trigger the today greater validation.
+  if (isset($form_state['today_greater_validation'])) {
+    $today_greater = TRUE;
+  }
+
+  // In case that this value is set trigger the today greater validation.
+  if (isset($form_state['single_day_bookings'])) {
+    $single_day_bookings = TRUE;
+  }
+  else {
+    // Set the form state so that we can carry the value over to the results page
+    $form_state['single_day_bookings'] = $single_day_bookings;
+  }
+
+  // Check date validity.
+  $errors = bat_check_dates_validity($start_date, $end_date, $today_greater, $single_day_bookings);
+
+  // For some forms as bat_availability_pricing_update_form and
+  // bat_availability_update_status_form we need to validate that the selected
+  // date match with current values.
+  if (isset($form_state['values']['curr_month']) && isset($form_state['values']['curr_year'])) {
+    $curr_month = $form_state['values']['curr_month'];
+    $curr_year = $form_state['values']['curr_year'];
+    if ($start_date->format('n') != $curr_month || $end_date->format('n') != $curr_month
+      || $start_date->format('Y') != $curr_year || $end_date->format('Y') != $curr_year) {
+      $errors[] = t('Start and end date must be within the current month.');
+    }
+  }
+
+  // When there are multiples errors for the same form element Drupal only
+  // display the first. Here we concatenate to display all at once.
+  if ($errors) {
+    $error_msg = implode(' ', $errors);
+    form_set_error('date_range', $error_msg);
+  }
+}
+
+/**
+ * Checks the logical validity of date values.
+ *
+ * @param DateTime $start_date
+ *   The start date
+ * @param DateTime $end_date
+ *   The end date
+ * @param bool $today_greater
+ *   TRUE in to enforce validating that start_date must be greater than
+ *   today.
+ *
+ * @return array
+ *   An array with error messages.
+ */
+function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $today_greater = FALSE, $single_day_bookings = FALSE) {
+  $errors = array();
+  // End date must be greater than start date unless single day bookings are
+  // enabled, in which case it must not be before the start date.
+  if (($end_date < $start_date) || (($end_date == $start_date) && !$single_day_bookings)) {
+    if ($single_day_bookings) {
+      $errors[] = t('End date must be on or after the start date.');
+    }
+    else {
+      $errors[] = t('End date must be after start date.');
+    }
+  }
+
+  // End date must not be more that the allowed number of days in advance for booking
+  $current_date = new DateTime();
+  $booking_interval = $current_date->diff($end_date);
+
+  // The following necessary to get a properly instantiated date interval when starting with
+  // just seconds
+  $d1 = new DateTime();
+  $d2 = new DateTime();
+  $d2->add(new DateInterval('PT' . variable_get('bat_advance_bookings_period', 15552000).'S'));
+  $advanced_bookings_interval = $d2->diff($d1);
+
+  if (($booking_interval->format('%a') > $advanced_bookings_interval->format('%a')) && (!user_access('book in advance without limitation'))) {
+    $errors[] = 'You cannot book that far into the future - bookings can only be made ' . $advanced_bookings_interval->format('%a') . ' days in advance';
+  }
+
+  // In case the date should be grater than today.
+  if ($today_greater) {
+    $now = new DateTime();
+    $diff1 = $now->setTime(0, 0, 0)->diff($start_date);
+    if ($diff1->invert) {
+      $errors[] = t('Start date must be current or in the future.');
+    }
+  }
+  return $errors;
+}
+
+/**
+ * Alternative numeric range generator considering users that use PHP < v5.3.6
+ * and experience the bug: https://bugs.php.net/bug.php?id=51894
+ *
+ * @param int $start
+ *   First value of the sequence.
+ * @param int $end
+ *   The sequence is ended upon reaching the end value.
+ *
+ * @return array
+ *   The expected range.
+ */
+function bat_range($start, $end) {
+  if (version_compare(phpversion(), '5.3.6', '<')) {
+    $range = array();
+    for ($index = $start; $index <= $end; $index++) {
+      $range[] = $index;
+    }
+    return $range;
+  }
+  else {
+    return range($start, $end, 1);
+  }
+}
+
+/**
+ * Returns a range array keyed by value.
+ *
+ * @param int $start
+ *   First value of the sequence.
+ * @param int $end
+ *   The sequence is ended upon reaching the end value.
+ *
+ * @return array
+ *   An array of elements from start to end, inclusive keyed by values.
+ */
+function bat_assoc_range($start, $end) {
+  return drupal_map_assoc(bat_range($start, $end));
+}
+
+/**
+ * Helper validate function to ensure that at least one unit is selected.
+ */
+function _bat_select_bat_validation($form_state) {
+  $select_bat = FALSE;
+  if ($form_state['values']['select-all'] == BAT_ALL_PAGES || $form_state['values']['select-all'] == BAT_THIS_PAGE) {
+    $select_bat = TRUE;
+  }
+  else {
+    foreach ($form_state['values'] as $key => $value) {
+      if (strpos($key, 'bat-') === 0 && $value == '1') {
+        $select_bat = TRUE;
+      }
+    }
+  }
+
+  if (!$select_bat) {
+    form_set_error('select-all', t('You have to select at least one unit to update.'));
+  }
+}
+
+function bat_filter_month_form($form, &$form_state, $month, $year, $unit_types = NULL) {
+
+  $form['#attributes']['class'][] = 'bat-management-form bat-filter-month-form';
+
+  $month_options = array(
+    1 => t('January'),
+    2 => t('February'),
+    3 => t('March'),
+    4 => t('April'),
+    5 => t('May'),
+    6 => t('June'),
+    7 => t('July'),
+    8 => t('August'),
+    9 => t('September'),
+    10 => t('October'),
+    11 => t('November'),
+    12 => t('December'),
+  );
+
+  $form['bat_availability_filter_month']['month'] = array(
+    '#title' => t('Month'),
+    '#type' => 'select',
+    '#options' => $month_options,
+    '#default_value' => $month,
+  );
+
+  $year_options = range(date('Y', time()) - 2, date('Y', time()) + 5);
+
+  $form['bat_availability_filter_month']['year'] = array(
+    '#title' => t('Year'),
+    '#type' => 'select',
+    '#options' => $year_options,
+    '#default_value' => $year - date('Y', time()) + 2,
+  );
+
+  $type_options['all'] = t('All types');
+  $unit_types = isset($unit_types) ? $unit_types : bat_unit_get_types();
+  foreach ($unit_types as $unit_type_name => $unit_type) {
+    $type_options[$unit_type_name] = $unit_type->label;
+  }
+
+  $form['bat_availability_filter_month']['type'] = array(
+    '#title' => t('Type'),
+    '#type' => 'select',
+    '#options' => $type_options,
+    '#default_value' => (arg(6) == '') ? 'all' : arg(6),
+  );
+
+  $form['bat_availability_filter_month']['actions'] = array(
+    '#type' => 'container',
+    '#attributes' => array('class' => array('form-actions')),
+    '#weight' => 400,
+  );
+
+  $form['bat_availability_filter_month']['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Filter'),
+  );
+
+  hide($form['bat_availability_filter_month']['actions']['submit']);
+
+  return $form;
+}
+
+/**
+ * Submit callback for bat_filter_month_form form.
+ *
+ * @see bat_filter_month_form()
+ */
+function bat_filter_month_form_submit(&$form, &$form_state) {
+  $year = $form_state['values']['year'] + date('Y', time()) - 2;
+  $month = $form_state['values']['month'];
+  $type = $form_state['values']['type'];
+
+  $address = 'admin/bat/units/' . arg(3) . '/' . $year . '/' . $month;
+  if ($type != 'all') {
+    $address .= '/' . $type;
+  }
+
+  if (arg(7) != '') {
+    $address .= ($type == 'all') ? '/all/' . arg(7) : $type . arg(7);
+  }
+
+  $form_state['redirect'] = $address;
+}
+
+/**
+ * Default implementation of hook_preprocess_bat_three_month_calendar().
+ *
+ * Here we setup the three-month calendar based on a specified year,
+ * month, and url.
+ */
+function bat_preprocess_bat_three_month_calendar(&$vars) {
+
+  // Load FullCalendar.
+  bat_fullcalendar_loaded();
+
+  // Add css styles for three-month-calendar.
+  drupal_add_css(drupal_get_path('module', 'bat_availability') . '/css/bat_three_month_calendar.css');
+  drupal_add_css(drupal_get_path('module', 'bat_availability') . '/css/fullcalendar.theme.css');
+
+  // If dates are not provided then use the current date.
+  $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
+  $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
+
+  // Inject settings in javascript that will be used to setup the three months
+  // display.
+  drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
+  drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
+  drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
+
+  // Calculate forward and back dates for the 3-month view calendar.
+  $date1 = new DateTime("$year-$month-1");
+  $date2 = new DateTime("$year-$month-1");
+  $date_current = new DateTime("now");
+
+  $forward = $date1->add(new DateInterval('P3M'));
+  $backward = $date2->sub(new DateInterval('P3M'));
+
+  // Create the links based off the url variable passed in.
+  if (!isset($vars['url'])) {
+    $vars['url'] = '';
+  }
+
+  $forward_path = $vars['url'] . '/' . $forward->format('Y') . '/' . $forward->format('n');
+  $backward_path = $vars['url'] . '/' . $backward->format('Y') . '/' . $backward->format('n');
+  $current_path = $vars['url'] . '/' . $date_current->format('Y') . '/' . $date_current->format('n');
+
+  if (!is_array($vars['link_options']) || empty($vars['link_options'])) {
+    $vars['link_options'] = array();
+  }
+  $vars['forward_link'] = l(t('Forward'), $forward_path, $vars['link_options']);
+  $vars['backward_link'] = l(t('Back'), $backward_path, $vars['link_options']);
+  $vars['current_link'] = l(t('Current'), $current_path, $vars['link_options']);
+}
+
+/**
+ * Form element validation handler for integer elements greater than or equal 
+ * to 0.
+ */
+function bat_element_validate_integer_zero_positive($element, &$form_state) {
+  $value = $element['#value'];
+  if ($value !== '' && (!is_numeric($value) || intval($value) != $value || $value < 0)) {
+    form_error($element, t('%name must be a positive integer.', array('%name' => $element['#title'])));
+  }
+}
+
+/**
+ * Form element validation handler for integer elements positive less than 100.
+ */
+function bat_element_validate_integer_positive_less_than_100($element, &$form_state) {
+  $value = $element['#value'];
+  if ($value !== '' && (!is_numeric($value) || intval($value) != $value || $value < 0 || $value > 100)) {
+    if ($value < 0) {
+      form_error($element, t('%name must be greater than 0.', array('%name' => $element['#title'])));
+    }
+    elseif ($value > 100) {
+      form_error($element, t('%name must be less than 100.', array('%name' => $element['#title'])));
+    }
+  }
+}
+
+/**
+ * A string transformation function specific to BAT to allow modules to use
+ * contextual information about bookings to change what is shown to the user.
+ *
+ * @param $string - The string to be altered.
+ * @param $context - Contextual information about the string.
+ *
+ * @return mixed
+ */
+function bat_string($string, $context) {
+
+  // The string_suggestions array will hold information about all the
+  // suggestions coming from modules. The default behaviour now is to simply
+  // return the suggestion made by the module with the highest weight.
+  $string_suggestions = array();
+  $string_suggestions[] = $string;
+  drupal_alter('bat_string', $string_suggestions, $context);
+
+  // Return the highest option string.
+  return max($string_suggestions);
+}

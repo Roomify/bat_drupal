@@ -1,0 +1,16 @@
+name = Booking and Availability Management
+description = A generalized Booking and Availability Management Framework
+core = 7.x
+php = 5.3.9
+
+files[] = include/bat_definitions.inc
+
+package = BAT
+
+dependencies[] = date
+dependencies[] = date_api
+dependencies[] = date_popup
+dependencies[] = jquery_update
+dependencies[] = libraries (>=2.x)
+dependencies[] = variable
+dependencies[] = xautoload (>=5.x)

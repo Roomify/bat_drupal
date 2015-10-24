@@ -1,0 +1,135 @@
+<?php
+
+/**
+ * @file
+ * Interface support to the Rooms family of modules.
+ */
+
+
+/**
+ * Implements hook_menu().
+ */
+function bat_ui_menu() {
+  $items = array();
+
+  // Top level "BAT" container.
+  $items['admin/bat'] = array(
+    'title' => 'BAT',
+    'description' => 'Administer BAT.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+    'weight' => -7,
+  );
+  $items['admin/bat/config'] = array(
+    'title' => 'Configuration',
+    'description' => 'Configure settings and business rules for BAT management.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('configure bat settings'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 10,
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+  );
+  $items['admin/bat/config/bookings'] = array(
+    'title' => 'Booking Settings',
+    'description' => 'Configure settings and business rules for Bookings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bat_booking_settings'),
+    'access arguments' => array('configure bat settings'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['admin/bat/config/terminology'] = array(
+    'title' => 'BAT Terminology',
+    'description' => 'Change BAT Terminology',
+    'page callback' => 'bat_ui_terminology_form',
+    'access arguments' => array('configure bat settings'),
+  );
+
+
+  return $items;
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function bat_ui_page_build(&$page) {
+  drupal_add_css(drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css');
+}
+
+/**
+ * Main booking settings form.
+ */
+function bat_booking_settings($form, &$form_state) {
+  // Management vertical tabs.
+  $form['bat_settings'] = array(
+    '#type' => 'vertical_tabs',
+    '#weight' => 99,
+    '#attached' => array(
+      'css' => array(
+        array(
+          'data' => '#bat-booking-settings .vertical-tabs .form-type-textfield input { width: auto; }',
+          'type' => 'inline',
+        ),
+      ),
+    ),
+  );
+
+  $form['bat_booking_settings'] = array(
+    '#type' => 'fieldset',
+    '#group' => 'bat_settings',
+    '#title' => t('Booking settings'),
+  );
+
+  $form['bat_booking_settings']['bat_booking_start_date'] = array(
+    '#type' => 'select',
+    '#title' => t('How soon a booking can start'),
+    '#options' => array(
+      '0' => t('Same day bookings'),
+      '1' => t('1 day in advance'),
+      '2' => t('@count days in advance', array('@count' => 2)),
+      '3' => t('@count days in advance', array('@count' => 3)),
+      '4' => t('@count days in advance', array('@count' => 4)),
+      '5' => t('@count days in advance', array('@count' => 5)),
+      '6' => t('@count days in advance', array('@count' => 6)),
+      '7' => t('@count days in advance', array('@count' => 7)),
+    ),
+    '#default_value' => variable_get('bat_booking_start_date', 1),
+  );
+
+  return system_settings_form($form);
+}
+
+
+/**
+ * Collects the various Variable definitions and presents in a single
+ * form for the user
+ *
+ * @return array|mixed
+ */
+function bat_ui_terminology_form() {
+  $module_list = module_list();
+  $list = array();
+  // Looking for all modules in the rooms_ namespace
+  foreach ($module_list as $element) {
+    if (strncmp($element, 'bat', strlen('bat')) == 0)
+      $list[] = $element;
+  }
+
+  $variable_list = array();
+
+  // Include specific API for variable
+  variable_include();
+
+  // Create the list of variable of all Rooms modules enabled
+  foreach ($list as $element) {
+    $element = variable_list_module($element);
+    if (!empty($element)) {
+      foreach ($element as $elem)
+        $variable_list[] = $elem['name'];
+    }
+  }
+
+  return drupal_get_form('variable_edit_form', $variable_list);
+}
