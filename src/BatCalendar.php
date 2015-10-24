@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal/bat
+namespace Drupal\bat;
 
 /**
  * Handles querying and updating the availability information
@@ -91,12 +91,12 @@ abstract class BatCalendar implements BatCalendarInterface {
   /**
    * {@inheritdoc}
    */
-  public abstract function getEvents(DateTime $start_date, DateTime $end_date);
+  public abstract function getEvents(\DateTime $start_date, \DateTime $end_date);
 
   /**
    * {@inheritdoc}
    */
-  public abstract function getRawDayData(DateTime $start_date, DateTime $end_date);
+  public abstract function getRawDayData(\DateTime $start_date, \DateTime $end_date);
 
   /**
    * {@inheritdoc}
@@ -109,7 +109,7 @@ abstract class BatCalendar implements BatCalendarInterface {
     $query->condition('a.unit_id', $this->unit_id);
     $query->condition('a.year', $year);
     $query->condition('a.month', $month);
-    $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+    $result = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
     if (count($result) > 0) {
       return TRUE;
     }

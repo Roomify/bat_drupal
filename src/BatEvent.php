@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal/bat;
+namespace Drupal\bat;
 
 abstract class BatEvent implements BatEventInterface {
 
@@ -199,6 +199,6 @@ abstract class BatEvent implements BatEventInterface {
    * @return BatEventInterface
    *   The new event created.
    */
-  protected abstract function createEvent(DateTime $start_date, DateTime $end_date);
+  protected abstract function createEvent(\DateTime $start_date, \DateTime $end_date);
 
 }

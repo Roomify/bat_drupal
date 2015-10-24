@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Interface support to the Rooms family of modules.
+ * Interface support to the BAT family of modules.
  */
 
 
@@ -111,7 +111,7 @@ function bat_booking_settings($form, &$form_state) {
 function bat_ui_terminology_form() {
   $module_list = module_list();
   $list = array();
-  // Looking for all modules in the rooms_ namespace
+  // Looking for all modules in the bat_ namespace
   foreach ($module_list as $element) {
     if (strncmp($element, 'bat', strlen('bat')) == 0)
       $list[] = $element;
@@ -122,7 +122,7 @@ function bat_ui_terminology_form() {
   // Include specific API for variable
   variable_include();
 
-  // Create the list of variable of all Rooms modules enabled
+  // Create the list of variable of all BAT modules enabled
   foreach ($list as $element) {
     $element = variable_list_module($element);
     if (!empty($element)) {

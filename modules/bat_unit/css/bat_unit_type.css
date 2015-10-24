@@ -1,0 +1,51 @@
+/* Bookable unit type edit form */
+.bat-unit-type-edit-form .form-wrapper {
+  max-width: 400px;
+  margin: 0 20px 0.4em 0;
+}
+.bat-unit-type-edit-form .form-item {
+  margin-bottom: 1em;
+}
+.bat-unit-type-edit-form .form-item label,
+.bat-unit-type-edit-form .form-wrapper legend {
+  margin-bottom: 0.2em;
+}
+.bat-unit-type-edit-form .form-item label,
+.bat-unit-type-edit-form .form-wrapper .fieldset-legend {
+  font-size: 1em;
+  font-weight: bold;
+}
+.bat-unit-type-edit-form .form-checkbox + label {
+  font-weight: normal;
+}
+.bat-unit-type-edit-form .form-checkbox:checked + label {
+  font-weight: bold;
+}
+.bat-unit-type-edit-form .field-widget-bat-options-combined {
+  max-width: inherit;
+  margin-right: 0;
+  clear: both;
+}
+.bat-unit-type-edit-form .field-widget-bat-availability-constraints-range {
+  max-width: inherit;
+  margin-right: 0;
+  clear: both;
+}
+.bat-unit-type-edit-form .form-actions {
+  clear: both;
+}
+
+.bat-unit-type-edit-form .form-item-name,
+.bat-unit-type-edit-form .form-item-data-base-price,
+.bat-unit-type-edit-form .bat-unit-type-guest-capacity,
+.bat-unit-type-edit-form .bat-unit-type-child-capacity {
+  float: left;
+  width: 15em;
+  margin-right: 20px;
+}
+.bat-unit-type-edit-form .bat-unit-type-reference,
+.bat-unit-type-edit-form .bat-unit-type-defaults {
+  float: none;
+  width: 100%;
+  max-width: 100%;
+}

@@ -1,0 +1,711 @@
+<?php
+
+/**
+ * @file
+ * Manage units - Units are things that can be booked on a nightly basis
+ * (e.g. rooms - but also villas bungalows, cars, drills, you-get-the-idea etc).
+ */
+
+/**
+ * Defining some unit availability states that will be used throughout.
+ */
+define ('BAT_NOT_AVAILABLE', 0);
+define ('BAT_AVAILABLE', 1);
+define ('BAT_ON_REQUEST', 2);
+define ('BAT_ANON_BOOKED', 3);
+
+define ('BAT_HOURLY_BOOKED', 5);
+
+define ('BAT_UNCONFIRMED_BOOKINGS', -1);
+
+/**
+ * Defining responses for Calendar Updated.
+ */
+define ('BAT_BLOCKED', 100);
+define ('BAT_UPDATED', 200);
+define ('BAT_WRONG_UNIT', 300);
+
+/**
+ * Implements hook_entity_info().
+ */
+function bat_unit_entity_info() {
+  $return['bat_unit'] = array(
+    'label' => t('Bookable Units'),
+    // The entity class and controller class extend the classes provided by the
+    // Entity API.
+    'entity class' => 'BatUnit',
+    'controller class' => 'BatUnitController',
+    'base table' => 'bat_units',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'unit_id',
+      'bundle' => 'type',
+    ),
+    // Bundles are defined by the unit types below.
+    'bundles' => array(),
+    // Bundle keys tell the FieldAPI how to extract information from the bundle
+    // objects.
+    'bundle keys' => array(
+      'bundle' => 'type',
+    ),
+    'label callback' => 'entity_class_label',
+    'uri callback' => 'entity_class_uri',
+    'creation callback' => 'bat_unit_create',
+    'access callback' => 'bat_unit_access',
+    'access arguments' => array(
+      'user key' => 'uid',
+      'access tag' => 'bat_unit_access',
+    ),
+    'permission labels' => array(
+      'singular' => t('bookable unit'),
+      'plural' => t('bookable units'),
+    ),
+    'module' => 'bat_unit',
+    // The information below is used by the BatUnitUIController (which extends
+    // the EntityDefaultUIController).
+    'admin ui' => array(
+      'path' => 'admin/bat/units',
+      'file' => 'bat_unit.admin.inc',
+      'controller class' => 'BatUnitUIController',
+      'menu wildcard' => '%bat_unit',
+    ),
+    'translation' => array(
+      'entity_translation' => array(
+        'base path' => 'admin/bat/units/unit/%bat_unit',
+        'default settings' => array(
+          'default_language' => LANGUAGE_NONE,
+          'hide_language_selector' => FALSE,
+        ),
+      ),
+    ),
+  );
+  // The entity that holds information about the entity types.
+  $return['bat_unit_type'] = array(
+    'label' => t('Bookable Unit Type'),
+    'entity class' => 'BatUnitType',
+    'controller class' => 'BatUnitTypeController',
+    'base table' => 'bat_unit_type',
+    'fieldable' => TRUE,
+    'bundle of' => 'bat_unit',
+    'exportable' => TRUE,
+    'entity keys' => array(
+      'id' => 'id',
+      'name' => 'type',
+      'label' => 'label',
+    ),
+    'access callback' => 'bat_unit_type_access',
+    'module' => 'bat_unit',
+    // Enable the entity API's admin UI.
+    'admin ui' => array(
+      'path' => 'admin/bat/units/unit-types',
+      'file' => 'bat_unit_type.admin.inc',
+      'controller class' => 'BatUnitTypeUIController',
+    ),
+  );
+
+  return $return;
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ *
+ * We are adding the info about the unit types via a hook to avoid a recursion
+ * issue as loading the unit types requires the entity info as well.
+ */
+function bat_unit_entity_info_alter(&$entity_info) {
+  foreach (bat_unit_get_types() as $type => $info) {
+    $entity_info['bat_unit']['bundles'][$type] = array(
+      'label' => $info->label,
+      'admin' => array(
+        'path' => 'admin/bat/units/unit-types/manage/%bat_unit_type',
+        'real path' => 'admin/bat/units/unit-types/manage/' . $type,
+        'bundle argument' => 5,
+        'access arguments' => array('bypass bat_unit entities access'),
+      ),
+    );
+  }
+  // Create custom build mode.
+  $entity_info['node']['view modes']['bat_list'] = array(
+    'label' => t('Bat Results View'),
+    'custom settings' => FALSE,
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function bat_unit_permission() {
+  $permissions = array(
+    'administer bat_unit_type entities' => array(
+      'title' => t('Administer bookable unit types'),
+      'description' => t('Allows users to add bookable unit types and configure their fields.'),
+      'restrict access' => TRUE,
+    ),
+    'view any bat_unit unpublished entity' => array(
+      'title' => t('View any unpublished bookable unit'),
+      'description' => t('Allows users to view any unpublished bookable unit.'),
+      'restrict access' => TRUE,
+    ),
+    'view own bat_unit unpublished entities' => array(
+      'title' => t('View own unpublished bookable units'),
+      'description' => t('Allows users to view own unpublished bookable units.'),
+    ),
+  );
+
+  $permissions += bat_entity_access_permissions('bat_unit');
+
+  // Override view permissions.
+  $entity_info = entity_get_info('bat_unit');
+  foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
+    $permissions['view own bat_unit entities of bundle ' . $bundle_name] = array(
+      'title' => t('View own published %bundle @entity_type', array('@entity_type' => 'bookable units', '%bundle' => $bundle_info['label'])),
+    );
+    $permissions['view any bat_unit entity of bundle ' . $bundle_name] = array(
+      'title' => t('View any published %bundle @entity_type', array('@entity_type' => 'bookable unit', '%bundle' => $bundle_info['label'])),
+    );
+  }
+
+  return $permissions;
+}
+
+/**
+ * Determines whether the given user has access to a bookable unit.
+ *
+ * @param string $op
+ *   The operation being performed. One of 'view', 'update', 'create', 'delete'
+ *   or just 'edit' (being the same as 'create' or 'update').
+ * @param BatUnit $unit
+ *   Optionally a unit or a unit type to check access for. If nothing is
+ *   given, access for all units is determined.
+ * @param object $account
+ *   The user to check for. Leave it to NULL to check for the global user.
+ *
+ * @return boolean
+ *   Whether access is allowed or not.
+ */
+function bat_unit_access($op, $unit = NULL, $account = NULL) {
+  return bat_entity_access($op, $unit, $account, 'bat_unit');
+}
+
+/**
+ * Filters units based on permissions for multiple values.
+ */
+function bat_unit_access_filter($op, $units = array(), $account = NULL) {
+  $filtered_units = array();
+
+  // If no user object is supplied, the access check is for the current user.
+  if (empty($account)) {
+    $account = $GLOBALS['user'];
+  }
+
+  foreach ($units as $key => $unit) {
+    if (bat_unit_access($op, $unit, $account)) {
+      $filtered_units[$key] = $unit;
+    }
+  }
+  return $filtered_units;
+}
+
+/**
+ * Access callback for the entity API.
+ */
+function bat_unit_type_access($op, $type = NULL, $account = NULL) {
+  return user_access('administer bat_unit_type entities', $account);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function bat_unit_query_bat_unit_access_alter(QueryAlterableInterface $query) {
+  // Look for an unit base table to pass to the query altering function or else
+  // assume we don't have the tables we need to establish order related altering
+  // right now.
+  foreach ($query->getTables() as $table) {
+    if ($table['table'] === 'bat_units') {
+      bat_entity_access_query_alter($query, 'bat_unit', $table['alias']);
+      break;
+    }
+  }
+}
+
+/**
+ * Implements hook_bat_entity_access_OP_condition_ENTITY_TYPE_alter().
+ */
+function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, $context) {
+  $account = $context['account'];
+
+  if (user_access('view any bat_unit unpublished entity', $account)) {
+    return;
+  }
+
+  $old_conditions = $conditions;
+  $conditions = db_and();
+
+  if ($account->uid && user_access('view own bat_unit unpublished entities', $account)) {
+    $or = db_and()
+      ->condition($context['base_table'] . '.status', 0)
+      ->condition($context['base_table'] . '.uid', $account->uid);
+    $conditions->condition(db_or()
+      ->condition($or)
+      ->condition($context['base_table'] . '.status', 1)
+    );
+
+  }
+  else {
+    $conditions->condition($context['base_table'] . '.status', 1);
+  }
+
+  if ($old_conditions->count()) {
+    $conditions->condition($old_conditions);
+  }
+}
+
+/**
+ * Access callback: Checks whether the user has permission to add a unit.
+ *
+ * @return bool
+ *   TRUE if the user has add permission, otherwise FALSE.
+ *
+ * @see node_menu()
+ */
+function _bat_unit_add_access() {
+  if (user_access('administer bat_unit_type entities')) {
+    // There are no bookable unit types defined that the user has permission to
+    // create, but the user does have the permission to administer the content
+    // types, so grant them access to the page anyway.
+    return TRUE;
+  }
+
+  $types = bat_unit_get_types();
+  foreach ($types as $type) {
+    if (bat_unit_access('create', bat_unit_create(array('type' => $type->type, 'uid' => 0)))) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Gets an array of all unit types, keyed by the type name.
+ *
+ * @param string $type_name
+ *   If set, the type with the given name is returned.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return BatUnitType[]
+ *   Depending whether $type isset, an array of unit types or a single one.
+ */
+function bat_unit_get_types($type_name = NULL, $reset = FALSE) {
+  // entity_load() will get the Entity controller for our unit entity and call
+  // the load function of that object.
+  $types = entity_load_multiple_by_name('bat_unit_type', isset($type_name) ? array($type_name) : FALSE);
+  return isset($type_name) ? reset($types) : $types;
+}
+
+/**
+ * Helper function to easily get unit types in an array for use in forms, etc.
+ *
+ * @return array
+ *  An array of unit types keyed by type name and labels
+*/
+function bat_unit_types_ids() {
+  $unit_types = array();
+  $types = bat_unit_get_types();
+  foreach ($types as $type) {
+    $unit_types[$type->type] = $type->label;
+  }
+
+  return $unit_types;
+}
+
+/**
+ * Menu argument loader; Load a unit type by string.
+ *
+ * @param $type
+ *   The machine-readable name of a unit type to load.
+ * @param bool $reset
+ *   A boolean indicating whether the internal cache should be reset.
+ *
+ * @return array|false
+ *   A unit type array or FALSE if $type does not exist.
+ */
+function bat_unit_type_load($type, $reset = FALSE) {
+  return bat_unit_get_types($type, $reset);
+}
+
+/**
+ * Fetches a bookable unit object.
+ *
+ * @param int $unit_id
+ *   Integer specifying the unit id.
+ * @param bool $reset
+ *   A boolean indicating whether the internal cache should be reset.
+ * @return BatUnit|false
+ *   A fully-loaded $unit object or FALSE if it cannot be loaded.
+ *
+ * @see bat_unit_load_multiple()
+ */
+function bat_unit_load($unit_id, $reset = FALSE) {
+  $units = bat_unit_load_multiple(array($unit_id), array(), $reset);
+  return reset($units);
+}
+
+/**
+ * Loads multiple units based on certain conditions.
+ *
+ * @param array $unit_ids
+ *   An array of unit IDs.
+ * @param array $conditions
+ *   An array of conditions to match against the {bat_units} table.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return array
+ *   An array of unit objects, indexed by unit_id.
+ *
+ * @see entity_load()
+ * @see bat_unit_load()
+ */
+function bat_unit_load_multiple($unit_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('bat_unit', $unit_ids, $conditions, $reset);
+}
+
+/**
+ * Deletes a bookable unit.
+ *
+ * @param BatUnit $unit
+ *   The BatUnit object that represents the unit to delete.
+ */
+function bat_unit_delete(BatUnit $unit) {
+  $unit->delete();
+}
+
+/**
+ * Deletes multiple units.
+ *
+ * @param array $unit_ids
+ *   An array of unit IDs.
+ */
+function bat_unit_delete_multiple(array $unit_ids) {
+  entity_get_controller('bat_unit')->delete($unit_ids);
+}
+
+/**
+ * Creates a unit object.
+ *
+ * @param array $values
+ *   The properties for the new unit type.
+ */
+function bat_unit_create($values = array()) {
+  return entity_get_controller('bat_unit')->create($values);
+}
+
+/**
+ * Saves a unit to the database.
+ *
+ * @param BatUnit $unit
+ *   The Unit object.
+ */
+function bat_unit_save(BatUnit $unit) {
+  return $unit->save();
+}
+
+/**
+ * Creates a unit object.
+ *
+ * @param array $values
+ *   The properties for the new unit type.
+ */
+function bat_unit_type_create($values = array()) {
+  return entity_get_controller('bat_unit_type')->create($values);
+}
+
+/**
+ * Saves a unit type to the db.
+ *
+ * @param BatUnitType $type
+ *   The unit type to save.
+ */
+function bat_unit_type_save(BatUnitType $type) {
+  $type->save();
+}
+
+/**
+ * Deletes a unit type from the db.
+ */
+function bat_unit_type_delete(BatUnitType $type) {
+  $type->delete();
+}
+
+/**
+ * URI callback for units.
+ */
+function bat_unit_uri(BatUnit $unit) {
+  return array(
+    'path' => 'unit/' . $unit->unit_id,
+  );
+}
+
+/**
+ * Menu title callback for showing individual entities.
+ */
+function bat_unit_page_title(BatUnit $unit) {
+  return $unit->name;
+}
+
+/**
+ * Gets a list of Units keyed by id and name in value.
+ */
+function bat_unit_ids($bundle = '') {
+  $units = array();
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'bat_unit');
+
+  if ($bundle != '') {
+    $query->entityCondition('bundle', $bundle);
+  }
+
+  $result = $query->execute();
+
+  if (count($result) > 0) {
+    $entities = entity_load('bat_unit', array_keys($result['bat_unit']));
+    foreach ($entities as $unit) {
+      $wrapper = entity_metadata_wrapper('bat_unit', $unit);
+      $units[$wrapper->unit_id->value()] = $wrapper->name->value();
+    }
+  }
+
+  return $units;
+}
+
+/**
+ * Sets up content to show an individual unit.
+ */
+function bat_unit_page_view($unit, $view_mode = 'full') {
+  $controller = entity_get_controller('bat_unit');
+  $content = $controller->view(array($unit->unit_id => $unit), $view_mode);
+
+  drupal_set_title($unit->name);
+
+  return $content;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function bat_unit_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'bat_unit') . '/views',
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bat_unit_theme() {
+  return array(
+    'bat_unit_add_list' => array(
+      'variables' => array('content' => array()),
+      'file' => 'bat_unit.admin.inc',
+    ),
+    'bat_unit' => array(
+      'render element' => 'elements',
+      'template' => 'bat_unit',
+    ),
+    'bat_unit_extra_data' => array(
+      'variables' => array('unit_extra_data', 'unit' => NULL),
+      'template' => 'bat_unit-extra-data',
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function bat_unit_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+  // Create an action link on the Units admin page for adding new units.
+  if ($root_path == 'admin/bat/units') {
+    $item = menu_get_item('admin/bat/units/add');
+    if ($item['access']) {
+      $data['actions']['output'][] = array(
+        '#theme' => 'menu_local_action',
+        '#link' => $item,
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = bat_unit_type_operation_form
+ * Prevent a unit type with associated units from being deleted.
+ */
+function bat_unit_form_bat_unit_type_operation_form_alter(&$form, &$form_state, $form_id) {
+  // Check if units of a unit type exist before allowing deletion.
+  if ($form_state['op'] == 'delete') {
+    $unit_type = $form_state['bat_unit_type'];
+
+    // Load the units associated with this type.
+    $query = new EntityFieldQuery();
+
+    $query->entityCondition('entity_type', 'bat_unit')
+          ->propertyCondition('type', $unit_type->type);
+    $units = $query->execute();
+    if (isset($units['bat_unit']) && count($units['bat_unit'])) {
+
+      // This type has associated units, don't allow deletion.
+      form_set_error('confirm', t('This unit type has associated units. Please delete all units before attempting to delete this unit type.'));
+
+      unset($form['description']);
+      unset($form['actions']);
+      unset($form['confirm']);
+    }
+  }
+}
+
+/**
+ * Helper function to generate a list of available unit states for select lists.
+ *
+ * @return array
+ *   Array of available unit states keyed by id.
+ */
+function bat_unit_state_options() {
+  return array(
+    BAT_NOT_AVAILABLE => t('Unavailable'),
+    BAT_AVAILABLE => t('Available'),
+    BAT_ON_REQUEST => t('On Request'),
+    BAT_ANON_BOOKED => t('Anonymous Booking'),
+  );
+}
+
+
+/**
+ * The class used for unit entities
+ */
+class BatUnit extends Entity {
+  public function __construct($values = array()) {
+    parent::__construct($values, 'bat_unit');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function defaultLabel() {
+    return $this->name;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function defaultUri() {
+    return array('path' => 'unit/' . $this->unit_id);
+  }
+
+}
+
+/**
+ * The class used for unit type entities
+ */
+class BatUnitType extends Entity {
+
+  /**
+   * The Bookable unit type.
+   *
+   * @var string
+   */
+  public $type;
+
+  /**
+   * The bookable unit type label.
+   *
+   * @var string
+   */
+  public $label;
+
+  public function __construct($values = array()) {
+    parent::__construct($values, 'bat_unit_type');
+  }
+
+}
+
+/**
+ * The Controller for BatUnit entities
+ */
+class BatUnitController extends EntityAPIController {
+
+  public function __construct($entityType) {
+    parent::__construct($entityType);
+  }
+
+  /**
+   * Creates a bookable unit.
+   *
+   * @param array $values
+   *   The properties for the new unit type.
+   *
+   * @return BatUnit
+   *   A unit object with all default fields initialized.
+   */
+  public function create(array $values = array()) {
+    $unit_type = bat_unit_type_load($values['type'], TRUE);
+    // Add values that are specific to our Unit.
+    $values += array(
+      'unit_id' => '',
+      'is_new' => TRUE,
+      'title' => '',
+      'created' => '',
+      'changed' => '',
+    );
+
+    $unit = parent::create($values);
+
+    return $unit;
+  }
+
+  /**
+   * Overriding the buildContent function to add entity specific fields.
+   */
+  public function buildContent($entity, $view_mode = 'full', $langcode = NULL, $content = array()) {
+    $content = parent::buildContent($entity, $view_mode, $langcode, $content);
+
+    return $content;
+  }
+
+}
+
+/**
+ * The Controller for Unit entities.
+ */
+class BatUnitTypeController extends EntityAPIControllerExportable {
+
+  public function __construct($entityType) {
+    parent::__construct($entityType);
+  }
+
+  /**
+   * Creates a unit type.
+   *
+   * @param array $values
+   *   The properties for the new unit type.
+   *
+   * @return BatUnitType
+   *   A unit type object with all default fields initialized.
+   */
+  public function create(array $values = array()) {
+    // Add values that are specific to our Unit.
+    $values += array(
+      'id' => '',
+      'is_new' => TRUE,
+      'data' => '',
+    );
+    $unit_type = parent::create($values);
+
+    return $unit_type;
+  }
+
+}

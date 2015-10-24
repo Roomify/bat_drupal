@@ -1,0 +1,152 @@
+.fc table {
+  margin: 0;
+}
+.fc td, .fc th {
+  width: auto;
+}
+
+/* Header styles */
+.fc-header-title {
+  text-align: center;
+}
+.fc-header-title h2 {
+  font-size: 18px;
+  font-weight: normal;
+  margin: 0;
+}
+.fc-header {
+  border: none;
+}
+.fc-header tbody,
+.fc-header tr,
+.fc-header th,
+.fc-header td {
+  background-color: transparent;
+  border: none !important;
+}
+.fc-header td {
+  padding: 8px 0;
+}
+.fc-header .fc-state-default,
+.fc-header .ui-state-default {
+  margin-bottom: 0;
+}
+
+/* Days of week */
+.fc-widget-header {
+  font-weight: 100;
+  font-size: 0.9em;
+  color: #666;
+  text-transform: none;
+  background: transparent;
+}
+
+/* Table borders */
+.fc-border-separate {
+  border: none;
+}
+.fc-border-separate th,
+.fc-border-separate th.fc-last {
+  border-width: 0;
+}
+.fc-border-separate td.fc-last {
+  border-width: 0 0 1px 1px;
+}
+.fc-border-separate tr.fc-last td {
+  border-width: 0 0 0 1px;
+  padding-bottom: 0;
+}
+.fc-border-separate td.fc-first {
+  border-left: none;
+}
+
+/* Calendar content */
+.fc-widget-content {
+  border-color: #f5f5f5;
+  background: transparent;
+}
+
+/* Events */
+.fc-event,
+.fc-agenda .fc-event-time,
+.fc-event a {
+  border-style: none;
+  background-color: transparent;
+  color: inherit;
+}
+.fc-event-default,
+.fc-event-default .fc-event-time,
+.fc-event-default a {
+  border-color: #36c;
+  border-style: solid;
+  background-color: #36c;
+  color: #fff;
+}
+.fc-event-skin {
+  opacity: 0.8;
+}
+.fc-event-title {
+  padding: 0 2px;
+  display: block;
+}
+
+.fc-corner-left,
+.fc-corner-left .fc-event-inner {
+  border-left-width: 0;
+}
+.fc-corner-right,
+.fc-corner-right .fc-event-inner {
+  border-right-width: 0;
+}
+.fc-corner-left.fc-corner-right,
+.fc-corner-left.fc-corner-right .fc-event-inner {
+  border-left-width: 0;
+  border-right-width: 0;
+}
+
+/* Updated message */
+.fullcalendar-status {
+  background: #ecf8f4;
+  border: 1px solid #fff;
+  color: #687;
+  display: none;
+  margin: 0 0 10px 0;
+  padding: 15px;
+  text-align: center;
+}
+
+/* Undo Drupal default theme link colors */
+.fc-content a:link,
+.fc-content a:visited {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Grid whitespace */
+.fc-grid .fc-day-number {
+  text-align: right;
+  padding: 1px 8% 0;
+  cursor: default;
+}
+.fc-grid .fc-day-content {
+  padding: 0 5% 0;
+}
+
+/* Visual separator between weeks in single-row-month */
+.fc-view-singleRowMonth th.fc-sun {
+  border-left-width: 1px;
+}
+.fc-view-singleRowMonth th.fc-sun.fc-first {
+  border-left-width: 0;
+}
+
+.fc-cell-overlay {
+  background: rgb(0, 122, 255);
+  opacity: .7;
+  filter: alpha(opacity=70);
+}
+
+/* Hide plain text events when javascript is enabled */
+html.js .fullcalendar-content {
+  display: none;
+}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal/bat;
+namespace Drupal\bat;
 
 
 /**
