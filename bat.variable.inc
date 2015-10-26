@@ -7,24 +7,8 @@
 /**
  * Implements hook_variable_info().
  */
-function rooms_variable_info($options) {
-  $variables['rooms_arrival_date'] = array(
-    'type' => 'string',
-    'title' => t('Arrival Date'),
-    'default' => 'Arrival Date',
-    'description' => t('Change text : Arrival Date'),
-    'localize' => TRUE,
-    'group' => 'rooms',
-  );
-  
-  $variables['rooms_departure_date'] = array(
-    'type' => 'string',
-    'title' => t('Departure Date'),
-    'default' => 'Departure Date',
-    'description' => t('Change text : Departure Date'),
-    'localize' => TRUE,
-    'group' => 'rooms',
-  );
+function bat_variable_info($options) {
+  $variables = array();
 
   return $variables;
 }
@@ -32,12 +16,8 @@ function rooms_variable_info($options) {
 /**
  * Implements hook_variable_group_info().
  */
-function rooms_variable_group_info() {
-  $groups['rooms'] = array(
-    'title' => t('Rooms'),
-    'description' => t('Variable examples of different types.'),
-    'access' => 'administer site configuration',
-    'path' => array('admin/rooms/'),
-  );
+function bat_variable_group_info() {
+  $groups = array();
+
   return $groups;
 }
