@@ -919,7 +919,7 @@ function bat_assoc_range($start, $end) {
 /**
  * Helper validate function to ensure that at least one unit is selected.
  */
-function _bat_select_bat_validation($form_state) {
+function bat_validate_unit($form_state) {
   $select_bat = FALSE;
   if ($form_state['values']['select-all'] == BAT_ALL_PAGES || $form_state['values']['select-all'] == BAT_THIS_PAGE) {
     $select_bat = TRUE;

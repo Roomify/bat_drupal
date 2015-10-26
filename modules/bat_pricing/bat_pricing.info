@@ -1,0 +1,14 @@
+name = BAT Pricing
+description = Manages pricing information for units.
+core = 7.x
+
+package = BAT
+
+files[] = includes/bat_pricing.unit_pricing_calendar.inc
+files[] = includes/bat_pricing.unit_pricing_calendar_interface.inc
+files[] = includes/bat_pricing.pricing_event.inc
+files[] = includes/bat_pricing.pricing_event_interface.inc
+
+dependencies[] = bat_unit
+dependencies[] = commerce
+dependencies[] = bam_api

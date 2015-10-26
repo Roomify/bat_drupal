@@ -1,0 +1,45 @@
+/* Styles for the bat_pricing edit form */
+.bat-bulk-pricing-form .fc-header {
+  display: none;
+}
+
+/* Filter month form */
+.bat-filter-month-form .form-item-month,
+.bat-filter-month-form .form-item-year,
+.bat-management-form .form-item,
+.bat-filter-month-form .form-item-type {
+  float: left;
+  margin-right: 20px;
+}
+.bat-filter-month-form .form-item-month label,
+.bat-filter-month-form .form-item-year label,
+.bat-filter-month-form .form-item-type label {
+  display: inline;
+  margin-right: 4px;
+}
+
+/* Bulk pricing form */
+.bat-bulk-pricing-form .fc-day-grid-container {
+  overflow-y: hidden;
+  height: 60px;
+}
+.bat-bulk-pricing-form .form-item-day-options {
+  float: left;
+  margin-right: 20px;
+}
+.bat-bulk-pricing-form .form-item-day-options .form-type-checkbox {
+  display: inline;
+}
+.bat-bulk-pricing-form .form-item-day-options .form-checkboxes:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.fc-day-grid-container {
+  overflow-y: hidden;
+}
+.fc-title {
+  color: white;
+}

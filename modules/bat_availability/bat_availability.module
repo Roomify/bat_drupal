@@ -315,7 +315,7 @@ function bat_availability_update_status_form_validate(&$form, &$form_state) {
     form_set_error('change_event_status', t('Select a valid status.'));
   }
   // Validate that a unit is selected.
-  _bat_select_bat_validation($form_state);
+  bat_validate_unit($form_state);
 }
 
 /**
