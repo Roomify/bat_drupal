@@ -6,7 +6,7 @@ It is a set of tools created by the [Roomify.us](https://roomify.us) team to pro
 
 BAT builds on our experience with [Rooms](http://drupal.org/project/rooms), which handles the problem of bookings specifically for the accommodation for rental use case(vacation rentals, hotels, B&B, etc).
 
-BAT on its own is a **booking and availability management framework** - much in the same way Drupal is a content management framework and Drupal Commerce is an e-commerce framework. Our aim is to build specific solutions on top of BAT to tackle specific application domains. 
+BAT on its own is a **booking and availability management framework** - much in the same way Drupal is a content management framework and Drupal Commerce is an e-commerce framework. Our aim is to build specific solutions on top of BAT to tackle specific application domains.
 
 
 # Objectives
@@ -38,11 +38,11 @@ Before enabling BAT you are going to need to download the following modules
 
 ### External Libraries
 
-To display calendars and dates we use the following libraries
+To display calendars and dates we use the following libraries:
 
 - Fullcalendar - http://fullcalendar.io/ - You need to [download the following zip](https://github.com/arshaw/fullcalendar/releases/download/v2.4.0/fullcalendar-2.4.0.zip) an unpack in libraries in a directory called fullcalendar
 - MomentJS - http://momentjs.com/ - The [moment.js](http://momentjs.com/downloads/moment.min.js) library should be placed in sites/all/libraries so that you end up with the file located here: sites/all/libraries/moment/moment.min.js
 
-##Conifguration
+##Configuration
  - Enable all the BAT modules 
  - Make sure to set the jQuery for the admin theme to at least 1.10 by visiting *admin/config/development/jquery_update*
