@@ -14,6 +14,7 @@ dependencies[] = image
 files[] = bat_unit.admin.inc
 files[] = bat_unit_type.admin.inc
 files[] = views/bat_unit.views.inc
+files[] = views/bat_unit.views_default.inc
 files[] = views/bat_unit_handler_link_field.inc
 files[] = views/bat_unit_handler_delete_link_field.inc
 files[] = views/bat_unit_handler_edit_link_field.inc
