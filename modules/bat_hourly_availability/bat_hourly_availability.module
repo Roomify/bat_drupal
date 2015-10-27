@@ -1,0 +1,701 @@
+<?php
+
+/**
+ * @file
+ * Manages availability for Bookable Units and displaying dates on the jquery
+ * FullCalendar plugin.
+ */
+
+use Drupal\bat_availability\BookingEvent;
+use Drupal\bat_availability\UnitCalendar;
+
+/**
+ * Implements hook_menu().
+ */
+function bat_hourly_availability_menu() {
+  $items = array();
+
+  $items['bat/units/unit/%bat_unit/day-availability/json/%'] = array(
+    'title' => 'Availability Event',
+    'page callback' => 'bat_hourly_availability_event',
+    'page arguments' => array(3, 6),
+    'access callback' => 'bat_unit_access',
+    'access arguments' => array('view', 3),
+    'type' => MENU_CALLBACK,
+    'weight' => 30,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function bat_hourly_availability_menu_alter(&$items) {
+  $items['admin/bat/units/unit/%bat_unit/availability']['page callback'] = 'bat_hourly_availability_page';
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bat_hourly_availability_theme() {
+  return array(
+    'bat_two_month_calendar' => array(
+      'template' => 'bat_two_month_calendar',
+      'variables' => array(
+        'url' => NULL,
+        'form' => NULL,
+        'year' => NULL,
+        'month' => NULL,
+        'link_options' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function bat_hourly_availability_entity_delete($entity, $type) {
+  if ($type == 'bat_booking') {
+    // Remove data related to entity from bat_hourly_availability table.
+    db_delete('bat_hourly_availability')
+      ->condition('state', bat_availability_assign_id($entity->booking_id, $entity->booking_status))
+      ->execute();
+  }
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function bat_hourly_availability_ctools_plugin_directory($module, $plugin) {
+  if (($module == 'bat_booking') && ($plugin == 'availabilityagent_filter')) {
+    return 'plugins';
+  }
+}
+
+/**
+ * Implements hook_views_default_views_alter().
+ */
+function bat_hourly_availability_views_default_views_alter(&$views) {
+  if (isset($views['bookings'])) {
+    $handler =& $views['bookings']->display['default']->handler;
+
+    $handler->display->display_options['fields']['start_date']['custom_date_format'] = 'd-m-Y H:i';
+    $handler->display->display_options['fields']['end_date']['custom_date_format'] = 'd-m-Y H:i';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bat_hourly_availability_form_bat_booking_edit_form_alter(&$form, &$form_state) {
+  $booking_type = bat_booking_type_load($form_state['bat_booking']->type);
+
+  if (isset($booking_type->data['hourly_booking']) && $booking_type->data['hourly_booking']) {
+    $form['bat_date_range']['bat_start_date']['#date_format'] = 'd/m/Y H:i';
+    $form['bat_date_range']['bat_end_date']['#date_format'] = 'd/m/Y H:i';
+
+    if (isset($_GET['startdate'])) {
+      $startdate = (is_numeric(check_plain($_GET['startdate']))) ? check_plain($_GET['startdate']) : '';
+      if ($startdate != '') $form['bat_date_range']['bat_start_date']['#default_value'] = gmdate('Y-m-d H:i', $startdate);
+    }
+
+    if (isset($_GET['enddate'])) {
+      $enddate = (is_numeric(check_plain($_GET['enddate']))) ? check_plain($_GET['enddate']) : '';
+      if ($enddate != '') $form['bat_date_range']['bat_end_date']['#default_value'] = gmdate('Y-m-d H:i', $enddate);
+    }
+
+    $form['actions']['submit']['#submit'][] = 'bat_hourly_availability_form_bat_booking_edit_form_submit';
+
+    if (($key = array_search('bat_booking_edit_form_validate', $form['#validate'])) !== FALSE) {
+      unset($form['#validate'][$key]);
+    }
+    $form['#validate'][] = 'bat_hourly_availability_form_bat_booking_edit_form_validate';
+
+    // Display only types of units setted as "Hourly booking".
+    if (isset($form['availability_fieldset']['unit_type']['#options'])) {
+      foreach ($form['availability_fieldset']['unit_type']['#options'] as $type => $name) {
+        $unit_type = bat_unit_type_load($type);
+        if (!(isset($unit_type->data['hourly_availability']) && $unit_type->data['hourly_availability'])) {
+          unset($form['availability_fieldset']['unit_type']['#options'][$type]);
+        }
+      }
+    }
+  }
+  else {
+    // Display only types of units setted as "Full day booking".
+    if (isset($form['availability_fieldset']['unit_type']['#options'])) {
+      foreach ($form['availability_fieldset']['unit_type']['#options'] as $type => $name) {
+        $unit_type = bat_unit_type_load($type);
+        if (isset($unit_type->data['hourly_availability']) && $unit_type->data['hourly_availability']) {
+          unset($form['availability_fieldset']['unit_type']['#options'][$type]);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Form API validate callback for the booking form.
+ */
+function bat_hourly_availability_form_bat_booking_edit_form_validate(&$form, &$form_state) {
+  $booking = $form_state['bat_booking'];
+  list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
+
+  if ($start_date && $end_date) {
+    // Convert input format to the same used in the stored dates.
+    $input_start_date = $start_date->format('Y-m-d');
+    $input_end_date = $end_date->format('Y-m-d');
+    // If stored dates differ from input dates check that price was re-assigned.
+    if (isset($booking->start_date) && isset($booking->end_date)) {
+      if ($input_start_date != $booking->start_date || $input_end_date != $booking->end_date) {
+        if (!isset($form_state['values']['unit_id']) || !is_numeric($form_state['values']['unit_id'])) {
+          form_set_error('availability_fieldset', t('A unit must be re-assigned for this booking.'));
+        }
+      }
+    }
+  }
+
+  // Check if unit assigned.
+  if ((!isset($form_state['values']['unit_id'])) || ($form_state['values']['unit_id'] == '')) {
+    form_set_error('availability_fieldset', t('A unit has not been assigned for this booking.'));
+  }
+  elseif ((isset($form_state['values']['unit_id'])) && ($form_state['values']['unit_id'] == '')) {
+    form_set_error('availability_fieldset', t('A unit has not been assigned for this booking.'));
+  }
+
+  $booking = $form_state['bat_booking'];
+  if (isset($booking->unit_id)) {
+    $new_unit_id = $booking->unit_id;
+    if (isset($form_state['values']['unit_id'])) {
+      $new_unit_id = $form_state['values']['unit_id'];
+    }
+
+    if ($new_unit_id == $booking->unit_id) {
+      // We are going to be updating the event. So the removing the old event.
+      if (($booking->unit_id != 0) && $start_date && $end_date) {
+        // Create a calendar.
+        $uc = new UnitCalendar($booking->unit_id);
+
+        $adjusted_end_date = clone($end_date);
+        $adjusted_end_date->modify('-1 day');
+
+        // Create an event representing the event to remove.
+        $event_id = bat_availability_assign_id($booking->booking_id, $booking->booking_status);
+        $be = new BookingEvent($booking->unit_id, $event_id, $start_date, $end_date);
+
+        // Check if a locked event is blocking the update.
+        $states_confirmed = $uc->getStates($start_date, $adjusted_end_date);
+
+        $valid_states = array_keys(array_filter(variable_get('bat_valid_availability_states', drupal_map_assoc(array(BAT_AVAILABLE, BAT_ON_REQUEST)))));
+        $valid_states = array_merge($valid_states, array(BAT_UNCONFIRMED_BOOKINGS, BAT_HOURLY_BOOKED, $be->id));
+
+        $state_diff_confirmed = array_diff($states_confirmed, $valid_states);
+
+        if (count($state_diff_confirmed) > 0) {
+          $date1 = new DateTime($form['bat_date_range']['bat_start_date']['#default_value']);
+          $date2 = new DateTime($form['bat_date_range']['bat_end_date']['#default_value']);
+
+          $form['bat_date_range']['bat_start_date']['date']['#value'] = $date1->format($form['bat_date_range']['bat_start_date']['#date_format']);
+          $form['bat_date_range']['bat_end_date']['date']['#value'] = $date2->format($form['bat_date_range']['bat_end_date']['#date_format']);
+
+          form_set_error('date_range', t('Could not update calendar because a locked event is blocking the update - you need to unlock any locked events in that period.'));
+        }
+
+        // Check if this booking overlap with an unconfirmed booking.
+        $states_unconfirmed = $uc->getStates($start_date, $adjusted_end_date, TRUE);
+
+        $valid_states = array_keys(array_filter(variable_get('bat_valid_availability_states', drupal_map_assoc(array(BAT_AVAILABLE, BAT_ON_REQUEST)))));
+        $valid_states = array_merge($valid_states, array(BAT_HOURLY_BOOKED, $be->id));
+
+        $state_diff_unconfirmed = array_diff($states_unconfirmed, $valid_states);
+
+        if (count($state_diff_unconfirmed) > 0) {
+          $booking_id = bat_availability_return_id(array_pop($state_diff_unconfirmed));
+          form_set_error('date_range', t('Change of dates leads to an overlap with an unconfirmed booking, please resolve issue with booking !booking_link first.', array('!booking_link' => l($booking_id, 'admin/bat/bookings/booking/' . $booking_id . '/edit'))));
+        }
+      }
+    }
+  }
+
+  // Notify field widgets to validate their data.
+  field_attach_form_validate('bat_booking', $booking, $form, $form_state);
+}
+
+/**
+ * Form API submit callback for the booking form.
+ */
+function bat_hourly_availability_form_bat_booking_edit_form_submit($form, &$form_state) {
+  $booking = $form_state['bat_booking'];
+
+  $state = bat_availability_assign_id($booking->booking_id, $booking->booking_status);
+
+  db_merge('bat_hourly_availability')
+    ->key(array('state' => $state))
+    ->fields(array(
+      'unit_id' => $booking->unit_id,
+      'start_date' => $booking->start_date,
+      'end_date' => $booking->end_date,
+      'state' => $state,
+    ))
+    ->execute();
+
+  // Create an event.
+  $be = new BookingEvent($booking->unit_id, BAT_HOURLY_BOOKED, new DateTime($booking->start_date), new DateTime($booking->end_date));
+
+  // Create UnitCalendar.
+  $rc = new UnitCalendar($booking->unit_id);
+  $responses = $rc->updateCalendar(array($be));
+}
+
+/**
+ * Callback for admin/bat/units/unit/%unit/availability - builds availability
+ * page by adding calendar and pulling events from availability table.
+ */
+function bat_hourly_availability_page(BatUnit $bat_unit, $year = '', $month = '') {
+  $bat_unit_type = bat_unit_type_load($bat_unit->type);
+
+  if ($bat_unit_type->data['hourly_availability']) {
+    // Set the page title.
+    drupal_set_title(t('Edit @unit_name Availability', array('@unit_name' => $bat_unit->name)));
+
+    // Add styles.
+    bat_availability_modal_style();
+
+    drupal_add_library('system', 'drupal.vertical-tabs');
+
+    $openingtime = bat_hourly_availability_get_opening_time($bat_unit);
+
+    // Get the current page's URL, striped of the year and month args.
+    // This allows us to place this page anywhere, including at
+    // unit/%/availability  or  admin/bat/units/unit/%/availability
+    list($url) = explode('/' . $year . '/' . $month, current_path());
+
+    $js_file = drupal_get_path('module', 'bat_hourly_availability') . '/js/bat_hourly_availability.js';
+    $css_file = drupal_get_path('module', 'bat_availability') . '/css/bat_availability.css';
+    // Show full day events on calendar.
+    if (variable_get('bat_calendar_events_view', '0') == '1') {
+      $js_file = drupal_get_path('module', 'bat_availability') . '/js/bat_availability_full_day.js';
+    }
+    return array(
+      '#theme' => 'bat_two_month_calendar',
+      '#url' => $url,
+      '#form' => drupal_get_form('update_availability_calendar_form', $bat_unit->unit_id, $year, $month),
+      '#year' => $year,
+      '#month' => $month,
+      '#attached' => array(
+        'css' => array(
+          $css_file,
+        ),
+        'js' => array(
+          $js_file,
+          array(
+            'data' => array('batHourlyAvailability' => array('unitID' => $bat_unit->unit_id, 'openingTime' => $openingtime)),
+            'type' => 'setting',
+          ),
+        ),
+      ),
+    );
+  }
+  else {
+    return bat_availability_page($bat_unit, $year, $month);
+  }
+}
+
+/**
+ * Default implementation of hook_preprocess_bat_two_month_calendar().
+ *
+ * Here we setup the two-month calendar based on a specified year, month, and url.
+ */
+function bat_hourly_availability_preprocess_bat_two_month_calendar(&$vars) {
+
+  // Load FullCalendar.
+  bat_fullcalendar_loaded();
+
+  // Add css styles for three-month-calendar.
+  drupal_add_css(drupal_get_path('module', 'bat_hourly_availability') . '/css/bat_two_month_calendar.css');
+  drupal_add_css(drupal_get_path('module', 'bat_availability') . '/css/fullcalendar.theme.css');
+
+  // If dates are not provided then use the current date.
+  $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
+  $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
+
+  // Inject settings in javascript that will be used to setup the three months
+  // display.
+  drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
+  drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
+  drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
+
+  // Calculate forward and back dates for the 3-month view calendar.
+  $date1 = new DateTime("$year-$month-1");
+  $date2 = new DateTime("$year-$month-1");
+  $date_current = new DateTime("now");
+
+  $forward = $date1->add(new DateInterval('P2M'));
+  $backward = $date2->sub(new DateInterval('P2M'));
+
+  // Create the links based off the url variable passed in.
+  if (!isset($vars['url'])) {
+    $vars['url'] = '';
+  }
+
+  $forward_path = $vars['url'] . '/' . $forward->format('Y') . '/' . $forward->format('n');
+  $backward_path = $vars['url'] . '/' . $backward->format('Y') . '/' . $backward->format('n');
+  $current_path = $vars['url'] . '/' . $date_current->format('Y') . '/' . $date_current->format('n');
+
+  if (!is_array($vars['link_options']) || empty($vars['link_options'])) {
+    $vars['link_options'] = array();
+  }
+  $vars['forward_link'] = l(t('Forward'), $forward_path, $vars['link_options']);
+  $vars['backward_link'] = l(t('Back'), $backward_path, $vars['link_options']);
+  $vars['current_link'] = l(t('Current'), $current_path, $vars['link_options']);
+}
+
+/**
+ * Displays the necessary json for the date range provided.
+ */
+function bat_hourly_availability_event($unit, $date, $duration = '1D') {
+
+  // If user don't have 'view anonymous availability information' permission.
+  if (!(user_access('view anonymous availability information') || bat_unit_access('update availability', $unit))) {
+    echo drupal_json_encode(array());
+    return;
+  }
+
+  $json_events = array();
+  $json_events = bat_hourly_availability_generate_json($unit, $date, $duration);
+
+  $start_date = new DateTime(substr($date, 0, 10));
+  $interval = new DateInterval('P1D');
+  $end_date = clone($start_date);
+  $end_date->add(new DateInterval('P' . $duration));
+
+  $period = new DatePeriod($start_date, $interval, $end_date);
+
+  $opening_time = bat_hourly_availability_get_opening_time($unit);
+  if (!empty($opening_time)) {
+    foreach ($period as $dt) {
+      if (in_array($dt->format('w'), $opening_time['dow'])) {
+        $json_events[] = array(
+          'start' => $dt->format('Y-m-d') . 'T' . $opening_time['opening'] . 'Z',
+          'end' => $dt->format('Y-m-d') . 'T' . $opening_time['closing'] . 'Z',
+          'rendering' => 'background',
+          'background' => variable_get('bat_available_color', '#8BA175'),
+        );
+      }
+    }
+  }
+  else {
+    foreach ($period as $dt) {
+      $json_events[] = array(
+        'start' => $dt->format('Y-m-d') . 'T00:00:00Z',
+        'end' => $dt->format('Y-m-d') . 'T24:00:00Z',
+        'rendering' => 'background',
+        'background' => variable_get('bat_available_color', '#8BA175'),
+      );
+    }
+  }
+
+  echo drupal_json_encode($json_events);
+}
+
+/**
+ * Generates json based on date range provided.
+ */
+function bat_hourly_availability_generate_json($unit, $date, $duration) {
+  $json_events  = array();
+
+  $start_date = new DateTime(substr($date, 0, 10));
+  $end_date = clone($start_date);
+  $end_date->add(new DateInterval('P' . $duration));
+
+  $start = $start_date->format('Y-m-d');
+  $end = $end_date->format('Y-m-d');
+
+  $query = db_select('bat_hourly_availability', 'n')
+            ->fields('n', array('id', 'start_date', 'end_date', 'state'))
+            ->condition('unit_id', $unit->unit_id)
+            ->where("start_date > '$start' and end_date < '$end'");
+  $results = $query->execute()->fetchAll();
+
+  foreach ($results as $result) {
+    $event = array(
+      'id' => $result->state,
+      'start' => str_replace(' ', 'T', $result->start_date) . 'Z',
+      'end' => str_replace(' ', 'T', $result->end_date) . 'Z',
+      'title' => $result->id,
+    );
+
+    switch ($result->state) {
+      case BAT_NOT_AVAILABLE:
+        $event['color']  = variable_get('bat_not_available_color', '#CC2727');
+        $event['title'] = variable_get('bat_not_available_text', 'N/A');
+        break;
+
+      case BAT_AVAILABLE:
+        $event['color'] = variable_get('bat_available_color', '#8BA175');
+        $event['title'] = variable_get('bat_available_text', 'AV');
+        break;
+
+      case ($result->state < 0):
+        $event['color'] = variable_get('bat_unconfirmed_booking_color', '#6D8C9C');
+        $event['title'] = variable_get('bat_unconfirmed_booking_text', 'UNCONF');
+        break;
+
+      default:
+        $event['color'] = '#017eba';
+    }
+
+    // Check if we are dealing with a booking.
+    if ($result->state > 10 || $result->state < -10) {
+      // Get the actual booking id.
+      $booking_id = bat_availability_return_id($result->state);
+      $booking = bat_booking_load($booking_id);
+
+      $event['title'] = t('Booking') . ': ' . $booking->booking_id;
+    }
+
+    $json_events[] = $event;
+  }
+
+  return $json_events;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bat_hourly_availability_form_bat_availability_event_manager_form_alter(&$form, &$form_state) {
+  if (isset($form['change_event_status']['#ajax']['callback'])) {
+    $unit = bat_unit_load($form['unit_id']['#value']);
+
+    $unit_type = bat_unit_type_load($unit->type);
+
+    if (isset($unit_type->data['hourly_availability']) && $unit_type->data['hourly_availability']) {
+      $start_date = $form['bat_start_date']['#value'];
+      $end_date = $form['bat_end_date']['#value'];
+
+      $form['change_event_status']['#ajax']['callback'] = 'bat_hourly_availability_ajax_event_status_change';
+
+      $form['event_details']['#markup'] = t('Duration: @startdate to @enddate', array('@startdate' => $start_date->format('Y-m-d H:i'), '@enddate' => $end_date->format('Y-m-d H:i')));
+
+      $booking_types = bat_booking_get_types();
+
+      foreach ($booking_types as $type) {
+        if (!(isset($type->data['hourly_booking']) && $type->data['hourly_booking'])) {
+          unset($form['order']['order_link'][$type->type]);
+        }
+      }
+    }
+    else {
+      $booking_types = bat_booking_get_types();
+
+      foreach ($booking_types as $type) {
+        if (isset($type->data['hourly_booking']) && $type->data['hourly_booking']) {
+          unset($form['order']['order_link'][$type->type]);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * The callback for the change_event_status widget of the event manager form.
+ */
+function bat_hourly_availability_ajax_event_status_change($form, $form_state) {
+  $start_date = $form_state['values']['bat_start_date']->format('Y-m-d H:i:s');
+  $end_date = $form_state['values']['bat_end_date']->format('Y-m-d H:i:s');
+  $unit_id = $form_state['values']['unit_id'];
+  $event_id = $form_state['values']['event_id'];
+  $new_event_id = $form_state['values']['change_event_status'];
+
+  // If we have a new event id go ahead and update event.
+  if (($event_id != $new_event_id) && $new_event_id != -1) {
+    db_merge('bat_hourly_availability')
+    ->key(array('unit_id' => $unit_id, 'start_date' => $start_date, 'end_date' => $end_date))
+    ->fields(array(
+      'unit_id' => $unit_id,
+      'start_date' => $start_date,
+      'end_date' => $end_date,
+      'state' => $new_event_id,
+    ))
+    ->execute();
+
+    $state_options = bat_unit_state_options();
+    if ($event_id >= -1) {
+      $form['form_wrapper_bottom']['#markup'] = t('Updated event from <strong>@old_status</strong> to <strong>@new_status</strong>.', array('@old_status' => $state_options[$event_id], '@new_status' => $state_options[$new_event_id]));
+    }
+    else {
+      $form['form_wrapper_bottom']['#markup'] = t('New Event state is <strong>@state</strong>.', array('@state' => $state_options[$new_event_id]));
+    }
+  }
+
+  return $form;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bat_hourly_availability_form_bat_booking_type_form_alter(&$form, &$form_state) {
+  $booking_type = $form_state['bat_booking_type'];
+
+  if (!isset($form['additional_settings'])) {
+    $form['additional_settings'] = array(
+      '#type' => 'vertical_tabs',
+      '#weight' => 99,
+    );
+  }
+
+  $form['hourly_booking'] = array(
+    '#type' => 'fieldset',
+    '#group' => 'additional_settings',
+    '#title' => t('Hourly booking'),
+    '#tree' => FALSE,
+    '#weight' => 80,
+  );
+
+  $form['hourly_booking']['enable_hourly_booking'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable hourly booking'),
+    '#default_value' => isset($booking_type->data['hourly_booking']) ? $booking_type->data['hourly_booking'] : NULL,
+  );
+
+  $form['actions']['submit']['#submit'][] = 'bat_hourly_availability_form_bat_booking_type_form_submit';
+}
+
+/**
+ * Form API submit callback for the booking type form.
+ */
+function bat_hourly_availability_form_bat_booking_type_form_submit($form, &$form_state) {
+  $form_state['bat_booking_type']->data['hourly_booking'] = $form_state['values']['enable_hourly_booking'];
+  $form_state['bat_booking_type']->save();
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bat_hourly_availability_form_bat_unit_type_form_alter(&$form, &$form_state) {
+  $unit_type = $form_state['bat_unit_type'];
+
+  if (!isset($form['additional_settings'])) {
+    $form['additional_settings'] = array(
+      '#type' => 'vertical_tabs',
+      '#weight' => 99,
+    );
+  }
+
+  $form['hourly_availability'] = array(
+    '#type' => 'fieldset',
+    '#group' => 'additional_settings',
+    '#title' => t('Hourly availability'),
+    '#tree' => FALSE,
+    '#weight' => 80,
+  );
+
+  $form['hourly_availability']['enable_hourly_availability'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable hourly availability'),
+    '#default_value' => isset($unit_type->data['hourly_availability']) ? $unit_type->data['hourly_availability'] : NULL,
+  );
+
+  $form['#submit'][] = 'bat_hourly_availability_form_bat_unit_type_form_submit';
+}
+
+/**
+ * Form API submit callback for the unit type form.
+ */
+function bat_hourly_availability_form_bat_unit_type_form_submit($form, &$form_state) {
+  $form_state['bat_unit_type']->data['hourly_availability'] = $form_state['values']['enable_hourly_availability'];
+  $form_state['bat_unit_type']->save();
+
+  if ($form_state['values']['enable_hourly_availability']) {
+    bat_hourly_availability_add_opening_time_field('bat_unit', $form_state['bat_unit_type']->type);
+  }
+}
+
+/**
+ * Get opening time.
+ *
+ * @param BatUnit $bat_unit
+ *
+ * @return array
+ */
+function bat_hourly_availability_get_opening_time($bat_unit) {
+  $openingtime = array();
+  if (isset($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['value']) &&
+      isset($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['value2'])) {
+
+    $time_format = array(
+      'hour' => 'H',
+      'minute' => 'i',
+      'separator' => ':',
+      'period' => 'none',
+    );
+
+    $openingtime['opening'] = timefield_integer_to_time($time_format, $bat_unit->bat_opening_time[LANGUAGE_NONE][0]['value']);
+    $openingtime['closing'] = timefield_integer_to_time($time_format, $bat_unit->bat_opening_time[LANGUAGE_NONE][0]['value2']);
+
+    $dow = array();
+    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['mon'] == 1) {
+      $dow[] = 1;
+    }
+    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['tue'] == 1) {
+      $dow[] = 2;
+    }
+    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['wed'] == 1) {
+      $dow[] = 3;
+    }
+    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['thu'] == 1) {
+      $dow[] = 4;
+    }
+    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['fri'] == 1) {
+      $dow[] = 5;
+    }
+    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['sat'] == 1) {
+      $dow[] = 6;
+    }
+    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['sun'] == 1) {
+      $dow[] = 7;
+    }
+    $openingtime['dow'] = $dow;
+  }
+
+  return $openingtime;
+}
+
+/**
+ * Add the bat_opening_time field.
+ */
+function bat_hourly_availability_add_opening_time_field($entity_type, $bundle) {
+  field_info_cache_clear();
+  // Create field ('bat_opening_time') if not exists.
+  if (field_read_field('bat_opening_time') === FALSE) {
+    $field = array(
+      'field_name' => 'bat_opening_time',
+      'type' => 'timefield',
+      'cardinality' => 1,
+      'settings' => array(
+        'totime' => 'required',
+        'weekly_summary' => 1,
+      ),
+    );
+    field_create_field($field);
+  }
+
+  field_cache_clear();
+
+  if (field_read_instance($entity_type, 'bat_opening_time', $bundle) === FALSE) {
+    // Create the instance on the bundle.
+    $instance = array(
+      'field_name' => 'bat_opening_time',
+      'entity_type' => $entity_type,
+      'label' => 'Opening time',
+      'bundle' => $bundle,
+      'required' => FALSE,
+      'widget' => array(
+        'type' => 'timefield_standard',
+      ),
+    );
+    field_create_instance($instance);
+  }
+}

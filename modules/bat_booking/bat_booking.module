@@ -1,0 +1,1116 @@
+<?php
+
+/**
+ * @file
+ * Manage Bookings - Bookings are tied to a customer profile and possible a
+ * Unit ID and Order ID.
+ */
+
+use Drupal\bat_availability\BookingEvent;
+use Drupal\bat_availability\UnitCalendar;
+
+// This is a special booking type used to avoid confusion between
+// deleted bookings directly or deleting them because we deleted
+// a line item or an order.
+define('BAT_BOOKING_DELETED', 'bat_booking_deleted');
+
+/**
+ * Implements hook_menu().
+ */
+function bat_booking_menu() {
+  $items = array();
+
+  $items['admin/bat/bookings/customers'] = array(
+    'title' => 'Customers',
+    'page callback' => 'bat_booking_get_client_profiles',
+    'access arguments' => array('bypass bat_booking entities access'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/bat/bookings/unit_types'] = array(
+    // This is a json request to list booking unit_types.
+    'page callback' => 'bat_booking_get_unit_types',
+    'access arguments' => array('bypass bat_booking entities access'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/bat/add_customers'] = array(
+    'title' => 'Add customer profile',
+    'page callback' => 'bat_booking_add_customer_profile',
+    'access arguments' => array('bypass bat_booking entities access'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/bat/customer-profiles/%/edit'] = array(
+    'title' => 'Edit customer profile',
+    'page callback' => 'bat_booking_edit_customer_profile',
+    'page arguments' => array(3),
+    'access arguments' => array('bypass bat_booking entities access'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/bat/config/children'] = array(
+    'title' => 'Children Discount Settings',
+    'description' => 'Configure settings for children discounts.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bat_booking_children_discount'),
+    'access arguments' => array('configure unit settings'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['admin/views/ajax/autocomplete/bat_unit'] = array(
+    'page callback' => 'bat_booking_views_ajax_autocomplete_unit',
+    'theme callback' => 'ajax_base_page_theme',
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'views/bat_booking.views.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Form callback for bat_booking_children_discount form.
+ */
+function bat_booking_children_discount($form, &$form_state) {
+  $form['#attributes']['class'][] = 'bat-management-form children-discount-form';
+
+  $form['#attached']['css'] = array(
+    drupal_get_path('module', 'bat_booking') . '/css/bat_booking.css',
+  );
+
+  $form['#tree'] = TRUE;
+
+  if (empty($form_state['num_options'])) {
+    $options = variable_get('bat_children_discount_options', array());
+
+    if (empty($options)) {
+      $form_state['num_options'] = 1;
+    }
+    else {
+      $form_state['num_options'] = count($options);
+    }
+  }
+
+  // This string gives us an easy way to translate the sentence used for
+  // giving the child discount, and at the same time we can break the string
+  // into components to use around our fields with clever useage of "explode".
+  // The "<wbr>" is used here to create an invisible boundary between the
+  // "option" field suffix and the "start" field prefix.
+  $string = t('Give a @amount % discount <wbr> for children ages @start to @end.');
+
+  list($option_prefix, $string) = explode('@amount', $string);
+  list($option_suffix, $string) = explode('<wbr>', $string);
+  list($start_prefix, $string) = explode('@start', $string);
+  list($end_prefix, $end_suffix) = explode('@end', $string);
+
+  for ($i = 1; $i <= $form_state['num_options']; $i++) {
+    $form['option'][$i] = array(
+      '#type' => 'container',
+      '#attributes' => array('class' => array('child-discount container-inline')),
+    );
+    $form['option'][$i]['discount'] = array(
+      '#title' => 'Discount',
+      '#title_display' => 'invisible',
+      '#type' => 'textfield',
+      '#field_prefix' => $option_prefix,
+      '#field_suffix' => $option_suffix,
+      '#size' => 10,
+      '#maxlength' => 10,
+      '#required' => TRUE,
+      '#default_value' => isset($options[$i]['end']) ? $options[$i]['discount'] : '',
+      '#attributes' => array('class' => array('child-discount__amount')),
+      '#element_validate' => array('bat_element_validate_integer_positive_less_than_100'),
+    );
+    $form['option'][$i]['start'] = array(
+      '#title' => 'Start date',
+      '#title_display' => 'invisible',
+      '#type' => 'textfield',
+      '#field_prefix' => $start_prefix,
+      '#size' => 5,
+      '#maxlength' => 5,
+      '#required' => TRUE,
+      '#default_value' => isset($options[$i]['start']) ? $options[$i]['start'] : '',
+      '#attributes' => array('class' => array('child-discount__age-start')),
+      '#element_validate' => array('bat_element_validate_integer_zero_positive'),
+    );
+    $form['option'][$i]['end'] = array(
+      '#title' => 'End date',
+      '#title_display' => 'invisible',
+      '#type' => 'textfield',
+      '#field_prefix' => $end_prefix,
+      '#field_suffix' => $end_suffix,
+      '#size' => 5,
+      '#maxlength' => 5,
+      '#required' => TRUE,
+      '#default_value' => isset($options[$i]['end']) ? $options[$i]['end'] : '',
+      '#attributes' => array('class' => array('child-discount__age-end')),
+      '#element_validate' => array('bat_element_validate_integer_zero_positive'),
+    );
+  }
+  $form['actions'] = array(
+    '#type' => 'actions',
+    '#tree' => FALSE,
+  );
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+    '#attributes' => array('class' => array('child-discount__save-button')),
+  );
+
+  $form['actions']['add_option'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add another discount'),
+    '#submit' => array('bat_booking_children_discount_add_option'),
+    '#attributes' => array('class' => array('child-discount__add-button')),
+  );
+
+  if ($form_state['num_options'] > 1) {
+    $form['actions']['remove_option'] = array(
+      '#type' => 'submit',
+      '#value' => t('Remove last discount'),
+      '#submit' => array('bat_booking_children_discount_remove_option'),
+      '#limit_validation_errors' => array(),
+      '#attributes' => array('class' => array('child-discount__remove-button')),
+    );
+  }
+
+  return $form;
+}
+
+/**
+ * Validate callback for bat_booking_children_discount form.
+ */
+function bat_booking_children_discount_validate($form, &$form_state) {
+  foreach ($form_state['values']['option'] as $key => $value) {
+    if ($value['start'] != '' || $value['end'] != '' || $value['discount'] != '') {
+      if ($value['start'] > $value['end']) {
+        form_set_error('option][' . $key . '][start', t('End age must be greater than start age.'));
+      }
+    }
+  }
+}
+
+/**
+ * Submit callback for bat_booking_children_discount form.
+ */
+function bat_booking_children_discount_submit($form, &$form_state) {
+  $options = array();
+
+  for ($i = 1; $i <= $form_state['num_options']; $i++) {
+    $options[$i] = array(
+      'start' => $form_state['values']['option'][$i]['start'],
+      'end' => $form_state['values']['option'][$i]['end'],
+      'discount' => $form_state['values']['option'][$i]['discount'],
+    );
+  }
+
+  variable_set('bat_children_discount_options', $options);
+}
+
+/**
+ * Callback to add children discount option.
+ */
+function bat_booking_children_discount_add_option($form, &$form_state) {
+  $form_state['num_options']++;
+
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * Callback to remove children discount option.
+ */
+function bat_booking_children_discount_remove_option($form, &$form_state) {
+  if ($form_state['num_options'] > 1) {
+    $form_state['num_options']--;
+  }
+
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * AJAX callback to display a modal form to create a customer profile.
+ */
+function bat_booking_add_customer_profile() {
+  ctools_include('modal');
+
+  module_load_include('inc', 'commerce_customer', 'includes/commerce_customer_profile.forms');
+  $form_state = array(
+    'title' => t('Add customer'),
+    'ajax' => TRUE,
+    'build_info' => array(
+      'args' => array(commerce_customer_profile_new('billing', 1)),
+      'files' => array(
+        'commmerce_customer' => array(
+          'module' => 'commmerce_customer',
+          'name' => 'includes/commerce_customer_profile.forms',
+          'type' => 'inc',
+        ),
+      ),
+    ),
+  );
+
+  // Wrap the form via ctools modal.
+  $output = ctools_modal_form_wrapper('commerce_customer_customer_profile_form', $form_state);
+
+  if ($form_state['executed']) {
+    $form['client'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Customer'),
+      '#maxlength' => 60,
+      '#autocomplete_path' => 'admin/bat/bookings/customers',
+      '#value' => $form_state['build_info']['args'][0]->commerce_customer_address[LANGUAGE_NONE][0]['name_line'],
+      '#weight' => -1,
+      '#required' => TRUE,
+      '#prefix' => '<div class="form-wrapper" id="edit-customer-wrapper">',
+      '#suffix' => '</div>',
+      '#id' => 'edit-client',
+      '#name' => 'client',
+    );
+
+    if (module_exists('commerce_customer')) {
+      ctools_include('modal');
+      ctools_modal_add_js();
+
+      $form['client']['#description'] = t('Customer profiles are saved in the <a href="@store-profile">store</a>. Search for an existing one by typing the customer name or <a href="@profile-create" class="ctools-use-modal">create a new profile</a>.', array('@store-profile' => url('admin/commerce/customer-profiles'), '@profile-create' => url('admin/bat/add_customers')));
+
+      if (isset($form_state['build_info']['args'][0]->profile_id)) {
+        $form['client']['#field_suffix'] = t('<a href="@edit-profile" class="ctools-use-modal">edit profile</a>', array('@edit-profile' => url('admin/bat/customer-profiles/' . $form_state['build_info']['args'][0]->profile_id . '/edit')));
+      }
+    }
+
+    $output = array(
+      ctools_modal_command_dismiss(),
+      ajax_command_replace('#edit-customer-wrapper', drupal_render($form['client'])),
+    );
+  }
+
+  print ajax_render($output);
+  exit();
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function bat_booking_entity_info() {
+  $return['bat_booking'] = array(
+    'label' => t('Bookings'),
+    // The entity class and controller class extend the classes provided by the
+    // Entity API.
+    'entity class' => 'BatBooking',
+    'controller class' => 'BatBookingController',
+    'base table' => 'bat_bookings',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'booking_id',
+      'bundle' => 'type',
+    ),
+    // Bundles are defined by the booking types below.
+    'bundles' => array(),
+    // Bundle keys tell the FieldAPI how to extract information from the bundle.
+    'bundle keys' => array(
+      'bundle' => 'type',
+    ),
+    'label callback' => 'entity_class_label',
+    'uri callback' => 'entity_class_uri',
+    'creation callback' => 'bat_booking_create',
+    'access callback' => 'bat_booking_access',
+    'access arguments' => array(
+      'user key' => 'uid',
+      'access tag' => 'bat_booking_access',
+    ),
+    'permission labels' => array(
+      'singular' => t('booking'),
+      'plural' => t('bookings'),
+    ),
+    'module' => 'bat_booking',
+    'admin ui' => array(
+      'path' => 'admin/bat/bookings',
+      'file' => 'bat_booking.admin.inc',
+      'controller class' => 'BatBookingUIController',
+      'menu wildcard' => '%bat_booking',
+    ),
+  );
+  // The entity that holds information about the entity types.
+  $return['bat_booking_type'] = array(
+    'label' => t('Booking Type'),
+    'entity class' => 'BatBookingType',
+    'controller class' => 'BatBookingTypeController',
+    'base table' => 'bat_booking_type',
+    'fieldable' => FALSE,
+    'bundle of' => 'bat_booking',
+    'exportable' => TRUE,
+    'entity keys' => array(
+      'id' => 'id',
+      'name' => 'type',
+      'label' => 'label',
+    ),
+    'access callback' => 'bat_booking_type_access',
+    'module' => 'bat_booking',
+    // Enable the entity API's admin UI.
+    'admin ui' => array(
+      'path' => 'admin/bat/bookings/booking-types',
+      'file' => 'bat_booking_type.admin.inc',
+      'controller class' => 'BatBookingTypeUIController',
+    ),
+  );
+
+  return $return;
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ *
+ * We are adding the info about the booking types via a hook to avoid a
+ * recursion issue as loading the unit types requires the entity info as well.
+ */
+function bat_booking_entity_info_alter(&$entity_info) {
+  foreach (bat_booking_get_types() as $type => $info) {
+    $entity_info['bat_booking']['bundles'][$type] = array(
+      'label' => $info->label,
+      'admin' => array(
+        'path' => 'admin/bat/bookings/booking-types/manage/%bat_booking_type',
+        'real path' => 'admin/bat/bookings/booking-types/manage/' . $type,
+        'bundle argument' => 5,
+        'access arguments' => array('administer bat_booking_type entities'),
+      ),
+    );
+  }
+}
+
+/**
+ * Implements hook_entity_property_info_alter().
+ */
+function bat_booking_entity_property_info_alter(&$info) {
+  $info['bat_booking']['properties']['booking_status']['setter callback'] = 'entity_property_verbatim_set';
+}
+
+/**
+ * Implements hook_permission().
+ */
+function bat_booking_permission() {
+  $permissions = array(
+    'administer bat_booking_type entities' => array(
+      'title' => t('Administer booking types'),
+      'description' => t('Allows users to add booking types and configure their fields.'),
+      'restrict access' => TRUE,
+    ),
+  );
+  return $permissions + bat_entity_access_permissions('bat_booking');
+}
+
+/**
+ * Implements hook_ctools_plugin_type().
+ */
+function bat_booking_ctools_plugin_type() {
+  return array(
+    'availabilityagent_filter' => array(
+      'use hooks' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = bat_booking_settings
+ */
+function bat_booking_form_bat_booking_settings_alter(&$form, &$form_state, $form_id) {
+  form_load_include($form_state, 'inc', 'rules', 'ui/ui.forms');
+
+  $form['bat_admin_settings'] = array(
+    '#type' => 'fieldset',
+    '#group' => 'bat_settings',
+    '#title' => t('Administrative settings'),
+  );
+
+  $form['bat_admin_settings']['bat_booking_expiration_time'] = array(
+    '#title' => t('Cart expiration time'),
+    '#type' => 'rules_duration',
+    '#default_value' => variable_get('bat_booking_expiration_time', 1800),
+    '#description' => t('Set the time after the carts will expire.'),
+    '#weight' => 50,
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = views_exposed_form
+ */
+function bat_booking_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
+  // Bookings admin view exposed filters.
+  if ($form['#id'] == 'views-exposed-form-bookings-page-1') {
+    $form['start_date']['#type'] = 'date_popup';
+    $form['start_date']['#date_format'] = 'd/m/Y';
+    $form['start_date']['#date_label_position'] = 'before';
+
+    $form['end_date']['#type'] = 'date_popup';
+    $form['end_date']['#date_format'] = 'd/m/Y';
+    $form['end_date']['#date_label_position'] = 'before';
+
+    $form['#attached']['css'][] = array(
+      'data' => '.views-exposed-form .views-exposed-widget { height: 70px; }',
+      'type' => 'inline',
+    );
+  }
+}
+
+/**
+ * Implements hook_rules_action_info_alter().
+ */
+function bat_booking_rules_action_info_alter(&$actions) {
+  unset($actions['commerce_cart_expiration_delete_orders']['parameter']['interval']);
+  $actions['commerce_cart_expiration_delete_orders']['callbacks']['execute'] = 'bat_booking_expiration_delete_orders';
+}
+
+/**
+ * Rules action: deletes expired cart orders based on the provided limit.
+ */
+function bat_booking_expiration_delete_orders($limit) {
+  module_load_include('inc', 'commerce_cart_expiration', 'commerce_cart_expiration.rules');
+  $interval = variable_get('bat_booking_expiration_time', 1800);
+  commerce_cart_expiration_delete_orders($interval, $limit);
+}
+
+/**
+ * Checks order access for various operations.
+ *
+ * @param string $op
+ *   The operation being performed. One of 'view', 'update', 'create' or
+ *   'delete'.
+ * @param object $booking
+ *   Optionally an booking to check access for.
+ * @param object $account
+ *   The user to check for. Leave it to NULL to check for the current user.
+ *
+ * @return bool
+ *   Boolean indicating if the defined user has access to the booking or not.
+ */
+function bat_booking_access($op, $booking = NULL, $account = NULL) {
+  return bat_entity_access($op, $booking, $account, 'bat_booking');
+}
+
+/**
+ * Access callback: Checks whether the user has permission to add a booking.
+ *
+ * @return bool
+ *   TRUE if the user has add permission, otherwise FALSE.
+ *
+ * @see node_menu()
+ */
+function _bat_booking_add_access() {
+  if (user_access('administer bat_booking_type entities')) {
+    // There are no booking types defined that the user has permission to create
+    // but the user does have the permission to administer the content types, so
+    // grant them access to the page anyway.
+    return TRUE;
+  }
+
+  $types = bat_booking_get_types();
+  foreach ($types as $type) {
+    if (bat_booking_access('create', bat_booking_create(array('type' => $type->type, 'uid' => 0)))) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Access callback for the entity API.
+ */
+function bat_booking_type_access($op, $type = NULL, $account = NULL) {
+  return user_access('administer bat_booking_type entities', $account);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function bat_booking_query_bat_booking_access_alter(QueryAlterableInterface $query) {
+  // Look for a booking base table to pass to the query altering function or
+  // else assume we don't have the tables we need to establish order related
+  // altering right now.
+  foreach ($query->getTables() as $table) {
+    if ($table['table'] === 'bat_bookings') {
+      bat_entity_access_query_alter($query, 'bat_booking', $table['alias']);
+      break;
+    }
+  }
+}
+
+/**
+ * Gets an array of all booking types, keyed by the type name.
+ *
+ * @param string $type_name
+ *   If set, the type with the given name is returned.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return BatBookingType[]
+ *   Depending whether $type isset, an array of booking types or a single one.
+ */
+function bat_booking_get_types($type_name = NULL, $reset = FALSE) {
+  // entity_load will get the Entity controller for our booking entity and call
+  // the load function of that object.
+  $types = entity_load_multiple_by_name('bat_booking_type', isset($type_name) ? array($type_name) : FALSE);
+  return isset($type_name) ? reset($types) : $types;
+}
+
+/**
+ * Menu argument loader; Load a booking type by string.
+ *
+ * @param string $type
+ *   The machine-readable name of a booking type to load.
+ * @param bool $reset
+ *   Boolean indicating if the booking types cache should be clear or not.
+ *
+ * @return array|false
+ *   A booking type array or FALSE if $type does not exist.
+ */
+function bat_booking_type_load($type, $reset = FALSE) {
+  return bat_booking_get_types($type, $reset);
+}
+
+/**
+ * Fetches a booking object.
+ *
+ * @param int $booking_id
+ *   Integer specifying the booking id.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return object
+ *   A fully-loaded $booking object or FALSE if it cannot be loaded.
+ *
+ * @see bat_booking_load_multiple()
+ */
+function bat_booking_load($booking_id, $reset = FALSE) {
+  $bookings = bat_booking_load_multiple(array($booking_id), array(), $reset);
+  return reset($bookings);
+}
+
+/**
+ * Load multiple bookings based on certain conditions.
+ *
+ * @param array $booking_ids
+ *   An array of booking IDs.
+ * @param array $conditions
+ *   An array of conditions to match against the {bat_bookings} table.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return array
+ *   An array of booking objects, indexed by booking_id.
+ *
+ * @see entity_load()
+ * @see bat_booking_load()
+ */
+function bat_booking_load_multiple($booking_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('bat_booking', $booking_ids, $conditions, $reset);
+}
+
+/**
+ * Deletes a booking.
+ *
+ * @param BatBooking $booking
+ *   The BatBooking object that represents the booking to delete
+ * @param bool $delete_line_item
+ *   Flag indicating if the associated line_item should be deleted or not.
+ */
+function bat_booking_delete(BatBooking $booking, $delete_line_item = TRUE) {
+  bat_booking_delete_multiple(array($booking->booking_id), $delete_line_item);
+}
+
+/**
+ * Implements hook_commerce_line_item_delete().
+ */
+function bat_booking_commerce_line_item_delete($line_item) {
+  if (isset($line_item->bat_booking_reference[LANGUAGE_NONE][0]['target_id'])) {
+    $booking = bat_booking_load($line_item->bat_booking_reference[LANGUAGE_NONE][0]['target_id']);
+
+    if ($booking !== FALSE) {
+      if ($line_item->order_id == $booking->order_id) {
+        bat_booking_delete($booking, FALSE);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_commerce_order_delete().
+ *
+ * Delete bookings associated with an order when deleting the order.
+ */
+function bat_booking_commerce_order_delete($order) {
+
+  // Load the bookings associated with this order.
+  $query = new EntityFieldQuery();
+
+  $query->entityCondition('entity_type', 'bat_booking');
+
+  $bookings = $query->execute();
+
+  // Delete all bookings associated with this order.
+  if (isset($bookings['bat_booking']) && count($bookings['bat_booking'])) {
+    foreach ($bookings['bat_booking'] as $result) {
+      $booking = bat_booking_load($result->booking_id);
+
+      if ($booking !== FALSE) {
+        bat_booking_delete($booking);
+        drupal_set_message(t('Deleted booking with id: %id', array('%id' => $result->booking_id)));
+      }
+    }
+  }
+}
+
+/**
+ * Delete multiple bookings.
+ *
+ * @param array $booking_ids
+ *   An array of booking IDs.
+ * @param bool $delete_line_item
+ *   Flag indicating if the associated line_item should be deleted or not.
+ */
+function bat_booking_delete_multiple(array $booking_ids, $delete_line_item = TRUE) {
+  entity_get_controller('bat_booking')->delete($booking_ids);
+}
+
+/**
+ * Create a booking object.
+ */
+function bat_booking_create($values = array()) {
+  return entity_get_controller('bat_booking')->create($values);
+}
+
+/**
+ * Saves a booking to the database.
+ *
+ * @param BatBooking $booking
+ *   The Booking object.
+ */
+function bat_booking_save(BatBooking $booking) {
+  return $booking->save();
+}
+
+/**
+ * Create a booking object.
+ */
+function bat_booking_type_create($values = array()) {
+  return entity_get_controller('bat_booking_type')->create($values);
+}
+
+/**
+ * Saves a booking type to the db.
+ */
+function bat_booking_type_save(BatBookingType $type) {
+  $type->save();
+}
+
+/**
+ * Deletes a booking type from the db.
+ */
+function bat_booking_type_delete(BatBookingType $type) {
+  $type->delete();
+}
+
+/**
+ * URI callback for bookings.
+ */
+function bat_booking_uri(BatBooking $booking) {
+  return array(
+    'path' => 'booking/' . $booking->booking_id,
+  );
+}
+
+/**
+ * Menu title callback for showing individual entities.
+ */
+function bat_booking_page_title(BatBooking $booking) {
+  return '';
+}
+
+/**
+ * Get a list of Booking keyed by id and name in value.
+ */
+function bat_booking_ids($conditions = array()) {
+  $bookings = array();
+
+  $query = new EntityFieldQuery();
+
+  $result = $query->entityCondition('entity_type', 'bat_booking')
+                    ->execute();
+
+  if (count($result) > 0) {
+    $entities = bat_booking_load_multiple(array_keys($result['bat_booking']), $conditions);
+    foreach ($entities as $booking) {
+      $wrapper = entity_metadata_wrapper('bat_booking', $booking);
+      $bookings[$wrapper->booking_id->value()] = $wrapper->name->value();
+    }
+  }
+
+  return $bookings;
+}
+
+/**
+ * Sets up content to show an individual booking.
+ */
+function bat_booking_page_view($booking, $view_mode = 'full') {
+  $controller = entity_get_controller('bat_booking');
+  $content = $controller->view(array($booking->booking_id => $booking));
+  return $content;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function bat_booking_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'bat_booking') . '/views',
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bat_booking_theme() {
+  return array(
+    'bat_booking_add_list' => array(
+      'variables' => array('content' => array()),
+      'file' => 'bat_booking.admin.inc',
+    ),
+    'bat_booking' => array(
+      'render element' => 'elements',
+      'template' => 'bat_booking',
+    ),
+    'bat_booking_extra_data' => array(
+      'variables' => array('booking_extra_data', 'booking' => NULL),
+      'template' => 'bat_booking-extra-data',
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function bat_booking_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+  // Add action link 'admin/bat/units/add' on 'admin/bat/units'.
+  if ($root_path == 'admin/bat/bookings') {
+    $item = menu_get_item('admin/bat/bookings/add');
+    if ($item['access']) {
+      $data['actions']['output'][] = array(
+        '#theme' => 'menu_local_action',
+        '#link' => $item,
+      );
+    }
+  }
+}
+
+/**
+ * Returns a JSON output for autocomplete user profiles.
+ *
+ * @param string $profile_string
+ *   The customer profile seed to look for.
+ */
+function bat_booking_get_client_profiles($profile_string = '') {
+  $matches = array();
+
+  if ($profile_string) {
+    if (module_exists('commerce_customer')) {
+      $result = db_select('field_data_commerce_customer_address')
+        ->fields('field_data_commerce_customer_address', array('commerce_customer_address_name_line', 'commerce_customer_address_thoroughfare', 'entity_id'))
+        ->condition('commerce_customer_address_name_line', '%' . db_like($profile_string) . '%', 'LIKE')
+        ->condition('entity_type', 'commerce_customer_profile')
+        ->condition('bundle', 'billing')
+        ->range(0, 10)
+        ->execute();
+
+      foreach ($result as $customer) {
+        $matches[$customer->commerce_customer_address_name_line . ':' . $customer->entity_id] = check_plain($customer->commerce_customer_address_name_line) . '<br />(' . $customer->commerce_customer_address_thoroughfare . ')';
+      }
+    }
+  }
+
+  drupal_json_output($matches);
+}
+
+/**
+ * Find a customer_id in the commerce customer tables looking by customer name.
+ *
+ * @params string $customer_name
+ *   The customer name to lookup.
+ *
+ * @return int|false
+ *   ID of the customer or FALSE if not found.
+ */
+function bat_booking_find_customer_by_name($customer_name) {
+  if (module_exists('commerce_customer')) {
+    return db_select('field_data_commerce_customer_address')
+      ->fields('field_data_commerce_customer_address', array('entity_id'))
+      ->condition('commerce_customer_address_name_line', $customer_name, '=')
+      ->condition('entity_type', 'commerce_customer_profile')
+      ->condition('bundle', 'billing')
+      ->execute()->fetchField();
+  }
+  return FALSE;
+}
+
+/**
+ * JSON output for autocomplete bat_booking_types.
+ *
+ * @param string $bat_booking_type_name
+ *   The bat_booking type seed to look for.
+ */
+function bat_booking_get_unit_types($bat_booking_type_name = '') {
+  $matches = array();
+  if ($bat_booking_type_name) {
+    $result = db_select('bat_booking_type')
+      ->fields('bat_booking_type', array('type'))
+      ->condition('type', db_like($bat_booking_type_name) . '%', 'LIKE')
+      ->range(0, 10)
+      ->execute();
+    foreach ($result as $unit_type) {
+      $matches[$unit_type->type] = check_plain($unit_type->type);
+    }
+  }
+
+  drupal_json_output($matches);
+}
+
+/**
+ * The class used for Booking entities.
+ */
+class BatBooking extends Entity {
+
+  /**
+   * DateTime object calculated from start date.
+   *
+   * @var DateTime
+   */
+  public $start_date_object;
+  /**
+   * DateTime object calculated from end date.
+   *
+   * @var DateTime
+   */
+  public $end_date_object;
+
+  public function __construct($values = array()) {
+    parent::__construct($values, 'bat_booking');
+    if (isset($this->start_date)) {
+      $this->start_date_object = new DateTime($this->start_date);
+    }
+    if (isset($this->end_date)) {
+      $this->end_date_object = new DateTime($this->end_date);
+    }
+  }
+
+  public function delete_event() {
+    entity_get_controller($this->entityType)->delete_event($this);
+  }
+
+  protected function defaultLabel() {
+    return '';
+  }
+
+  protected function defaultUri() {
+    return array('path' => 'booking/' . $this->booking_id);
+  }
+
+}
+
+/**
+ * The class used for unit type entities.
+ */
+class BatBookingType extends Entity {
+
+  public $type;
+  public $label;
+
+  public function __construct($values = array()) {
+    parent::__construct($values, 'bat_booking_type');
+  }
+
+}
+
+/**
+ * The Controller for BatBooking entities.
+ */
+class BatBookingController extends EntityAPIController {
+
+  /**
+   * Create a booking - we first set up the values that are specific
+   * to our booking but then also go through the EntityAPIController
+   * function.
+   *
+   * @param array $values
+   *   The booking to create properties.
+   *
+   * @return object
+   *   A booking object with all default fields initialized.
+   */
+  public function create(array $values = array()) {
+    $booking_type = bat_booking_type_load($values['type'], TRUE);
+
+    // Add values that are specific to our unit.
+    $values += array(
+      'booking_id' => '',
+      'is_new' => TRUE,
+      'title' => '',
+      'created' => '',
+      'changed' => '',
+      'order_id' => '',
+      'data' => array(),
+    );
+
+    $booking = parent::create($values);
+    return $booking;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save($entity) {
+    $entity->original = entity_load_unchanged($this->entityType, $entity->{$this->idKey});
+    $corrected_end_date = new DateTime($entity->end_date);
+    $corrected_end_date->sub(new DateInterval('P1D'));
+
+    // We are going to be updating the event - so the first step is to remove
+    // the old event unless this is a booking we are deleting - in which case we
+    // have already removed the event.
+    if ((!isset($entity->is_new)) && ($entity->unit_id != 0) && ($entity->original->start_date != '') &&
+      ($entity->original->end_date != '') && ($entity->type != BAT_BOOKING_DELETED)) {
+      // Create a calendar.
+      $uc = new UnitCalendar($entity->original->unit_id);
+      $event_id = bat_availability_assign_id($entity->booking_id, $entity->booking_status);
+      // The original end date of the BookingEvent to remove
+      $corrected_original_end_date = new DateTime($entity->original->end_date);
+      $corrected_original_end_date->sub(new DateInterval('P1D'));
+      // Create an event representing the event to remove.
+      $be = new BookingEvent($entity->original->unit_id, $event_id, new DateTime($entity->original->start_date), $corrected_original_end_date);
+      $uc->removeEvents(array($be));
+    }
+
+    parent::save($entity);
+
+    // We have a unit defined so lets block availability there unless its a
+    // booking that is to be deleted.
+    if (($entity->unit_id != 0) && ($entity->type != BAT_BOOKING_DELETED)) {
+      // Set the event_id.
+      $event_id = bat_availability_assign_id($entity->booking_id, $entity->booking_status);
+      // Create an event.
+      $be = new BookingEvent($entity->unit_id, $event_id, new DateTime($entity->start_date), $corrected_end_date);
+
+      // Create UnitCalendar.
+      $rc = new UnitCalendar($entity->unit_id);
+      $responses = $rc->updateCalendar(array($be));
+
+      $entity->bat_av_update = $responses[$event_id];
+
+      if ($responses[$event_id] == BAT_UPDATED) {
+        $be->lock();
+      }
+    }
+  }
+
+  public function delete($ids, $delete_line_item = TRUE) {
+    foreach ($ids as $id) {
+      $booking = bat_booking_load($id);
+
+      // Update the availability calendar.
+      $this->delete_event($booking);
+
+      // We've updated the calendar so mark the booking as deleted.
+      $booking->type = BAT_BOOKING_DELETED;
+      $booking->save();
+
+      if ($delete_line_item) {
+        // Delete the line_item associated with this booking.
+        $this->delete_line_item($booking);
+      }
+    }
+
+    parent::delete($ids);
+  }
+
+  public function delete_event($booking) {
+    // Check if the booking had a unit associated with it and if so update the
+    // availability calendar.
+    if (isset($booking->unit_id) && isset($booking->start_date) && isset($booking->end_date)) {
+      $uc = new UnitCalendar($booking->unit_id);
+      // We are not concerned with the state of the event id (confirmed or
+      // unconfirmed here) because we will unlock it no matter what (we look for
+      // absolute value).
+      $event_id = bat_availability_assign_id($booking->booking_id);
+      // Create an event representing the event to remove.
+      $start_date = $booking->start_date_object;
+      $end_date = $booking->end_date_object;
+      // Remove a day from end date to represent the actual event.
+      $end_date->sub(new DateInterval('P1D'));
+      $be = new BookingEvent($booking->unit_id, $event_id, $start_date, $end_date);
+      $uc->removeEvents(array($be));
+    }
+  }
+
+  protected function delete_line_item($booking) {
+    /*if ($booking->order_id != '') {
+      $order = commerce_order_load($booking->order_id);
+
+      if (isset($order->commerce_line_items[LANGUAGE_NONE])) {
+        foreach ($order->commerce_line_items[LANGUAGE_NONE] as $value) {
+          $line_item = commerce_line_item_load($value['line_item_id']);
+
+          if ($line_item->bat_booking_reference[LANGUAGE_NONE][0]['target_id'] == $booking->booking_id) {
+            commerce_line_item_delete($line_item->line_item_id);
+            if (count($order->commerce_line_items) == 0) {
+              commerce_order_delete($order->order_number);
+            }
+
+            break;
+          }
+        }
+      }
+    }*/
+  }
+
+  /**
+   * Overriding the buildContent function to add entity specific fields.
+   */
+  public function buildContent($entity, $view_mode = 'full', $langcode = NULL, $content = array()) {
+    $content = parent::buildContent($entity, $view_mode, $langcode, $content);
+
+    return $content;
+  }
+
+}
+
+/**
+ * The Controller for Booking Type entities
+ */
+class BatBookingTypeController extends EntityAPIControllerExportable {
+
+  /**
+   * Create a booking type - we first set up the values that are specific
+   * to our booking type schema but then also go through the EntityAPIController
+   * function.
+   *
+   * @param array $values
+   *   Array containing properties to include in the booking type.
+   *
+   * @return object
+   *   A booking type object with all default fields initialized.
+   */
+  public function create(array $values = array()) {
+    // Add values that are specific to our Booking Type.
+    $values += array(
+      'id' => '',
+      'is_new' => TRUE,
+      'data' => '',
+    );
+    $booking_type = parent::create($values);
+    return $booking_type;
+  }
+
+}

@@ -1,0 +1,107 @@
+.bat-two-month-calendar {
+  margin-bottom: 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+.bat-two-month-calendar ::-moz-selection {
+  color: inherit;
+  background: inherit;
+}
+.bat-two-month-calendar ::selection {
+  color: inherit;
+  background: inherit;
+}
+.bat-two-month-calendar .ajax-progress {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.calendar-set,
+.calendar-navigation,
+.calendar-management-form {
+  margin-bottom: 20px;
+}
+.bat-two-month-calendar .month1,
+.bat-two-month-calendar .month2 {
+  float: left; /* LTR */
+  width: 50%;
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.bat-two-month-calendar .month1 {
+  padding-left: 0; /* LTR */
+}
+.bat-two-month-calendar .month2 {
+  padding-right: 0; /* LTR */
+}
+@media (max-width: 570px) {
+  .bat-two-month-calendar .month1,
+  .bat-two-month-calendar .month2 {
+    width: 100%;
+    padding: 0 0 15px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+}
+
+.calendar-back,
+.calendar-current,
+.calendar-forward {
+  float: left; /* LTR */
+  width: 33%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.calendar-back {
+  text-align: left; /* LTR */
+}
+.calendar-current {
+  text-align: center;
+}
+.calendar-forward {
+  text-align: right; /* LTR */
+}
+
+.page-admin-bat-units{
+    font: normal 81.3%/1.538em "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+}
+.bat-two-month-calendar .fc-content-skeleton .fc-event-container a {
+  border-radius: 0px;
+}
+
+.bat-two-month-calendar .fc-content-skeleton .fc-event-container .event-start {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-bottom: 0;
+  bottom: -8px;
+  left: 0px;
+  border-width: 8px;
+}
+
+.bat-two-month-calendar .fc-content-skeleton .fc-event-container .event-end {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-bottom: 0;
+  bottom: -12px;
+  left: 0px;
+  border-width: 8px;
+}
+
+.bat-two-month-calendar .fc-content-skeleton .fc-event-container .event-end {
+  margin-bottom: 26px;
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg); /* IE 9 */
+  -webkit-transform: rotate(180deg);
+}

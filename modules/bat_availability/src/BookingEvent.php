@@ -57,7 +57,7 @@ class BookingEvent extends BatEvent implements BookingEventInterface {
     $query->condition('l.unit_id', $this->unit_id);
     $query->condition('l.state', $this->id);
     $query->condition('l.locked', 1);
-    $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+    $result = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
 
     if (count($result) == 1) {
       return FALSE;

@@ -1,7 +1,7 @@
 (function ($) {
 
 /*
- * Default settings for all Rooms datepickers that come in pairs.
+ * Default settings for all BAT datepickers that come in pairs.
  */
 Drupal.behaviors.bat_datepicker = {
   attach: function(context) {
