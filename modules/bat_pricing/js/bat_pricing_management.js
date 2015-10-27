@@ -39,7 +39,7 @@ Drupal.behaviors.batPricing = {
     }
 
     events = [];
-    var url = Drupal.settings.basePath + '?q=bam/v1/pricing&units=' + Drupal.settings.batUnitManagement.batId.join() + '&start_date=' + year1 + '-' + (month1+1) + '-01&duration=1M';
+    var url = Drupal.settings.basePath + '?q=bat/v1/pricing&units=' + Drupal.settings.batUnitManagement.batId.join() + '&start_date=' + year1 + '-' + (month1+1) + '-01&duration=1M';
     $.ajax({
       url: url,
       success: function(data) {
