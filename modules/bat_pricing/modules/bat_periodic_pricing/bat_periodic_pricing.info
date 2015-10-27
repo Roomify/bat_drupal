@@ -4,7 +4,4 @@ core = 7.x
 
 package = BAT
 
-files[] = includes/bat_periodic_pricing.unit_weekly_pricing_calendar.inc
-files[] = includes/bat_periodic_pricing.unit_monthly_pricing_calendar.inc
-
 dependencies[] = bat_pricing

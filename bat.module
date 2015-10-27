@@ -132,7 +132,7 @@ function bat_libraries_info() {
     ),
   );
 
-  $libraries['fullcalendar_scheduler'] = array(
+  $libraries['fullcalendar-scheduler'] = array(
     'name' => 'Fullcalendar Scheduler',
     'vendor url' => 'http://fullcalendar.io',
     'download url' => 'https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.0.2/fullcalendar-scheduler-1.0.2.zip',
@@ -196,7 +196,7 @@ function bat_fullcalendar_loaded() {
 }
 
 function bat_fullcalendar_scheduler_loaded() {
-  if (bat_library_loaded('fullcalendar_scheduler', 'source')) {
+  if (bat_library_loaded('fullcalendar-scheduler', 'source')) {
     return TRUE;
   }
   else {

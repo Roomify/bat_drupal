@@ -1,5 +1,11 @@
 <?php
 
+namespace Drupal\bat_periodic_pricing;
+
+use Drupal\bat\BatEventInterface;
+use Drupal\bat_pricing\PricingEvent;
+use Drupal\bat_pricing\UnitPricingCalendar;
+
 
 class UnitMonthlyPricingCalendar extends UnitPricingCalendar {
 
@@ -30,13 +36,13 @@ class UnitMonthlyPricingCalendar extends UnitPricingCalendar {
     $this->base_table = 'bat_monthly_pricing';
   }
 
-  public function calculatePrice(DateTime $start_date, DateTime $end_date, $persons = 0, $children = 0, $children_ages = array()) {
+  public function calculatePrice(\DateTime $start_date, \DateTime $end_date, $persons = 0, $children = 0, $children_ages = array()) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getEvents(DateTime $start_date, DateTime $end_date) {
+  public function getEvents(\DateTime $start_date, \DateTime $end_date) {
     // Get the raw day results.
     $results = $this->getRawDayData($start_date, $end_date);
     $events = array();
@@ -47,7 +53,7 @@ class UnitMonthlyPricingCalendar extends UnitPricingCalendar {
         $start = $state['start_month'];
         $end = $state['end_month'];
 
-        $sd = new DateTime("$year-$start-01");
+        $sd = new \DateTime("$year-$start-01");
         $ed = clone($sd);
         $ed->modify('+' . ($end - $start + 1) . ' months - 1 day');
 
@@ -63,7 +69,7 @@ class UnitMonthlyPricingCalendar extends UnitPricingCalendar {
   /**
    * {@inheritdoc}
    */
-  public function getRawDayData(DateTime $start_date, DateTime $end_date) {
+  public function getRawDayData(\DateTime $start_date, \DateTime $end_date) {
     // Create a dummy PricingEvent to represent the range we are searching over.
     // This gives us access to handy functions that PricingEvents have.
     $s = new PricingEvent($this->unit_id, 0, $start_date, $end_date);
@@ -95,7 +101,7 @@ class UnitMonthlyPricingCalendar extends UnitPricingCalendar {
         $query->fields('a');
         $query->condition('a.unit_id', $this->unit_id);
         $query->condition('a.year', $j);
-        $years = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+        $years = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
         if (count($years) > 0) {
           foreach ($years as $year) {
             $y = $year['year'];
@@ -267,10 +273,10 @@ class UnitMonthlyPricingCalendar extends UnitPricingCalendar {
   /**
    * {@inheritdoc}
    */
-  public function calculatePricingEvents($unit_id, $amount, DateTime $start_date, DateTime $end_date, $operation, $days) {
+  public function calculatePricingEvents($unit_id, $amount, \DateTime $start_date, \DateTime $end_date, $operation, $days) {
     $events = array();
 
-    $start = new DateTime($start_date->format('Y-m') . '-01');
+    $start = new \DateTime($start_date->format('Y-m') . '-01');
 
     do {
       $end = clone($start);
@@ -294,7 +300,7 @@ class UnitMonthlyPricingCalendar extends UnitPricingCalendar {
     $query->addField('a', 'year');
     $query->condition('a.unit_id', $this->unit_id);
     $query->condition('a.year', $year);
-    $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+    $result = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
     if (count($result) > 0) {
       return TRUE;
     }

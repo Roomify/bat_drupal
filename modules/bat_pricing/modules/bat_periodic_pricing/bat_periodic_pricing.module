@@ -4,6 +4,9 @@
  * @file
  */
 
+use \Drupal\bat_periodic_pricing\UnitWeeklyPricingCalendar;
+use \Drupal\bat_periodic_pricing\UnitMonthlyPricingCalendar;
+
 /**
  * Implements hook_menu().
  */

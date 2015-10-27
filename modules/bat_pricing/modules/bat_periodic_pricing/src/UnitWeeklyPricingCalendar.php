@@ -1,5 +1,10 @@
 <?php
 
+namespace Drupal\bat_periodic_pricing;
+
+use Drupal\bat\BatEventInterface;
+use Drupal\bat_pricing\PricingEvent;
+use Drupal\bat_pricing\UnitPricingCalendar;
 
 class UnitWeeklyPricingCalendar extends UnitPricingCalendar {
 
@@ -30,13 +35,13 @@ class UnitWeeklyPricingCalendar extends UnitPricingCalendar {
     $this->base_table = 'bat_weekly_pricing';
   }
 
-  public function calculatePrice(DateTime $start_date, DateTime $end_date, $persons = 0, $children = 0, $children_ages = array()) {
+  public function calculatePrice(\DateTime $start_date, \DateTime $end_date, $persons = 0, $children = 0, $children_ages = array()) {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getEvents(DateTime $start_date, DateTime $end_date) {
+  public function getEvents(\DateTime $start_date, \DateTime $end_date) {
     // Get the raw day results.
     $results = $this->getRawDayData($start_date, $end_date);
     $events = array();
@@ -47,9 +52,9 @@ class UnitWeeklyPricingCalendar extends UnitPricingCalendar {
         $start = $state['start_week'];
         $end = $state['end_week'];
 
-        $sd = new DateTime();
+        $sd = new \DateTime();
         $sd->setISODate($year, $start, intval(variable_get('date_first_day', 0)));
-        $ed = new DateTime();
+        $ed = new \DateTime();
         $ed->setISODate($year, $end, intval(variable_get('date_first_day', 0)));
         $ed->modify('+6 days');
 
@@ -66,7 +71,7 @@ class UnitWeeklyPricingCalendar extends UnitPricingCalendar {
   /**
    * {@inheritdoc}
    */
-  public function getRawDayData(DateTime $start_date, DateTime $end_date) {
+  public function getRawDayData(\DateTime $start_date, \DateTime $end_date) {
     // Create a dummy PricingEvent to represent the range we are searching over.
     // This gives us access to handy functions that PricingEvents have.
     $s = new PricingEvent($this->unit_id, 0, $start_date, $end_date);
@@ -89,7 +94,7 @@ class UnitWeeklyPricingCalendar extends UnitPricingCalendar {
       $query->fields('a');
       $query->condition('a.unit_id', $this->unit_id);
       $query->condition('a.year', $start_year);
-      $years = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+      $years = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
       if (count($years) > 0) {
         foreach ($years as $year) {
           $y = $year['year'];
@@ -108,7 +113,7 @@ class UnitWeeklyPricingCalendar extends UnitPricingCalendar {
         $query->fields('a');
         $query->condition('a.unit_id', $this->unit_id);
         $query->condition('a.year', $j);
-        $years = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+        $years = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
         if (count($years) > 0) {
           foreach ($years as $year) {
             $y = $year['year'];
@@ -275,10 +280,10 @@ class UnitWeeklyPricingCalendar extends UnitPricingCalendar {
   /**
    * {@inheritdoc}
    */
-  public function calculatePricingEvents($unit_id, $amount, DateTime $start_date, DateTime $end_date, $operation, $days) {
+  public function calculatePricingEvents($unit_id, $amount, \DateTime $start_date, \DateTime $end_date, $operation, $days) {
     $events = array();
 
-    $start = new DateTime();
+    $start = new \DateTime();
     if ($start_date->format('m') == 12 && $start_date->format('W') == 1) {
       $start->setISODate($start_date->format('Y') + 1, $start_date->format('W'));
     }
@@ -308,7 +313,7 @@ class UnitWeeklyPricingCalendar extends UnitPricingCalendar {
     $query->addField('a', 'year');
     $query->condition('a.unit_id', $this->unit_id);
     $query->condition('a.year', $year);
-    $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+    $result = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
     if (count($result) > 0) {
       return TRUE;
     }
