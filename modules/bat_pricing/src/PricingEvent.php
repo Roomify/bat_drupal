@@ -5,6 +5,11 @@
  * contains PricingEvent.
  */
 
+namespace Drupal\bat_pricing;
+
+use Drupal\bat\BatEventInterface;
+use Drupal\bat\BatEvent;
+
 class PricingEvent extends BatEvent implements PricingEventInterface {
 
   /**
@@ -28,9 +33,9 @@ class PricingEvent extends BatEvent implements PricingEventInterface {
    *   The unit ID.
    * @param int $amount
    *   The booking amount.
-   * @param DateTime $start_date
+   * @param \DateTime $start_date
    *   The start date of the event.
-   * @param DateTime $end_date
+   * @param \DateTime $end_date
    *   The start date of the event.
    * @param string $operation
    *   The operation to perform.
@@ -46,7 +51,7 @@ class PricingEvent extends BatEvent implements PricingEventInterface {
   /**
    * {@inheritdoc}
    */
-  protected function createEvent(DateTime $start_date, DateTime $end_date) {
+  protected function createEvent(\DateTime $start_date, \DateTime $end_date) {
     return new PricingEvent($this->unit_id, $this->amount, $start_date, $end_date, $this->operation);
   }
 

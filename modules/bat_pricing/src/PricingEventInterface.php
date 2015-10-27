@@ -6,6 +6,11 @@
  * the price changes that is a different pricing event
  */
 
+namespace Drupal\bat_pricing;
+
+use Drupal\bat\BatEventInterface;
+
+
 interface PricingEventInterface extends BatEventInterface {
   /**
    * Applies an operation against a Price event.

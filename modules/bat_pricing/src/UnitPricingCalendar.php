@@ -5,6 +5,11 @@
  * Contains UnitPricingCalendar.
  */
 
+namespace Drupal\bat_pricing;
+
+use Drupal\bat\BatCalendar;
+use Drupal\bat\BatEventInterface;
+
 /**
  * Handles querying and updating the pricing information
  * relative to a single bookable unit.
@@ -61,7 +66,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
   /**
    * {@inheritdoc}
    */
-  public function calculatePrice(DateTime $start_date, DateTime $end_date, $persons = 0, $children = 0, $children_ages = array()) {
+  public function calculatePrice(\DateTime $start_date, \DateTime $end_date, $persons = 0, $children = 0, $children_ages = array()) {
 
     $price = 0;
     $booking_price = 0;
@@ -216,7 +221,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
   /**
    * {@inheritdoc}
    */
-  public function getEvents(DateTime $start_date, DateTime $end_date) {
+  public function getEvents(\DateTime $start_date, \DateTime $end_date) {
     // Get the raw day results.
     $results = $this->getRawDayData($start_date, $end_date);
     $events = array();
@@ -228,8 +233,8 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
           // Create a booking event.
           $start = $state['start_day'];
           $end = $state['end_day'];
-          $sd = new DateTime("$year-$mid-$start");
-          $ed = new DateTime("$year-$mid-$end");
+          $sd = new \DateTime("$year-$mid-$start");
+          $ed = new \DateTime("$year-$mid-$end");
           $amount = commerce_currency_amount_to_decimal($state['state'], commerce_default_currency());
           $event = new PricingEvent($this->unit_id, $amount, $sd, $ed);
           $events[] = $event;
@@ -242,7 +247,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
   /**
    * {@inheritdoc}
    */
-  public function getRawDayData(DateTime $start_date, DateTime $end_date) {
+  public function getRawDayData(\DateTime $start_date, \DateTime $end_date) {
     // To handle single-day bookings (Tours) we pretend that they are overnight
     // bookings.
     if ($end_date < $start_date) {
@@ -263,7 +268,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
       $query->condition('a.year', $s->startYear());
       $query->condition('a.month', $s->startMonth(), '>=');
       $query->condition('a.month', $s->endMonth(), '<=');
-      $months = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+      $months = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
       if (count($months) > 0) {
         foreach ($months as $month) {
           $m = $month['month'];
@@ -290,7 +295,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
         elseif ($j == $s->endYear()) {
           $query->condition('a.month', $s->endMonth(), '<=');
         }
-        $months = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+        $months = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
         if (count($months) > 0) {
           foreach ($months as $month) {
             $m = $month['month'];
@@ -341,8 +346,8 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
             $last_day = $eod[$i];
             $month = $this->prepareFullMonthArray(new PricingEvent($this->unit_id,
               $this->default_price,
-              new DateTime("$j-$i-1"),
-              new DateTime("$j-$i-$last_day")));
+              new \DateTime("$j-$i-1"),
+              new \DateTime("$j-$i-$last_day")));
             // Add the month in its rightful position.
             $results[$this->unit_id][$j][$i]['days'] = $month;
             // And sort months.
@@ -532,7 +537,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
   /**
    * {@inheritdoc}
    */
-  public function calculatePricingEvents($unit_id, $amount, DateTime $start_date, DateTime $end_date, $operation, $days) {
+  public function calculatePricingEvents($unit_id, $amount, \DateTime $start_date, \DateTime $end_date, $operation, $days) {
     $s_timestamp = $start_date->getTimestamp();
     $e_timestamp = $end_date->getTimestamp();
 
@@ -543,7 +548,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
       $wday_start = $s_date['wday'];
 
       if (in_array($wday_start + 1, $days)) {
-        $events[] = new PricingEvent($unit_id, $amount, new DateTime(date('Y-m-d', $s_timestamp)), new DateTime(date('Y-m-d', $s_timestamp)), $operation, $days);
+        $events[] = new PricingEvent($unit_id, $amount, new \DateTime(date('Y-m-d', $s_timestamp)), new \DateTime(date('Y-m-d', $s_timestamp)), $operation, $days);
       }
 
       $s_timestamp = strtotime('+1 days', $s_timestamp);
