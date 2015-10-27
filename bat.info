@@ -3,7 +3,7 @@ description = A generalized Booking and Availability Management Framework
 core = 7.x
 php = 5.3.9
 
-files[] = include/bat_definitions.inc
+files[] = includes/bat_definitions.inc
 
 package = BAT
 

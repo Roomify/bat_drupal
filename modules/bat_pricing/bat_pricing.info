@@ -11,4 +11,5 @@ files[] = includes/bat_pricing.pricing_event_interface.inc
 
 dependencies[] = bat_unit
 dependencies[] = commerce
+dependencies[] = commerce_price
 dependencies[] = bat_api
