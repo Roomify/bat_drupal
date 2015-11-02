@@ -80,7 +80,6 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
     );
 
     // Get settings to add to log
-    $reply['log']['bat_children_discount_options'] = variable_get('bat_children_discount_options', array());
     $reply['log']['bat_price_calculation'] = variable_get('bat_price_calculation', BAT_PER_NIGHT);
 
     $pricing_events = $this->getEvents($start_date, $end_date);
@@ -89,7 +88,6 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
       $days = $event->diff()->days + 1;
       $booking_days += $days;
       if (variable_get('bat_price_calculation', BAT_PER_NIGHT) == BAT_PER_PERSON) {
-        $children_discount_options = variable_get('bat_children_discount_options', array());
         $price = $price + ($days * $event->amount * ($persons - $children));
 
         foreach ($children_ages as $age) {
@@ -97,15 +95,8 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
           if (is_array($age)) {
             $age = $age['value'];
           }
-          $discount = 0;
-          foreach ($children_discount_options as $option) {
-            if ($age >= $option['start'] && $age <= $option['end']) {
-              $discount = $option['discount'];
-              break;
-            }
-          }
 
-          $price = $price + ($days * $event->amount * (100 - $discount) / 100);
+          $price = $price + ($days * $event->amount);
           $reply['log']['children'][$age]['post'] = $price;
         }
       }

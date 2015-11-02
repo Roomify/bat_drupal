@@ -64,18 +64,3 @@
   float: none;
   margin-bottom: 15px;
 }
-
-/* Children discount form */
-.children-discount-form .child-discount {
-  clear: both;
-  float: none;
-}
-.children-discount-form .child-discount__age-start,
-.children-discount-form .child-discount__age-end {
-  width: 2em;
-  text-align: right;
-}
-.children-discount-form .child-discount__amount {
-  width: 3em;
-  text-align: right;
-}
