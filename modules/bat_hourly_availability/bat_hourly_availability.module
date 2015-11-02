@@ -87,6 +87,45 @@ function bat_hourly_availability_views_default_views_alter(&$views) {
 }
 
 /**
+ * Implements hook_form__FORM_ID_alter().
+ *
+ * FORM_ID = bat_booking_settings
+ */
+function bat_hourly_availability_form_bat_booking_settings_alter(&$form, &$form_state, $form_id) {
+  $form['bat_booking_settings']['bat_daily_booking_start_date'] = array(
+    '#type' => 'select',
+    '#title' => t('How soon can a booking start for daily bookings'),
+    '#options' => array(
+      '0' => t('Same day bookings'),
+      '1' => t('1 day in advance'),
+      '2' => t('@count days in advance', array('@count' => 2)),
+      '3' => t('@count days in advance', array('@count' => 3)),
+      '4' => t('@count days in advance', array('@count' => 4)),
+      '5' => t('@count days in advance', array('@count' => 5)),
+      '6' => t('@count days in advance', array('@count' => 6)),
+      '7' => t('@count days in advance', array('@count' => 7)),
+    ),
+    '#default_value' => variable_get('bat_daily_booking_start_date', 1),
+  );
+
+  $form['bat_booking_settings']['bat_hourly_booking_start_date'] = array(
+    '#type' => 'select',
+    '#title' => t('How soon can a booking start for hourly bookings'),
+    '#options' => array(
+      '0' => t('Same day bookings'),
+      '1' => t('1 day in advance'),
+      '2' => t('@count days in advance', array('@count' => 2)),
+      '3' => t('@count days in advance', array('@count' => 3)),
+      '4' => t('@count days in advance', array('@count' => 4)),
+      '5' => t('@count days in advance', array('@count' => 5)),
+      '6' => t('@count days in advance', array('@count' => 6)),
+      '7' => t('@count days in advance', array('@count' => 7)),
+    ),
+    '#default_value' => variable_get('bat_hourly_booking_start_date', 1),
+  );
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function bat_hourly_availability_form_bat_booking_edit_form_alter(&$form, &$form_state) {
