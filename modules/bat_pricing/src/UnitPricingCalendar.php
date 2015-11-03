@@ -242,7 +242,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
     // To handle single-day bookings (Tours) we pretend that they are overnight
     // bookings.
     if ($end_date < $start_date) {
-      $end_date->add(new DateInterval('P1D'));
+      $end_date->add(new \DateInterval('P1D'));
     }
 
     // Create a dummy PricingEvent to represent the range we are searching over.
