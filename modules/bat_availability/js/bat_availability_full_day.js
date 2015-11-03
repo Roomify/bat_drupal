@@ -102,6 +102,13 @@ Drupal.behaviors.bat_availability = {
           // Remove Time from events.
           el.find('.fc-time').remove();
         },
+        eventAfterRender: function(event, element, view) {
+          // Hide events that are outside this month.
+          if (event.start.month() != view.intervalStart.month()) {
+            element.css('visibility', 'hidden');
+            return;
+          }
+        }
       });
     });
   }

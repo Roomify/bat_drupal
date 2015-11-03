@@ -34,19 +34,8 @@ Drupal.behaviors.bat_hourly_availability = {
       };
     }
 
-    // Second month is the next one obviously unless it is 11 in which case we need to move a year ahead
-    if (currentMonth == 11) {
-      month2 = 0;
-      year2 = year1 + 1;
-    }
-    else {
-      month2 = currentMonth+1;
-      year2 = currentYear;
-    }
-
     var calendars = [];
     calendars[0] = new Array('#calendar', month1, year1);
-    calendars[1] = new Array('#calendar1', month2, year2);
 
     // refresh the events once the modal is closed
     $(document).one("CToolsDetachBehaviors", function() {
@@ -150,6 +139,13 @@ Drupal.behaviors.bat_hourly_availability = {
             element.find('.fc-time').remove();
           }
         },
+        eventAfterRender: function(event, element, view) {
+          // Hide events that are outside this month.
+          if (event.start.month() != view.intervalStart.month()) {
+            element.css('visibility', 'hidden');
+            return;
+          }
+        }
       });
     });
   }

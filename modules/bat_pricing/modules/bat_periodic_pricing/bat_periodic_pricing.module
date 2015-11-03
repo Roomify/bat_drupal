@@ -94,47 +94,6 @@ function bat_periodic_pricing_menu() {
 }
 
 /**
- * Implements hook_theme().
- */
-function bat_periodic_pricing_theme() {
-  return array(
-    'bat_one_month_calendar' => array(
-      'template' => 'bat_one_month_calendar',
-      'variables' => array(
-        'url' => NULL,
-        'form' => NULL,
-        'year' => NULL,
-        'month' => NULL,
-        'link_options' => NULL,
-      ),
-    ),
-  );
-}
-
-/**
- * Default implementation of hook_preprocess_bat_one_month_calendar().
- */
-function bat_periodic_pricing_preprocess_bat_one_month_calendar(&$vars) {
-
-  // Load FullCalendar Scheduler.
-  bat_fullcalendar_scheduler_loaded();
-
-  // Add css styles for three-month-calendar.
-  drupal_add_css(drupal_get_path('module', 'bat_periodic_pricing') . '/css/bat_one_month_calendar.css');
-  drupal_add_css(drupal_get_path('module', 'bat_availability') . '/css/fullcalendar.theme.css');
-
-  // If dates are not provided then use the current date.
-  $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
-  $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
-
-  // Inject settings in javascript that will be used to setup the three months
-  // display.
-  drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
-  drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
-  drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
-}
-
-/**
  * Builds pricing page by adding calendar and pulling events from weekly pricing table.
  */
 function bat_periodic_pricing_weekly_page(BatUnit $bat_unit, $year = '', $month = '') {

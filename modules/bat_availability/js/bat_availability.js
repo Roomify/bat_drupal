@@ -120,7 +120,13 @@ Drupal.behaviors.bat_availability = {
             el.find('.event-end').css('border-top-color', this.color);
           }
         },
-        eventAfterRender: function(event, element, view) { 
+        eventAfterRender: function(event, element, view) {
+          // Hide events that are outside this month.
+          if (event.start.month() != view.intervalStart.month()) {
+            element.css('visibility', 'hidden');
+            return;
+          }
+
           // Event width.
           var width = element.parent().width()
           // Event colspan number.

@@ -36,24 +36,6 @@ function bat_hourly_availability_menu_alter(&$items) {
 }
 
 /**
- * Implements hook_theme().
- */
-function bat_hourly_availability_theme() {
-  return array(
-    'bat_two_month_calendar' => array(
-      'template' => 'bat_two_month_calendar',
-      'variables' => array(
-        'url' => NULL,
-        'form' => NULL,
-        'year' => NULL,
-        'month' => NULL,
-        'link_options' => NULL,
-      ),
-    ),
-  );
-}
-
-/**
  * Implements hook_entity_delete().
  */
 function bat_hourly_availability_entity_delete($entity, $type) {
@@ -318,7 +300,7 @@ function bat_hourly_availability_page(BatUnit $bat_unit, $year = '', $month = ''
       $js_file = drupal_get_path('module', 'bat_availability') . '/js/bat_availability_full_day.js';
     }
     return array(
-      '#theme' => 'bat_two_month_calendar',
+      '#theme' => 'bat_one_month_calendar',
       '#url' => $url,
       '#form' => drupal_get_form('update_availability_calendar_form', $bat_unit->unit_id, $year, $month),
       '#year' => $year,
@@ -340,55 +322,6 @@ function bat_hourly_availability_page(BatUnit $bat_unit, $year = '', $month = ''
   else {
     return bat_availability_page($bat_unit, $year, $month);
   }
-}
-
-/**
- * Default implementation of hook_preprocess_bat_two_month_calendar().
- *
- * Here we setup the two-month calendar based on a specified year, month, and url.
- */
-function bat_hourly_availability_preprocess_bat_two_month_calendar(&$vars) {
-
-  // Load FullCalendar.
-  bat_fullcalendar_loaded();
-
-  // Add css styles for three-month-calendar.
-  drupal_add_css(drupal_get_path('module', 'bat_hourly_availability') . '/css/bat_two_month_calendar.css');
-  drupal_add_css(drupal_get_path('module', 'bat_availability') . '/css/fullcalendar.theme.css');
-
-  // If dates are not provided then use the current date.
-  $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
-  $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
-
-  // Inject settings in javascript that will be used to setup the three months
-  // display.
-  drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
-  drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
-  drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
-
-  // Calculate forward and back dates for the 3-month view calendar.
-  $date1 = new DateTime("$year-$month-1");
-  $date2 = new DateTime("$year-$month-1");
-  $date_current = new DateTime("now");
-
-  $forward = $date1->add(new DateInterval('P2M'));
-  $backward = $date2->sub(new DateInterval('P2M'));
-
-  // Create the links based off the url variable passed in.
-  if (!isset($vars['url'])) {
-    $vars['url'] = '';
-  }
-
-  $forward_path = $vars['url'] . '/' . $forward->format('Y') . '/' . $forward->format('n');
-  $backward_path = $vars['url'] . '/' . $backward->format('Y') . '/' . $backward->format('n');
-  $current_path = $vars['url'] . '/' . $date_current->format('Y') . '/' . $date_current->format('n');
-
-  if (!is_array($vars['link_options']) || empty($vars['link_options'])) {
-    $vars['link_options'] = array();
-  }
-  $vars['forward_link'] = l(t('Forward'), $forward_path, $vars['link_options']);
-  $vars['backward_link'] = l(t('Back'), $backward_path, $vars['link_options']);
-  $vars['current_link'] = l(t('Current'), $current_path, $vars['link_options']);
 }
 
 /**
