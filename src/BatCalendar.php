@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Class BatCalendar
+ */
+
 namespace Drupal\bat;
 
 /**

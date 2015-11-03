@@ -43,16 +43,16 @@ To display calendars and dates we use the following libraries:
 - Fullcalendar - http://fullcalendar.io/ - You need to [download the following zip](https://github.com/arshaw/fullcalendar/releases/download/v2.4.0/fullcalendar-2.4.0.zip) an unpack in libraries in a directory called fullcalendar
 - MomentJS - http://momentjs.com/ - The [moment.js](http://momentjs.com/downloads/moment.min.js) library should be placed in sites/all/libraries so that you end up with the file located here: sites/all/libraries/moment/moment.min.js
 
-##Configuration
+## Configuration
  - Enable all the BAT modules 
  - Make sure to set the jQuery for the admin theme to at least 1.10 by visiting *admin/config/development/jquery_update*
  
-###Creating Booking Units
+### Creating Booking Units
 The first thing you will want to do is create a bookable unit which you can then manage the availability of.
 
 Visit *admin/bat/units/unit-types* to create a unit. Bookable units are basic entities that you can manage the permissions off and add any fields you require.
  
-###Pricing
+### Pricing
 To add price information to your bookable units you will need to:
 - Add a Commerce Price field to your Bookable Unit Entity Type. 
 - Under *bat/units/unit-types/<yourunittype>* make sure that you have the correct price field selected under the pricing tab.

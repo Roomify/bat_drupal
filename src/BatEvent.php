@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Class BatEvent
+ */
+
 namespace Drupal\bat;
 
 abstract class BatEvent implements BatEventInterface {

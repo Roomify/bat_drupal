@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Variable API module. Definition for some xample variables

@@ -1,10 +1,13 @@
 <?php
 
+/**
+ * @file
+ * Interface BatEventInterface
+ */
+
 namespace Drupal\bat;
 
-
 /**
- * Class BatEventInterface
  * The basic BAT event interface.
  */
 interface BatEventInterface {
