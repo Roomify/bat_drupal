@@ -82,7 +82,7 @@ class UnitMonthlyPricingCalendar extends UnitPricingCalendar {
       $query->fields('a');
       $query->condition('a.unit_id', $this->unit_id);
       $query->condition('a.year', $s->startYear());
-      $years = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+      $years = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
       if (count($years) > 0) {
         foreach ($years as $year) {
           $y = $year['year'];
