@@ -2,8 +2,10 @@
 
 /**
  * @file
- * Contains the AvailabilityAgent.
+ * Class AvailabilityAgent.
  */
+
+namespace Drupal\bat_booking;
 
 use Drupal\bat_availability\UnitCalendar;
 use Drupal\bat_pricing\UnitPricingCalendar;
@@ -105,7 +107,7 @@ class AvailabilityAgent {
     $this->start_date = $start_date;
     // For availability purposes the end date is a day earlier than checkout.
     $this->end_date = clone($end_date);
-    $this->end_date->sub(new DateInterval('P1D'));
+    $this->end_date->sub(new \DateInterval('P1D'));
     $this->booking_parameters = $booking_parameters;
     $this->booking_units = $booking_units;
     $this->unit_types = $unit_types;
@@ -341,7 +343,7 @@ class AvailabilityAgent {
 
         // Calculate the price as well to add to the array.
         $temp_end_date = clone($this->end_date);
-        $temp_end_date->add(new DateInterval('P1D'));
+        $temp_end_date->add(new \DateInterval('P1D'));
 
         $booking_info = array(
           'start_date' => clone($this->start_date),

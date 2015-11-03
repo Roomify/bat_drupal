@@ -18,8 +18,6 @@ dependencies[] = commerce_order
 
 files[] = bat_booking.admin.inc
 files[] = bat_booking_type.admin.inc
-files[] = includes/bat_booking.availability_agent.inc
-files[] = includes/bat_booking.availability_agent_filter.inc
 files[] = views/bat_booking.views.inc
 files[] = views/bat_booking_handler_link_field.inc
 files[] = views/bat_booking_handler_date_field.inc

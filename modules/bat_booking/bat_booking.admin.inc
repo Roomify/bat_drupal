@@ -9,6 +9,8 @@
  * more often than not, be end-user facing.
  */
 
+use \Drupal\bat_booking\AvailabilityAgent;
+
 /**
  * UI controller.
  */

@@ -4,12 +4,6 @@ core = 7.x
 
 package = BAT
 
-files[] = includes/bat_availability.booking_event.inc
-files[] = includes/bat_availability.booking_event_interface.inc
-files[] = includes/bat_availability.unit_calendar.inc
-files[] = includes/bat_availability.unit_calendar_interface.inc
-
-
 dependencies[] = bat_unit
 dependencies[] = bat
 dependencies[] = bat_ui
