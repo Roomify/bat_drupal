@@ -61,19 +61,6 @@ function bat_booking_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'unit_type' => array(
-        'description' => 'The type of Unit the booking refers to',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'unit_id' => array(
-        'description' => 'The unit_id this booking may be tied to.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ),
       'start_date' => array(
         'type' => 'datetime',
         'mysql_type' => 'datetime',

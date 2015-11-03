@@ -826,25 +826,6 @@ class BatBookingController extends EntityAPIController {
     }
 
     parent::save($entity);
-
-    // We have a unit defined so lets block availability there unless its a
-    // booking that is to be deleted.
-    if (($entity->unit_id != 0) && ($entity->type != BAT_BOOKING_DELETED)) {
-      // Set the event_id.
-      $event_id = bat_availability_assign_id($entity->booking_id, $entity->booking_status);
-      // Create an event.
-      $be = new BookingEvent($entity->unit_id, $event_id, new DateTime($entity->start_date), $corrected_end_date);
-
-      // Create UnitCalendar.
-      $rc = new UnitCalendar($entity->unit_id);
-      $responses = $rc->updateCalendar(array($be));
-
-      $entity->bat_av_update = $responses[$event_id];
-
-      if ($responses[$event_id] == BAT_UPDATED) {
-        $be->lock();
-      }
-    }
   }
 
   public function delete($ids, $delete_line_item = TRUE) {
