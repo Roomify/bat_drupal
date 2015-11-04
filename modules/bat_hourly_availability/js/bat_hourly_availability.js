@@ -141,9 +141,11 @@ Drupal.behaviors.bat_hourly_availability = {
         },
         eventAfterRender: function(event, element, view) {
           // Hide events that are outside this month.
-          if (event.start.month() != view.intervalStart.month()) {
-            element.css('visibility', 'hidden');
-            return;
+          if (view.name == 'month') {
+            if (event.start.month() != view.intervalStart.month()) {
+              element.css('visibility', 'hidden');
+              return;
+            }
           }
         }
       });
