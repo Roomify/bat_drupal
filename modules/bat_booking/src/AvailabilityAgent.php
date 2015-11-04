@@ -352,9 +352,10 @@ class AvailabilityAgent {
         );
 
         // Give other modules a chance to change the price modifiers.
-        drupal_alter('bat_price_modifier', $price_modifiers, $booking_info);
+        $current_price_modifiers = $price_modifiers;
+        drupal_alter('bat_price_modifier', $current_price_modifiers, $booking_info);
 
-        $price_calendar = new UnitPricingCalendar($unit->unit_id, $price_modifiers);
+        $price_calendar = new UnitPricingCalendar($unit->unit_id, $current_price_modifiers);
 
         $price_log = $price_calendar->calculatePrice($this->start_date, $this->end_date);
         $full_price = $price_log['full_price'];
