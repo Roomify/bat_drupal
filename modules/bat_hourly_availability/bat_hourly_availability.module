@@ -570,7 +570,7 @@ function bat_hourly_availability_form_bat_unit_type_form_alter(&$form, &$form_st
     '#default_value' => isset($unit_type->data['hourly_availability']) ? $unit_type->data['hourly_availability'] : NULL,
   );
 
-  $form['#submit'][] = 'bat_hourly_availability_form_bat_unit_type_form_submit';
+  $form['actions']['submit']['#submit'][] = 'bat_hourly_availability_form_bat_unit_type_form_submit';
 }
 
 /**
