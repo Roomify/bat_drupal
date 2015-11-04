@@ -5,7 +5,7 @@
 </div>
 
 <div class="calendar-set clearfix">
-  <div id='calendar' class="month1"></div>
+  <div id='calendar' class="month"></div>
 </div>
 
 </div>
