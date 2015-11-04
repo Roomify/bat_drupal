@@ -66,6 +66,7 @@ function bat_booking_type_form($form, &$form_state, $booking_type, $op = 'edit')
     '#type' => 'submit',
     '#value' => t('Save Booking type'),
     '#weight' => 40,
+    '#submit' => array('bat_booking_type_form_submit'),
   );
 
   return $form;

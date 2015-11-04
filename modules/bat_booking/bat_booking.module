@@ -219,6 +219,73 @@ function bat_booking_entity_property_info_alter(&$info) {
 }
 
 /**
+ * Implements hook_entity_insert().
+ */
+function bat_booking_entity_insert($entity, $type) {
+  if ($type == 'bat_booking_type') {
+    field_info_cache_clear();
+
+    // "booking_unit_reference" field.
+    if (field_read_field('booking_unit_reference') === FALSE) {
+      $field = array(
+        'field_name' => 'booking_unit_reference',
+        'type' => 'entityreference',
+        'cardinality' => 1,
+        'settings' => array(
+          'target_type' => 'bat_unit',
+        ),
+      );
+      field_create_field($field);
+    }
+
+    // "booking_order_reference" field.
+    if (field_read_field('booking_order_reference') === FALSE) {
+      $field = array(
+        'field_name' => 'booking_order_reference',
+        'type' => 'entityreference',
+        'cardinality' => 1,
+        'settings' => array(
+          'target_type' => 'commerce_order',
+        ),
+      );
+      field_create_field($field);
+    }
+
+    field_cache_clear();
+
+    // "booking_unit_reference" field instance.
+    if (field_read_instance('bat_booking', 'booking_unit_reference', $entity->type) === FALSE) {
+      $instance = array(
+        'field_name' => 'booking_unit_reference',
+        'entity_type' => 'bat_booking',
+        'label' => 'Unit',
+        'bundle' => $entity->type,
+        'required' => FALSE,
+        'widget' => array(
+          'type' => 'entityreference_autocomplete',
+        ),
+      );
+      field_create_instance($instance);
+    }
+
+    // "booking_order_reference" field instance.
+    if (field_read_instance('bat_booking', 'booking_order_reference', $entity->type) === FALSE) {
+      $instance = array(
+        'field_name' => 'booking_order_reference',
+        'entity_type' => 'bat_booking',
+        'label' => 'Order',
+        'bundle' => $entity->type,
+        'required' => FALSE,
+        'widget' => array(
+          'type' => 'entityreference_autocomplete',
+        ),
+      );
+      field_create_instance($instance);
+    }
+  }
+}
+
+/**
  * Implements hook_permission().
  */
 function bat_booking_permission() {
