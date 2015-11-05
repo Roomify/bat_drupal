@@ -44,7 +44,7 @@ Drupal.behaviors.bat_availability = {
 
     phpmonth = currentMonth+1;
     $('#calendar').once().fullCalendar({
-      schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+      schedulerLicenseKey: Drupal.settings.batCalendar.schedulerLicenseKey,
       contentHeight: 90,
       views: {
         timeline8Week: {

@@ -107,8 +107,6 @@ class BookingEvent extends BatEvent implements BookingEventInterface {
       }
     }
 
-    $view_unit_name = array_filter(variable_get('bat_view_unit_name', array('')));
-
     // Set the color.
     switch ($this->id) {
       case BAT_NOT_AVAILABLE:
@@ -152,7 +150,7 @@ class BookingEvent extends BatEvent implements BookingEventInterface {
         $event['color'] = '#017eba';
     }
 
-    if (!empty($view_unit_name)) {
+    if (variable_get('bat_view_unit_name', '')) {
       $event['title'] = $unit_name;
     }
 

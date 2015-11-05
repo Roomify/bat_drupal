@@ -1075,11 +1075,23 @@ function bat_preprocess_bat_one_month_calendar(&$vars) {
   $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
   $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
 
+  $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', 'non-commercial');
+  if ($schedulerlicense == 'gpl') {
+    $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
+  }
+  elseif ($schedulerlicense == 'non-commercial') {
+    $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
+  }
+  elseif ($schedulerlicense == 'commercial') {
+    $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
+  }
+
   // Inject settings in javascript that will be used to setup the one months
   // display.
   drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
   drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
   drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
+  drupal_add_js(array('batCalendar' => array('schedulerLicenseKey' => $schedulerlicensekey)), 'setting');
 }
 
 /**

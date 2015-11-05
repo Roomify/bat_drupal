@@ -73,7 +73,7 @@ function bat_hourly_availability_views_default_views_alter(&$views) {
  *
  * FORM_ID = bat_booking_settings
  */
-function bat_hourly_availability_form_bat_booking_settings_alter(&$form, &$form_state, $form_id) {
+function bat_hourly_availability_form_bat_booking_settings_alter(&$form, &$form_state) {
   $form['bat_booking_settings']['bat_daily_booking_start_date'] = array(
     '#type' => 'select',
     '#title' => t('How soon can a booking start for daily bookings'),
@@ -105,6 +105,43 @@ function bat_hourly_availability_form_bat_booking_settings_alter(&$form, &$form_
     ),
     '#default_value' => variable_get('bat_hourly_booking_start_date', 1),
   );
+
+  $form['label_settings']['bat_fullcalendar_scheduler'] = array(
+    '#type' => 'container',
+    '#prefix' => '<div id="label-settings">',
+    '#suffix' => '</div>',
+  );
+
+  $form['label_settings']['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_key'] = array(
+    '#type' => 'radios',
+    '#title' => t('FullCalendar Scheduler License'),
+    '#default_value' => variable_get('bat_fullcalendar_scheduler_key', 'non-commercial'),
+    '#options' => array (
+      'commercial' => t('Commercial License'),
+      'non-commercial' => t('Non-Commercial Creative Commons'),
+      'gpl' => t('GPL License'),
+    ),
+    '#ajax' => array(
+      'callback' => 'bat_hourly_availability_form_bat_booking_settings_ajax_callback',
+      'wrapper' => 'label-settings',
+    ),
+  );
+
+  if ((!isset($form_state['values']['bat_fullcalendar_scheduler_key']) && $form['label_settings']['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_key']['#default_value'] == 'commercial') || (isset($form_state['values']['bat_fullcalendar_scheduler_key']) && $form_state['values']['bat_fullcalendar_scheduler_key'] == 'commercial')) {
+    $form['label_settings']['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_commercial_key'] = array(
+      '#type' => 'textfield',
+      '#title' => t('FullCalendar Scheduler Commercial License Key'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('bat_fullcalendar_scheduler_commercial_key', ''),
+    );
+  }
+}
+
+/**
+ * Ajax callback for bat_booking_settings form.
+ */
+function bat_hourly_availability_form_bat_booking_settings_ajax_callback($form, $form_state) {
+  return $form['label_settings']['bat_fullcalendar_scheduler'];
 }
 
 /**

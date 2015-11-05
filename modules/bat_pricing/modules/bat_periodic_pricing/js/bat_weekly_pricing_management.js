@@ -59,7 +59,7 @@ Drupal.behaviors.batPricing = {
       var unit_id = Drupal.settings.batUnitManagement.batId[c];
 
       $(value[0]).once().fullCalendar({
-        schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+        schedulerLicenseKey: Drupal.settings.batCalendar.schedulerLicenseKey,
         contentHeight: 74,
         views: {
           timeline8Week: {
