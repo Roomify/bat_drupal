@@ -15,6 +15,7 @@ dependencies[] = commerce_customer_ui
 dependencies[] = commerce_cart
 dependencies[] = commerce_cart_expiration
 dependencies[] = commerce_order
+dependencies[] = entityreference
 
 files[] = bat_booking.admin.inc
 files[] = bat_booking_type.admin.inc

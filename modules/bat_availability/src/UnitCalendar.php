@@ -44,8 +44,6 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
   public function removeEvents($events) {
     $events_to_delete = array();
     foreach ($events as $event) {
-      // Break any locks.
-      $event->unlock();
       // Set the events to the default state.
       $event->id = $this->default_state;
 
@@ -321,30 +319,6 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
   /**
    * {@inheritdoc}
    */
-  public function eventBlocked(BookingEventInterface $event) {
-
-    $states = $this->getStates($event->start_date, $event->end_date);
-    $blocked = FALSE;
-
-    // Query the locks table to see if event is blocked.
-    $query = db_select('bat_booking_locks', 'l');
-    $query->addField('l', 'unit_id');
-    $query->addField('l', 'state');
-    $query->addField('l', 'locked');
-    $query->condition('l.unit_id', $this->unit_id);
-    $query->condition('l.state', $states);
-    $query->condition('l.locked', 1);
-    $result = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
-    // Only block if we are trying to update an event that is not locked.
-    if ((count($result) > 0) && $result[0]['state'] != $event->id) {
-      $blocked = TRUE;
-    }
-    return $blocked;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function updateCalendar($events) {
     $response = array();
     // First check that none of the events supplied are blocked by an existing
@@ -354,30 +328,24 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
     foreach ($events as $event) {
       // Make sure event refers to the unit for this calendar.
       if ($event->unit_id == $this->unit_id) {
-        // Check if event is not blocked by a locked event.
-        if (!$this->eventBlocked($event)) {
-          // If the event is in the same month span just queue to be added.
-          if ($event->sameMonth()) {
-            $monthly_events[] = $event;
-          }
-          else {
-            // Check if multi-year - if not just create monthly events.
-            if ($event->sameYear()) {
-              $monthly_events_tmp = $event->transformToMonthlyEvents();
-              $monthly_events = array_merge($monthly_events, $monthly_events_tmp);
-            }
-            else {
-              // Else transform to single years and then to monthly.
-              $yearly_events = $event->transformToYearlyEvents();
-              foreach ($yearly_events as $ye) {
-                $monthly_events_tmp = $ye->transformToMonthlyEvents();
-                $monthly_events = array_merge($monthly_events, $monthly_events_tmp);
-              }
-            }
-          }
+        // If the event is in the same month span just queue to be added.
+        if ($event->sameMonth()) {
+          $monthly_events[] = $event;
         }
         else {
-          $response[$event->id] = BAT_BLOCKED;
+          // Check if multi-year - if not just create monthly events.
+          if ($event->sameYear()) {
+            $monthly_events_tmp = $event->transformToMonthlyEvents();
+            $monthly_events = array_merge($monthly_events, $monthly_events_tmp);
+          }
+          else {
+            // Else transform to single years and then to monthly.
+            $yearly_events = $event->transformToYearlyEvents();
+            foreach ($yearly_events as $ye) {
+              $monthly_events_tmp = $ye->transformToMonthlyEvents();
+              $monthly_events = array_merge($monthly_events, $monthly_events_tmp);
+            }
+          }
         }
       }
       else {

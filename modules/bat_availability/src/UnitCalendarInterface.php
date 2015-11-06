@@ -28,19 +28,6 @@ interface UnitCalendarInterface extends BatCalendarInterface {
   public function getStates(\DateTime $start_date, \DateTime $end_date, $confirmed = FALSE);
 
   /**
-   * Checks if an event is blocked, i.e. cannot be updated. This happens
-   * when the event id is in the bat_booking_locks table and the new event_id
-   * is not the same as the one that is locked.
-   *
-   * @param BookingEventInterface $event
-   *   The event to check if it is blocked.
-   *
-   * @return bool
-   *   TRUE if blocked, FALSE otherwise.
-   */
-  public function eventBlocked(BookingEventInterface $event);
-
-  /**
    * Given a set of states (e.g. the desired states to accept a booking) we
    * compare against the states the unit is actually in.
    *

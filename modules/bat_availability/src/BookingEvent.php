@@ -48,44 +48,6 @@ class BookingEvent extends BatEvent implements BookingEventInterface {
   /**
    * {@inheritdoc}
    */
-  public function lock() {
-    // Check that the event is not already locked.
-    $query = db_select('bat_booking_locks', 'l');
-    $query->addField('l', 'unit_id');
-    $query->addField('l', 'state');
-    $query->addField('l', 'locked');
-    $query->condition('l.unit_id', $this->unit_id);
-    $query->condition('l.state', $this->id);
-    $query->condition('l.locked', 1);
-    $result = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
-
-    if (count($result) == 1) {
-      return FALSE;
-    }
-    else {
-      $fields = array(
-        'unit_id' => $this->unit_id,
-        'state' => $this->id,
-        'locked' => 1,
-      );
-      $lock = db_insert('bat_booking_locks')->fields($fields);
-      $lock->execute();
-    }
-    return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function unlock() {
-    db_delete('bat_booking_locks')
-    ->condition(db_or()->condition('state', $this->id)->condition('state', -($this->id)))
-    ->execute();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function formatJson($style = BAT_AVAILABILITY_ADMIN_STYLE, $unit_name = '') {
     $event = array(
       'id' => $this->id,

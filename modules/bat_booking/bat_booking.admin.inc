@@ -9,7 +9,7 @@
  * more often than not, be end-user facing.
  */
 
-use \Drupal\bat_booking\AvailabilityAgent;
+use Drupal\bat_booking\AvailabilityAgent;
 
 /**
  * UI controller.
@@ -211,7 +211,9 @@ function bat_booking_edit_form($form, &$form_state, $booking) {
   // A fieldset to hold the date range fields.
   $form['bat_date_range'] = array(
     '#type' => 'fieldset',
+    '#title' => t('Booking dates'),
     '#attributes' => array('class' => array('bat-booking-date-range-wrapper')),
+    '#weight' => -1,
   );
 
   $form['bat_date_range'] += bat_date_range_fields();
@@ -499,22 +501,6 @@ function bat_booking_edit_form_get_units($unit_type, $current_booking, $start_da
  * Form API validate callback for the booking form.
  */
 function bat_booking_edit_form_validate(&$form, &$form_state) {
-  list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
-
-  if ($start_date && $end_date) {
-    // Convert input format to the same used in the stored dates.
-    $input_start_date = $start_date->format('Y-m-d');
-    $input_end_date = $end_date->format('Y-m-d');
-    // If stored dates differ from input dates check that price was re-assigned.
-    if (isset($booking->start_date) && isset($booking->end_date)) {
-      if ($input_start_date != $booking->start_date || $input_end_date != $booking->end_date) {
-        if (!isset($form_state['values']['unit_id']) || !is_numeric($form_state['values']['unit_id'])) {
-          form_set_error('availability_fieldset', t('A unit must be re-assigned for this booking.'));
-        }
-      }
-    }
-  }
-
   // Notify field widgets to validate their data.
   entity_form_field_validate('bat_booking', $form, $form_state);
 }
@@ -540,10 +526,6 @@ function bat_booking_edit_form_submit(&$form, &$form_state) {
   }
   else {
     $booking = entity_ui_controller('bat_booking')->entityFormSubmitBuildEntity($form, $form_state);
-
-    // Get the unit id from the booking to be used further down as it is not in
-    // the form_values because of how unit ids are assigned.
-    $unit_id = $booking->unit_id;
   }
 
   // Add in created and changed times.
@@ -563,6 +545,21 @@ function bat_booking_edit_form_submit(&$form, &$form_state) {
 
   // Add the booking to $form_state to be altered by other submit handlers.
   $form_state['booking'] = $booking;
+
+  $booking_unit_reference = field_get_items('bat_booking', $booking, 'booking_unit_reference');
+  if ($booking_unit_reference !== FALSE) {
+    $unit_id = $booking_unit_reference[0]['target_id'];
+
+    // We have a unit defined so lets block availability there.
+    if ($unit_id != 0) {
+      if ($booking->bat_av_update == BAT_UPDATED) {
+        drupal_set_message(t('Unit availability has been updated.'));
+      }
+      else {
+        drupal_set_message(t('Unit availability could not be updated.'), 'error');
+      }
+    }
+  }
 
   $form_state['redirect'] = 'admin/bat/bookings';
 }

@@ -6,8 +6,8 @@
  * FullCalendar plugin.
  */
 
-use \Drupal\bat_availability\BookingEvent;
-use \Drupal\bat_availability\UnitCalendar;
+use Drupal\bat_availability\BookingEvent;
+use Drupal\bat_availability\UnitCalendar;
 
 
 define('BAT_AVAILABILITY_ADMIN_STYLE', 1);

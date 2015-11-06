@@ -34,21 +34,6 @@ function bat_booking_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  $items['admin/bat/add_customers'] = array(
-    'title' => 'Add customer profile',
-    'page callback' => 'bat_booking_add_customer_profile',
-    'access arguments' => array('bypass bat_booking entities access'),
-    'type' => MENU_CALLBACK,
-  );
-
-  $items['admin/bat/customer-profiles/%/edit'] = array(
-    'title' => 'Edit customer profile',
-    'page callback' => 'bat_booking_edit_customer_profile',
-    'page arguments' => array(3),
-    'access arguments' => array('bypass bat_booking entities access'),
-    'type' => MENU_CALLBACK,
-  );
-
   $items['admin/views/ajax/autocomplete/bat_unit'] = array(
     'page callback' => 'bat_booking_views_ajax_autocomplete_unit',
     'theme callback' => 'ajax_base_page_theme',
@@ -59,67 +44,6 @@ function bat_booking_menu() {
   );
 
   return $items;
-}
-
-/**
- * AJAX callback to display a modal form to create a customer profile.
- */
-function bat_booking_add_customer_profile() {
-  ctools_include('modal');
-
-  module_load_include('inc', 'commerce_customer', 'includes/commerce_customer_profile.forms');
-  $form_state = array(
-    'title' => t('Add customer'),
-    'ajax' => TRUE,
-    'build_info' => array(
-      'args' => array(commerce_customer_profile_new('billing', 1)),
-      'files' => array(
-        'commmerce_customer' => array(
-          'module' => 'commmerce_customer',
-          'name' => 'includes/commerce_customer_profile.forms',
-          'type' => 'inc',
-        ),
-      ),
-    ),
-  );
-
-  // Wrap the form via ctools modal.
-  $output = ctools_modal_form_wrapper('commerce_customer_customer_profile_form', $form_state);
-
-  if ($form_state['executed']) {
-    $form['client'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Customer'),
-      '#maxlength' => 60,
-      '#autocomplete_path' => 'admin/bat/bookings/customers',
-      '#value' => $form_state['build_info']['args'][0]->commerce_customer_address[LANGUAGE_NONE][0]['name_line'],
-      '#weight' => -1,
-      '#required' => TRUE,
-      '#prefix' => '<div class="form-wrapper" id="edit-customer-wrapper">',
-      '#suffix' => '</div>',
-      '#id' => 'edit-client',
-      '#name' => 'client',
-    );
-
-    if (module_exists('commerce_customer')) {
-      ctools_include('modal');
-      ctools_modal_add_js();
-
-      $form['client']['#description'] = t('Customer profiles are saved in the <a href="@store-profile">store</a>. Search for an existing one by typing the customer name or <a href="@profile-create" class="ctools-use-modal">create a new profile</a>.', array('@store-profile' => url('admin/commerce/customer-profiles'), '@profile-create' => url('admin/bat/add_customers')));
-
-      if (isset($form_state['build_info']['args'][0]->profile_id)) {
-        $form['client']['#field_suffix'] = t('<a href="@edit-profile" class="ctools-use-modal">edit profile</a>', array('@edit-profile' => url('admin/bat/customer-profiles/' . $form_state['build_info']['args'][0]->profile_id . '/edit')));
-      }
-    }
-
-    $output = array(
-      ctools_modal_command_dismiss(),
-      ajax_command_replace('#edit-customer-wrapper', drupal_render($form['client'])),
-    );
-  }
-
-  print ajax_render($output);
-  exit();
 }
 
 /**
@@ -216,6 +140,46 @@ function bat_booking_entity_info_alter(&$entity_info) {
  */
 function bat_booking_entity_property_info_alter(&$info) {
   $info['bat_booking']['properties']['booking_status']['setter callback'] = 'entity_property_verbatim_set';
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function bat_booking_entity_insert($entity, $type) {
+  if ($type == 'bat_booking_type') {
+    field_info_cache_clear();
+
+    // "booking_unit_reference" field.
+    if (field_read_field('booking_unit_reference') === FALSE) {
+      $field = array(
+        'field_name' => 'booking_unit_reference',
+        'type' => 'entityreference',
+        'cardinality' => 1,
+        'locked' => 1,
+        'settings' => array(
+          'target_type' => 'bat_unit',
+        ),
+      );
+      field_create_field($field);
+    }
+
+    field_cache_clear();
+
+    // "booking_unit_reference" field instance.
+    if (field_read_instance('bat_booking', 'booking_unit_reference', $entity->type) === FALSE) {
+      $instance = array(
+        'field_name' => 'booking_unit_reference',
+        'entity_type' => 'bat_booking',
+        'label' => 'Unit',
+        'bundle' => $entity->type,
+        'required' => FALSE,
+        'widget' => array(
+          'type' => 'entityreference_autocomplete',
+        ),
+      );
+      field_create_instance($instance);
+    }
+  }
 }
 
 /**
@@ -812,20 +776,43 @@ class BatBookingController extends EntityAPIController {
     // We are going to be updating the event - so the first step is to remove
     // the old event unless this is a booking we are deleting - in which case we
     // have already removed the event.
-    if ((!isset($entity->is_new)) && ($entity->unit_id != 0) && ($entity->original->start_date != '') &&
-      ($entity->original->end_date != '') && ($entity->type != BAT_BOOKING_DELETED)) {
+    if ((!isset($entity->is_new)) && ($entity->original->start_date != '') && ($entity->original->end_date != '') &&
+        ($entity->type != BAT_BOOKING_DELETED) && field_get_items('bat_booking', $entity->original, 'booking_unit_reference') !== FALSE) {
+
+      $booking_unit_reference = field_get_items('bat_booking', $entity->original, 'booking_unit_reference');
+      $unit_id = $booking_unit_reference[0]['target_id'];
+
       // Create a calendar.
-      $uc = new UnitCalendar($entity->original->unit_id);
+      $uc = new UnitCalendar($unit_id);
       $event_id = bat_availability_assign_id($entity->booking_id, $entity->booking_status);
       // The original end date of the BookingEvent to remove
       $corrected_original_end_date = new DateTime($entity->original->end_date);
       $corrected_original_end_date->sub(new DateInterval('P1D'));
       // Create an event representing the event to remove.
-      $be = new BookingEvent($entity->original->unit_id, $event_id, new DateTime($entity->original->start_date), $corrected_original_end_date);
+      $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->original->start_date), $corrected_original_end_date);
       $uc->removeEvents(array($be));
     }
 
     parent::save($entity);
+
+    // We have a unit defined so lets block availability there unless its a
+    // booking that is to be deleted.
+    if ((field_get_items('bat_booking', $entity, 'booking_unit_reference') !== FALSE) && ($entity->type != BAT_BOOKING_DELETED)) {
+
+      $booking_unit_reference = field_get_items('bat_booking', $entity, 'booking_unit_reference');
+      $unit_id = $booking_unit_reference[0]['target_id'];
+
+      // Set the event_id.
+      $event_id = bat_availability_assign_id($entity->booking_id, $entity->booking_status);
+      // Create an event.
+      $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->start_date), $corrected_end_date);
+
+      // Create UnitCalendar.
+      $rc = new UnitCalendar($unit_id);
+      $responses = $rc->updateCalendar(array($be));
+
+      $entity->bat_av_update = $responses[$event_id];
+    }
   }
 
   public function delete($ids, $delete_line_item = TRUE) {

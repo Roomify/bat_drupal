@@ -237,29 +237,5 @@ function bat_availability_schema() {
     ),
   );
 
-  $schema['bat_booking_locks'] = array(
-    'description' => 'Booking states held in this table can be set to lock - so they cannot be deleted',
-    'fields' => array(
-      'unit_id' => array(
-        'description' => 'Identifier for a booking unit.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'state' => array(
-        'description' => 'The state for a booking unit.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'locked' => array(
-        'description' => 'Whether the state is locked or not',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '1',
-      ),
-    ),
-  );
-
   return $schema;
 }

@@ -166,11 +166,6 @@ function bat_hourly_availability_form_bat_booking_edit_form_alter(&$form, &$form
 
     $form['actions']['submit']['#submit'][] = 'bat_hourly_availability_form_bat_booking_edit_form_submit';
 
-    if (($key = array_search('bat_booking_edit_form_validate', $form['#validate'])) !== FALSE) {
-      unset($form['#validate'][$key]);
-    }
-    $form['#validate'][] = 'bat_hourly_availability_form_bat_booking_edit_form_validate';
-
     // Display only types of units setted as "Hourly booking".
     if (isset($form['availability_fieldset']['unit_type']['#options'])) {
       foreach ($form['availability_fieldset']['unit_type']['#options'] as $type => $name) {
@@ -198,87 +193,8 @@ function bat_hourly_availability_form_bat_booking_edit_form_alter(&$form, &$form
  * Form API validate callback for the booking form.
  */
 function bat_hourly_availability_form_bat_booking_edit_form_validate(&$form, &$form_state) {
-  $booking = $form_state['bat_booking'];
-  list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
-
-  if ($start_date && $end_date) {
-    // Convert input format to the same used in the stored dates.
-    $input_start_date = $start_date->format('Y-m-d');
-    $input_end_date = $end_date->format('Y-m-d');
-    // If stored dates differ from input dates check that price was re-assigned.
-    if (isset($booking->start_date) && isset($booking->end_date)) {
-      if ($input_start_date != $booking->start_date || $input_end_date != $booking->end_date) {
-        if (!isset($form_state['values']['unit_id']) || !is_numeric($form_state['values']['unit_id'])) {
-          form_set_error('availability_fieldset', t('A unit must be re-assigned for this booking.'));
-        }
-      }
-    }
-  }
-
-  // Check if unit assigned.
-  if ((!isset($form_state['values']['unit_id'])) || ($form_state['values']['unit_id'] == '')) {
-    form_set_error('availability_fieldset', t('A unit has not been assigned for this booking.'));
-  }
-  elseif ((isset($form_state['values']['unit_id'])) && ($form_state['values']['unit_id'] == '')) {
-    form_set_error('availability_fieldset', t('A unit has not been assigned for this booking.'));
-  }
-
-  $booking = $form_state['bat_booking'];
-  if (isset($booking->unit_id)) {
-    $new_unit_id = $booking->unit_id;
-    if (isset($form_state['values']['unit_id'])) {
-      $new_unit_id = $form_state['values']['unit_id'];
-    }
-
-    if ($new_unit_id == $booking->unit_id) {
-      // We are going to be updating the event. So the removing the old event.
-      if (($booking->unit_id != 0) && $start_date && $end_date) {
-        // Create a calendar.
-        $uc = new UnitCalendar($booking->unit_id);
-
-        $adjusted_end_date = clone($end_date);
-        $adjusted_end_date->modify('-1 day');
-
-        // Create an event representing the event to remove.
-        $event_id = bat_availability_assign_id($booking->booking_id, $booking->booking_status);
-        $be = new BookingEvent($booking->unit_id, $event_id, $start_date, $end_date);
-
-        // Check if a locked event is blocking the update.
-        $states_confirmed = $uc->getStates($start_date, $adjusted_end_date);
-
-        $valid_states = array_keys(array_filter(variable_get('bat_valid_availability_states', drupal_map_assoc(array(BAT_AVAILABLE, BAT_ON_REQUEST)))));
-        $valid_states = array_merge($valid_states, array(BAT_UNCONFIRMED_BOOKINGS, BAT_HOURLY_BOOKED, $be->id));
-
-        $state_diff_confirmed = array_diff($states_confirmed, $valid_states);
-
-        if (count($state_diff_confirmed) > 0) {
-          $date1 = new DateTime($form['bat_date_range']['bat_start_date']['#default_value']);
-          $date2 = new DateTime($form['bat_date_range']['bat_end_date']['#default_value']);
-
-          $form['bat_date_range']['bat_start_date']['date']['#value'] = $date1->format($form['bat_date_range']['bat_start_date']['#date_format']);
-          $form['bat_date_range']['bat_end_date']['date']['#value'] = $date2->format($form['bat_date_range']['bat_end_date']['#date_format']);
-
-          form_set_error('date_range', t('Could not update calendar because a locked event is blocking the update - you need to unlock any locked events in that period.'));
-        }
-
-        // Check if this booking overlap with an unconfirmed booking.
-        $states_unconfirmed = $uc->getStates($start_date, $adjusted_end_date, TRUE);
-
-        $valid_states = array_keys(array_filter(variable_get('bat_valid_availability_states', drupal_map_assoc(array(BAT_AVAILABLE, BAT_ON_REQUEST)))));
-        $valid_states = array_merge($valid_states, array(BAT_HOURLY_BOOKED, $be->id));
-
-        $state_diff_unconfirmed = array_diff($states_unconfirmed, $valid_states);
-
-        if (count($state_diff_unconfirmed) > 0) {
-          $booking_id = bat_availability_return_id(array_pop($state_diff_unconfirmed));
-          form_set_error('date_range', t('Change of dates leads to an overlap with an unconfirmed booking, please resolve issue with booking !booking_link first.', array('!booking_link' => l($booking_id, 'admin/bat/bookings/booking/' . $booking_id . '/edit'))));
-        }
-      }
-    }
-  }
-
   // Notify field widgets to validate their data.
-  field_attach_form_validate('bat_booking', $booking, $form, $form_state);
+  entity_form_field_validate('bat_booking', $form, $form_state);
 }
 
 /**
@@ -289,22 +205,27 @@ function bat_hourly_availability_form_bat_booking_edit_form_submit($form, &$form
 
   $state = bat_availability_assign_id($booking->booking_id, $booking->booking_status);
 
-  db_merge('bat_hourly_availability')
-    ->key(array('state' => $state))
-    ->fields(array(
-      'unit_id' => $booking->unit_id,
-      'start_date' => $booking->start_date,
-      'end_date' => $booking->end_date,
-      'state' => $state,
-    ))
-    ->execute();
+  $booking_unit_reference = field_get_items('bat_booking', $booking, 'booking_unit_reference');
+  if ($booking_unit_reference !== FALSE) {
+    $unit_id = $booking_unit_reference[0]['target_id'];
 
-  // Create an event.
-  $be = new BookingEvent($booking->unit_id, BAT_HOURLY_BOOKED, new DateTime($booking->start_date), new DateTime($booking->end_date));
+    db_merge('bat_hourly_availability')
+      ->key(array('state' => $state))
+      ->fields(array(
+        'unit_id' => $unit_id,
+        'start_date' => $booking->start_date,
+        'end_date' => $booking->end_date,
+        'state' => $state,
+      ))
+      ->execute();
 
-  // Create UnitCalendar.
-  $rc = new UnitCalendar($booking->unit_id);
-  $responses = $rc->updateCalendar(array($be));
+    // Create an event.
+    $be = new BookingEvent(unit_id, BAT_HOURLY_BOOKED, new DateTime($booking->start_date), new DateTime($booking->end_date));
+
+    // Create UnitCalendar.
+    $rc = new UnitCalendar($unit_id);
+    $responses = $rc->updateCalendar(array($be));
+  }
 }
 
 /**

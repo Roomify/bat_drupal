@@ -12,20 +12,6 @@ use Drupal\bat\BatEventInterface;
 interface BookingEventInterface extends BatEventInterface {
 
   /**
-   * Locks event - updates the bat_booking_locks table to indicate that this
-   * event is locked.
-   *
-   * @return bool
-   *   TRUE if the event is locked successfully, FALSE if was already blocked.
-   */
-  public function lock();
-
-  /**
-   * Unlocks the event.
-   */
-  public function unlock();
-
-  /**
    * Returns event in a format amenable to FullCalendar display or generally
    * sensible JSON.
    *

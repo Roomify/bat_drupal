@@ -3,64 +3,24 @@
   float: none;
   clear: both;
 }
-.bat-booking-form .bat-booking-status-wrapper,
-.bat-booking-form .bat-booking-availability-wrapper,
-.bat-booking-form .bat-booking-unit-type-wrapper,
-.bat-booking-form .bat-booking-order-wrapper {
-  margin-bottom: 15px;
-}
-.bat-booking-form .bat-booking-customer-wrapper,
-.bat-booking-form .bat-booking-data-wrapper {
-  float: left;
-  max-width: 400px;
-  margin-right: 20px;
-}
-.bat-booking-form .bat-booking-customer-wrapper .form-item-client .form-text {
-  width: 62%;
-  min-width: 250px;
-}
-.bat-booking-form .bat-booking-customer-wrapper .form-item-client .field-suffix {
-  width: 30%;
-  display: block;
-}
+
 .bat-booking-form .bat-booking-date-range-wrapper {
-  clear: both;
+  float: none;
   padding: 0;
   margin: 0 0 1em;
 }
+
 .bat-booking-form .bat-booking-availability-button-wrapper {
   clear: both;
 }
+
 .bat-booking-form .bat-booking-availability-wrapper fieldset {
   background: none;
   float: none;
   clear: both;
   margin-bottom: 0;
 }
+
 .bat-booking-form .bat-booking-availability-wrapper .fieldset-description {
   padding: 0;
-}
-.bat-booking-form .form-item-data-group-size,
-.bat-booking-form .bat-booking-group-size-children-container {
-  float: left;
-  margin-right: 20px;
-  max-width: 175px;
-}
-.bat-booking-form .form-item-data-group-size,
-.bat-booking-form .form-item-data-group-size-children {
-  padding: 0;
-}
-.bat-booking-form .bat-booking-options-wrapper .form-wrapper {
-  margin: 0;
-}
-.bat-booking-form .bat-booking-options-wrapper .form-type-select {
-  float: none;
-}
-.bat-booking-form .bat-booking-options-wrapper .form-type-select label {
-  display: inline;
-  font-weight: normal;
-}
-.bat-booking-form .bat-booking-availability-wrapper .form-item-unit-type {
-  float: none;
-  margin-bottom: 15px;
 }
