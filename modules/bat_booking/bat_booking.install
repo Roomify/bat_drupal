@@ -116,6 +116,13 @@ function bat_booking_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'booking_mode' => array(
+        'description' => 'The booking mode (daily/hourly).',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'daily',
+      ),
       'weight' => array(
         'type' => 'int',
         'not null' => TRUE,

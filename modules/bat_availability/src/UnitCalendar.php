@@ -321,41 +321,52 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
    */
   public function updateCalendar($events) {
     $response = array();
-    // First check that none of the events supplied are blocked by an existing
-    // event with a locked status.
-    $monthly_events = array();
 
     foreach ($events as $event) {
-      // Make sure event refers to the unit for this calendar.
-      if ($event->unit_id == $this->unit_id) {
-        // If the event is in the same month span just queue to be added.
-        if ($event->sameMonth()) {
-          $monthly_events[] = $event;
-        }
-        else {
-          // Check if multi-year - if not just create monthly events.
-          if ($event->sameYear()) {
-            $monthly_events_tmp = $event->transformToMonthlyEvents();
-            $monthly_events = array_merge($monthly_events, $monthly_events_tmp);
+      if ($event->booking_mode == 'daily') {
+        // Make sure event refers to the unit for this calendar.
+        if ($event->unit_id == $this->unit_id) {
+          // If the event is in the same month span just queue to be added.
+          if ($event->sameMonth()) {
+            $monthly_event = $event;
           }
           else {
-            // Else transform to single years and then to monthly.
-            $yearly_events = $event->transformToYearlyEvents();
-            foreach ($yearly_events as $ye) {
-              $monthly_events_tmp = $ye->transformToMonthlyEvents();
-              $monthly_events = array_merge($monthly_events, $monthly_events_tmp);
+            // Check if multi-year - if not just create monthly events.
+            if ($event->sameYear()) {
+              $monthly_event = $event->transformToMonthlyEvents();
+            }
+            else {
+              // Else transform to single years and then to monthly.
+              $yearly_events = $event->transformToYearlyEvents();
+              foreach ($yearly_events as $ye) {
+                $monthly_event = $ye->transformToMonthlyEvents();
+              }
             }
           }
+
+          $this->addMonthEvent($monthly_event);
+          $response[$monthly_event->id] = BAT_UPDATED;
+        }
+        else {
+          $response[$event->id] = BAT_WRONG_UNIT;
         }
       }
-      else {
-        $response[$event->id] = BAT_WRONG_UNIT;
-      }
-    }
+      elseif ($event->booking_mode == 'hourly') {
+        // Make sure event refers to the unit for this calendar.
+        if ($event->unit_id == $this->unit_id) {
+          db_merge('bat_hourly_availability')
+            ->key(array('state' => $event->id))
+            ->fields(array(
+              'unit_id' => $event->unit_id,
+              'start_date' => $event->start_date->format('Y-m-d H:i'),
+              'end_date' => $event->end_date->format('Y-m-d H:i'),
+              'state' => $event->id,
+            ))
+            ->execute();
 
-    foreach ($monthly_events as $event) {
-      $this->addMonthEvent($event);
-      $response[$event->id] = BAT_UPDATED;
+          $response[$event->id] = BAT_UPDATED;
+        }
+      }
     }
 
     module_invoke_all('bat_availability_update', $response, $events);

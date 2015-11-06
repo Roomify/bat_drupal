@@ -150,7 +150,7 @@ function bat_hourly_availability_form_bat_booking_settings_ajax_callback($form, 
 function bat_hourly_availability_form_bat_booking_edit_form_alter(&$form, &$form_state) {
   $booking_type = bat_booking_type_load($form_state['bat_booking']->type);
 
-  if (isset($booking_type->data['hourly_booking']) && $booking_type->data['hourly_booking']) {
+  if ($booking_type->booking_mode == 'hourly') {
     $form['bat_date_range']['bat_start_date']['#date_format'] = 'd/m/Y H:i';
     $form['bat_date_range']['bat_end_date']['#date_format'] = 'd/m/Y H:i';
 
@@ -163,25 +163,13 @@ function bat_hourly_availability_form_bat_booking_edit_form_alter(&$form, &$form
       $enddate = (is_numeric(check_plain($_GET['enddate']))) ? check_plain($_GET['enddate']) : '';
       if ($enddate != '') $form['bat_date_range']['bat_end_date']['#default_value'] = gmdate('Y-m-d H:i', $enddate);
     }
-
-    $form['actions']['submit']['#submit'][] = 'bat_hourly_availability_form_bat_booking_edit_form_submit';
-
-    // Display only types of units setted as "Hourly booking".
-    if (isset($form['availability_fieldset']['unit_type']['#options'])) {
-      foreach ($form['availability_fieldset']['unit_type']['#options'] as $type => $name) {
-        $unit_type = bat_unit_type_load($type);
-        if (!(isset($unit_type->data['hourly_availability']) && $unit_type->data['hourly_availability'])) {
-          unset($form['availability_fieldset']['unit_type']['#options'][$type]);
-        }
-      }
-    }
   }
   else {
     // Display only types of units setted as "Full day booking".
     if (isset($form['availability_fieldset']['unit_type']['#options'])) {
       foreach ($form['availability_fieldset']['unit_type']['#options'] as $type => $name) {
         $unit_type = bat_unit_type_load($type);
-        if (isset($unit_type->data['hourly_availability']) && $unit_type->data['hourly_availability']) {
+        if ($unit_type->booking_mode == 'hourly') {
           unset($form['availability_fieldset']['unit_type']['#options'][$type]);
         }
       }
@@ -198,44 +186,13 @@ function bat_hourly_availability_form_bat_booking_edit_form_validate(&$form, &$f
 }
 
 /**
- * Form API submit callback for the booking form.
- */
-function bat_hourly_availability_form_bat_booking_edit_form_submit($form, &$form_state) {
-  $booking = $form_state['bat_booking'];
-
-  $state = bat_availability_assign_id($booking->booking_id, $booking->booking_status);
-
-  $booking_unit_reference = field_get_items('bat_booking', $booking, 'booking_unit_reference');
-  if ($booking_unit_reference !== FALSE) {
-    $unit_id = $booking_unit_reference[0]['target_id'];
-
-    db_merge('bat_hourly_availability')
-      ->key(array('state' => $state))
-      ->fields(array(
-        'unit_id' => $unit_id,
-        'start_date' => $booking->start_date,
-        'end_date' => $booking->end_date,
-        'state' => $state,
-      ))
-      ->execute();
-
-    // Create an event.
-    $be = new BookingEvent(unit_id, BAT_HOURLY_BOOKED, new DateTime($booking->start_date), new DateTime($booking->end_date));
-
-    // Create UnitCalendar.
-    $rc = new UnitCalendar($unit_id);
-    $responses = $rc->updateCalendar(array($be));
-  }
-}
-
-/**
  * Callback for admin/bat/units/unit/%unit/availability - builds availability
  * page by adding calendar and pulling events from availability table.
  */
 function bat_hourly_availability_page(BatUnit $bat_unit, $year = '', $month = '') {
   $bat_unit_type = bat_unit_type_load($bat_unit->type);
 
-  if ($bat_unit_type->data['hourly_availability']) {
+  if ($bat_unit_type->booking_mode == 'hourly') {
     // Set the page title.
     drupal_set_title(t('Edit @unit_name Availability', array('@unit_name' => $bat_unit->name)));
 
@@ -401,7 +358,7 @@ function bat_hourly_availability_form_bat_availability_event_manager_form_alter(
 
     $unit_type = bat_unit_type_load($unit->type);
 
-    if (isset($unit_type->data['hourly_availability']) && $unit_type->data['hourly_availability']) {
+    if ($unit_type->booking_mode == 'hourly') {
       $start_date = $form['bat_start_date']['#value'];
       $end_date = $form['bat_end_date']['#value'];
 
@@ -412,7 +369,7 @@ function bat_hourly_availability_form_bat_availability_event_manager_form_alter(
       $booking_types = bat_booking_get_types();
 
       foreach ($booking_types as $type) {
-        if (!(isset($type->data['hourly_booking']) && $type->data['hourly_booking'])) {
+        if ($type->booking_mode != 'hourly') {
           unset($form['order']['order_link'][$type->type]);
         }
       }
@@ -421,7 +378,7 @@ function bat_hourly_availability_form_bat_availability_event_manager_form_alter(
       $booking_types = bat_booking_get_types();
 
       foreach ($booking_types as $type) {
-        if (isset($type->data['hourly_booking']) && $type->data['hourly_booking']) {
+        if ($type->booking_mode == 'hourly') {
           unset($form['order']['order_link'][$type->type]);
         }
       }
@@ -461,44 +418,6 @@ function bat_hourly_availability_ajax_event_status_change($form, $form_state) {
   }
 
   return $form;
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function bat_hourly_availability_form_bat_booking_type_form_alter(&$form, &$form_state) {
-  $booking_type = $form_state['bat_booking_type'];
-
-  if (!isset($form['additional_settings'])) {
-    $form['additional_settings'] = array(
-      '#type' => 'vertical_tabs',
-      '#weight' => 99,
-    );
-  }
-
-  $form['hourly_booking'] = array(
-    '#type' => 'fieldset',
-    '#group' => 'additional_settings',
-    '#title' => t('Hourly booking'),
-    '#tree' => FALSE,
-    '#weight' => 80,
-  );
-
-  $form['hourly_booking']['enable_hourly_booking'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Enable hourly booking'),
-    '#default_value' => isset($booking_type->data['hourly_booking']) ? $booking_type->data['hourly_booking'] : NULL,
-  );
-
-  $form['actions']['submit']['#submit'][] = 'bat_hourly_availability_form_bat_booking_type_form_submit';
-}
-
-/**
- * Form API submit callback for the booking type form.
- */
-function bat_hourly_availability_form_bat_booking_type_form_submit($form, &$form_state) {
-  $form_state['bat_booking_type']->data['hourly_booking'] = $form_state['values']['enable_hourly_booking'];
-  $form_state['bat_booking_type']->save();
 }
 
 /**

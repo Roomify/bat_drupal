@@ -773,6 +773,13 @@ class BatBookingController extends EntityAPIController {
     $corrected_end_date = new DateTime($entity->end_date);
     $corrected_end_date->sub(new DateInterval('P1D'));
 
+    if ($entity->type != BAT_BOOKING_DELETED) {
+      $booking_type = bat_booking_type_load($entity->type);
+    }
+    else {
+      $booking_type = bat_booking_type_load($entity->original->type);
+    }
+
     // We are going to be updating the event - so the first step is to remove
     // the old event unless this is a booking we are deleting - in which case we
     // have already removed the event.
@@ -788,8 +795,16 @@ class BatBookingController extends EntityAPIController {
       // The original end date of the BookingEvent to remove
       $corrected_original_end_date = new DateTime($entity->original->end_date);
       $corrected_original_end_date->sub(new DateInterval('P1D'));
-      // Create an event representing the event to remove.
-      $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->original->start_date), $corrected_original_end_date);
+
+      if ($booking_type->booking_mode == 'hourly') {
+        // Create an event representing the event to remove.
+        $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->original->start_date), new DateTime($entity->original->end_date), $booking_type->booking_mode);
+      }
+      else {
+        // Create an event representing the event to remove.
+        $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->original->start_date), $corrected_original_end_date);
+      }
+
       $uc->removeEvents(array($be));
     }
 
@@ -802,14 +817,29 @@ class BatBookingController extends EntityAPIController {
       $booking_unit_reference = field_get_items('bat_booking', $entity, 'booking_unit_reference');
       $unit_id = $booking_unit_reference[0]['target_id'];
 
-      // Set the event_id.
-      $event_id = bat_availability_assign_id($entity->booking_id, $entity->booking_status);
-      // Create an event.
-      $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->start_date), $corrected_end_date);
-
       // Create UnitCalendar.
       $rc = new UnitCalendar($unit_id);
-      $responses = $rc->updateCalendar(array($be));
+
+      // Set the event_id.
+      $event_id = bat_availability_assign_id($entity->booking_id, $entity->booking_status);
+
+      if ($booking_type->booking_mode == 'hourly') {
+        // Create an event.
+        $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->start_date), new DateTime($entity->end_date), $booking_type->booking_mode);
+
+        // Create an event.
+        $hourly_be = new BookingEvent($unit_id, BAT_HOURLY_BOOKED, new DateTime($entity->start_date), new DateTime($entity->end_date));
+
+        $events = array($be, $hourly_be);
+      }
+      else {
+        // Create an event.
+        $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->start_date), $corrected_end_date, $booking_type->booking_mode);
+
+        $events = array($be);
+      }
+
+      $responses = $rc->updateCalendar($events);
 
       $entity->bat_av_update = $responses[$event_id];
     }
@@ -825,11 +855,6 @@ class BatBookingController extends EntityAPIController {
       // We've updated the calendar so mark the booking as deleted.
       $booking->type = BAT_BOOKING_DELETED;
       $booking->save();
-
-      if ($delete_line_item) {
-        // Delete the line_item associated with this booking.
-        $this->delete_line_item($booking);
-      }
     }
 
     parent::delete($ids);
@@ -838,41 +863,37 @@ class BatBookingController extends EntityAPIController {
   public function delete_event($booking) {
     // Check if the booking had a unit associated with it and if so update the
     // availability calendar.
-    if (isset($booking->unit_id) && isset($booking->start_date) && isset($booking->end_date)) {
-      $uc = new UnitCalendar($booking->unit_id);
+    if (field_get_items('bat_booking', $booking, 'booking_unit_reference') !== FALSE &&
+        isset($booking->start_date) && isset($booking->end_date)) {
+
+      $booking_type = bat_booking_type_load($booking->type);
+
+      $booking_unit_reference = field_get_items('bat_booking', $booking, 'booking_unit_reference');
+      $unit_id = $booking_unit_reference[0]['target_id'];
+
+      $uc = new UnitCalendar($unit_id);
       // We are not concerned with the state of the event id (confirmed or
       // unconfirmed here) because we will unlock it no matter what (we look for
       // absolute value).
       $event_id = bat_availability_assign_id($booking->booking_id);
-      // Create an event representing the event to remove.
-      $start_date = $booking->start_date_object;
-      $end_date = $booking->end_date_object;
-      // Remove a day from end date to represent the actual event.
-      $end_date->sub(new DateInterval('P1D'));
-      $be = new BookingEvent($booking->unit_id, $event_id, $start_date, $end_date);
-      $uc->removeEvents(array($be));
-    }
-  }
 
-  protected function delete_line_item($booking) {
-    /*if ($booking->order_id != '') {
-      $order = commerce_order_load($booking->order_id);
-
-      if (isset($order->commerce_line_items[LANGUAGE_NONE])) {
-        foreach ($order->commerce_line_items[LANGUAGE_NONE] as $value) {
-          $line_item = commerce_line_item_load($value['line_item_id']);
-
-          if ($line_item->bat_booking_reference[LANGUAGE_NONE][0]['target_id'] == $booking->booking_id) {
-            commerce_line_item_delete($line_item->line_item_id);
-            if (count($order->commerce_line_items) == 0) {
-              commerce_order_delete($order->order_number);
-            }
-
-            break;
-          }
-        }
+      if ($booking_type->booking_mode == 'hourly') {
+        $be = new BookingEvent($unit_id, $event_id, $booking->start_date_object, $booking->end_date_object, $booking_type->booking_mode);
+        $hourly_be = new BookingEvent($unit_id, BAT_HOURLY_BOOKED, $booking->start_date_object, $booking->end_date_object);
+        $events = array($be, $hourly_be);
       }
-    }*/
+      else {
+        // Create an event representing the event to remove.
+        $start_date = $booking->start_date_object;
+        $end_date = $booking->end_date_object;
+        // Remove a day from end date to represent the actual event.
+        $end_date->sub(new DateInterval('P1D'));
+
+        $be = new BookingEvent($unit_id, $event_id, $start_date, $end_date, $booking_type->booking_mode);
+        $events = array($be);
+      }
+      $uc->removeEvents($events);
+    }
   }
 
   /**

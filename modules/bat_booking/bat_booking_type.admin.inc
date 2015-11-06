@@ -58,6 +58,13 @@ function bat_booking_type_form($form, &$form_state, $booking_type, $op = 'edit')
     '#description' => t('A unique machine-readable name for this booking type. It must only contain lowercase letters, numbers, and underscores.'),
   );
 
+  $form['booking_mode'] = array(
+    '#type' => 'select',
+    '#title' => t('Booking Mode'),
+    '#options' => (module_exists('bat_hourly_availability')) ? array('daily' => t('Daily'), 'hourly' => t('Hourly')) : array('daily' => t('Daily')),
+    '#default_value' => isset($booking_type->booking_mode) ? $booking_type->booking_mode : 'daily',
+  );
+
   $form['actions'] = array(
     '#type' => 'actions',
     '#tree' => FALSE,

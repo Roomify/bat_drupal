@@ -20,6 +20,13 @@ class BookingEvent extends BatEvent implements BookingEventInterface {
   public $id;
 
   /**
+   * Booking Mode (daily/hourly).
+   *
+   * @var string
+   */
+  public $booking_mode;
+
+  /**
    * Constructs a BookingEvent instance.
    *
    * @param int $unit_id
@@ -31,11 +38,12 @@ class BookingEvent extends BatEvent implements BookingEventInterface {
    * @param DateTime $end_date
    *   The end date of the event.
    */
-  public function __construct($unit_id, $event_id, $start_date, $end_date) {
+  public function __construct($unit_id, $event_id, $start_date, $end_date, $booking_mode = 'daily') {
     $this->unit_id = $unit_id;
     $this->id = $event_id;
     $this->start_date = $start_date;
     $this->end_date = $end_date;
+    $this->booking_mode = $booking_mode;
   }
 
   /**

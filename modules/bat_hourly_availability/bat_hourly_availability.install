@@ -63,7 +63,7 @@ function bat_hourly_availability_install() {
   $booking = new BatBookingType(array(
     'label' => 'Hourly Booking',
     'type' => 'hourly_booking',
-    'data' => array('hourly_booking' => 1),
+    'booking_mode' => 'hourly',
   ));
   bat_booking_type_save($booking);
 

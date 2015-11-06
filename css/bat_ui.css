@@ -46,6 +46,8 @@ tbody {
 
 .bat-management-form .form-actions {
   padding-top: 1.6em;
+  clear: both;
+  float: none;
 }
 
 /* Fieldsets are floated by default, but if its collapsible, dont float it*/
