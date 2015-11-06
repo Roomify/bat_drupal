@@ -85,6 +85,7 @@ function bat_unit_type_form($form, &$form_state, $unit_type, $op = 'edit') {
     '#type' => 'submit',
     '#value' => t('Save unit type'),
     '#weight' => 100,
+    '#submit' => array('bat_unit_type_form_submit'),
   );
 
   return $form;
