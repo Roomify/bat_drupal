@@ -8,7 +8,7 @@
 namespace Drupal\bat_hourly_availability;
 
 /**
- *
+ * HourlyAvailabilityAgent
  */
 class HourlyAvailabilityAgent {
 
@@ -28,8 +28,9 @@ class HourlyAvailabilityAgent {
   public $opening_time_event = array();
 
   /**
-   * @param BatUnit $unit
+   * Construct the HourlyAvailabilityAgent instance.
    *
+   * @param BatUnit $unit
    * @param DateTime $date
    */
   public function __construct($unit, $date) {
@@ -62,31 +63,31 @@ class HourlyAvailabilityAgent {
   }
 
   /**
-   *
+   * @return array
    */
-  public function getEvents() {
+  public function getEvents($valid_states = array(), $negate = FALSE) {
     $events = array();
 
-    if (!empty($opening_time_event)) {
+    if (!empty($this->opening_time_event)) {
       $end_date = clone($this->date);
-      $end_date->add(new DateInterval('P1D'));
+      $end_date->add(new \DateInterval('P1D'));
 
       $start = $this->date->format('Y-m-d');
       $end = $end_date->format('Y-m-d');
 
       $query = db_select('bat_hourly_availability', 'n')
                 ->fields('n', array('id', 'start_date', 'end_date', 'state'))
-                ->condition('unit_id', $unit->unit_id)
+                ->condition('unit_id', $this->unit->unit_id)
                 ->orderBy('start_date')
                 ->where("start_date > '$start' and end_date < '$end'");
       $results = $query->execute()->fetchAll();
 
       foreach ($results as $result) {
-        if ($result->state != BAT_AVAILABLE) {
-          $start = new \DateTime($result->start_date);
-          $end = new \DateTime($result->end_date);
-
-          $events[] = new HourlyAvailabilityEvent($start, $end);
+        if ((!in_array($result->state, $valid_states) && $negate) || (in_array($result->state, $valid_states) && !$negate)) {
+          $events[] = new HourlyAvailabilityEvent(
+            new \DateTime($result->start_date),
+            new \DateTime($result->end_date)
+          );
         }
       }
     }
@@ -95,7 +96,9 @@ class HourlyAvailabilityAgent {
   }
 
   /**
+   * @param array
    *
+   * @return array
    */
   public function getRemainingEvents($events) {
     $remaining_events = array();
@@ -112,11 +115,7 @@ class HourlyAvailabilityAgent {
 
       for ($i = 0; $i < count($dates); $i = $i + 2) {
         if ($dates[$i] < $dates[$i + 1]) {
-          $remaining_events[] = array(
-            'start' => $dates[$i],
-            'end' => $dates[$i + 1],
-            'duration' => $dates[$i]->diff($dates[$i + 1]),
-          );
+          $remaining_events[] = new HourlyAvailabilityEvent($dates[$i], $dates[$i + 1]);
         }
       }
     }

@@ -7,6 +7,9 @@
 
 namespace Drupal\bat_hourly_availability;
 
+/**
+ * A set of static helper functions for DateInterval.
+ */
 class BatDateInterval {
 
   /**
@@ -18,13 +21,13 @@ class BatDateInterval {
    * @return integer
    */
   public static function compare(\DateInterval $interval1, \DateInterval $interval2) {
-    $total_seconds = BatDateInterval::ConvertToSeconds($interval1);
-    $your_total_seconds = BatDateInterval::ConvertToSeconds($interval2);
+    $seconds_interval1 = BatDateInterval::ConvertToSeconds($interval1);
+    $seconds_interval2 = BatDateInterval::ConvertToSeconds($interval2);
 
-    if ($total_seconds < $your_total_seconds) {
+    if ($seconds_interval1 < $seconds_interval2) {
       return -1;
     }
-    elseif ($total_seconds == $your_total_seconds) {
+    elseif ($seconds_interval1 == $seconds_interval2) {
       return 0;
     }
 

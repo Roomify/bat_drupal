@@ -8,7 +8,7 @@
 namespace Drupal\bat_hourly_availability;
 
 /**
- *
+ * HourlyAvailabilityEvent
  */
 class HourlyAvailabilityEvent {
 
@@ -23,15 +23,21 @@ class HourlyAvailabilityEvent {
   public $end_date;
 
   /**
-   * @var DateInterval
+   * Construct the HourlyAvailabilityEvent instance.
+   *
+   * @param DateTime $start_date
+   * @param DateTime $end_date
    */
-  public $duration;
-
   public function __construct($start_date, $end_date) {
     $this->start_date = $start_date;
     $this->end_date = $end_date;
+  }
 
-    $this->duration = $start_date->diff($end_date);
+  /**
+   * @return DateInterval
+   */
+  public function getDuration() {
+    return $this->start_date->diff($this->end_date);
   }
 
 }
