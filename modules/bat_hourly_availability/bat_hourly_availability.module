@@ -116,7 +116,7 @@ function bat_hourly_availability_form_bat_booking_settings_alter(&$form, &$form_
     '#type' => 'radios',
     '#title' => t('FullCalendar Scheduler License'),
     '#default_value' => variable_get('bat_fullcalendar_scheduler_key', 'non-commercial'),
-    '#options' => array (
+    '#options' => array(
       'commercial' => t('Commercial License'),
       'non-commercial' => t('Non-Commercial Creative Commons'),
       'gpl' => t('GPL License'),

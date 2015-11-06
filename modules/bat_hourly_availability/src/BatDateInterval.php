@@ -68,14 +68,17 @@ class BatDateInterval {
   public static function format(\DateInterval $interval) {
     $format = array();
 
-    if ($interval->s > 0) {
-      $format[] = ($interval->s == 1) ? $interval->format('%s second') : $interval->format('%s seconds');
+    if ($interval->d > 0) {
+      $format[] = ($interval->d == 1) ? $interval->format('%d day') : $interval->format('%d days');
+    }
+    if ($interval->h > 0) {
+      $format[] = ($interval->h == 1) ? $interval->format('%h hour') : $interval->format('%h hours');
     }
     if ($interval->i > 0) {
       $format[] = ($interval->i == 1) ? $interval->format('%i minute') : $interval->format('%i minutes');
     }
-    if ($interval->h > 0) {
-      $format[] = ($interval->h == 1) ? $interval->format('%h hour') : $interval->format('%h hours');
+    if ($interval->s > 0) {
+      $format[] = ($interval->s == 1) ? $interval->format('%s second') : $interval->format('%s seconds');
     }
 
     return implode(' ', $format);
@@ -102,6 +105,29 @@ class BatDateInterval {
     $interval->i = $interval->i % 60;
 
     return $interval;
+  }
+
+  /**
+   * @param DateInterval $interval1
+   * @param DateInterval $interval2
+   *
+   * @return array
+   */
+  public static function getIntervals(\DateInterval $duration, \DateInterval $max_duration) {
+    $duration_options[BatDateInterval::format($duration)] = BatDateInterval::format($duration);
+
+    $interval = BatDateInterval::sum($duration, $duration);
+
+    if (BatDateInterval::compare($interval, $max_duration) == -1) {
+      $duration_options[BatDateInterval::format($interval)] = BatDateInterval::format($interval);
+
+      while (BatDateInterval::compare($interval, $max_duration) == -1) {
+        $interval = BatDateInterval::sum($interval, $duration);
+        $duration_options[BatDateInterval::format($interval)] = BatDateInterval::format($interval);
+      }
+    }
+
+    return $duration_options;
   }
 
 }

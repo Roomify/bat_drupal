@@ -16,7 +16,7 @@ abstract class BatEvent implements BatEventInterface {
   public $unit_id;
 
   /**
-   * The default state for the unit if it has no specific booking.
+   * The start date for the event.
    *
    * @var DateTime
    */
