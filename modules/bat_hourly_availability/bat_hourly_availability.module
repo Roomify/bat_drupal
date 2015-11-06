@@ -631,9 +631,21 @@ function bat_hourly_availability_form_bat_unit_type_form_submit($form, &$form_st
  */
 function bat_hourly_availability_get_opening_time($bat_unit) {
   $openingtime = array();
-  if (isset($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['value']) &&
-      isset($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['value2'])) {
 
+  $bat_opening_time = NULL;
+
+  if (field_get_items('bat_unit', $bat_unit, 'bat_opening_time') === FALSE) {
+    $bat_unit_type = bat_unit_type_load($bat_unit->type);
+
+    if (field_get_items('bat_unit_type', $bat_unit_type, 'bat_opening_time') !== FALSE) {
+      $bat_opening_time = field_get_items('bat_unit_type', $bat_unit_type, 'bat_opening_time');
+    }
+  }
+  else {
+    $bat_opening_time = field_get_items('bat_unit', $bat_unit, 'bat_opening_time');
+  }
+
+  if ($bat_opening_time !== NULL) {
     $time_format = array(
       'hour' => 'H',
       'minute' => 'i',
@@ -641,29 +653,29 @@ function bat_hourly_availability_get_opening_time($bat_unit) {
       'period' => 'none',
     );
 
-    $openingtime['opening'] = timefield_integer_to_time($time_format, $bat_unit->bat_opening_time[LANGUAGE_NONE][0]['value']);
-    $openingtime['closing'] = timefield_integer_to_time($time_format, $bat_unit->bat_opening_time[LANGUAGE_NONE][0]['value2']);
+    $openingtime['opening'] = timefield_integer_to_time($time_format, $bat_opening_time[0]['value']);
+    $openingtime['closing'] = timefield_integer_to_time($time_format, $bat_opening_time[0]['value2']);
 
     $dow = array();
-    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['mon'] == 1) {
+    if ($bat_opening_time[0]['mon'] == 1) {
       $dow[] = 1;
     }
-    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['tue'] == 1) {
+    if ($bat_opening_time[0]['tue'] == 1) {
       $dow[] = 2;
     }
-    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['wed'] == 1) {
+    if ($bat_opening_time[0]['wed'] == 1) {
       $dow[] = 3;
     }
-    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['thu'] == 1) {
+    if ($bat_opening_time[0]['thu'] == 1) {
       $dow[] = 4;
     }
-    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['fri'] == 1) {
+    if ($bat_opening_time[0]['fri'] == 1) {
       $dow[] = 5;
     }
-    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['sat'] == 1) {
+    if ($bat_opening_time[0]['sat'] == 1) {
       $dow[] = 6;
     }
-    if ($bat_unit->bat_opening_time[LANGUAGE_NONE][0]['sun'] == 1) {
+    if ($bat_opening_time[0]['sun'] == 1) {
       $dow[] = 7;
     }
     $openingtime['dow'] = $dow;
