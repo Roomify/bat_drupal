@@ -1,0 +1,15 @@
+name = Bat Facets
+description = Facet API facets for Bat.
+core = 7.x
+
+package = bat
+
+dependencies[] = bat_availability
+dependencies[] = bat_booking
+dependencies[] = bat_unit
+dependencies[] = facetapi
+dependencies[] = search_api
+dependencies[] = search_api_facetapi
+
+files[] = src/BatStateSearchAPIQuery.php
+files[] = src/BatStateWidget.php

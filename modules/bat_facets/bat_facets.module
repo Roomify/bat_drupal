@@ -1,0 +1,185 @@
+<?php
+
+/**
+ * @file
+ */
+
+use Drupal\bat_booking\AvailabilityAgent;
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function bat_facets_ctools_plugin_api($module = NULL, $api = NULL) {
+  if ($module == "facetapi" && $api == "facetapi_defaults") {
+    return array("version" => "1");
+  }
+}
+
+/**
+ * Implements hook_facetapi_facet_info_alter().
+ */
+function bat_facets_facetapi_facet_info_alter(array &$facet_info, array $searcher_info) {
+  switch ($searcher_info['adapter']) {
+    case 'search_api':
+      foreach ($facet_info as $name => $info) {
+        if ($name == 'unit_id') {
+          $facet_info[$name]['query types'][] = 'bat_state';
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Callback for facet availability form.
+ */
+function bat_facets_availability($form, &$form_state, $elements) {
+  $params = drupal_get_query_parameters();
+  $now = date_create();
+
+  // Year defaults to current year, although we are not filtering yet.
+  $default_year = $now->format('Y');
+
+  // Month doesn't have a default selection.
+  $default_month = '';
+
+  $form['container'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'class' => array('container-inline'),
+    ),
+  );
+
+  if (isset($params['bat_start_date']) && !empty($params['bat_start_date'])) {
+    $arrivalDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_start_date']);
+    $arrival = $arrivalDateTime->format('Y-m-d');
+  }
+  if (isset($params['bat_end_date']) && !empty($params['bat_end_date'])) {
+    $departureDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_end_date']);
+    $departure = $departureDateTime->format('Y-m-d');
+  }
+
+  // Create unique ids and selectors for each picker.
+  $start_date_id = drupal_html_id('datepicker-start-date');
+  $start_date_selector = '#' . $start_date_id . ' .form-text';
+
+  $end_date_id = drupal_html_id('datepicker-end-date');
+  $end_date_selector = '#' . $start_date_id . ' .form-text';
+
+  // Specify the default datepicker parameters (see date_popup_element_info())
+  $datepicker_options = array(
+    // Limit bookings to X days in advance, depending on the
+    // chosen configuration in your Rooms installation, defaults
+    // to one day in advance.
+    'minDate' => '+' . variable_get('rooms_booking_start_date', 1) . 'd',
+  );
+
+  $form['container']['arrival'] = array(
+    '#type' => 'date_popup',
+    '#description' => '',
+    '#date_format' => variable_get('rooms_date_format', 'd-m-Y'),
+    '#title' => t('Arrival date'),
+    '#default_value' => isset($arrival) ? $arrival : '',
+    '#datepicker_options' => array_merge($datepicker_options, array('endDateSelector' => $end_date_selector)),
+    '#required' => TRUE,
+  );
+
+  $form['container']['departure'] = array(
+    '#type' => 'date_popup',
+    '#description' => '',
+    '#date_format' => variable_get('rooms_date_format', 'd-m-Y'),
+    '#title' => t('Departure date'),
+    '#default_value' => isset($departure) ? $departure : '',
+    '#datepicker_options' => array_merge($datepicker_options, array('startDateSelector' => $start_date_selector)),
+    '#required' => TRUE,
+    '#attached' => array(
+      'js' => array(
+        drupal_get_path('module', 'rooms') . '/js/rooms_date_popup.js',
+        array(
+          'data' => array(
+            'rooms' => array(
+              'roomsBookingStartDay' => variable_get('rooms_booking_start_date', 1),
+              'roomsDateFormat' => 'dd/mm/yy',
+
+              // Here we create a listing of all datepickers registered on the
+              // current page. This is available for use in your own custom
+              // jQuery scripts as Drupal.settings.rooms.datepickers.
+              'datepickers' => array(
+                $start_date_selector => array(
+                  'endDateSelector' => $end_date_selector,
+                ),
+              ),
+            ),
+          ),
+          'type' => 'setting',
+        ),
+      ),
+    ),
+  );
+
+  $form['container']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Search',
+  );
+
+  return $form;
+}
+
+/**
+ * submit handler.
+ */
+function bat_facets_availability_submit($form, &$form_state) {
+  $form_state['redirect'] = array($_GET['q'], array('query' => array('bat_start_date' => $form_state['values']['arrival'], 'bat_end_date' => $form_state['values']['departure'])));
+}
+
+/**
+ * Implements hook_search_api_query_alter().
+ *
+ * @param SearchApiQueryInterface $query
+ *   The search query being executed.
+ */
+function bat_facets_search_api_query_alter($query) {
+  if ($query->getIndex()->getEntityType()) {
+    $info = entity_get_info($query->getIndex()->getEntityType());
+
+    // Only modify the query if this query is against rooms units.
+    if ($info['base table'] = 'bat_unit') {
+      $params = drupal_get_query_parameters();
+
+      // See if we have dates to search.
+      if (isset($params['bat_start_date']) &&
+          !empty($params['bat_start_date']) &&
+          isset($params['bat_end_date']) &&
+          !empty($params['bat_end_date'])) {
+        $arrivalDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_start_date']);
+        $departureDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_end_date']);
+
+        $options = array();
+        $agent = new AvailabilityAgent($arrivalDateTime, $departureDateTime, $options);
+        $units = $agent->checkAvailability();
+
+        // If no units are available, zero out results.
+        if (!is_array($units)) {
+          $query->condition($info['entity keys']['id'], 1, '<');
+          return;
+        }
+
+        // Make array of unit IDs with availability.
+        $ids = array();
+        foreach ($units as $units_per_type) {
+          foreach ($units_per_type as $units) {
+            foreach ($units as $id => $unit) {
+              $ids[] = $id;
+            }
+          }
+        }
+
+        // Limit the search API query to entity ids with availability.
+        $query->condition($info['entity keys']['id'], $ids, 'IN');
+      }
+    }
+  }
+}
+
+
+
