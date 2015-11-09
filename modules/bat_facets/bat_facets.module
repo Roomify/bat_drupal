@@ -144,6 +144,14 @@ function bat_facets_search_api_query_alter($query) {
 
     // Only modify the query if this query is against rooms units.
     if ($info['base table'] = 'bat_unit') {
+      // Get this widget's settings.
+      $index = $query->getIndex();
+      $facets = facetapi_get_enabled_facets('search_api@' . $index->machine_name);
+      $adapter = facetapi_adapter_load('search_api@' . $index->machine_name);
+      $realm = facetapi_realm_load('block');
+      $settings = $adapter->getFacetSettings($facets['unit_id'], $realm);
+
+      // Get URL parameters.
       $params = drupal_get_query_parameters();
 
       // See if we have dates to search.
@@ -156,6 +164,9 @@ function bat_facets_search_api_query_alter($query) {
 
         $options = array();
         $agent = new AvailabilityAgent($arrivalDateTime, $departureDateTime, $options);
+
+        // Search for units in the states configured on the facet widget settings.
+        $agent->setValidStates($settings->settings['states']);
         $units = $agent->checkAvailability();
 
         // If no units are available, zero out results.
@@ -180,6 +191,4 @@ function bat_facets_search_api_query_alter($query) {
     }
   }
 }
-
-
 

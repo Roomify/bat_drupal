@@ -4,6 +4,7 @@
  * @file
  * Bat Facet API definitions.
  */
+
 /**
  * Implements hook_facetapi_facet_info().
  */
