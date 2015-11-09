@@ -128,7 +128,7 @@ function bat_pricing_form_bat_unit_type_form_alter(&$form, &$form_state) {
 }
 
 /**
- *
+ * Submit callback for bat_unit_type_form form.
  */
 function bat_pricing_form_bat_unit_type_form_submit($form, &$form_state) {
   $form_state['bat_unit_type']->data['pricing_field'] = $form_state['values']['pricing_field'];
@@ -528,6 +528,7 @@ function bat_pricing_update_form_validate(&$form, &$form_state) {
   if (!empty($form_state['values']['amount']) && !is_numeric($form_state['values']['amount'])) {
     form_set_error('amount', t('%name: you must enter a numeric value for the price.', array('%name' => t('Amount'))));
   }
+
   // Validate that a unit is selected.
   bat_validate_unit($form_state);
 }
@@ -567,7 +568,9 @@ function bat_pricing_update_form_submit(&$form, &$form_state) {
 
 }
 
-// Get all the pricing events for the date range.
+/**
+ * Get all pricing events for a specific date range.
+ */
 function update_calendar_event($unit_id, $amount, $start_date, $end_date, $operation, $days) {
   if (!empty($days)) {
     $rc = new UnitPricingCalendar($unit_id);

@@ -127,7 +127,6 @@ class AvailabilityAgent {
     $this->valid_states = $states;
   }
 
-
   /**
    * Searches for availability inside a set of bookable units.
    *

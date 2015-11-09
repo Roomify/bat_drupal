@@ -45,6 +45,12 @@ function bat_hourly_availability_entity_delete($entity, $type) {
       ->condition('state', bat_availability_assign_id($entity->booking_id, $entity->booking_status))
       ->execute();
   }
+  elseif ($type == 'bat_unit') {
+    // Remove data related to entity from bat_hourly_availability table.
+    db_delete('bat_hourly_availability')
+      ->condition('unit_id', $entity->unit_id)
+      ->execute();
+  }
 }
 
 /**

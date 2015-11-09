@@ -22,8 +22,10 @@ class BatBookingTypeUIController extends EntityDefaultUIController {
     $items[$this->path]['description'] = 'Manage booking types, including adding and removing fields and the display of fields.';
     $items[$this->path]['weight'] = '3';
     $items[$this->path]['type'] = MENU_LOCAL_TASK;
+
     return $items;
   }
+
 }
 
 /**
@@ -46,6 +48,7 @@ function bat_booking_type_form($form, &$form_state, $booking_type, $op = 'edit')
     '#required' => TRUE,
     '#size' => 30,
   );
+
   // Machine-readable type name.
   $form['type'] = array(
     '#type' => 'machine_name',

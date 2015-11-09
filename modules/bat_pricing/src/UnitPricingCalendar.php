@@ -498,6 +498,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
         $days['d' . $i] = -1;
       }
     }
+
     return $days;
   }
 
@@ -509,6 +510,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
     for ($i = $event->startDay(); $i <= $event->endDay(); $i++) {
       $days['d' . $i] = commerce_currency_decimal_to_amount($event->amount, commerce_default_currency());
     }
+
     return $days;
   }
 

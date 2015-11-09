@@ -100,11 +100,11 @@ class PricingEvent extends BatEvent implements PricingEventInterface {
 
     // Set the color.
     if ($this->amount < 100) {
-      $event['color']  = "orange";
+      $event['color']  = 'orange';
       $event['title'] = "$this->amount";
     }
     elseif ($this->amount >= 100) {
-      $event['color'] = "green";
+      $event['color'] = 'green';
       $event['title'] = "$amount";
     }
 

@@ -161,12 +161,15 @@ function bat_booking_form_wrapper($booking) {
  */
 function bat_booking_create_form_wrapper($type) {
   global $user;
+
   // Add the breadcrumb for the form's location.
   bat_booking_set_breadcrumb();
+
   // Create a booking object.
   $booking = bat_booking_create(array('type' => $type));
   $booking->created = REQUEST_TIME;
   $booking->owner_name = $user->name;
+
   return drupal_get_form('bat_booking_edit_form', $booking);
 }
 
@@ -181,6 +184,7 @@ function bat_booking_create_form_wrapper($type) {
 function bat_booking_delete_form_wrapper($booking) {
   // Add the breadcrumb for the form's location.
   bat_booking_set_breadcrumb();
+
   return drupal_get_form('bat_booking_delete_form', $booking);
 }
 
@@ -404,6 +408,7 @@ function bat_booking_edit_form($form, &$form_state, $booking) {
   // is used to add validate handlers earlier.
   $form['#validate'][] = 'bat_form_start_end_dates_validate';
   $form['#validate'][] = 'bat_booking_edit_form_validate';
+
   return $form;
 }
 
@@ -489,7 +494,6 @@ function bat_booking_edit_form_get_units($unit_type, $current_booking, $start_da
 
   return empty($bookable_units) ? BAT_NO_MATCH : $bookable_units;
 }
-
 
 /**
  * Form API validate callback for the booking form.
@@ -628,6 +632,7 @@ function bat_booking_add_page() {
  */
 function theme_bat_booking_add_list($variables) {
   $content = $variables['content'];
+
   if ($content) {
     $output = '<dl class="booking-type-list">';
     foreach ($content as $item) {
@@ -644,6 +649,7 @@ function theme_bat_booking_add_list($variables) {
       $output = '<p>' . t('No booking types have been created yet for you to use.') . '</p>';
     }
   }
+
   return $output;
 }
 
