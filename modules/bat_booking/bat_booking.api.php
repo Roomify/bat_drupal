@@ -22,8 +22,6 @@
  *   - unit: The BatUnit entity the booking is related to.
  *   - booking_parameters: Array containing some other booking parameters:
  *     - group_size: The total number of persons included in the booking.
- *     - group_size_children: The number of children.
- *     - childrens_age: Array containing children's age.
  */
 function hook_bat_price_modifier_alter(&$price_modifiers, $booking_info) {
   // This adds programmatically a 10$ discount.

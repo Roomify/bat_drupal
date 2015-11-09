@@ -100,9 +100,7 @@
   margin: 0;
   clear: both;
 }
-.page-admin-bat .modal-content .bat-management-form .bat-date-range,
-.page-admin-bat .modal-content .bat-management-form .form-item-data-group-size,
-.page-admin-bat .modal-content .bat-management-form .bat-booking-group-size-children-container {
+.page-admin-bat .modal-content .bat-management-form .bat-date-range {
   float: left !important;
   margin-right: 4% !important;
   width: 45% !important;

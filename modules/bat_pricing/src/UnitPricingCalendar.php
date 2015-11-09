@@ -66,7 +66,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
   /**
    * {@inheritdoc}
    */
-  public function calculatePrice(\DateTime $start_date, \DateTime $end_date, $persons = 0, $children = 0, $children_ages = array()) {
+  public function calculatePrice(\DateTime $start_date, \DateTime $end_date, $persons = 0, $children = 0) {
 
     $price = 0;
     $booking_price = 0;
@@ -89,16 +89,6 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
       $booking_days += $days;
       if (variable_get('bat_price_calculation', BAT_PER_NIGHT) == BAT_PER_PERSON) {
         $price = $price + ($days * $event->amount * ($persons - $children));
-
-        foreach ($children_ages as $age) {
-          $reply['log']['children'][$age]['pre'] = $price;
-          if (is_array($age)) {
-            $age = $age['value'];
-          }
-
-          $price = $price + ($days * $event->amount);
-          $reply['log']['children'][$age]['post'] = $price;
-        }
       }
       else {
         $price = $price + ($days * $event->amount);
@@ -111,8 +101,6 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
       'end_date' => $end_date,
       'booking_parameters' => array(
         'group_size' => $persons,
-        'group_size_children' => $children,
-        'childrens_age' => $children_ages,
       ),
     );
 

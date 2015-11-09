@@ -63,12 +63,10 @@ interface UnitPricingCalendarInterface extends BatCalendarInterface {
    *   The number of persons staying in this unit.
    * @param int $children
    *   The number of children staying in this unit.
-   * @param array $children_ages
-   *   Children ages.
    *
    * @return array
    *   Array holding full price and booking price of the unit for that period.
    */
-  public function calculatePrice(\DateTime $start_date, \DateTime $end_date, $persons = 0, $children = 0, $children_ages = array());
+  public function calculatePrice(\DateTime $start_date, \DateTime $end_date, $persons = 0, $children = 0);
 
 }

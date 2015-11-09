@@ -629,7 +629,7 @@ function bat_end_of_month_dates($year) {
   $end_of_month_dates = array();
 
   for ($i = 1; $i <= 12; $i++) {
-    $end_of_month_dates[$i] = date("t", mktime(0, 0, 0, $i, 1, $year));
+    $end_of_month_dates[$i] = date('t', mktime(0, 0, 0, $i, 1, $year));
   }
 
   return $end_of_month_dates;

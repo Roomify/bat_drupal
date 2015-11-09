@@ -441,12 +441,6 @@ function bat_booking_edit_form_get_unit_types() {
  *   Start date.
  * @param DateTime $end_date
  *   End date.
- * @param int $group_size
- *   Group size.
- * @param int $group_size_children
- *   Number of children in the group.
- * @param array $children_age
- *   Children age array.
  *
  * @return array|int
  *   Array containing available units or integer to indicate error code.

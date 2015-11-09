@@ -23,8 +23,6 @@
  *   - unit: The BatUnit entity the booking is related to.
  *   - booking_parameters: Array containing some other booking parameters:
  *     - group_size: The total number of persons included in the booking.
- *     - group_size_children: The number of children.
- *     - childrens_age: Array containing children's age.
  */
 function hook_bat_booking_amount_before_modifiers_alter(&$price, $booking_info) {
   // Hardcode a 100$ price whe booking longer than 5 days.

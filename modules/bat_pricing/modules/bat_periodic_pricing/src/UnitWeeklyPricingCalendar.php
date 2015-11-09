@@ -35,7 +35,7 @@ class UnitWeeklyPricingCalendar extends UnitPricingCalendar {
     $this->base_table = 'bat_weekly_pricing';
   }
 
-  public function calculatePrice(\DateTime $start_date, \DateTime $end_date, $persons = 0, $children = 0, $children_ages = array()) {
+  public function calculatePrice(\DateTime $start_date, \DateTime $end_date, $persons = 0, $children = 0) {
   }
 
   /**
