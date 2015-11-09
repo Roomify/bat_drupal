@@ -55,13 +55,4 @@ interface UnitCalendarInterface extends BatCalendarInterface {
    */
   public function getDefaultState();
 
-  /**
-   * Given an array of events removes events from the calendar setting the value
-   * to the default.
-   *
-   * @param BookingEventInterface[] $events
-   *   The events to remove from the database - an array of Booking Events
-   */
-  public function removeEvents($events);
-
 }

@@ -54,7 +54,7 @@ interface BatCalendarInterface {
    * @return array
    *   An array of response on whether event updates were successful or not
    */
-  public function updateCalendar($events);
+  public function updateCalendar($events, $events_to_remove = array());
 
   /**
    * Adds an event to the calendar
@@ -67,13 +67,11 @@ interface BatCalendarInterface {
   /**
    * Checks if a month exists.
    *
-   * @param int $month
-   *   The month to check.
-   * @param int $year
-   *   The year to check.
+   * @param BatEventInterface $event
+   *   The event to check.
    *
    * @return bool
    *   TRUE if the month is defined, FALSE otherwise.
    */
-  public function monthDefined($month, $year);
+  public function monthDefined($event);
 }

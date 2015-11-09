@@ -765,10 +765,10 @@ class BatBookingController extends EntityAPIController {
    */
   public function save($entity) {
     $entity->original = entity_load_unchanged($this->entityType, $entity->{$this->idKey});
-    $corrected_end_date = new DateTime($entity->end_date);
-    $corrected_end_date->sub(new DateInterval('P1D'));
 
     $booking_type = bat_booking_type_load($entity->type);
+
+    $events_to_remove = array();
 
     // We are going to be updating the event - so the first step is to remove
     // the old event unless this is a booking we are deleting - in which case we
@@ -782,20 +782,11 @@ class BatBookingController extends EntityAPIController {
       // Create a calendar.
       $uc = new UnitCalendar($unit_id);
       $event_id = bat_availability_assign_id($entity->booking_id, $entity->booking_status);
-      // The original end date of the BookingEvent to remove
-      $corrected_original_end_date = new DateTime($entity->original->end_date);
-      $corrected_original_end_date->sub(new DateInterval('P1D'));
 
-      if ($booking_type->booking_mode == 'hourly') {
-        // Create an event representing the event to remove.
-        $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->original->start_date), new DateTime($entity->original->end_date), $booking_type->booking_mode);
-      }
-      else {
-        // Create an event representing the event to remove.
-        $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->original->start_date), $corrected_original_end_date);
-      }
+      // Create an event representing the event to remove.
+      $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->original->start_date), new DateTime($entity->original->end_date), $booking_type->booking_mode);
 
-      $uc->removeEvents(array($be));
+      $events_to_remove = array($be);
     }
 
     parent::save($entity);
@@ -812,23 +803,15 @@ class BatBookingController extends EntityAPIController {
       // Set the event_id.
       $event_id = bat_availability_assign_id($entity->booking_id, $entity->booking_status);
 
-      if ($booking_type->booking_mode == 'hourly') {
-        // Create an event.
-        $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->start_date), new DateTime($entity->end_date), $booking_type->booking_mode);
+      // Create an event.
+      $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->start_date), new DateTime($entity->end_date), $booking_type->booking_mode);
 
-        // Create an event.
-        $hourly_be = new BookingEvent($unit_id, BAT_HOURLY_BOOKED, new DateTime($entity->start_date), new DateTime($entity->end_date));
+      $responses = $rc->updateCalendar(array($be), $events_to_remove);
 
-        $events = array($be, $hourly_be);
-      }
-      else {
-        // Create an event.
-        $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->start_date), $corrected_end_date, $booking_type->booking_mode);
-
-        $events = array($be);
-      }
-
-      $responses = $rc->updateCalendar($events);
+      $entity->bat_av_update = $responses[$event_id];
+    }
+    else {
+      $responses = $rc->updateCalendar(array(), $events_to_remove);
 
       $entity->bat_av_update = $responses[$event_id];
     }
@@ -862,22 +845,20 @@ class BatBookingController extends EntityAPIController {
       // absolute value).
       $event_id = bat_availability_assign_id($booking->booking_id);
 
-      if ($booking_type->booking_mode == 'hourly') {
-        $be = new BookingEvent($unit_id, $event_id, $booking->start_date_object, $booking->end_date_object, $booking_type->booking_mode);
-        $hourly_be = new BookingEvent($unit_id, BAT_HOURLY_BOOKED, $booking->start_date_object, $booking->end_date_object);
-        $events = array($be, $hourly_be);
-      }
-      else {
-        // Create an event representing the event to remove.
-        $start_date = $booking->start_date_object;
-        $end_date = $booking->end_date_object;
-        // Remove a day from end date to represent the actual event.
-        $end_date->sub(new DateInterval('P1D'));
+      $be = new BookingEvent($unit_id, $event_id, $booking->start_date_object, $booking->end_date_object, $booking_type->booking_mode);
 
-        $be = new BookingEvent($unit_id, $event_id, $start_date, $end_date, $booking_type->booking_mode);
-        $events = array($be);
+      $events = array($be);
+
+      if ($booking_type->booking_mode == 'hourly') {
+        $corrected_end_date = clone($booking->end_date_object);
+        $corrected_end_date->add(new \DateInterval('P1D'));
+
+        $hourly_be = new BookingEvent($unit_id, $event_id, $booking->start_date_object, $corrected_end_date);
+
+        $events = array_merge($events, array($hourly_be));
       }
-      $uc->removeEvents($events);
+
+      $uc->updateCalendar(array(), $events);
     }
   }
 

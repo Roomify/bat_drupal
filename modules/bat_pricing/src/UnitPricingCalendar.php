@@ -451,8 +451,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
   /**
    * {@inheritdoc}
    */
-  public function updateCalendar($events) {
-
+  public function updateCalendar($events, $events_to_remove = array()) {
     foreach ($events as $event) {
       // Make sure event refers to the unit for this calendar.
       if ($event->unit_id == $this->unit_id) {

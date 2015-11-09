@@ -41,20 +41,6 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
   /**
    * {@inheritdoc}
    */
-  public function removeEvents($events) {
-    $events_to_delete = array();
-    foreach ($events as $event) {
-      // Set the events to the default state.
-      $event->id = $this->default_state;
-
-      $events_to_delete[] = $event;
-    }
-    $this->updateCalendar($events_to_delete);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function stateAvailability(\DateTime $start_date, \DateTime $end_date, array $states = array()) {
     // Get all states in the date range.
     $existing_states = $this->getStates($start_date, $end_date);
@@ -319,59 +305,82 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
   /**
    * {@inheritdoc}
    */
-  public function updateCalendar($events) {
+  public function updateCalendar($events, $events_to_remove = array()) {
     $response = array();
+
+    $events_to_delete = array();
+    foreach ($events_to_remove as $event) {
+      // Set the events to the default state.
+      $event->id = $this->default_state;
+
+      $events_to_delete[] = $event;
+    }
+
+    $events = array_merge($events_to_delete, $events);
 
     foreach ($events as $event) {
       if ($event->booking_mode == 'daily') {
-        // Make sure event refers to the unit for this calendar.
-        if ($event->unit_id == $this->unit_id) {
-          // If the event is in the same month span just queue to be added.
-          if ($event->sameMonth()) {
-            $monthly_event = $event;
-          }
-          else {
-            // Check if multi-year - if not just create monthly events.
-            if ($event->sameYear()) {
-              $monthly_event = $event->transformToMonthlyEvents();
-            }
-            else {
-              // Else transform to single years and then to monthly.
-              $yearly_events = $event->transformToYearlyEvents();
-              foreach ($yearly_events as $ye) {
-                $monthly_event = $ye->transformToMonthlyEvents();
-              }
-            }
-          }
-
-          $this->addMonthEvent($monthly_event);
-          $response[$monthly_event->id] = BAT_UPDATED;
-        }
-        else {
-          $response[$event->id] = BAT_WRONG_UNIT;
-        }
+        $this->addDailyEvent($event);
+        
+        $response[$event->id] = BAT_UPDATED;
       }
       elseif ($event->booking_mode == 'hourly') {
-        // Make sure event refers to the unit for this calendar.
-        if ($event->unit_id == $this->unit_id) {
-          db_merge('bat_hourly_availability')
-            ->key(array('state' => $event->id))
-            ->fields(array(
-              'unit_id' => $event->unit_id,
-              'start_date' => $event->start_date->format('Y-m-d H:i'),
-              'end_date' => $event->end_date->format('Y-m-d H:i'),
-              'state' => $event->id,
-            ))
-            ->execute();
+        $this->addHourlyEvent($event);
 
-          $response[$event->id] = BAT_UPDATED;
-        }
+        $response[$event->id] = BAT_UPDATED;
       }
     }
 
     module_invoke_all('bat_availability_update', $response, $events);
 
     return $response;
+  }
+
+  protected function addDailyEvent($event) {
+    $event->end_date->sub(new \DateInterval('P1D'));
+
+    // If the event is in the same month span just queue to be added.
+    if ($event->sameMonth()) {
+      $monthly_event = $event;
+    }
+    else {
+      // Check if multi-year - if not just create monthly events.
+      if ($event->sameYear()) {
+        $monthly_event = $event->transformToMonthlyEvents();
+      }
+      else {
+        // Else transform to single years and then to monthly.
+        $yearly_events = $event->transformToYearlyEvents();
+        foreach ($yearly_events as $ye) {
+          $monthly_event = $ye->transformToMonthlyEvents();
+        }
+      }
+    }
+
+    $this->addMonthEvent($monthly_event);
+  }
+
+  protected function addHourlyEvent($event) {
+    db_merge('bat_hourly_availability')
+          ->key(array(
+            'unit_id' => $event->unit_id,
+            'start_date' => $event->start_date->format('Y-m-d H:i'),
+            'end_date' => $event->end_date->format('Y-m-d H:i'),
+          ))
+          ->fields(array(
+            'unit_id' => $event->unit_id,
+            'start_date' => $event->start_date->format('Y-m-d H:i'),
+            'end_date' => $event->end_date->format('Y-m-d H:i'),
+            'state' => $event->id,
+          ))
+          ->execute();
+
+    if (bat_availability_return_id($event->id) > 0) {
+      $corrected_end_date = clone($event->end_date);
+      $corrected_end_date->add(new \DateInterval('P1D'));
+      $daily_event = new BookingEvent($event->unit_id, BAT_HOURLY_BOOKED, $event->start_date, $corrected_end_date, 'daily');
+      $this->addDailyEvent($daily_event);
+    }
   }
 
   /**

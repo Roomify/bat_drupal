@@ -37,17 +37,17 @@ abstract class BatCalendar implements BatCalendarInterface {
   /**
    * {@inheritdoc}
    */
-  public abstract function updateCalendar($events);
+  public abstract function updateCalendar($events, $events_to_remove = array());
 
   /**
    * {@inheritdoc}
    */
   public function addMonthEvent(BatEventInterface $event) {
     // First check if the month exists and do an update if so
-    if ($this->monthDefined($event->startMonth(), $event->startYear())) {
+    if ($this->monthDefined($event)) {
       $partial_month_row = $this->preparePartialMonthArray($event);
       $update = db_update($this->base_table)
-        ->condition('unit_id', $this->unit_id)
+        ->condition('unit_id', $event->unit_id)
         ->condition('month', $event->startMonth())
         ->condition('year', $event->startYear())
         ->fields($partial_month_row)
@@ -58,7 +58,7 @@ abstract class BatCalendar implements BatCalendarInterface {
       // Prepare the days array
       $days = $this->prepareFullMonthArray($event);
       $month_row = array(
-        'unit_id' => $this->unit_id,
+        'unit_id' => $event->unit_id,
         'year' => $event->startYear(),
         'month' => $event->startMonth(),
       );
@@ -106,12 +106,16 @@ abstract class BatCalendar implements BatCalendarInterface {
   /**
    * {@inheritdoc}
    */
-  public function monthDefined($month, $year) {
+  public function monthDefined($event) {
+    $month = $event->startMonth();
+    $year = $event->startYear();
+    $unit_id = $event->unit_id;
+
     $query = db_select($this->base_table, 'a');
     $query->addField('a', 'unit_id');
     $query->addField('a', 'year');
     $query->addField('a', 'month');
-    $query->condition('a.unit_id', $this->unit_id);
+    $query->condition('a.unit_id', $unit_id);
     $query->condition('a.year', $year);
     $query->condition('a.month', $month);
     $result = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
