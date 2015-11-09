@@ -22,7 +22,7 @@
  */
 function hook_bat_availability_update($response, $events) {
   foreach ($events as $event) {
-    if ($response[$event->id] == BAT_UPDATED) {
+    if ($response[$event->getId()] == BAT_UPDATED) {
       $unit_affected = bat_unit_load($event->unit_id);
     }
   }

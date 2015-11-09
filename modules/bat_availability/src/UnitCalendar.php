@@ -204,7 +204,7 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
           if (!isset($results[$this->unit_id][$j][$i])) {
             $last_day = $eod[$i];
             $month = $this->prepareFullMonthArray(new BookingEvent($this->unit_id,
-              $this->default_state,
+              $this->getDefaultState(),
               new \DateTime("$j-$i-1"),
               new \DateTime("$j-$i-$last_day")));
             // Add the month in its rightful position.
@@ -311,7 +311,7 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
     $events_to_delete = array();
     foreach ($events_to_remove as $event) {
       // Set the events to the default state.
-      $event->id = $this->default_state;
+      $event->getId() = $this->getDefaultState();
 
       $events_to_delete[] = $event;
     }
@@ -319,15 +319,15 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
     $events = array_merge($events_to_delete, $events);
 
     foreach ($events as $event) {
-      if ($event->booking_mode == 'daily') {
+      if ($event->getBookingMode() == 'daily') {
         $this->addDailyEvent($event);
         
-        $response[$event->id] = BAT_UPDATED;
+        $response[$event->getId()] = BAT_UPDATED;
       }
-      elseif ($event->booking_mode == 'hourly') {
+      elseif ($event->getBookingMode() == 'hourly') {
         $this->addHourlyEvent($event);
 
-        $response[$event->id] = BAT_UPDATED;
+        $response[$event->getId()] = BAT_UPDATED;
       }
     }
 
@@ -371,11 +371,11 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
             'unit_id' => $event->unit_id,
             'start_date' => $event->start_date->format('Y-m-d H:i'),
             'end_date' => $event->end_date->format('Y-m-d H:i'),
-            'state' => $event->id,
+            'state' => $event->getId(),
           ))
           ->execute();
 
-    if (bat_availability_return_id($event->id) > 0) {
+    if (bat_availability_return_id($event->getId()) > 0) {
       $corrected_end_date = clone($event->end_date);
       $corrected_end_date->add(new \DateInterval('P1D'));
       $daily_event = new BookingEvent($event->unit_id, BAT_HOURLY_BOOKED, $event->start_date, $corrected_end_date, 'daily');
@@ -393,11 +393,11 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
 
     for ($i = 1; $i <= $last_day; $i++) {
       if (($i >= $event->startDay()) && ($i <= $event->endDay())) {
-        $days['d' . $i] = $event->id;
+        $days['d' . $i] = $event->getId();
       }
       else {
         // Replace with default state.
-        $days['d' . $i] = $this->default_state;
+        $days['d' . $i] = $this->getDefaultState();
       }
     }
     return $days;
@@ -409,7 +409,7 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
   protected function preparePartialMonthArray(BatEventInterface $event) {
     $days = array();
     for ($i = $event->startDay(); $i <= $event->endDay(); $i++) {
-      $days['d' . $i] = $event->id;
+      $days['d' . $i] = $event->getId();
     }
     return $days;
   }

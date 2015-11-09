@@ -23,7 +23,6 @@ define ('BAT_UNCONFIRMED_BOOKINGS', -1);
  */
 define ('BAT_BLOCKED', 100);
 define ('BAT_UPDATED', 200);
-define ('BAT_WRONG_UNIT', 300);
 
 /**
  * Implements hook_entity_info().
@@ -588,6 +587,7 @@ function bat_unit_state_options() {
  * The class used for unit entities
  */
 class BatUnit extends Entity {
+
   public function __construct($values = array()) {
     parent::__construct($values, 'bat_unit');
   }

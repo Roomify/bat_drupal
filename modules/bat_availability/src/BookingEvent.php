@@ -54,6 +54,42 @@ class BookingEvent extends BatEvent implements BookingEventInterface {
   }
 
   /**
+   * Returns the event id.
+   *
+   * @return int
+   */
+  public function getId() {
+    return $this->id;
+  }
+
+  /**
+   * Set the event id.
+   *
+   * @param int $event_id
+   */
+  public function setId($event_id) {
+    $this->id = $event_id;
+  }
+
+  /**
+   * Returns the booking mode (daily/hourly).
+   *
+   * @return string
+   */
+  public function getBookingMode() {
+    return $this->booking_mode;
+  }
+
+  /**
+   * Set the booking mode (daily/hourly).
+   *
+   * @param string $booking_mode
+   */
+  public function setBookingMode($booking_mode) {
+    $this->booking_mode = $booking_mode;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function formatJson($style = BAT_AVAILABILITY_ADMIN_STYLE, $unit_name = '') {

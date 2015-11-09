@@ -30,6 +30,60 @@ abstract class BatEvent implements BatEventInterface {
   public $end_date;
 
   /**
+   * Returns the unit id.
+   *
+   * @return int
+   */
+  public function getUnitId() {
+    return $this->unit_id;
+  }
+
+  /**
+   * Set the unit id.
+   *
+   * @param int $unit_id
+   */
+  public function setUnitId($unit_id) {
+    $this->unit_id = $unit_id;
+  }
+
+  /**
+   * Returns the start date.
+   *
+   * @return DateTime
+   */
+  public function getStartDate() {
+    return $this->start_date;
+  }
+
+  /**
+   * Set the start date.
+   *
+   * @param DateTime $start_date
+   */
+  public function setStartDate($start_date) {
+    $this->start_date = $start_date;
+  }
+
+  /**
+   * Returns the end date.
+   *
+   * @return DateTime
+   */
+  public function getEndDate() {
+    return $this->end_date;
+  }
+
+  /**
+   * Set the end date.
+   *
+   * @param DateTime $end_date
+   */
+  public function setEndDate($end_date) {
+    $this->end_date = $end_date;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function startDay($format = 'j') {
