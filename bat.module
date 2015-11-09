@@ -196,7 +196,7 @@ function bat_fullcalendar_loaded() {
 }
 
 function bat_fullcalendar_scheduler_loaded() {
-  if (bat_library_loaded('fullcalendar-scheduler', 'source')) {
+  if (bat_library_loaded('fullcalendar-scheduler', 'minified')) {
     return TRUE;
   }
   else {
