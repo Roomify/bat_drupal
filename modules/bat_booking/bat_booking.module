@@ -9,11 +9,6 @@
 use Drupal\bat_availability\BookingEvent;
 use Drupal\bat_availability\UnitCalendar;
 
-// This is a special booking type used to avoid confusion between
-// deleted bookings directly or deleting them because we deleted
-// a line item or an order.
-define('BAT_BOOKING_DELETED', 'bat_booking_deleted');
-
 /**
  * Implements hook_menu().
  */
@@ -773,18 +768,13 @@ class BatBookingController extends EntityAPIController {
     $corrected_end_date = new DateTime($entity->end_date);
     $corrected_end_date->sub(new DateInterval('P1D'));
 
-    if ($entity->type != BAT_BOOKING_DELETED) {
-      $booking_type = bat_booking_type_load($entity->type);
-    }
-    else {
-      $booking_type = bat_booking_type_load($entity->original->type);
-    }
+    $booking_type = bat_booking_type_load($entity->type);
 
     // We are going to be updating the event - so the first step is to remove
     // the old event unless this is a booking we are deleting - in which case we
     // have already removed the event.
     if ((!isset($entity->is_new)) && ($entity->original->start_date != '') && ($entity->original->end_date != '') &&
-        ($entity->type != BAT_BOOKING_DELETED) && field_get_items('bat_booking', $entity->original, 'booking_unit_reference') !== FALSE) {
+        field_get_items('bat_booking', $entity->original, 'booking_unit_reference') !== FALSE) {
 
       $booking_unit_reference = field_get_items('bat_booking', $entity->original, 'booking_unit_reference');
       $unit_id = $booking_unit_reference[0]['target_id'];
@@ -812,8 +802,7 @@ class BatBookingController extends EntityAPIController {
 
     // We have a unit defined so lets block availability there unless its a
     // booking that is to be deleted.
-    if ((field_get_items('bat_booking', $entity, 'booking_unit_reference') !== FALSE) && ($entity->type != BAT_BOOKING_DELETED)) {
-
+    if (field_get_items('bat_booking', $entity, 'booking_unit_reference') !== FALSE) {
       $booking_unit_reference = field_get_items('bat_booking', $entity, 'booking_unit_reference');
       $unit_id = $booking_unit_reference[0]['target_id'];
 
@@ -845,16 +834,12 @@ class BatBookingController extends EntityAPIController {
     }
   }
 
-  public function delete($ids, $delete_line_item = TRUE) {
+  public function delete($ids) {
     foreach ($ids as $id) {
       $booking = bat_booking_load($id);
 
       // Update the availability calendar.
       $this->delete_event($booking);
-
-      // We've updated the calendar so mark the booking as deleted.
-      $booking->type = BAT_BOOKING_DELETED;
-      $booking->save();
     }
 
     parent::delete($ids);
