@@ -1,0 +1,22 @@
+{#
+/**
+ * @file property.html.twig
+ * Default theme implementation to present Property data.
+ *
+ * This template is used when viewing Property pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_property()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('property') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

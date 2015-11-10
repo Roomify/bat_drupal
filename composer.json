@@ -1,0 +1,14 @@
+{
+  "name": "drupal/bat",
+  "type": "drupal-module",
+  "description": "A generalized Booking and Availability Management Framework",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "http://drupal.org/project/bat",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://drupal.org/project/issues/bat",
+    "source": "http://cgit.drupalcode.org/bat"
+  },
+  "require": { }
+}

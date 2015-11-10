@@ -1,0 +1,45 @@
+add property entities:
+  title: 'Create new Property entities'
+
+administer property entities:
+  title: 'Administer Property entities'
+  description: 'Allow to access the administration form to configure Property entities.'
+
+delete property entities:
+  title: 'Delete Property entities'
+
+edit property entities:
+  title: 'Edit Property entities'
+
+view property entities:
+  title: 'View Property entities'
+add unit type entities:
+  title: 'Create new Unit type entities'
+
+administer unit type entities:
+  title: 'Administer Unit type entities'
+  description: 'Allow to access the administration form to configure Unit type entities.'
+
+delete unit type entities:
+  title: 'Delete Unit type entities'
+
+edit unit type entities:
+  title: 'Edit Unit type entities'
+
+view unit type entities:
+  title: 'View Unit type entities'
+add unit entities:
+  title: 'Create new Unit entities'
+
+administer unit entities:
+  title: 'Administer Unit entities'
+  description: 'Allow to access the administration form to configure Unit entities.'
+
+delete unit entities:
+  title: 'Delete Unit entities'
+
+edit unit entities:
+  title: 'Edit Unit entities'
+
+view unit entities:
+  title: 'View Unit entities'

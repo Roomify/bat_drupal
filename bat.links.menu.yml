@@ -1,0 +1,46 @@
+# Bat menu items definition
+bat.admin:
+  title: 'Bat'
+  route_name: bat.admin
+  description: 'Administer Bat'
+  parent: system.admin
+
+# Property menu items definition
+entity.property.collection:
+  title: 'Property list'
+  route_name: entity.property.collection
+  description: 'List Property entities'
+  parent: bat.admin
+
+property.admin.structure.settings:
+  title: Property settings
+  description: 'Configure Property entities'
+  route_name: property.settings
+  parent: bat.admin
+
+# Unit type menu items definition
+entity.unit_type.collection:
+  title: 'Unit type list'
+  route_name: entity.unit_type.collection
+  description: 'List Unit type entities'
+  parent: bat.admin
+
+unit_type.admin.structure.settings:
+  title: Unit type settings
+  description: 'Configure Unit type entities'
+  route_name: unit_type.settings
+  parent: bat.admin
+
+# Unit menu items definition
+entity.unit.collection:
+  title: 'Unit list'
+  route_name: entity.unit.collection
+  description: 'List Unit entities'
+  parent: bat.admin
+
+unit.admin.structure.settings:
+  title: Unit settings
+  description: 'Configure Unit entities'
+  route_name: unit.settings
+  parent: bat.admin
+

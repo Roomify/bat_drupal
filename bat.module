@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Contains bat.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function bat_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the bat module.
+    case 'help.page.bat':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('A generalized Booking and Availability Management Framework') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bat_theme() {
+  $theme = [];
+
+  return $theme;
+}

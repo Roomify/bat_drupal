@@ -1,0 +1,21 @@
+entity.property.add_form:
+  route_name: entity.property.add_form
+  title: 'Add Property'
+  appears_on:
+    - entity.property.collection
+    - entity.property.canonical
+
+entity.unit_type.add_form:
+  route_name: entity.unit_type.add_form
+  title: 'Add Unit type'
+  appears_on:
+    - entity.unit_type.collection
+    - entity.unit_type.canonical
+
+entity.unit.add_form:
+  route_name: entity.unit.add_form
+  title: 'Add Unit'
+  appears_on:
+    - entity.unit.collection
+    - entity.unit.canonical
+

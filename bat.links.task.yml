@@ -1,0 +1,72 @@
+# Bat routing definition
+bat.admin:
+  route_name: bat.admin
+  title: 'Bat Admistration'
+
+
+# Property routing definition
+property.settings_tab:
+  route_name: property.settings
+  title: 'Settings'
+  base_route: property.settings
+
+entity.property.canonical:
+  route_name: entity.property.canonical
+  base_route: entity.property.canonical
+  title: 'View'
+
+entity.property.edit_form:
+  route_name: entity.property.edit_form
+  base_route: entity.property.canonical
+  title: Edit
+
+entity.property.delete_form:
+  route_name:  entity.property.delete_form
+  base_route:  entity.property.canonical
+  title: Delete
+  weight: 10
+
+# Unit type routing definition
+unit_type.settings_tab:
+  route_name: unit_type.settings
+  title: 'Settings'
+  base_route: unit_type.settings
+
+entity.unit_type.canonical:
+  route_name: entity.unit_type.canonical
+  base_route: entity.unit_type.canonical
+  title: 'View'
+
+entity.unit_type.edit_form:
+  route_name: entity.unit_type.edit_form
+  base_route: entity.unit_type.canonical
+  title: Edit
+
+entity.unit_type.delete_form:
+  route_name:  entity.unit_type.delete_form
+  base_route:  entity.unit_type.canonical
+  title: Delete
+  weight: 10
+
+# Unit routing definition
+unit.settings_tab:
+  route_name: unit.settings
+  title: 'Settings'
+  base_route: unit.settings
+
+entity.unit.canonical:
+  route_name: entity.unit.canonical
+  base_route: entity.unit.canonical
+  title: 'View'
+
+entity.unit.edit_form:
+  route_name: entity.unit.edit_form
+  base_route: entity.unit.canonical
+  title: Edit
+
+entity.unit.delete_form:
+  route_name:  entity.unit.delete_form
+  base_route:  entity.unit.canonical
+  title: Delete
+  weight: 10
+
