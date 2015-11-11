@@ -6,9 +6,11 @@
  * FullCalendar plugin.
  */
 
+use Drupal\bat_pricing\PricingEvent;
+use Drupal\bat_pricing\UnitPricingCalendar;
+
 define('BAT_PER_NIGHT', 'bat_per_night');
 define('BAT_PER_PERSON', 'bat_per_person');
-
 
 /**
  * Implements hook_permission().

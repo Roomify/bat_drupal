@@ -9,7 +9,6 @@
 use Drupal\bat_availability\BookingEvent;
 use Drupal\bat_availability\UnitCalendar;
 
-
 define('BAT_AVAILABILITY_ADMIN_STYLE', 1);
 define('BAT_AVAILABILITY_GENERIC_STYLE', 2);
 
