@@ -14,6 +14,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\bat\UnitInterface;
 use Drupal\bat\PropertyInterface;
+use Drupal\bat\UnitTypeInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -131,6 +132,35 @@ class Unit extends ContentEntityBase implements UnitInterface {
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getUnitType() {
+    return $this->get('unit_type_id')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUnitTypeId() {
+    return $this->get('unit_type_id')->target_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUnitTypeId($utid) {
+    $this->set('unit_type_id', $utid);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUnitType(UnitTypeInterface $unit_type) {
+    $this->set('unit_type_id', $unit_type->id());
+    return $this;
+  }
 
   /**
    * {@inheritdoc}
@@ -177,6 +207,30 @@ class Unit extends ContentEntityBase implements UnitInterface {
       ->setDescription(t('The property ID of the Property this Unit entity belongs to.'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'property')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'property',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['unit_type_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Unit Type'))
+      ->setDescription(t('The ID of the Unit Type entity this Unit entity belongs to.'))
+      ->setRevisionable(TRUE)
+      ->setSetting('target_type', 'unit_type')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
