@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_help().
@@ -30,4 +31,21 @@ function bat_theme() {
   $theme = [];
 
   return $theme;
+}
+
+/**
+ * Implements hook_toolbar().
+ */
+function bat_toolbar() {
+  $items = [];
+  $items['bat'] = array(
+    '#type' => 'toolbar_item',
+    '#attached' => array(
+      'library' => array(
+        'bat/drupal.bat.toolbar',
+      ),
+    ),
+  );
+
+  return $items;
 }

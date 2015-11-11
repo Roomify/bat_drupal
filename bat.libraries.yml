@@ -1,0 +1,5 @@
+drupal.bat.toolbar:
+  version: VERSION
+  css:
+    theme:
+      css/bat.icons.css: {}

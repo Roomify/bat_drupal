@@ -1,0 +1,15 @@
+/**
+ * @file
+ * Styling for the bat module icons.
+ */
+
+/**
+ * Toolbar tab icon.
+ */
+.toolbar-bar .toolbar-icon-bat-admin:before {
+  background-image: url(../icons/787878/bat.svg);
+}
+.toolbar-bar .toolbar-icon-bat-admin:active:before,
+.toolbar-bar .toolbar-icon-bat-admin.is-active:before {
+  background-image: url(../icons/ffffff/bat.svg);
+}
