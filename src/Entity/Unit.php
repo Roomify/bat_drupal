@@ -13,6 +13,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\bat\UnitInterface;
+use Drupal\bat\PropertyInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -103,6 +104,37 @@ class Unit extends ContentEntityBase implements UnitInterface {
   /**
    * {@inheritdoc}
    */
+  public function getProperty() {
+    return $this->get('property_id')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPropertyId() {
+    return $this->get('property_id')->target_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPropertyId($pid) {
+    $this->set('property_id', $pid);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setProperty(PropertyInterface $property) {
+    $this->set('property_id', $property->id());
+    return $this;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
@@ -125,6 +157,30 @@ class Unit extends ContentEntityBase implements UnitInterface {
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'author',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['property_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Property'))
+      ->setDescription(t('The property ID of the Property this Unit entity belongs to.'))
+      ->setRevisionable(TRUE)
+      ->setSetting('target_type', 'property')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'property',
         'weight' => 0,
       ))
       ->setDisplayOptions('form', array(
