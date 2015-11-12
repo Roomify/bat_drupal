@@ -13,6 +13,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\bat\AvailabilityEventInterface;
+use Drupal\bat\AvailabilityStateInterface;
 use Drupal\bat\UnitInterface;
 use Drupal\user\UserInterface;
 
@@ -134,6 +135,36 @@ class AvailabilityEvent extends ContentEntityBase implements AvailabilityEventIn
   /**
    * {@inheritdoc}
    */
+  public function getAvailabilityState() {
+    return $this->get('state_id')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAvailabilityStateId() {
+    return $this->get('state_id')->target_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAvailabilityStateId($state_id) {
+    $this->set('state_id', $state_id);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAvailabilityState(AvailabilityStateInterface $state) {
+    $this->set('state_id', $state->id());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
@@ -238,6 +269,30 @@ class AvailabilityEvent extends ContentEntityBase implements AvailabilityEventIn
       ->setDescription(t('The ID of the Unit entity this Availability Event entity is associated with.'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'unit')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'property',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['state_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Availability State'))
+      ->setDescription(t('The ID of the Availability State entity this Availability Event entity is associated with.'))
+      ->setRevisionable(TRUE)
+      ->setSetting('target_type', 'availability_state')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
