@@ -19,3 +19,9 @@ entity.unit.add_form:
     - entity.unit.collection
     - entity.unit.canonical
 
+entity.availability_state.add_form:
+  route_name: 'entity.availability_state.add_form'
+  title: 'Add Availability State'
+  appears_on:
+    - entity.availability_state.collection
+

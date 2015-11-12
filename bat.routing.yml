@@ -180,3 +180,45 @@ unit.settings:
   options:
     _admin_route: TRUE
 
+
+# AvailabilityState routing definition
+entity.availability_state.collection:
+  path: '/admin/bat/availability_state'
+  defaults:
+    _entity_list: 'availability_state'
+    _title: 'Availability State'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+entity.availability_state.add_form:
+  path: '/admin/bat/availability_state/add'
+  defaults:
+    _entity_form: 'availability_state.add'
+    _title: 'Add Availability State'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+entity.availability_state.edit_form:
+  path: '/admin/bat/availability_state/{availability_state}'
+  defaults:
+    _entity_form: 'availability_state.edit'
+    _title: 'Edit Availability State'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+entity.availability_state.delete_form:
+  path: '/admin/bat/availability_state/{availability_state}/delete'
+  defaults:
+    _entity_form: 'availability_state.delete'
+    _title: 'Delete Availability State'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+

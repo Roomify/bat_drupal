@@ -44,3 +44,10 @@ unit.admin.structure.settings:
   route_name: unit.settings
   parent: bat.admin
 
+# Availability State menu items definition
+entity.availability_state.collection:
+  title: 'Availability State'
+  route_name: entity.availability_state.collection
+  description: 'List Availability State'
+  parent: bat.admin
+
