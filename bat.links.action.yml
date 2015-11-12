@@ -25,3 +25,10 @@ entity.availability_state.add_form:
   appears_on:
     - entity.availability_state.collection
 
+entity.availability_event.add_form:
+  route_name: entity.availability_event.add_form
+  title: 'Add Availability Event'
+  appears_on:
+    - entity.availability_event.collection
+    - entity.availability_event.canonical
+

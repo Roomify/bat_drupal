@@ -51,3 +51,16 @@ entity.availability_state.collection:
   description: 'List Availability State'
   parent: bat.admin
 
+# Availability Event menu items definition
+entity.availability_event.collection:
+  title: 'Availability Event list'
+  route_name: entity.availability_event.collection
+  description: 'List Availability Event entities'
+  parent: bat.admin
+
+availability_event.admin.structure.settings:
+  title: Availability Event settings
+  description: 'Configure Availability Event entities'
+  route_name: availability_event.settings
+  parent: bat.admin
+

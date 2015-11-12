@@ -222,3 +222,65 @@ entity.availability_state.delete_form:
   options:
     _admin_route: TRUE
 
+
+# AvailabilityEvent routing definition
+entity.availability_event.canonical:
+  path: '/admin/bat/availability_event/{availability_event}'
+  defaults:
+    _entity_view: 'availability_event'
+    _title: 'Availability Event'
+  requirements:
+    _entity_access: 'availability_event.view'
+  options:
+    _admin_route: TRUE
+
+entity.availability_event.collection:
+  path: '/admin/bat/availability_event'
+  defaults:
+    _entity_list: 'availability_event'
+    _title: 'Availability Event list'
+  requirements:
+    _permission: 'view availability event entities'
+  options:
+    _admin_route: TRUE
+
+entity.availability_event.add_form:
+  path: '/admin/bat/availability_event/add'
+  defaults:
+    _entity_form: availability_event.add
+    _title: 'Add Availability Event'
+  requirements:
+    _permission: 'add availability event entities'
+  options:
+    _admin_route: TRUE
+
+entity.availability_event.edit_form:
+  path: '/admin/bat/availability_event/{availability_event}/edit'
+  defaults:
+    _entity_form: availability_event.edit
+    _title: 'Edit Availability Event'
+  requirements:
+    _permission: 'edit availability event entities'
+  options:
+    _admin_route: TRUE
+
+entity.availability_event.delete_form:
+  path: '/admin/bat/availability_event/{availability_event}/delete'
+  defaults:
+    _entity_form: availability_event.delete
+    _title: 'Delete Availability Event'
+  requirements:
+    _permission: 'delete availability event entities'
+  options:
+    _admin_route: TRUE
+
+availability_event.settings:
+  path: 'admin/bat/availability_event'
+  defaults:
+   _form: '\Drupal\bat\Entity\Form\AvailabilityEventSettingsForm'
+   _title: 'Availability Event settings'
+  requirements:
+    _permission: 'administer availability event entities'
+  options:
+    _admin_route: TRUE
+

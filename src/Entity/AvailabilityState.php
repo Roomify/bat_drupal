@@ -32,10 +32,10 @@ use Drupal\bat\AvailabilityStateInterface;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/availability_state/{availability_state}",
- *     "edit-form" = "/admin/structure/availability_state/{availability_state}/edit",
- *     "delete-form" = "/admin/structure/availability_state/{availability_state}/delete",
- *     "collection" = "/admin/structure/visibility_group"
+ *     "canonical" = "/admin/bat/availability_state/{availability_state}",
+ *     "edit-form" = "/admin/bat/availability_state/{availability_state}/edit",
+ *     "delete-form" = "/admin/bat/availability_state/{availability_state}/delete",
+ *     "collection" = "/admin/bat/visibility_group"
  *   }
  * )
  */

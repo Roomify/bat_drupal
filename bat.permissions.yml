@@ -43,3 +43,18 @@ edit unit entities:
 
 view unit entities:
   title: 'View Unit entities'
+add availability event entities:
+  title: 'Create new Availability Event entities'
+
+administer availability event entities:
+  title: 'Administer Availability Event entities'
+  description: 'Allow to access the administration form to configure Availability Event entities.'
+
+delete availability event entities:
+  title: 'Delete Availability Event entities'
+
+edit availability event entities:
+  title: 'Edit Availability Event entities'
+
+view availability event entities:
+  title: 'View Availability Event entities'
