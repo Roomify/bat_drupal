@@ -172,6 +172,36 @@ class AvailabilityEvent extends ContentEntityBase implements AvailabilityEventIn
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
 
+    $fields['start'] = BaseFieldDefinition::create('created')
+      ->setLabel(t('Start Date'))
+      ->setDescription(t('The time that this event starts.'))
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'timestamp',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'datetime_timestamp',
+        'weight' => 10,
+      ))
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['end'] = BaseFieldDefinition::create('created')
+      ->setLabel(t('End Date'))
+      ->setDescription(t('The time that this event ends.'))
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'timestamp',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'datetime_timestamp',
+        'weight' => 10,
+      ))
+      ->setDisplayConfigurable('form', TRUE);
+
     return $fields;
   }
 
