@@ -10,6 +10,7 @@ namespace Drupal\bat;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\bat\EntityUnitInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
@@ -17,7 +18,7 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup bat
  */
-interface AvailabilityEventInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
+interface AvailabilityEventInterface extends ContentEntityInterface, EntityChangedInterface, EntityUnitInterface, EntityOwnerInterface {
   // Add get/set methods for your configuration properties here.
 
 }

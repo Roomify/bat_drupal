@@ -13,6 +13,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\bat\AvailabilityEventInterface;
+use Drupal\bat\UnitInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -97,6 +98,36 @@ class AvailabilityEvent extends ContentEntityBase implements AvailabilityEventIn
    */
   public function setOwner(UserInterface $account) {
     $this->set('user_id', $account->id());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUnit() {
+    return $this->get('unit_id')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUnitId() {
+    return $this->get('unit_id')->target_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUnitId($unit_id) {
+    $this->set('unit_id', $unit_id);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUnit(UnitInterface $unit) {
+    $this->set('unit_id', $unit->id());
     return $this;
   }
 
@@ -201,6 +232,30 @@ class AvailabilityEvent extends ContentEntityBase implements AvailabilityEventIn
         'weight' => 10,
       ))
       ->setDisplayConfigurable('form', TRUE);
+
+    $fields['unit_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Unit'))
+      ->setDescription(t('The ID of the Unit entity this Availability Event entity is associated with.'))
+      ->setRevisionable(TRUE)
+      ->setSetting('target_type', 'unit')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'property',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
     return $fields;
   }
