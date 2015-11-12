@@ -49,7 +49,7 @@ entity.property.delete_form:
     _permission: 'delete property entities'
 
 property.settings:
-  path: 'admin/bat/property'
+  path: 'admin/bat/property/settings'
   defaults:
    _form: '\Drupal\bat\Entity\Form\PropertySettingsForm'
    _title: 'Property settings'
@@ -109,7 +109,7 @@ entity.unit_type.delete_form:
     _admin_route: TRUE
 
 unit_type.settings:
-  path: 'admin/bat/unit_type'
+  path: 'admin/bat/unit_type/settings'
   defaults:
    _form: '\Drupal\bat\Entity\Form\UnitTypeSettingsForm'
    _title: 'Unit type settings'
@@ -171,7 +171,7 @@ entity.unit.delete_form:
     _admin_route: TRUE
 
 unit.settings:
-  path: 'admin/bat/unit'
+  path: 'admin/bat/unit/settings'
   defaults:
    _form: '\Drupal\bat\Entity\Form\UnitSettingsForm'
    _title: 'Unit settings'
@@ -275,7 +275,7 @@ entity.availability_event.delete_form:
     _admin_route: TRUE
 
 availability_event.settings:
-  path: 'admin/bat/availability_event'
+  path: 'admin/bat/availability_event/settings'
   defaults:
    _form: '\Drupal\bat\Entity\Form\AvailabilityEventSettingsForm'
    _title: 'Availability Event settings'
