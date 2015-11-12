@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\bat\UnitInterface;
 use Drupal\bat\PropertyInterface;
 use Drupal\bat\UnitTypeInterface;
+use Drupal\bat\AvailabilityStateInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -165,6 +166,36 @@ class Unit extends ContentEntityBase implements UnitInterface {
   /**
    * {@inheritdoc}
    */
+  public function getAvailabilityState() {
+    return $this->get('state_id')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAvailabilityStateId() {
+    return $this->get('state_id')->target_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAvailabilityStateId($state_id) {
+    $this->set('state_id', $state_id);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAvailabilityState(AvailabilityStateInterface $state) {
+    $this->set('state_id', $state->id());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
@@ -281,6 +312,30 @@ class Unit extends ContentEntityBase implements UnitInterface {
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
+
+    $fields['state_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Default Availability State'))
+      ->setDescription(t('The ID of the Availability State entity this Unit entity is in by default.'))
+      ->setRevisionable(TRUE)
+      ->setSetting('target_type', 'availability_state')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'property',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
     return $fields;
   }
