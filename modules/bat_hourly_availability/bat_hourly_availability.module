@@ -153,6 +153,56 @@ function bat_hourly_availability_form_bat_booking_settings_ajax_callback($form, 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
+function bat_hourly_availability_form_bat_unit_edit_form_alter(&$form, &$form_state) {
+  if (isset($form['#entity']->is_new)) {
+    $bat_unit_type = bat_unit_type_load($form['#entity']->type);
+
+    // Transferring hours defined on the Unit type to the new Units.
+    if (field_get_items('bat_unit_type', $bat_unit_type, 'bat_opening_time') !== FALSE) {
+      $bat_opening_time = field_get_items('bat_unit_type', $bat_unit_type, 'bat_opening_time');
+
+      $time_format = array(
+        'hour' => 'g',
+        'minute' => 'i',
+        'separator' => ':',
+        'period_separator' => '',
+        'period' => 'A',
+      );
+
+      $form['bat_opening_time'][$form['bat_opening_time']['#language']][0]['value']['#default_value'] = timefield_integer_to_time($time_format, $bat_opening_time[0]['value']);
+      $form['bat_opening_time'][$form['bat_opening_time']['#language']][0]['value2']['#default_value'] = timefield_integer_to_time($time_format, $bat_opening_time[0]['value2']);
+
+      $days = array();
+      if ($bat_opening_time[0]['mon'] == 1) {
+        $days[] = 'mon';
+      }
+      if ($bat_opening_time[0]['tue'] == 1) {
+        $days[] = 'tue';
+      }
+      if ($bat_opening_time[0]['wed'] == 1) {
+        $days[] = 'wed';
+      }
+      if ($bat_opening_time[0]['thu'] == 1) {
+        $days[] = 'thu';
+      }
+      if ($bat_opening_time[0]['fri'] == 1) {
+        $days[] = 'fri';
+      }
+      if ($bat_opening_time[0]['sat'] == 1) {
+        $days[] = 'sat';
+      }
+      if ($bat_opening_time[0]['sun'] == 1) {
+        $days[] = 'sun';
+      }
+
+      $form['bat_opening_time'][$form['bat_opening_time']['#language']][0]['days']['#default_value'] = $days;
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function bat_hourly_availability_form_bat_booking_edit_form_alter(&$form, &$form_state) {
   $booking_type = bat_booking_type_load($form_state['bat_booking']->type);
 
@@ -500,20 +550,7 @@ function bat_hourly_availability_entity_update($entity, $type) {
 function bat_hourly_availability_get_opening_time($bat_unit) {
   $openingtime = array();
 
-  $bat_opening_time = NULL;
-
-  if (field_get_items('bat_unit', $bat_unit, 'bat_opening_time') === FALSE) {
-    $bat_unit_type = bat_unit_type_load($bat_unit->type);
-
-    if (field_get_items('bat_unit_type', $bat_unit_type, 'bat_opening_time') !== FALSE) {
-      $bat_opening_time = field_get_items('bat_unit_type', $bat_unit_type, 'bat_opening_time');
-    }
-  }
-  else {
-    $bat_opening_time = field_get_items('bat_unit', $bat_unit, 'bat_opening_time');
-  }
-
-  if ($bat_opening_time !== NULL) {
+  if ($bat_opening_time = field_get_items('bat_unit', $bat_unit, 'bat_opening_time')) {
     $time_format = array(
       'hour' => 'H',
       'minute' => 'i',
