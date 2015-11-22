@@ -311,7 +311,7 @@ class UnitCalendar extends BatCalendar implements UnitCalendarInterface {
     $events_to_delete = array();
     foreach ($events_to_remove as $event) {
       // Set the events to the default state.
-      $event->getId() = $this->getDefaultState();
+      $event->setId($this->getDefaultState());
 
       $events_to_delete[] = $event;
     }
