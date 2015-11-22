@@ -1,8 +1,8 @@
-name = Bat Facets
-description = Facet API facets for Bat.
+name = BAT Facets
+description = Facet API facets for BAT.
 core = 7.x
 
-package = bat
+package = BAT
 
 dependencies[] = bat_availability
 dependencies[] = bat_booking
