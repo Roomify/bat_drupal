@@ -44,7 +44,8 @@ To display calendars and dates we use the following libraries:
 - MomentJS - http://momentjs.com/ - The [moment.js](http://momentjs.com/downloads/moment.min.js) library should be placed in sites/all/libraries so that you end up with the file located here: sites/all/libraries/moment/moment.min.js
 
 ## Configuration
- - Enable all the BAT modules 
+ - Enable all the BAT modules
+ - The BAT API module is in a separate project - http://drupal.org/project/bat_api - and you need branch 7.x-2.x
  - Make sure to set the jQuery for the admin theme to at least 1.10 by visiting *admin/config/development/jquery_update*
  
 ### Creating Booking Units

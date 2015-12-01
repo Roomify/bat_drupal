@@ -11,4 +11,4 @@ dependencies[] = date
 dependencies[] = date_api
 dependencies[] = date_popup
 dependencies[] = ctools
-dependencies[] = bat_api
+dependencies[] = bat_api (>=2.x)
