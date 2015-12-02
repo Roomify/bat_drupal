@@ -40,7 +40,7 @@ Before enabling BAT you are going to need to download the following modules
 
 To display calendars and dates we use the following libraries:
 
-- Fullcalendar - http://fullcalendar.io/ - You need to [download the following zip](https://github.com/arshaw/fullcalendar/releases/download/v2.4.0/fullcalendar-2.4.0.zip) an unpack in libraries in a directory called fullcalendar
+- Fullcalendar - http://fullcalendar.io/ - You need to [download the following zip](https://github.com/arshaw/fullcalendar/releases/download/v2.5.0/fullcalendar-2.5.0.zip) an unpack in libraries in a directory called fullcalendar
 - MomentJS - http://momentjs.com/ - The [moment.js](http://momentjs.com/downloads/moment.min.js) library should be placed in sites/all/libraries so that you end up with the file located here: sites/all/libraries/moment/moment.min.js
 
 ## Configuration
