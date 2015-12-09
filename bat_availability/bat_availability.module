@@ -1,0 +1,31 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\bat_availability\BatAgent;
+
+/**
+ * Implements hook_entity_insert().
+ */
+function bat_availability_entity_insert(EntityInterface $entity) {
+  if (get_class($entity) == 'Drupal\bat\Entity\AvailabilityEvent') {
+    $unit_id = $entity->getUnitId();
+    $state = $entity->getAvailabilityStateId();
+    $start_date = $entity->getStartDate();
+    $end_date = $entity->getEndDate();
+
+    $agent = new BatAgent($unit_id);
+
+    try {
+      $agent->updateAvailabilityStates($start_date, $end_date, $state);
+    }
+    catch (\Exception $e) {
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function bat_availability_entity_update(EntityInterface $entity) {
+  bat_availability_entity_insert($entity);
+}

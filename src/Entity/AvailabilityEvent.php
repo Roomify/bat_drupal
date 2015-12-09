@@ -165,6 +165,22 @@ class AvailabilityEvent extends ContentEntityBase implements AvailabilityEventIn
   /**
    * {@inheritdoc}
    */
+  public function getStartDate() {
+    $date = new \DateTime();
+    return $date->setTimestamp($this->get('start')->value);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEndDate() {
+    $date = new \DateTime();
+    return $date->setTimestamp($this->get('end')->value);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))

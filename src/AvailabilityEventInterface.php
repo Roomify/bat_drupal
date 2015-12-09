@@ -22,4 +22,7 @@ use Drupal\user\EntityOwnerInterface;
 interface AvailabilityEventInterface extends ContentEntityInterface, EntityChangedInterface, EntityUnitInterface, EntityAvailabilityStateInterface, EntityOwnerInterface {
   // Add get/set methods for your configuration properties here.
 
+	public function getStartDate();
+
+	public function getEndDate();
 }
