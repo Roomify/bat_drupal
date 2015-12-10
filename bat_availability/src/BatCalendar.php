@@ -24,7 +24,7 @@ class BatCalendar implements BatCalendarInterface {
   /**
    *
    */
-  public function __constructor($unit_id, $controller) {
+  public function __construct($unit_id, $controller) {
     $this->unit_id = $unit_id;
     $this->controller = $controller;
   }
@@ -40,20 +40,26 @@ class BatCalendar implements BatCalendarInterface {
    *
    */
   public function addEvents(array $events) {
-
+    foreach ($events as $event) {
+      $this->controller->saveEvent($event);
+    }
   }
 
   /**
    *
    */
   public function deleteEvents(array $events) {
-    
+   foreach ($events as $event) {
+      $this->controller->deleteEvent($event);
+    } 
   }
 
   /**
    *
    */
   public function updateEvents(array $events) {
-
+    foreach ($events as $event) {
+      $this->controller->updateEvent($event);
+    }
   }
 }

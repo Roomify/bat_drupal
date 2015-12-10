@@ -7,6 +7,8 @@
 
 namespace Drupal\bat_availability;
 
+use Drupal\bat_availability\BatEventInterface;
+
 /**
  *
  */
@@ -14,15 +16,15 @@ interface BatCalendarControllerInterface {
 	/**
    *
    */
-	public function saveEvent();
+	public function saveEvent(BatEventInterface $event);
 
 	/**
    *
    */
-	public function updateEvent();
+	public function updateEvent(BatEventInterface $event);
 
 	/**
    *
    */
-	public function deleteEvent();
+	public function deleteEvent(BatEventInterface $event);
 }

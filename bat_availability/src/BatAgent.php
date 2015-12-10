@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat_availability\BatAgentInterface.
+ * Contains \Drupal\bat_availability\BatAgent.
  */
 
 namespace Drupal\bat_availability;
@@ -29,7 +29,7 @@ class BatAgent implements BatAgentInterface {
   /**
    *
    */
-  public function __constructor($unit_id) {
+  public function __construct($unit_id) {
     $this->unit_id = $unit_id;
   }
 
@@ -68,7 +68,7 @@ class BatAgent implements BatAgentInterface {
   /**
    *
    */
-  public function updateAvailabilityEvents($availability_event_entity) {
+  public function updateAvailabilityEvents(Drupal\bat\Entity\AvailabilityEvent $availability_event_entity) {
 
   }
 }

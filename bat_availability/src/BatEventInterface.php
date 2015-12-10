@@ -44,5 +44,10 @@ interface BatEventInterface {
   /**
    *
    */
+  public function getStateInteger();
+
+  /**
+   *
+   */
   public function getEventId();
 }

@@ -15,10 +15,14 @@ function bat_availability_entity_insert(EntityInterface $entity) {
 
     $agent = new BatAgent($unit_id);
 
+    $transaction = db_transaction();
+
     try {
       $agent->updateAvailabilityStates($start_date, $end_date, $state);
+      $agent->updateAvailabilityEvents($entity);
     }
     catch (\Exception $e) {
+      $transaction->rollback();
     }
   }
 }

@@ -34,5 +34,5 @@ interface BatAgentInterface {
   /**
    *
    */
-  public function updateAvailabilityEvents($availability_event_entity);
+  public function updateAvailabilityEvents(Drupal\bat\Entity\AvailabilityEvent $availability_event_entity);
 }
