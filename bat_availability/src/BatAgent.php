@@ -34,28 +34,28 @@ class BatAgent implements BatAgentInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function setValidStates(array $availability_states) {
     $this->availability_states = $availability_states;
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getAvailability(array $availability_filters) {
     return $this->availability_states;
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function checkAvailability() {
 
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function updateAvailabilityStates(\DateTime $start_date, \DateTime $end_date, $state) {
     $controller = new BatCalendarController();
@@ -66,7 +66,7 @@ class BatAgent implements BatAgentInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function updateAvailabilityEvents(Drupal\bat\Entity\AvailabilityEvent $availability_event_entity) {
 

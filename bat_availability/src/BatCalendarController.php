@@ -22,7 +22,7 @@ class BatCalendarController implements BatCalendarControllerInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function saveEvent(BatEventInterface $event) {
     $daily_array = $this->transformToDaily($event);
@@ -73,21 +73,21 @@ class BatCalendarController implements BatCalendarControllerInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function updateEvent(BatEventInterface $event) {
 
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function deleteEvent(BatEventInterface $event) {
 
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function transformToDaily(BatEventInterface $event) {
     $daily_array = array();
@@ -119,7 +119,7 @@ class BatCalendarController implements BatCalendarControllerInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function transformToHourly(BatEventInterface $event) {
     $hourly_array = array();
@@ -164,7 +164,7 @@ class BatCalendarController implements BatCalendarControllerInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function transformToMinute(BatEventInterface $event) {
     $minute_array = array();

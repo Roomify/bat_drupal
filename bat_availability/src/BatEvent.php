@@ -43,49 +43,49 @@ class BatEvent implements BatEventInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getStartDate() {
     return clone($this->start_date);
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getEndDate() {
     return clone($this->end_date);
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function setStartDate(\DateTime $start_date) {
     $this->start_date = clone($start_date);
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function setEndDate(\DateTime $end_date) {
     $this->end_date = clone($end_date);
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getState() {
     return $this->state;
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function setState($state) {
     $this->state = $state;
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getStateInteger() {
     db_merge('availability_states_map')
@@ -101,7 +101,7 @@ class BatEvent implements BatEventInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getEventId() {
     return $event_id;

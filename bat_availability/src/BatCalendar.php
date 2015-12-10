@@ -30,14 +30,14 @@ class BatCalendar implements BatCalendarInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getEvents(\DateTime $start_date, \DateTime $end_date) {
 
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function addEvents(array $events) {
     foreach ($events as $event) {
@@ -46,7 +46,7 @@ class BatCalendar implements BatCalendarInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function deleteEvents(array $events) {
    foreach ($events as $event) {
@@ -55,7 +55,7 @@ class BatCalendar implements BatCalendarInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function updateEvents(array $events) {
     foreach ($events as $event) {
