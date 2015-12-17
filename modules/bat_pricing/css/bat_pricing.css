@@ -7,6 +7,20 @@
   float: none;
 }
 
+.modal-content .unit-pricing-form fieldset {
+  margin-top: 0;
+}
+.modal-content .unit-pricing-form fieldset legend {
+  display: none;
+}
+.modal-content .unit-pricing-form fieldset .fieldset-wrapper {
+  display: block !important;
+}
+.page-admin-bat .modal-content .bat-management-form fieldset .bat-date-range {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
 /* Filter month form */
 .bat-filter-month-form .form-item-month,
 .bat-filter-month-form .form-item-year,

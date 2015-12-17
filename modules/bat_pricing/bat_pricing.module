@@ -63,6 +63,16 @@ function bat_pricing_menu() {
     'weight' => '30',
   );
 
+  $items['admin/bat/units/unit/%bat_unit/price'] = array(
+    'title' => 'Price Management',
+    'page callback' => 'bat_availability_price_manager_page',
+    'page arguments' => array(4),
+    'access callback' => 'bat_unit_access',
+    'access arguments' => array('update pricing', 4),
+    'type' => MENU_CALLBACK,
+    'weight' => 30,
+  );
+
   $items['admin/bat/units/bulk_pricing_management'] = array(
     'title' => 'Bulk pricing management',
     'page callback' => 'bat_pricing_bulk_pricing_management',
@@ -173,6 +183,9 @@ function bat_pricing_page(BatUnit $bat_unit, $year = '', $month = '') {
   // Set the page title.
   drupal_set_title(t('Edit @unit_name Pricing', array('@unit_name' => $bat_unit->name)));
 
+  // Add styles.
+  bat_availability_modal_style();
+
   // Get the current page's URL, striped of the year and month args.
   // This allows us to place this page anywhere, including at
   // unit/%/pricing  or  admin/bat/units/unit/%/pricing
@@ -197,6 +210,60 @@ function bat_pricing_page(BatUnit $bat_unit, $year = '', $month = '') {
       ),
     ),
   );
+}
+
+/**
+ * The PriceManager page shows when clicking on an event in the pricing
+ * calendar - will allow a user to manipulate that event.
+ */
+function bat_availability_price_manager_page($unit, $event_id = NULL, $start_date = 0, $end_date = 0) {
+  // Include modal library.
+  ctools_include('modal');
+
+  // If any info missing we cannot load the event.
+  if ($event_id == NULL || $start_date == 0 || $end_date == 0) {
+    $output[] = ctools_modal_command_dismiss();
+    drupal_set_message(t('Unable to load event.'), 'error');
+  }
+
+  // Basic check to avoid damage from dirty input.
+  $event_id = check_plain($event_id);
+  $start_date = check_plain($start_date);
+  $end_date = check_plain($end_date);
+
+  // Process start and end date.
+  $sd = new DateTime();
+  $sd->setTimezone(new DateTimeZone('UTC'))->setTimestamp($start_date);
+
+  $ed = new DateTime();
+  $ed->setTimezone(new DateTimeZone('UTC'))->setTimestamp($end_date);
+
+  $form_state = array(
+    'title' => t('Price Management'),
+    'ajax' => TRUE,
+    're_render' => FALSE,
+    'no_redirect' => TRUE,
+    'build_info' => array(
+      'args' => array($unit->unit_id),
+    ),
+  );
+
+  $form = drupal_build_form('update_unit_pricing_form', $form_state);
+  if (!empty($form_state['ajax']) && (!$form_state['executed'] || $form_state['rebuild'])) {
+    $form['bat_update_pricing']['bat_date_range']['bat_start_date']['date']['#value'] = $sd->format($form['bat_update_pricing']['bat_date_range']['bat_start_date']['#date_format']);
+    $form['bat_update_pricing']['bat_date_range']['bat_end_date']['date']['#value'] = $ed->format($form['bat_update_pricing']['bat_date_range']['bat_end_date']['#date_format']);
+
+    $form['bat_update_pricing']['bat_date_range']['bat_start_date']['#disabled'] = TRUE;
+    $form['bat_update_pricing']['bat_date_range']['bat_end_date']['#disabled'] = TRUE;
+
+    $output = ctools_modal_form_render($form_state, $form);
+  }
+  else {
+    $output = array(ctools_modal_command_dismiss());
+  }
+
+  print ajax_render($output);
+  exit();
 }
 
 /**

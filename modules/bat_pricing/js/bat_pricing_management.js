@@ -1,6 +1,6 @@
 (function ($) {
 
-Drupal.behaviors.batAvailabilityPrepareForm = {
+Drupal.behaviors.batPricingPrepareForm = {
   attach: function(context) {
     $("form#bat-filter-month-form select").once('select').change(function() {
       $("form#bat-filter-month-form").submit();

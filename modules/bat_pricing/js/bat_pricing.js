@@ -1,6 +1,9 @@
 (function ($) {
+// define object
+Drupal.BatPricing = Drupal.BatPricing || {};
+Drupal.BatPricing.Modal = Drupal.BatPricing.Modal || {};
 
-Drupal.behaviors.bat_availability = {
+Drupal.behaviors.bat_pricing = {
   attach: function(context) {
 
     unit_id = Drupal.settings.batPricing.batID;
@@ -60,6 +63,7 @@ Drupal.behaviors.bat_availability = {
       phpmonth = value[1]+1;
       $(value[0]).once().fullCalendar({
         editable: false,
+        selectable: true,
         height: 400,
         dayNamesShort:[Drupal.t("Sun"), Drupal.t("Mon"), Drupal.t("Tue"), Drupal.t("Wed"), Drupal.t("Thu"), Drupal.t("Fri"), Drupal.t("Sat")],
         monthNames:[Drupal.t("January"), Drupal.t("February"), Drupal.t("March"), Drupal.t("April"), Drupal.t("May"), Drupal.t("June"), Drupal.t("July"), Drupal.t("August"), Drupal.t("September"), Drupal.t("October"), Drupal.t("November"), Drupal.t("December")],
@@ -72,6 +76,26 @@ Drupal.behaviors.bat_availability = {
         },
         events: function(start, end, timezone, callback) {
           callback(events[unit_id]);
+        },
+        eventClick: function(calEvent, jsEvent, view) {
+          // Getting the Unix timestamp - JS will only give us milliseconds
+          if (calEvent.end === null) {
+            //We are probably dealing with a single day event
+            calEvent.end = calEvent.start;
+          }
+
+          var sd = calEvent.start.unix();
+          var ed = calEvent.end.unix();
+          // Open the modal for edit
+          Drupal.BatPricing.Modal(view, calEvent.id, sd, ed);
+        },
+        select: function(start, end, jsEvent, view) {
+          var ed = end.subtract(1, 'days');
+          var sd = start.unix();
+          ed = end.unix();
+          // Open the modal for edit
+          Drupal.BatPricing.Modal(this, -2, sd, ed);
+          $(value[0]).fullCalendar('unselect');
         },
         // Remove Time from events
         eventRender: function(event, el, view) {
@@ -90,4 +114,36 @@ Drupal.behaviors.bat_availability = {
     $(window).resize();
   }
 };
+
+/**
+* Initialize the modal box.
+*/
+Drupal.BatPricing.Modal = function(element, eid, sd, ed) {
+  // prepare the modal show with the bat-pricing settings.
+  Drupal.CTools.Modal.show('bat-modal-style');
+  // base url the part that never change is used to identify our ajax instance
+  var base = Drupal.settings.basePath + '?q=admin/bat/units/unit/';
+  // Create a drupal ajax object that points to the unit pricing form.
+  var element_settings = {
+    url : base + Drupal.settings.batPricing.batID + '/price/' + eid + '/' + sd + '/' + ed,
+    event : 'getResponse',
+    progress : { type: 'throbber' }
+  };
+  // To made all calendars trigger correctly the getResponse event we need to
+  // initialize the ajax instance with the global calendar table element.
+  var calendars_table = $(element.el).closest('.calendar-set');
+
+  // create new instance only once if exists just override the url
+  if (Drupal.ajax[base] === undefined) {
+    Drupal.ajax[base] = new Drupal.ajax(element_settings.url, calendars_table, element_settings);
+  }
+  else {
+    Drupal.ajax[base].element_settings.url = element_settings.url;
+    Drupal.ajax[base].options.url = element_settings.url;
+  }
+  // We need to trigger manually the AJAX getResponse due fullcalendar select
+  // event is not recognized by Drupal AJAX
+  $(calendars_table).trigger('getResponse');
+};
+
 })(jQuery);
