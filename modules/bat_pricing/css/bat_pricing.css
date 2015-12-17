@@ -1,6 +1,10 @@
-/* Styles for the bat_pricing edit form */
-.bat-bulk-pricing-form .fc-header {
-  display: none;
+/* Update unit pricing form */
+.unit-pricing-form .form-item-day-options {
+  clear: both;
+  width: 100%;
+}
+.unit-pricing-form .form-item-day-options .form-type-checkbox {
+  float: none;
 }
 
 /* Filter month form */
@@ -19,6 +23,9 @@
 }
 
 /* Bulk pricing form */
+.bat-bulk-pricing-form .fc-header {
+  display: none;
+}
 .bat-bulk-pricing-form .fc-day-grid-container {
   overflow-y: hidden;
   height: 60px;

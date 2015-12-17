@@ -224,17 +224,19 @@ function update_unit_pricing_form($form, &$form_state, $unit_id) {
   );
 
   $form['bat_update_pricing']['bat_date_range'] += bat_date_range_fields();
+  $form['bat_update_pricing']['bat_date_range']['bat_start_date']['#title'] = t('Start Date');
+  $form['bat_update_pricing']['bat_date_range']['bat_end_date']['#title'] = t('End Date');
   // Unset a js setting that is not relevant for pricing.
   drupal_add_js(array('bat' => array('batBookingStartDay' => 0)), 'setting');
 
   $day_options = array(
-    '1' => t('Sun'),
-    '2' => t('Mon'),
-    '3' => t('Tue'),
-    '4' => t('Wed'),
-    '5' => t('Thu'),
-    '6' => t('Fri'),
-    '7' => t('Sat'),
+    '1' => t('Sunday'),
+    '2' => t('Monday'),
+    '3' => t('Tuesday'),
+    '4' => t('Wednesday'),
+    '5' => t('Thursday'),
+    '6' => t('Friday'),
+    '7' => t('Saturday'),
   );
   $form['bat_update_pricing']['day_options'] = array(
     '#type' => 'checkboxes',
