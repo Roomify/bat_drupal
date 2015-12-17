@@ -582,6 +582,101 @@ function bat_unit_state_options() {
   );
 }
 
+/**
+ * Returns an initialized bat type array. This is here to help other modules easily and
+ * consistently add BAT unit types.
+ */
+function bat_unit_unit_type_new() {
+  return array(
+    'type' => '',
+    'label' => '',
+    'weight' => '0',
+    'data' => array(
+      'hourly_availability' => 0,
+    ),
+    'bat_opening_time' => '',
+ );
+}
+
+/**
+ * Support for adding price fields to BAT Units - something modules such as Rooms make use of.
+ *
+ * @param $field_name
+ * @param $entity_type
+ * @param $bundle
+ * @param $label
+ * @param $description
+ * @param int $weight
+ * @param bool|FALSE $locked
+ * @param bool|FALSE $calculation
+ * @param array $display
+ * @throws \Exception
+ * @throws \FieldException
+ */
+function bat_unit_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = false, $calculation = false, $display = array()) {
+
+  $field = field_info_field($field_name);
+  $instance = field_info_instance($entity_type, $field_name, $bundle);
+
+  if (empty($field)) {
+    $field = array(
+      'field_name' => $field_name,
+      'type' => 'commerce_price',
+      'cardinality' => 1,
+      'entity_types' => array($entity_type),
+      'translatable' => FALSE,
+      'locked' => $locked,
+    );
+    $field = field_create_field($field);
+  }
+
+  if (empty($instance)) {
+    $instance = array(
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'description' => $description,
+
+      'label' => $label,
+      'required' => TRUE,
+      'settings' => array(),
+
+      // Because this widget is locked, we need it to use the full price widget
+      // since the currency option can't be adjusted at the moment.
+      'widget' => array(
+        'type' => 'commerce_price_full',
+        'weight' => $weight,
+        'settings' => array(
+          'currency_code' => 'default',
+        ),
+      ),
+
+      'display' => array(),
+    );
+
+    $entity_info = entity_get_info($entity_type);
+
+    // Spoof the default view mode and node teaser so its display type is set.
+    $entity_info['view modes'] += array(
+      'default' => array(),
+      'node_teaser' => array(),
+    );
+
+    foreach ($entity_info['view modes'] as $view_mode => $data) {
+      $instance['display'][$view_mode] = $display + array(
+          'label' => 'hidden',
+          'type' => 'commerce_price_formatted_amount',
+          'settings' => array(
+            'calculation' => $calculation,
+          ),
+          'weight' => $weight,
+        );
+    }
+
+    field_create_instance($instance);
+  }
+}
+
 
 /**
  * The class used for unit entities
