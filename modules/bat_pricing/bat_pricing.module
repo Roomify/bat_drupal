@@ -253,8 +253,8 @@ function bat_availability_price_manager_page($unit, $event_id = NULL, $start_dat
     $form['bat_update_pricing']['bat_date_range']['bat_start_date']['date']['#value'] = $sd->format($form['bat_update_pricing']['bat_date_range']['bat_start_date']['#date_format']);
     $form['bat_update_pricing']['bat_date_range']['bat_end_date']['date']['#value'] = $ed->format($form['bat_update_pricing']['bat_date_range']['bat_end_date']['#date_format']);
 
-    $form['bat_update_pricing']['bat_date_range']['bat_start_date']['#disabled'] = TRUE;
-    $form['bat_update_pricing']['bat_date_range']['bat_end_date']['#disabled'] = TRUE;
+    $form['bat_update_pricing']['bat_date_range']['bat_start_date']['#attributes']['disabled'] = 'disabled';
+    $form['bat_update_pricing']['bat_date_range']['bat_end_date']['#attributes']['disabled'] = 'disabled';
 
     $output = ctools_modal_form_render($form_state, $form);
   }
