@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the bat_availability_reference
+ * module.
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function bat_availability_reference_field_schema($field) {
+  $columns = array(
+    'unit_id' => array(
+      'type'     => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+    ),
+  );
+  return array(
+    'columns' => $columns,
+    'indexes' => array('unit_id' => array('unit_id')),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+}
