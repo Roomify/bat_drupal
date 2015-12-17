@@ -482,40 +482,9 @@ function bat_hourly_availability_ajax_event_status_change($form, $form_state) {
 function bat_hourly_availability_form_bat_unit_type_form_alter(&$form, &$form_state) {
   $unit_type = $form_state['bat_unit_type'];
 
-  if (!isset($form['additional_settings'])) {
-    $form['additional_settings'] = array(
-      '#type' => 'vertical_tabs',
-      '#weight' => 99,
-    );
-  }
-
-  $form['hourly_availability'] = array(
-    '#type' => 'fieldset',
-    '#group' => 'additional_settings',
-    '#title' => t('Hourly availability'),
-    '#tree' => FALSE,
-    '#weight' => 80,
-  );
-
-  $form['hourly_availability']['enable_hourly_availability'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Enable hourly availability'),
-    '#default_value' => isset($unit_type->data['hourly_availability']) ? $unit_type->data['hourly_availability'] : NULL,
-  );
-
-  if (!(isset($unit_type->data['hourly_availability']) && $unit_type->data['hourly_availability'])) {
+  if ((isset($unit_type->booking_mode) && $unit_type->booking_mode != 'hourly') || isset($unit_type->is_new)) {
     $form['bat_opening_time']['#access'] = FALSE;
   }
-
-  $form['actions']['submit']['#submit'][] = 'bat_hourly_availability_form_bat_unit_type_form_submit';
-}
-
-/**
- * Form API submit callback for the unit type form.
- */
-function bat_hourly_availability_form_bat_unit_type_form_submit($form, &$form_state) {
-  $form_state['bat_unit_type']->data['hourly_availability'] = $form_state['values']['enable_hourly_availability'];
-  $form_state['bat_unit_type']->save();
 }
 
 /**
@@ -523,7 +492,7 @@ function bat_hourly_availability_form_bat_unit_type_form_submit($form, &$form_st
  */
 function bat_hourly_availability_entity_insert($entity, $type) {
   if ($type == 'bat_unit_type') {
-    if (isset($entity->data['hourly_availability']) && $entity->data['hourly_availability']) {
+    if ($entity->booking_mode == 'hourly') {
       bat_hourly_availability_add_opening_time_field('bat_unit', $entity->type);
     }
   }
@@ -534,7 +503,7 @@ function bat_hourly_availability_entity_insert($entity, $type) {
  */
 function bat_hourly_availability_entity_update($entity, $type) {
   if ($type == 'bat_unit_type') {
-    if (isset($entity->data['hourly_availability']) && $entity->data['hourly_availability']) {
+    if ($entity->booking_mode == 'hourly') {
       bat_hourly_availability_add_opening_time_field('bat_unit', $entity->type);
     }
   }

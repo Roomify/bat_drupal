@@ -133,6 +133,13 @@ function bat_unit_schema() {
         'size' => 'tiny',
         'description' => 'The weight of this unit type in relation to others.',
       ),
+      'booking_mode' => array(
+        'description' => 'The booking mode (daily/hourly).',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'daily',
+      ),
       'data' => array(
         'type' => 'text',
         'not null' => FALSE,
