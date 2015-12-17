@@ -814,30 +814,19 @@ function bat_form_values_get_start_end_dates($form_state) {
  */
 function bat_form_start_end_dates_validate($form, &$form_state) {
   list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
-  $today_greater = FALSE;
-  $single_day_bookings = FALSE;
+  $single_day = FALSE;
   // Skip if no dates are provided.
   if (empty($start_date) || empty($end_date)) {
     form_set_error('date_range', t('Please choose dates.'));
     return;
   }
 
-  // In case that this value is set trigger the today greater validation.
-  if (isset($form_state['today_greater_validation'])) {
-    $today_greater = TRUE;
-  }
-
-  // In case that this value is set trigger the today greater validation.
-  if (isset($form_state['single_day_bookings'])) {
-    $single_day_bookings = TRUE;
-  }
-  else {
-    // Set the form state so that we can carry the value over to the results page
-    $form_state['single_day_bookings'] = $single_day_bookings;
+  if ($form_state['values']['form_id'] == 'update_unit_pricing_form') {
+    $single_day = TRUE;
   }
 
   // Check date validity.
-  $errors = bat_check_dates_validity($start_date, $end_date, $today_greater, $single_day_bookings);
+  $errors = bat_check_dates_validity($start_date, $end_date, $single_day);
 
   // For some forms as bat_availability_pricing_update_form and
   // bat_availability_update_status_form we need to validate that the selected
@@ -866,19 +855,18 @@ function bat_form_start_end_dates_validate($form, &$form_state) {
  *   The start date
  * @param DateTime $end_date
  *   The end date
- * @param bool $today_greater
- *   TRUE in to enforce validating that start_date must be greater than
- *   today.
+ * @param bool $single_day
+ *   TRUE validating that start_date can be equal to end_date.
  *
  * @return array
  *   An array with error messages.
  */
-function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $today_greater = FALSE, $single_day_bookings = FALSE) {
+function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $single_day = FALSE) {
   $errors = array();
   // End date must be greater than start date unless single day bookings are
   // enabled, in which case it must not be before the start date.
-  if (($end_date < $start_date) || (($end_date == $start_date) && !$single_day_bookings)) {
-    if ($single_day_bookings) {
+  if (($end_date < $start_date) || (($end_date == $start_date) && !$single_day)) {
+    if ($single_day) {
       $errors[] = t('End date must be on or after the start date.');
     }
     else {
@@ -901,14 +889,6 @@ function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $tod
     $errors[] = 'You cannot book that far into the future - bookings can only be made ' . $advanced_bookings_interval->format('%a') . ' days in advance';
   }
 
-  // In case the date should be grater than today.
-  if ($today_greater) {
-    $now = new DateTime();
-    $diff1 = $now->setTime(0, 0, 0)->diff($start_date);
-    if ($diff1->invert) {
-      $errors[] = t('Start date must be current or in the future.');
-    }
-  }
   return $errors;
 }
 
