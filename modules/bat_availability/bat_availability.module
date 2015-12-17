@@ -579,16 +579,6 @@ function bat_availability_event_manager_page($unit, $event_id = NULL, $start_dat
     exit();
   }
 
-  // If the event is blocked, show an error message.
-  $uc = new UnitCalendar($unit->unit_id);
-  $mock_event = new BookingEvent($unit->unit_id, NULL, $sd, $ed);
-  if ($uc->eventBlocked($mock_event)) {
-    drupal_set_message(t('You can not update calendar because a locked event is blocking the update. You need to unlock any locked events in that period.'), 'warning');
-    $output = theme('status_messages');
-    ctools_modal_render(t('Event Management'), $output);
-    return;
-  }
-
   ctools_modal_render(t('Event Management'), drupal_get_form('bat_availability_event_manager_form', $unit, $event_id, $sd, $ed));
 }
 
