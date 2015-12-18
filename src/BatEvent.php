@@ -61,7 +61,7 @@ abstract class BatEvent implements BatEventInterface {
    *
    * @param DateTime $start_date
    */
-  public function setStartDate($start_date) {
+  public function setStartDate(\DateTime $start_date) {
     $this->start_date = clone($start_date);
   }
 
@@ -79,7 +79,7 @@ abstract class BatEvent implements BatEventInterface {
    *
    * @param DateTime $end_date
    */
-  public function setEndDate($end_date) {
+  public function setEndDate(\DateTime $end_date) {
     $this->end_date = clone($end_date);
   }
 

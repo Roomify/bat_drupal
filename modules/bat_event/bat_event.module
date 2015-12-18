@@ -216,22 +216,6 @@ function bat_event_ctools_plugin_type() {
 /**
  * Implements hook_form_FORM_ID_alter().
  *
- * FORM_ID = bat_event_settings
- */
-function bat_event_form_bat_event_settings_alter(&$form, &$form_state, $form_id) {
-  form_load_include($form_state, 'inc', 'rules', 'ui/ui.forms');
-
-  $form['bat_admin_settings'] = array(
-    '#type' => 'fieldset',
-    '#group' => 'bat_settings',
-    '#title' => t('Administrative settings'),
-  );
-
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- *
  * FORM_ID = views_exposed_form
  */
 function bat_event_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {

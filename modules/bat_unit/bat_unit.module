@@ -569,12 +569,15 @@ function bat_unit_form_bat_unit_type_operation_form_alter(&$form, &$form_state, 
  *   Array of available unit states keyed by id.
  */
 function bat_unit_state_options() {
-  return array(
-    BAT_NOT_AVAILABLE => t('Unavailable'),
-    BAT_AVAILABLE => t('Available'),
-    BAT_ON_REQUEST => t('On Request'),
-    BAT_ANON_BOOKED => t('Anonymous Booking'),
-  );
+  $event_states = array();
+
+  $states = bat_event_get_states();
+
+  foreach ($states as $event_state) {
+    $event_states[$event_state['id']] = t($event_state['label']);
+  }
+
+  return $event_states;
 }
 
 /**
