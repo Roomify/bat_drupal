@@ -13,6 +13,20 @@ namespace Drupal\bat;
 interface BatEventInterface {
 
   /**
+   * Returns the unit id.
+   *
+   * @return int
+   */
+  public function getUnitId();
+
+  /**
+   * Set the unit id.
+   *
+   * @param int $unit_id
+   */
+  public function setUnitId($unit_id);
+
+  /**
    * Returns the StartDate object
    *
    * @return \DateTime
@@ -103,6 +117,28 @@ interface BatEventInterface {
    *   The year formatted string.
    */
   public function endYear($format = 'Y');
+
+  /**
+   * Returns the booking start hour.
+   *
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The year formatted string.
+   */
+  public function startWeek($format = 'W');
+
+  /**
+   * Returns the booking end hour.
+   *
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The year formatted string.
+   */
+  public function endWeek($format = 'W');
 
   /**
    * Returns the booking start hour.

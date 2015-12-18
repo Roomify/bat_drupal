@@ -53,7 +53,7 @@ abstract class BatEvent implements BatEventInterface {
    * @return DateTime
    */
   public function getStartDate() {
-    return $this->start_date;
+    return clone($this->start_date);
   }
 
   /**
@@ -62,7 +62,7 @@ abstract class BatEvent implements BatEventInterface {
    * @param DateTime $start_date
    */
   public function setStartDate($start_date) {
-    $this->start_date = $start_date;
+    $this->start_date = clone($start_date);
   }
 
   /**
@@ -71,7 +71,7 @@ abstract class BatEvent implements BatEventInterface {
    * @return DateTime
    */
   public function getEndDate() {
-    return $this->end_date;
+    return clone($this->end_date);
   }
 
   /**
@@ -80,34 +80,13 @@ abstract class BatEvent implements BatEventInterface {
    * @param DateTime $end_date
    */
   public function setEndDate($end_date) {
-    $this->end_date = $end_date;
+    $this->end_date = clone($end_date);
   }
 
   /**
    * {@inheritdoc}
    */
   public function startDay($format = 'j') {
-    return $this->start_date->format($format);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function startMonth($format = 'n') {
-    return $this->start_date->format($format);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function startYear($format = 'Y') {
-    return $this->start_date->format($format);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function startWeek($format = 'W') {
     return $this->start_date->format($format);
   }
 
@@ -121,8 +100,23 @@ abstract class BatEvent implements BatEventInterface {
   /**
    * {@inheritdoc}
    */
+  public function startMonth($format = 'n') {
+    return $this->start_date->format($format);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function endMonth($format = 'n') {
     return $this->end_date->format($format);
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function startYear($format = 'Y') {
+    return $this->start_date->format($format);
   }
 
   /**
@@ -135,6 +129,13 @@ abstract class BatEvent implements BatEventInterface {
   /**
    * {@inheritdoc}
    */
+  public function startWeek($format = 'W') {
+    return $this->start_date->format($format);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function endWeek($format = 'W') {
     return $this->end_date->format($format);
   }
@@ -142,19 +143,29 @@ abstract class BatEvent implements BatEventInterface {
   /**
    * {@inheritdoc}
    */
-  public function diff() {
-    $interval = $this->start_date->diff($this->end_date);
-    return $interval;
+  public function startHour($format = 'H') {
+    return $this->start_date->format($format);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function sameMonth() {
-    if (($this->startMonth() == $this->endMonth()) && ($this->startYear() == $this->endYear())) {
-      return TRUE;
-    }
-    return FALSE;
+  public function endHour($format = 'H') {
+    return $this->end_date->format($format);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function startMinute($format = 'i') {
+    return $this->start_date->format($format);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function endMinute($format = 'i') {
+    return $this->end_date->format($format);
   }
 
   /**
@@ -165,6 +176,45 @@ abstract class BatEvent implements BatEventInterface {
       return TRUE;
     }
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function sameMonth() {
+    if (($this->startMonth() == $this->endMonth()) && $this->sameYear()) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function sameDay() {
+    if (($this->startDay() == $this->endDay()) && $this->sameMonth()) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function sameHour() {
+    if (($this->startHour() == $this->endHour()) && $this->sameDay()) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function diff() {
+    $interval = $this->start_date->diff($this->end_date);
+    return $interval;
   }
 
   /**
