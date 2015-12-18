@@ -104,7 +104,7 @@ class BookingEvent extends BatEvent implements BookingEventInterface {
     if ($this->id > 10 || $this->id < -10) {
       // Get the actual booking id.
       $booking_id = bat_availability_return_id($this->id);
-      $booking = bat_booking_load($booking_id);
+      $booking = bat_event_load($booking_id);
       if ($style == BAT_AVAILABILITY_ADMIN_STYLE) {
         $event['title'] = t('Booking') . ': ' . $booking->booking_id;
       }

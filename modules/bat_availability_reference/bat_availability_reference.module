@@ -262,9 +262,9 @@ function bat_availability_reference_potential_references($field, $options = arra
 }
 
 /**
- * Helper function for node_reference_potential_references().
+ * Helper function for bat_availability_reference_potential_references().
  *
- * List of referenceable nodes defined by content types.
+ * List of referenceable units.
  */
 function _bat_availability_reference_potential_references($field, $options) {
   // Avoid useless work.

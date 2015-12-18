@@ -5,7 +5,7 @@ core = 7.x
 package = BAT
 
 dependencies[] = bat_availability
-dependencies[] = bat_booking
+dependencies[] = bat_event
 dependencies[] = bat_unit
 dependencies[] = facetapi
 dependencies[] = search_api

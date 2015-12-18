@@ -24,7 +24,7 @@
  *   - booking_parameters: Array containing some other booking parameters:
  *     - group_size: The total number of persons included in the booking.
  */
-function hook_bat_booking_amount_before_modifiers_alter(&$price, $booking_info) {
+function hook_bat_event_amount_before_modifiers_alter(&$price, $booking_info) {
   // Hardcode a 100$ price whe booking longer than 5 days.
 
   $period = $booking_info ['start_date']->diff($booking_data['end_date'])->days + 1;

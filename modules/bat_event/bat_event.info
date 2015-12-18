@@ -5,17 +5,6 @@ core = 7.x
 package = BAT
 
 dependencies[] = bat_unit
-dependencies[] = bat_availability
-dependencies[] = bat_pricing
-dependencies[] = views
-dependencies[] = commerce
-dependencies[] = commerce_ui
-dependencies[] = commerce_customer
-dependencies[] = commerce_customer_ui
-dependencies[] = commerce_cart
-dependencies[] = commerce_cart_expiration
-dependencies[] = commerce_order
-dependencies[] = entityreference
 
 files[] = bat_event.admin.inc
 files[] = bat_event_type.admin.inc

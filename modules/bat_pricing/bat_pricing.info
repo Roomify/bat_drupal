@@ -7,4 +7,4 @@ package = BAT
 dependencies[] = bat_unit
 dependencies[] = commerce
 dependencies[] = commerce_price
-dependencies[] = bat_api (>=2.x)
+dependencies[] = bat_api

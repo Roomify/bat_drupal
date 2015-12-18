@@ -104,7 +104,7 @@ class UnitPricingCalendar extends BatCalendar implements UnitPricingCalendarInte
       ),
     );
 
-    drupal_alter('bat_booking_amount_before_modifiers', $price, $booking_info);
+    drupal_alter('bat_event_amount_before_modifiers', $price, $booking_info);
 
     $price = $this->applyPriceModifiers($price, $booking_days, $reply);
     $payment_option = variable_get('bat_payment_options', FULL_PAYMENT);

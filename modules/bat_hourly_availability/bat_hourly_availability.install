@@ -60,24 +60,24 @@ function bat_hourly_availability_install() {
   bat_hourly_availability_add_opening_time_field('bat_unit_type', 'bat_unit_type');
 
   // Create the Hourly booking type.
-  $booking = new BatBookingType(array(
+  $booking = new BatEventType(array(
     'label' => 'Hourly Booking',
     'type' => 'hourly_booking',
     'booking_mode' => 'hourly',
   ));
-  bat_booking_type_save($booking);
+  bat_event_type_save($booking);
 
   // Create the Full day booking type.
-  $booking_type = bat_booking_type_load('standard_booking');
+  $booking_type = bat_event_type_load('standard_booking');
   if ($booking_type === FALSE) {
-    $booking = new BatBookingType(array(
+    $booking = new BatEventType(array(
       'label' => 'Full day booking',
       'type' => 'standard_booking',
     ));
-    bat_booking_type_save($booking);
+    bat_event_type_save($booking);
   }
   else {
     $booking_type->label = 'Full day booking';
-    bat_booking_type_save($booking_type);
+    bat_event_type_save($booking_type);
   }
 }

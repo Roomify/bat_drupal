@@ -1,7 +1,7 @@
 <?php
 
 use Drupal\bat_availability\UnitCalendar;
-use Drupal\bat_booking\AvailabilityAgentFilterBase;
+use Drupal\bat_event\AvailabilityAgentFilterBase;
 
 
 $plugin = array(

@@ -543,25 +543,25 @@ function bat_availability_event_manager_page($unit, $event_id = NULL, $start_dat
 
   if ($booked) {
     $booking_id = bat_availability_return_id($event_id);
-    $booking = bat_booking_load($booking_id);
+    $booking = bat_event_load($booking_id);
     // For existing bookings allow to edit in the modal.
-    module_load_include('inc', 'bat_booking', 'bat_booking.admin');
+    module_load_include('inc', 'bat_event', 'bat_event.admin');
     $form_state = array(
       'title' => t('Edit booking'),
       'ajax' => TRUE,
       'build_info' => array(
         'args' => array($booking),
         'files' => array(
-          'bat_booking_admin' => array(
-            'module' => 'bat_booking',
-            'name' => 'bat_booking.admin',
+          'bat_event_admin' => array(
+            'module' => 'bat_event',
+            'name' => 'bat_event.admin',
             'type' => 'inc',
           ),
         ),
       ),
     );
     // Wrap the form via ctools modal.
-    $output = ctools_modal_form_wrapper('bat_booking_edit_form', $form_state);
+    $output = ctools_modal_form_wrapper('bat_event_edit_form', $form_state);
     if ($form_state['executed']) {
       if (!empty($form_state['booking_deleted'])) {
         // If there are messages for the form, render them.
@@ -690,8 +690,8 @@ function bat_availability_event_manager_form($form, $form_state, $unit, $event_i
     '#empty_option' => t('- Select -'),
   );
 
-  if (module_exists('bat_booking') && $new_event_id != 89) {
-    $booking_types = bat_booking_get_types();
+  if (module_exists('bat_event') && $new_event_id != 89) {
+    $booking_types = bat_event_get_types();
 
     foreach ($booking_types as $type) {
       $book_end_date = clone($end_date);
@@ -770,9 +770,9 @@ function bat_availability_return_id($id) {
 /**
  * Implements hook_form__FORM_ID_alter().
  *
- * FORM_ID = bat_booking_settings
+ * FORM_ID = bat_event_settings
  */
-function bat_availability_form_bat_booking_settings_alter(&$form, &$form_state, $form_id) {
+function bat_availability_form_bat_event_settings_alter(&$form, &$form_state, $form_id) {
   $form['label_settings'] = array(
     '#type' => 'fieldset',
     '#group' => 'bat_settings',

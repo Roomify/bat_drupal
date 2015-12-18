@@ -133,7 +133,7 @@ class BatEventUIController extends EntityDefaultUIController {
  * Form callback wrapper: edit a Booking.
  *
  * @param $event
- *   The  BatBooking object being edited by this form.
+ *   The  BatEvent object being edited by this form.
  *
  * @see bat_event_edit_form()
  */
@@ -192,7 +192,7 @@ function bat_event_delete_form_wrapper($event) {
  * Form callback: create or edit a event.
  *
  * @param $event
- *   The BatBooking object to edit or for a create form an empty event object
+ *   The BatEvent object to edit or for a create form an empty event object
  *     with only a event type defined.
  */
 function bat_event_edit_form($form, &$form_state, $event) {
@@ -440,7 +440,7 @@ function bat_event_edit_form_get_unit_types() {
  *
  * @param string $unit_type
  *   The unit type.
- * @param BatBooking $current_event
+ * @param BatEvent $current_event
  *   The current event.
  * @param DateTime $start_date
  *   Start date.

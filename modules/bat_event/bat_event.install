@@ -12,6 +12,32 @@
 function bat_event_install() {
   // Create a basic event type.
   bat_event_create_standard_event_type();
+
+  // Create default event states.
+  bat_event_create_standard_event_states();
+}
+
+/**
+ * Implements hook_field_schema().
+ */
+function bat_event_field_schema($field) {
+  $columns = array(
+    'state_id' => array(
+      'type'     => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+    ),
+  );
+  return array(
+    'columns' => $columns,
+    'indexes' => array('state_id' => array('state_id')),
+    'foreign keys' => array(
+      'state_id' => array(
+        'table' => 'bat_event_state',
+        'columns' => array('state_id' => 'state_id'),
+      ),
+    ),
+  );
 }
 
 /**
@@ -150,6 +176,32 @@ function bat_event_schema() {
     ),
   );
 
+  $schema['bat_event_state'] = array(
+    'description' => 'Stores information about defined event states.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique event state identifier.',
+      ),
+      'label' => array(
+        'description' => 'The human-readable name of this event state.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'locked' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Lock.',
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
   return $schema;
 }
 
@@ -162,4 +214,23 @@ function bat_event_create_standard_event_type() {
     'type' => 'standard_event',
   ));
   bat_event_type_save($event);
+}
+
+/**
+ * Creates the default event states.
+ */
+function bat_event_create_standard_event_states() {
+  $not_available_state = array(
+    'id' => BAT_NOT_AVAILABLE,
+    'label' => 'Not Available',
+    'locked' => 1,
+  );
+  drupal_write_record('bat_event_state', $not_available_state);
+
+  $available_state = array(
+    'id' => BAT_AVAILABLE,
+    'label' => 'Available',
+    'locked' => 1,
+  );
+  drupal_write_record('bat_event_state', $available_state);
 }

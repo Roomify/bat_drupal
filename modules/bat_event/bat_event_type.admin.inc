@@ -2,13 +2,13 @@
 
 /**
  * @file
- * BatBooking type editing UI.
+ * BatEvent type editing UI.
  */
 
 /**
  * UI controller.
  */
-class BatBookingTypeUIController extends EntityDefaultUIController {
+class BatEventTypeUIController extends EntityDefaultUIController {
 
   /**
    * Overrides hook_menu() defaults.

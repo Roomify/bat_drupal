@@ -9,14 +9,9 @@
 /**
  * Defining some unit availability states that will be used throughout.
  */
-define ('BAT_NOT_AVAILABLE', 0);
-define ('BAT_AVAILABLE', 1);
-define ('BAT_ON_REQUEST', 2);
-define ('BAT_ANON_BOOKED', 3);
+define ('BAT_NOT_AVAILABLE', 1);
+define ('BAT_AVAILABLE', 2);
 
-define ('BAT_HOURLY_BOOKED', 5);
-
-define ('BAT_UNCONFIRMED_BOOKINGS', -1);
 
 /**
  * Defining responses for Calendar Updated.

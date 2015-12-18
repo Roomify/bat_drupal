@@ -652,7 +652,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
     // Limit bookings to X days in advance, depending on the
     // chosen configuration in your BAT installation, defaults
     // to one day in advance.
-    'minDate' => '+' . variable_get('bat_booking_start_date', 1) . 'd',
+    'minDate' => '+' . variable_get('bat_event_start_date', 1) . 'd',
   );
 
   if ($year && $month) {
@@ -671,7 +671,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
   }
   else {
     $datepicker_options += array(
-      'minDate' => '+' . variable_get('bat_booking_start_date', 1) . 'd',
+      'minDate' => '+' . variable_get('bat_event_start_date', 1) . 'd',
     );
   }
 
@@ -714,7 +714,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
             'bat' => array(
               'batStartYear' => $year,
               'batStartMonth' => $month,
-              'batBookingStartDay' => variable_get('bat_booking_start_date', 1),
+              'batBookingStartDay' => variable_get('bat_event_start_date', 1),
               'batDateFormat' => 'dd/mm/yy',
 
               // Here we create a listing of all datepickers registered on the

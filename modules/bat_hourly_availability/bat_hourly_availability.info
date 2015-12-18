@@ -5,5 +5,5 @@ core = 7.x
 package = BAT
 
 dependencies[] = bat_availability
-dependencies[] = bat_booking
+dependencies[] = bat_event
 dependencies[] = timefield

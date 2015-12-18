@@ -4,7 +4,7 @@
  * @file
  */
 
-use Drupal\bat_booking\AvailabilityAgent;
+use Drupal\bat_event\AvailabilityAgent;
 
 /**
  * Implements hook_ctools_plugin_api().
