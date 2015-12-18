@@ -11,6 +11,44 @@ namespace Drupal\bat;
  * The basic BAT event interface.
  */
 interface BatEventInterface {
+
+  /**
+   * Returns the StartDate object
+   *
+   * @return \DateTime
+   */
+  public function getStartDate();
+
+  /**
+   * Returns the SndDate object
+   * @return \DateTime
+   */
+  public function getEndDate();
+
+  /**
+   * Sets the StartDate
+   * @param \DateTime
+   */
+  public function setStartDate(\DateTime $start_date);
+
+  /**
+   * Sets the EndDate
+   *
+   * @param \DateTime
+   */
+  public function setEndDate(\DateTime $end_date);
+
+  /**
+   * Returns the booking start day.
+   *
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The day formatted string.
+   */
+  public function startDay($format = 'j');
+
   /**
    * Returns the booking end day.
    *
@@ -23,12 +61,92 @@ interface BatEventInterface {
   public function endDay($format = 'j');
 
   /**
-   * Checks if the event starts and ends in the same month.
+   * Returns the booking start month.
    *
-   * @return bool
-   *   TRUE if the event starts and ends in the same month, FALSE otherwise
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The month formatted string.
    */
-  public function sameMonth();
+  public function startMonth($format = 'n');
+
+  /**
+   * Returns the booking end month.
+   *
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The month formatted string.
+   */
+  public function endMonth($format = 'n');
+
+  /**
+   * Returns the booking start year.
+   *
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The year formatted string.
+   */
+  public function startYear($format = 'Y');
+
+  /**
+   * Returns the booking end year.
+   *
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The year formatted string.
+   */
+  public function endYear($format = 'Y');
+
+  /**
+   * Returns the booking start hour.
+   *
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The year formatted string.
+   */
+  public function startHour($format = 'H');
+
+  /**
+   * Returns the booking end hour.
+   *
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The year formatted string.
+   */
+  public function endHour($format = 'H');
+
+  /**
+   * Returns the booking start minute.
+   *
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The year formatted string.
+   */
+  public function startMinute($format = 'i');
+
+  /**
+   * Returns the booking end minute.
+   *
+   * @param string $format
+   *   The format string to return.
+   *
+   * @return string
+   *   The year formatted string.
+   */
+  public function endMinute($format = 'i');
 
   /**
    * Checks if the event starts and ends in the same year.
@@ -39,15 +157,28 @@ interface BatEventInterface {
   public function sameYear();
 
   /**
-   * Returns the booking start day.
+   * Checks if the event starts and ends in the same month.
    *
-   * @param string $format
-   *   The format string to return.
-   *
-   * @return string
-   *   The day formatted string.
+   * @return bool
+   *   TRUE if the event starts and ends in the same month, FALSE otherwise
    */
-  public function startDay($format = 'j');
+  public function sameMonth();
+
+  /**
+   * Checks if the event starts and ends in the same day.
+   *
+   * @return bool
+   *   TRUE if the event starts and ends in the same day, FALSE otherwise
+   */
+  public function sameDay();
+
+  /**
+   * Checks if the event starts and ends in the same hour.
+   *
+   * @return bool
+   *   TRUE if the event starts and ends in the same hour, FALSE otherwise
+   */
+  public function sameHour();
 
   /**
    * Takes a single event that spans several months and transforms it to
@@ -65,50 +196,6 @@ interface BatEventInterface {
    *   The event split if is necessary, a single item array otherwise.
    */
   public function transformToYearlyEvents();
-
-  /**
-   * Returns the booking end month.
-   *
-   * @param string $format
-   *   The format string to return.
-   *
-   * @return string
-   *   The month formatted string.
-   */
-  public function endMonth($format = 'n');
-
-  /**
-   * Returns the booking start month.
-   *
-   * @param string $format
-   *   The format string to return.
-   *
-   * @return string
-   *   The month formatted string.
-   */
-  public function startMonth($format = 'n');
-
-  /**
-   * Returns the booking end year.
-   *
-   * @param string $format
-   *   The format string to return.
-   *
-   * @return string
-   *   The year formatted string.
-   */
-  public function endYear($format = 'Y');
-
-  /**
-   * Returns the booking start year.
-   *
-   * @param string $format
-   *   The format string to return.
-   *
-   * @return string
-   *   The year formatted string.
-   */
-  public function startYear($format = 'Y');
 
   /**
    * Returns the date interval between end and start date.
