@@ -5,7 +5,7 @@
  * Class AvailabilityAgentSingleUnitFilter.
  */
 
-namespace Drupal\bat_event;
+namespace Drupal\bat_availability;
 
 /**
  * Filter units by unit id.

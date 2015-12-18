@@ -5,7 +5,7 @@
  * Class AvailabilityAgentFilterBase.
  */
 
-namespace Drupal\bat_event;
+namespace Drupal\bat_availability;
 
 /**
  * Abstract class implementing AvailabilityAgentFilterInterface.

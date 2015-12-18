@@ -5,7 +5,7 @@
  * Interface AvailabilityAgentFilterInterface.
  */
 
-namespace Drupal\bat_event;
+namespace Drupal\bat_availability;
 
 /**
  * An availability agent filter receives a set of units and applies a filter

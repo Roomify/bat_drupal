@@ -5,7 +5,7 @@
  * Class AvailabilityAgentDateFilter.
  */
 
-namespace Drupal\bat_event;
+namespace Drupal\bat_availability;
 
 use Drupal\bat_availability\UnitCalendar;
 

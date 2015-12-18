@@ -13,214 +13,9 @@
 function bat_availability_schema() {
   $schema = array();
 
-  $schema['bat_availability'] = array(
-    'description' => 'The main table holding availability information',
-    'fields' => array(
-      'unit_id' => array(
-        'description' => 'Identifier for a unit.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'year' => array(
-        'description' => 'The calendar year for which this availability row is relevant',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'month' => array(
-        'description' => 'The month for which this availability row is relevant',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd1' => array(
-        'description' => 'Month Day 1',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd2' => array(
-        'description' => 'Month Day 2',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd3' => array(
-        'description' => 'Month Day 3',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd4' => array(
-        'description' => 'Month Day 4',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd5' => array(
-        'description' => 'Month Day 5',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd6' => array(
-        'description' => 'Month Day 6',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd7' => array(
-        'description' => 'Month Day 7',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd8' => array(
-        'description' => 'Month Day 8',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd9' => array(
-        'description' => 'Month Day 9',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd10' => array(
-        'description' => 'Month Day 10',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd11' => array(
-        'description' => 'Month Day 11',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd12' => array(
-        'description' => 'Month Day 12',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd13' => array(
-        'description' => 'Month Day 13',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd14' => array(
-        'description' => 'Month Day 14',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd15' => array(
-        'description' => 'Month Day 15',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd16' => array(
-        'description' => 'Month Day 16',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd17' => array(
-        'description' => 'Month Day 17',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd18' => array(
-        'description' => 'Month Day 18',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd19' => array(
-        'description' => 'Month Day 19',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd20' => array(
-        'description' => 'Month Day 20',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd21' => array(
-        'description' => 'Month Day 21',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd22' => array(
-        'description' => 'Month Day 22',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd23' => array(
-        'description' => 'Month Day 23',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd24' => array(
-        'description' => 'Month Day 24',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd25' => array(
-        'description' => 'Month Day 25',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd26' => array(
-        'description' => 'Month Day 26',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd27' => array(
-        'description' => 'Month Day 27',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd28' => array(
-        'description' => 'Month Day 28',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd29' => array(
-        'description' => 'Month Day 29',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd30' => array(
-        'description' => 'Month Day 30',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-      'd31' => array(
-        'description' => 'Month Day 31',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => '0',
-      ),
-    ),
+  $schema['bat_event_day_state'] = array(
+    'description' => 'Holds the state of each unit for a given day',
+    'fields' => bat_availability_generate_day_schema_fields(),
     'indexes' => array(
       'unit_id' => array('unit_id'),
       'year' => array('year'),
@@ -237,5 +32,235 @@ function bat_availability_schema() {
     ),
   );
 
+  $schema['bat_event_day_event'] = array(
+    'description' => 'Holds the event that determined the state of a unit',
+    'fields' => bat_availability_generate_day_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'month_key' => array('unit_id', 'year', 'month'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
+  $schema['bat_event_hour_state'] = array(
+    'description' => 'Holds the state of the unit',
+    'fields' => bat_availability_generate_hour_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'day_key' => array('unit_id', 'year', 'month', 'day'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
+  $schema['bat_event_hour_event'] = array(
+    'description' => 'Holds the event that determined the state of a unit',
+    'fields' => bat_availability_generate_hour_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'day_key' => array('unit_id', 'year', 'month', 'day'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
+  $schema['bat_event_minute_state'] = array(
+    'description' => 'Holds the state of the unit',
+    'fields' => bat_availability_generate_minute_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'day_key' => array('unit_id', 'year', 'month', 'day', 'hour'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
+  $schema['bat_event_minute_event'] = array(
+    'description' => 'Holds the event that determined the state of a unit',
+    'fields' => bat_availability_generate_minute_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'day_key' => array('unit_id', 'year', 'month', 'day', 'hour'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
   return $schema;
+}
+
+/**
+ * Creates the necessary day schema fields
+ * @return array
+ */
+function bat_availability_generate_day_schema_fields() {
+
+  $fields = array(
+      'unit_id' => array(
+      'description' => 'Identifier for a unit.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+      'year' => array(
+      'description' => 'The calendar year for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+      'month' => array(
+      'description' => 'The month for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+  );
+
+  for ($i = 1; $i<=31; $i++) {
+    $fields['d' . $i] = array(
+      'description' => 'D' . $i,
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    );
+  }
+
+  return $fields;
+}
+
+/**
+ * Creates the necessary hour schema fields
+ * @return array
+ */
+function bat_availability_generate_hour_schema_fields() {
+
+  $fields = array(
+    'unit_id' => array(
+      'description' => 'Identifier for a unit.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+    'year' => array(
+      'description' => 'The calendar year for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+    'month' => array(
+      'description' => 'The month for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+    'day' => array(
+      'description' => 'The day for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+  );
+
+  for ($i = 0; $i<=23; $i++) {
+    $fields['h' . $i] = array(
+      'description' => 'D' . $i,
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    );
+  }
+
+  return $fields;
+}
+
+/**
+ * Creates the necessary minute schema fields
+ * @return array
+ */
+function bat_availability_generate_minute_schema_fields() {
+
+  $fields = array(
+    'unit_id' => array(
+      'description' => 'Identifier for a unit.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+    'year' => array(
+      'description' => 'The calendar year for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+    'month' => array(
+      'description' => 'The month for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+    'day' => array(
+      'description' => 'The day for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+    'hour' => array(
+      'description' => 'The hour for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+  );
+
+  for ($i = 0; $i<=59; $i++) {
+    $fields['m' . $i] = array(
+      'description' => 'D' . $i,
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    );
+  }
+
+  return $fields;
 }

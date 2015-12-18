@@ -5,10 +5,3 @@ core = 7.x
 package = BAT
 
 dependencies[] = bat_unit
-dependencies[] = bat
-dependencies[] = bat_ui
-dependencies[] = date
-dependencies[] = date_api
-dependencies[] = date_popup
-dependencies[] = ctools
-dependencies[] = bat_api (>=2.x)
