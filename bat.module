@@ -589,19 +589,6 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
 }
 
 /**
- * Implements hook_module_implements_alter()
- *
- * This ensures that this hook is called after entity translation's alter hook.
- */
-function bat_module_implements_alter(&$implementations, $hook) {
-  if ($hook == 'form_alter' && isset($implementations['bat'])) {
-    $group = $implementations['bat'];
-    unset($implementations['bat']);
-    $implementations['bat'] = $group;
-  }
-}
-
-/**
  * Returns the available price options for booking_unit options field.
  */
 function bat_price_options_options() {
