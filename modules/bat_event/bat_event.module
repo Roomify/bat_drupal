@@ -25,7 +25,7 @@ function bat_event_menu() {
   );
 
   $items['admin/bat/config/events/event/%/edit'] = array(
-    'title' => 'Event states',
+    'title' => 'Event States',
     'description' => 'Edit event state.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('bat_event_states_edit_event_form', 5),
@@ -34,7 +34,7 @@ function bat_event_menu() {
   );
 
   $items['admin/bat/config/events/event/%/delete'] = array(
-    'title' => 'Event states',
+    'title' => 'Event States',
     'description' => 'Delete event state.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('bat_event_states_delete_event_form', 5),
@@ -251,6 +251,8 @@ function bat_event_get_states() {
     $event_states[$event_state->id] = array(
       'id' => $event_state->id,
       'label' => $event_state->label,
+      'color' => $event_state->color,
+      'calendar_label' => $event_state->calendar_label,
       'locked' => $event_state->locked,
     );
   }
@@ -308,12 +310,46 @@ function bat_event_states_form($form, &$form_state) {
   );
 
   $form['new_state'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Create new state',
+  );
+
+  $form['new_state']['label'] = array(
     '#type' => 'textfield',
-    '#title' => t('Create new state'),
+    '#title' => t('Label'),
     '#required' => TRUE,
   );
 
-  $form['submit'] = array(
+  $form['new_state']['color'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Color'),
+    '#size' => 12,
+    '#maxlength' => 7,
+    '#element_validate' => array('bat_availability_validate_hex_color'),
+    '#dependency' => array('edit-row-options-colors-legend' => array('type')),
+    '#prefix' => '<div class="bat-colorpicker-wrapper form-wrapper">',
+    '#suffix' => '<div class="bat-colorpicker"></div></div>',
+    '#attributes' => array('class' => array('bat-edit-colorpicker')),
+    '#attached' => array(
+      // Add Farbtastic color picker.
+      'library' => array(
+        array('system', 'farbtastic'),
+      ),
+      // Add javascript to trigger the colorpicker.
+      'js' => array(drupal_get_path('module', 'bat_availability') . '/js/bat_color.js'),
+    ),
+    '#required' => TRUE,
+  );
+
+  $form['new_state']['calendar_label'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Calendar label'),
+    '#size' => 10,
+    '#maxlength' => 50,
+    '#required' => TRUE,
+  );
+
+  $form['new_state']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Add state'),
   );
@@ -329,7 +365,9 @@ function bat_event_states_form_submit($form, &$form_state) {
 
   $event_state = array(
     'id' => reset($max_id) + 1,
-    'label' => $form_state['values']['new_state'],
+    'label' => $form_state['values']['label'],
+    'color' => $form_state['values']['color'],
+    'calendar_label' => $form_state['values']['calendar_label'],
   );
 
   drupal_write_record('bat_event_state', $event_state);
@@ -339,27 +377,58 @@ function bat_event_states_form_submit($form, &$form_state) {
  *
  */
 function bat_event_states_edit_event_form($form, &$form_state, $event_id) {
-  $state_label = db_select('bat_event_state', 'n')
-                    ->fields('n', array('label'))
+  $state = db_select('bat_event_state', 'n')
+                    ->fields('n', array())
                     ->condition('id', $event_id)
                     ->execute()
-                    ->fetchField();
+                    ->fetchAssoc();
 
   $form['state_id'] = array(
     '#type' => 'hidden',
     '#value' => $event_id,
   );
 
-  $form['state_label'] = array(
+  $form['label'] = array(
     '#type' => 'textfield',
     '#title' => t('State Label'),
-    '#default_value' => $state_label,
+    '#default_value' => $state['label'],
+    '#required' => TRUE,
+  );
+
+  $form['color'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Color'),
+    '#size' => 12,
+    '#maxlength' => 7,
+    '#default_value' => $state['color'],
+    '#element_validate' => array('bat_availability_validate_hex_color'),
+    '#dependency' => array('edit-row-options-colors-legend' => array('type')),
+    '#prefix' => '<div class="bat-colorpicker-wrapper form-wrapper">',
+    '#suffix' => '<div class="bat-colorpicker"></div></div>',
+    '#attributes' => array('class' => array('bat-edit-colorpicker')),
+    '#attached' => array(
+      // Add Farbtastic color picker.
+      'library' => array(
+        array('system', 'farbtastic'),
+      ),
+      // Add javascript to trigger the colorpicker.
+      'js' => array(drupal_get_path('module', 'bat_availability') . '/js/bat_color.js'),
+    ),
+    '#required' => TRUE,
+  );
+
+  $form['new_state']['calendar_label'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Calendar label'),
+    '#size' => 10,
+    '#maxlength' => 50,
+    '#default_value' => $state['calendar_label'],
     '#required' => TRUE,
   );
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Update State Label'),
+    '#value' => t('Update State'),
   );
 
   return $form;
@@ -370,7 +439,11 @@ function bat_event_states_edit_event_form($form, &$form_state, $event_id) {
  */
 function bat_event_states_edit_event_form_submit($form, &$form_state) {
   db_update('bat_event_state')
-    ->fields(array('label' => $form_state['values']['state_label']))
+    ->fields(array(
+      'label' => $form_state['values']['label'],
+      'color' => $form_state['values']['color'],
+      'calendar_label' => $form_state['values']['calendar_label'],
+    ))
     ->condition('id', $form_state['values']['state_id'])
     ->execute();
 

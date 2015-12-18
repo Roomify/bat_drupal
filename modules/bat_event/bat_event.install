@@ -191,6 +191,20 @@ function bat_event_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'color' => array(
+        'description' => 'The color hex.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'calendar_label' => array(
+        'description' => 'The calendar label.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
       'locked' => array(
         'type' => 'int',
         'not null' => TRUE,
@@ -223,6 +237,8 @@ function bat_event_create_standard_event_states() {
   $not_available_state = array(
     'id' => BAT_NOT_AVAILABLE,
     'label' => 'Not Available',
+    'color' => '#CC2727',
+    'calendar_label' => 'N/A',
     'locked' => 1,
   );
   drupal_write_record('bat_event_state', $not_available_state);
@@ -230,6 +246,8 @@ function bat_event_create_standard_event_states() {
   $available_state = array(
     'id' => BAT_AVAILABLE,
     'label' => 'Available',
+    'color' => '#8BA175',
+    'calendar_label' => 'AV',
     'locked' => 1,
   );
   drupal_write_record('bat_event_state', $available_state);

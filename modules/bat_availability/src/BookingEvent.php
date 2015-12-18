@@ -113,47 +113,14 @@ class BookingEvent extends BatEvent implements BookingEventInterface {
       }
     }
 
-    // Set the color.
-    switch ($this->id) {
-      case BAT_NOT_AVAILABLE:
-        $event['color']  = variable_get('bat_not_available_color', '#CC2727');
-        $event['title'] = variable_get('bat_not_available_text', 'N/A');
-        break;
+    $event_states = bat_event_get_states();
 
-      case BAT_AVAILABLE:
-        $event['color'] = variable_get('bat_available_color', '#8BA175');
-        $event['title'] = variable_get('bat_available_text', 'AV');
-        break;
-
-      case BAT_ON_REQUEST:
-        $event['color'] = variable_get('bat_on_request_color', '#C5C5C5');
-        $event['title'] = variable_get('bat_on_request_text', 'ON-REQ');
-        break;
-
-      case BAT_HOURLY_BOOKED:
-        $event['color'] = '#017eba';
-        $event['title'] = 'Hourly bookings';
-        break;
-
-      case ($this->id < 0):
-        $event['color'] = variable_get('bat_unconfirmed_booking_color', '#6D8C9C');
-        $event['title'] = variable_get('bat_unconfirmed_booking_text', 'UNCONF');
-        break;
-
-      case BAT_ANON_BOOKED:
-        if ($style == BAT_AVAILABILITY_ADMIN_STYLE) {
-          $event['color'] = variable_get('bat_anon_booking_color', '#8C6A5A');
-          $event['title'] = variable_get('bat_anon_booking_text', 'A-B');
-        }
-        elseif ($style == BAT_AVAILABILITY_GENERIC_STYLE) {
-          $event['color']  = variable_get('bat_not_available_color',
-            '#910a1c');
-          $event['title'] = variable_get('bat_not_available_text', 'N/A');
-        }
-        break;
-
-      default:
-        $event['color'] = '#017eba';
+    if (isset($event_states[$this->id])) {
+      $event['color'] = $event_states[$this->id]['color'];
+      $event['title'] = $event_states[$this->id]['calendar_label'];
+    }
+    else {
+      $event['color'] = '#017eba';
     }
 
     if (variable_get('bat_view_unit_name', '')) {
