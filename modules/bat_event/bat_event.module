@@ -1,0 +1,810 @@
+<?php
+
+/**
+ * @file
+ * Manage Bookings - Bookings are tied to a customer profile and possible a
+ * Unit ID and Order ID.
+ */
+
+use Drupal\bat_availability\BookingEvent;
+use Drupal\bat_availability\UnitCalendar;
+
+/**
+ * Implements hook_menu().
+ */
+function bat_event_menu() {
+  $items = array();
+
+  return $items;
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function bat_event_entity_info() {
+  $return['bat_event'] = array(
+    'label' => t('Events'),
+    // The entity class and controller class extend the classes provided by the
+    // Entity API.
+    'entity class' => 'BatEvent',
+    'controller class' => 'BatEventController',
+    'base table' => 'bat_events',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'event_id',
+      'bundle' => 'type',
+    ),
+    // Bundles are defined by the event types below.
+    'bundles' => array(),
+    // Bundle keys tell the FieldAPI how to extract information from the bundle.
+    'bundle keys' => array(
+      'bundle' => 'type',
+    ),
+    'label callback' => 'entity_class_label',
+    'uri callback' => 'entity_class_uri',
+    'creation callback' => 'bat_event_create',
+    'access callback' => 'bat_event_access',
+    'access arguments' => array(
+      'user key' => 'uid',
+      'access tag' => 'bat_event_access',
+    ),
+    'permission labels' => array(
+      'singular' => t('event'),
+      'plural' => t('events'),
+    ),
+    'module' => 'bat_event',
+    'admin ui' => array(
+      'path' => 'admin/bat/events',
+      'file' => 'bat_event.admin.inc',
+      'controller class' => 'BatEventUIController',
+      'menu wildcard' => '%bat_event',
+    ),
+  );
+  // The entity that holds information about the entity types.
+  $return['bat_event_type'] = array(
+    'label' => t('Event Type'),
+    'entity class' => 'BatEventType',
+    'controller class' => 'BatEventTypeController',
+    'base table' => 'bat_event_type',
+    'fieldable' => FALSE,
+    'bundle of' => 'bat_event',
+    'exportable' => TRUE,
+    'entity keys' => array(
+      'id' => 'id',
+      'name' => 'type',
+      'label' => 'label',
+    ),
+    'access callback' => 'bat_event_type_access',
+    'module' => 'bat_event',
+    // Enable the entity API's admin UI.
+    'admin ui' => array(
+      'path' => 'admin/bat/events/event-types',
+      'file' => 'bat_event_type.admin.inc',
+      'controller class' => 'BatEventTypeUIController',
+    ),
+  );
+
+  return $return;
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ *
+ * We are adding the info about the event types via a hook to avoid a
+ * recursion issue as loading the event types requires the entity info as well.
+ */
+function bat_event_entity_info_alter(&$entity_info) {
+  foreach (bat_event_get_types() as $type => $info) {
+    $entity_info['bat_event']['bundles'][$type] = array(
+      'label' => $info->label,
+      'admin' => array(
+        'path' => 'admin/bat/events/event-types/manage/%bat_event_type',
+        'real path' => 'admin/bat/events/event-types/manage/' . $type,
+        'bundle argument' => 5,
+        'access arguments' => array('administer bat_event_type entities'),
+      ),
+    );
+  }
+}
+
+/**
+ * Implements hook_entity_property_info_alter().
+ */
+function bat_event_entity_property_info_alter(&$info) {
+  $info['bat_event']['properties']['event_status']['setter callback'] = 'entity_property_verbatim_set';
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function bat_event_entity_insert($entity, $type) {
+  if ($type == 'bat_event_type') {
+    field_info_cache_clear();
+
+    // "event_unit_reference" field.
+    if (field_read_field('event_unit_reference') === FALSE) {
+      $field = array(
+        'field_name' => 'event_unit_reference',
+        'type' => 'entityreference',
+        'cardinality' => 1,
+        'locked' => 1,
+        'settings' => array(
+          'target_type' => 'event_unit',
+        ),
+      );
+      field_create_field($field);
+    }
+
+    field_cache_clear();
+
+    // "event_unit_reference" field instance.
+    if (field_read_instance('bat_event', 'event_unit_reference', $entity->type) === FALSE) {
+      $instance = array(
+        'field_name' => 'event_unit_reference',
+        'entity_type' => 'bat_event',
+        'label' => 'Unit',
+        'bundle' => $entity->type,
+        'required' => FALSE,
+        'widget' => array(
+          'type' => 'entityreference_autocomplete',
+        ),
+      );
+      field_create_instance($instance);
+    }
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function bat_event_permission() {
+  $permissions = array(
+    'administer bat_event_type entities' => array(
+      'title' => t('Administer event types'),
+      'description' => t('Allows users to add event types and configure their fields.'),
+      'restrict access' => TRUE,
+    ),
+  );
+  return $permissions + bat_entity_access_permissions('bat_event');
+}
+
+/**
+ * Implements hook_ctools_plugin_type().
+ */
+function bat_event_ctools_plugin_type() {
+  return array(
+    'availabilityagent_filter' => array(
+      'use hooks' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = bat_event_settings
+ */
+function bat_event_form_bat_event_settings_alter(&$form, &$form_state, $form_id) {
+  form_load_include($form_state, 'inc', 'rules', 'ui/ui.forms');
+
+  $form['bat_admin_settings'] = array(
+    '#type' => 'fieldset',
+    '#group' => 'bat_settings',
+    '#title' => t('Administrative settings'),
+  );
+
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = views_exposed_form
+ */
+function bat_event_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
+  // Bookings admin view exposed filters.
+  if ($form['#id'] == 'views-exposed-form-events-page-1') {
+    $form['start_date']['#type'] = 'date_popup';
+    $form['start_date']['#date_format'] = 'd/m/Y';
+    $form['start_date']['#date_label_position'] = 'before';
+
+    $form['end_date']['#type'] = 'date_popup';
+    $form['end_date']['#date_format'] = 'd/m/Y';
+    $form['end_date']['#date_label_position'] = 'before';
+
+    $form['#attached']['css'][] = array(
+      'data' => '.views-exposed-form .views-exposed-widget { height: 70px; }',
+      'type' => 'inline',
+    );
+  }
+}
+
+/**
+ * Implements hook_rules_action_info_alter().
+ */
+function bat_event_rules_action_info_alter(&$actions) {
+  unset($actions['commerce_cart_expiration_delete_orders']['parameter']['interval']);
+  $actions['commerce_cart_expiration_delete_orders']['callbacks']['execute'] = 'bat_event_expiration_delete_orders';
+}
+
+/**
+ * Checks event access for various operations.
+ *
+ * @param string $op
+ *   The operation being performed. One of 'view', 'update', 'create' or
+ *   'delete'.
+ * @param object $event
+ *   Optionally an event to check access for.
+ * @param object $account
+ *   The user to check for. Leave it to NULL to check for the current user.
+ *
+ * @return bool
+ *   Boolean indicating if the defined user has access to the event or not.
+ */
+function bat_event_access($op, $event = NULL, $account = NULL) {
+  return bat_entity_access($op, $event, $account, 'bat_event');
+}
+
+/**
+ * Access callback: Checks whether the user has permission to add an event.
+ *
+ * @return bool
+ *   TRUE if the user has add permission, otherwise FALSE.
+ *
+ * @see node_menu()
+ */
+function _bat_eventg_add_access() {
+  if (user_access('administer bat_event_type entities')) {
+    // There are no event types defined that the user has permission to create
+    // but the user does have the permission to administer the content types, so
+    // grant them access to the page anyway.
+    return TRUE;
+  }
+
+  $types = bat_event_get_types();
+  foreach ($types as $type) {
+    if (bat_event_access('create', bat_event_create(array('type' => $type->type, 'uid' => 0)))) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Access callback for the entity API.
+ */
+function bat_event_type_access($op, $type = NULL, $account = NULL) {
+  return user_access('administer bat_event_type entities', $account);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function bat_event_query_bat_event_access_alter(QueryAlterableInterface $query) {
+  // Look for an event base table to pass to the query altering function or
+  // else assume we don't have the tables we need to establish order related
+  // altering right now.
+  foreach ($query->getTables() as $table) {
+    if ($table['table'] === 'bat_events') {
+      bat_entity_access_query_alter($query, 'bat_event', $table['alias']);
+      break;
+    }
+  }
+}
+
+/**
+ * Gets an array of all event types, keyed by the type name.
+ *
+ * @param string $type_name
+ *   If set, the type with the given name is returned.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return BatBookingType[]
+ *   Depending whether $type isset, an array of event types or a single one.
+ */
+function bat_event_get_types($type_name = NULL, $reset = FALSE) {
+  // entity_load will get the Entity controller for our event entity and call
+  // the load function of that object.
+  $types = entity_load_multiple_by_name('bat_event_type', isset($type_name) ? array($type_name) : FALSE);
+  return isset($type_name) ? reset($types) : $types;
+}
+
+/**
+ * Menu argument loader; Load a event type by string.
+ *
+ * @param string $type
+ *   The machine-readable name of a event type to load.
+ * @param bool $reset
+ *   Boolean indicating if the event types cache should be clear or not.
+ *
+ * @return array|false
+ *   An event type array or FALSE if $type does not exist.
+ */
+function bat_event_type_load($type, $reset = FALSE) {
+  return bat_event_get_types($type, $reset);
+}
+
+/**
+ * Fetches an event object.
+ *
+ * @param int $event_id
+ *   Integer specifying the event id.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return object
+ *   A fully-loaded $event object or FALSE if it cannot be loaded.
+ *
+ * @see bat_event_load_multiple()
+ */
+function bat_event_load($event_id, $reset = FALSE) {
+  $events = bat_event_load_multiple(array($event_id), array(), $reset);
+  return reset($events);
+}
+
+/**
+ * Load multiple events based on certain conditions.
+ *
+ * @param array $event_ids
+ *   An array of event IDs.
+ * @param array $conditions
+ *   An array of conditions to match against the {bat_events} table.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return array
+ *   An array of event objects, indexed by event_id.
+ *
+ * @see entity_load()
+ * @see bat_event_load()
+ */
+function bat_event_load_multiple($event_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('bat_event', $event_ids, $conditions, $reset);
+}
+
+/**
+ * Deletes a event.
+ *
+ * @param BatBooking $event
+ *   The BatBooking object that represents the event to delete
+ * @param bool $delete_line_item
+ *   Flag indicating if the associated line_item should be deleted or not.
+ */
+function bat_event_delete(BatBooking $event, $delete_line_item = TRUE) {
+  bat_event_delete_multiple(array($event->event_id), $delete_line_item);
+}
+
+/**
+ * Implements hook_commerce_line_item_delete().
+ */
+function bat_event_commerce_line_item_delete($line_item) {
+  if (isset($line_item->bat_event_reference[LANGUAGE_NONE][0]['target_id'])) {
+    $event = bat_event_load($line_item->bat_event_reference[LANGUAGE_NONE][0]['target_id']);
+
+    if ($event !== FALSE) {
+      if ($line_item->order_id == $event->order_id) {
+        bat_event_delete($event, FALSE);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_commerce_order_delete().
+ *
+ * Delete events associated with an order when deleting the order.
+ */
+function bat_event_commerce_order_delete($order) {
+
+  // Load the events associated with this order.
+  $query = new EntityFieldQuery();
+
+  $query->entityCondition('entity_type', 'bat_event');
+
+  $events = $query->execute();
+
+  // Delete all events associated with this order.
+  if (isset($events['bat_event']) && count($events['bat_event'])) {
+    foreach ($events['bat_event'] as $result) {
+      $event = bat_event_load($result->event_id);
+
+      if ($event !== FALSE) {
+        bat_event_delete($event);
+        drupal_set_message(t('Deleted event with id: %id', array('%id' => $result->event_id)));
+      }
+    }
+  }
+}
+
+/**
+ * Delete multiple events.
+ *
+ * @param array $event_ids
+ *   An array of event IDs.
+ * @param bool $delete_line_item
+ *   Flag indicating if the associated line_item should be deleted or not.
+ */
+function bat_event_delete_multiple(array $event_ids, $delete_line_item = TRUE) {
+  entity_get_controller('bat_event')->delete($event_ids);
+}
+
+/**
+ * Create a event object.
+ */
+function bat_event_create($values = array()) {
+  return entity_get_controller('bat_event')->create($values);
+}
+
+/**
+ * Saves a event to the database.
+ *
+ * @param BatBooking $event
+ *   The Booking object.
+ */
+function bat_event_save(BatBooking $event) {
+  return $event->save();
+}
+
+/**
+ * Create a event object.
+ */
+function bat_event_type_create($values = array()) {
+  return entity_get_controller('bat_event_type')->create($values);
+}
+
+/**
+ * Saves a event type to the db.
+ */
+function bat_event_type_save(BatBookingType $type) {
+  $type->save();
+}
+
+/**
+ * Deletes a event type from the db.
+ */
+function bat_event_type_delete(BatBookingType $type) {
+  $type->delete();
+}
+
+/**
+ * URI callback for events.
+ */
+function bat_event_uri(BatBooking $event) {
+  return array(
+    'path' => 'event/' . $event->event_id,
+  );
+}
+
+/**
+ * Menu title callback for showing individual entities.
+ */
+function bat_event_page_title(BatBooking $event) {
+  return '';
+}
+
+/**
+ * Get a list of Booking keyed by id and name in value.
+ */
+function bat_event_ids($conditions = array()) {
+  $events = array();
+
+  $query = new EntityFieldQuery();
+
+  $result = $query->entityCondition('entity_type', 'bat_event')
+                    ->execute();
+
+  if (count($result) > 0) {
+    $entities = bat_event_load_multiple(array_keys($result['bat_event']), $conditions);
+    foreach ($entities as $event) {
+      $wrapper = entity_metadata_wrapper('bat_event', $event);
+      $events[$wrapper->event_id->value()] = $wrapper->name->value();
+    }
+  }
+
+  return $events;
+}
+
+/**
+ * Sets up content to show an individual event.
+ */
+function bat_event_page_view($event, $view_mode = 'full') {
+  $controller = entity_get_controller('bat_event');
+  $content = $controller->view(array($event->event_id => $event));
+  return $content;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function bat_event_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'bat_event') . '/views',
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bat_event_theme() {
+  return array(
+    'bat_event_add_list' => array(
+      'variables' => array('content' => array()),
+      'file' => 'bat_event.admin.inc',
+    ),
+    'bat_event' => array(
+      'render element' => 'elements',
+      'template' => 'bat_event',
+    ),
+    'bat_event_extra_data' => array(
+      'variables' => array('event_extra_data', 'event' => NULL),
+      'template' => 'bat_event-extra-data',
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function bat_event_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+  // Add action link 'admin/bat/units/add' on 'admin/bat/units'.
+  if ($root_path == 'admin/bat/events') {
+    $item = menu_get_item('admin/bat/events/add');
+    if ($item['access']) {
+      $data['actions']['output'][] = array(
+        '#theme' => 'menu_local_action',
+        '#link' => $item,
+      );
+    }
+  }
+}
+
+/**
+ * JSON output for autocomplete bat_event_types.
+ *
+ * @param string $bat_event_type_name
+ *   The bat_event type seed to look for.
+ */
+function bat_event_get_unit_types($bat_event_type_name = '') {
+  $matches = array();
+  if ($bat_event_type_name) {
+    $result = db_select('bat_event_type')
+      ->fields('bat_event_type', array('type'))
+      ->condition('type', db_like($bat_event_type_name) . '%', 'LIKE')
+      ->range(0, 10)
+      ->execute();
+    foreach ($result as $unit_type) {
+      $matches[$unit_type->type] = check_plain($unit_type->type);
+    }
+  }
+
+  drupal_json_output($matches);
+}
+
+/**
+ * The class used for Booking entities.
+ */
+class BatBooking extends Entity {
+
+  /**
+   * DateTime object calculated from start date.
+   *
+   * @var DateTime
+   */
+  public $start_date_object;
+  /**
+   * DateTime object calculated from end date.
+   *
+   * @var DateTime
+   */
+  public $end_date_object;
+
+  public function __construct($values = array()) {
+    parent::__construct($values, 'bat_event');
+    if (isset($this->start_date)) {
+      $this->start_date_object = new DateTime($this->start_date);
+    }
+    if (isset($this->end_date)) {
+      $this->end_date_object = new DateTime($this->end_date);
+    }
+  }
+
+  public function delete_event() {
+    entity_get_controller($this->entityType)->delete_event($this);
+  }
+
+  protected function defaultLabel() {
+    return '';
+  }
+
+  protected function defaultUri() {
+    return array('path' => 'event/' . $this->event_id);
+  }
+
+}
+
+/**
+ * The class used for unit type entities.
+ */
+class BatBookingType extends Entity {
+
+  public $type;
+  public $label;
+
+  public function __construct($values = array()) {
+    parent::__construct($values, 'bat_event_type');
+  }
+
+}
+
+/**
+ * The Controller for BatBooking entities.
+ */
+class BatBookingController extends EntityAPIController {
+
+  /**
+   * Create a event - we first set up the values that are specific
+   * to our event but then also go through the EntityAPIController
+   * function.
+   *
+   * @param array $values
+   *   The event to create properties.
+   *
+   * @return object
+   *   A event object with all default fields initialized.
+   */
+  public function create(array $values = array()) {
+    $event_type = bat_event_type_load($values['type'], TRUE);
+
+    // Add values that are specific to our unit.
+    $values += array(
+      'event_id' => '',
+      'is_new' => TRUE,
+      'title' => '',
+      'created' => '',
+      'changed' => '',
+      'order_id' => '',
+      'data' => array(),
+    );
+
+    $event = parent::create($values);
+    return $event;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save($entity) {
+    $entity->original = entity_load_unchanged($this->entityType, $entity->{$this->idKey});
+
+    $event_type = bat_event_type_load($entity->type);
+
+    $unit_id = 0;
+    $events = array();
+    $events_to_remove = array();
+
+    // We are going to be updating the event - so the first step is to remove
+    // the old event.
+    if ((!isset($entity->is_new)) && ($entity->original->start_date != '') && ($entity->original->end_date != '') &&
+        field_get_items('bat_event', $entity->original, 'event_unit_reference') !== FALSE) {
+
+      $event_unit_reference = field_get_items('bat_event', $entity->original, 'event_unit_reference');
+      $unit_id = $event_unit_reference[0]['target_id'];
+
+      // Create an event representing the event to remove.
+      $be = new BookingEvent($unit_id, BAT_AVAILABLE, new DateTime($entity->original->start_date), new DateTime($entity->original->end_date), $event_type->event_mode);
+
+      $events_to_remove = array($be);
+    }
+
+    parent::save($entity);
+
+    $event_id = bat_availability_assign_id($entity->event_id, $entity->event_status);
+
+    // We have a unit defined so lets block availability there unless its a
+    // event that is to be deleted.
+    if (field_get_items('bat_event', $entity, 'event_unit_reference') !== FALSE) {
+      $event_unit_reference = field_get_items('bat_event', $entity, 'event_unit_reference');
+      $unit_id = $event_unit_reference[0]['target_id'];
+
+      // Create an event.
+      $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->start_date), new DateTime($entity->end_date), $event_type->event_mode);
+
+      $events = array($be);
+    }
+
+    if ($unit_id > 0) {
+      // Create UnitCalendar.
+      $uc = new UnitCalendar($unit_id);
+
+      $responses = $uc->updateCalendar($events, $events_to_remove);
+
+      $entity->bat_av_update = $responses[$event_id];
+    }
+  }
+
+  public function delete($ids) {
+    foreach ($ids as $id) {
+      $event = bat_event_load($id);
+
+      // Update the availability calendar.
+      $this->delete_event($event);
+    }
+
+    parent::delete($ids);
+  }
+
+  public function delete_event($event) {
+    // Check if the event had a unit associated with it and if so update the
+    // availability calendar.
+    if (field_get_items('bat_event', $event, 'event_unit_reference') !== FALSE &&
+        isset($event->start_date) && isset($event->end_date)) {
+
+      $event_type = bat_event_type_load($event->type);
+
+      $event_unit_reference = field_get_items('bat_event', $event, 'event_unit_reference');
+      $unit_id = $event_unit_reference[0]['target_id'];
+
+      $uc = new UnitCalendar($unit_id);
+      // We are not concerned with the state of the event id (confirmed or
+      // unconfirmed here) because we will unlock it no matter what (we look for
+      // absolute value).
+      $event_id = bat_availability_assign_id($event->event_id);
+
+      $be = new BookingEvent($unit_id, $event_id, $event->start_date_object, $event->end_date_object, $event_type->event_mode);
+
+      $events = array($be);
+
+      if ($event_type->event_mode == 'hourly') {
+        $corrected_end_date = clone($event->end_date_object);
+        $corrected_end_date->add(new \DateInterval('P1D'));
+
+        $hourly_be = new BookingEvent($unit_id, $event_id, $event->start_date_object, $corrected_end_date);
+
+        $events = array_merge($events, array($hourly_be));
+      }
+
+      $uc->updateCalendar(array(), $events);
+    }
+  }
+
+  /**
+   * Overriding the buildContent function to add entity specific fields.
+   */
+  public function buildContent($entity, $view_mode = 'full', $langcode = NULL, $content = array()) {
+    $content = parent::buildContent($entity, $view_mode, $langcode, $content);
+
+    return $content;
+  }
+
+}
+
+/**
+ * The Controller for Booking Type entities
+ */
+class BatBookingTypeController extends EntityAPIControllerExportable {
+
+  /**
+   * Create a event type - we first set up the values that are specific
+   * to our event type schema but then also go through the EntityAPIController
+   * function.
+   *
+   * @param array $values
+   *   Array containing properties to include in the event type.
+   *
+   * @return object
+   *   A event type object with all default fields initialized.
+   */
+  public function create(array $values = array()) {
+    // Add values that are specific to our Booking Type.
+    $values += array(
+      'id' => '',
+      'is_new' => TRUE,
+      'data' => '',
+    );
+    $event_type = parent::create($values);
+    return $event_type;
+  }
+
+}

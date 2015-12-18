@@ -1,0 +1,34 @@
+name = BAT Booking
+description = Create and administer events for BAT.
+core = 7.x
+
+package = BAT
+
+dependencies[] = bat_unit
+dependencies[] = bat_availability
+dependencies[] = bat_pricing
+dependencies[] = views
+dependencies[] = commerce
+dependencies[] = commerce_ui
+dependencies[] = commerce_customer
+dependencies[] = commerce_customer_ui
+dependencies[] = commerce_cart
+dependencies[] = commerce_cart_expiration
+dependencies[] = commerce_order
+dependencies[] = entityreference
+
+files[] = bat_event.admin.inc
+files[] = bat_event_type.admin.inc
+files[] = views/bat_event.views.inc
+files[] = views/bat_event_handler_link_field.inc
+files[] = views/bat_event_handler_date_field.inc
+files[] = views/bat_event_handler_delete_link_field.inc
+files[] = views/bat_event_handler_edit_link_field.inc
+files[] = views/bat_event_handler_unit_field.inc
+files[] = views/bat_event_handler_event_operations_field.inc
+files[] = views/bat_event_handler_event_type_field.inc
+files[] = views/bat_event_handler_date_filter.inc
+files[] = views/bat_event_handler_field_event_status.inc
+files[] = views/bat_event_handler_filter_event_status.inc
+files[] = views/bat_event_handler_unit_filter.inc
+files[] = views/bat_event_handler_nights_field.inc

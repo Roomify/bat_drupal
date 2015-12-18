@@ -14,7 +14,7 @@ function bat_availability_schema() {
   $schema = array();
 
   $schema['bat_availability'] = array(
-    'description' => 'The main table holiding availability information',
+    'description' => 'The main table holding availability information',
     'fields' => array(
       'unit_id' => array(
         'description' => 'Identifier for a unit.',
