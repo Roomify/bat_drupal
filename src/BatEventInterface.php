@@ -185,12 +185,37 @@ interface BatEventInterface {
   public function endMinute($format = 'i');
 
   /**
+   * Given a month it returns a date object representing the last
+   * day of that month
+   *
+   * @param $date
+   * @return \DateTime
+   */
+  public function endMonthDate(\DateTime $date);
+
+
+  /**
+   * Returns TRUE if the date supplied is the first month of the event
+   * @param $date
+   * @return bool
+   */
+  public function isFirstMonth($date);
+
+  /**
+   * Returns TRUE if the date supplied is the first month of the event
+   * @param $date
+   * @return bool
+   */
+  public function isLastMonth($date);
+
+  /**
    * Checks if the event starts and ends in the same year.
    *
    * @return bool
    *   TRUE if the event starts and ends in the same year, FALSE otherwise
    */
-  public function sameYear();
+  public function isSameYear();
+
 
   /**
    * Checks if the event starts and ends in the same month.
@@ -198,7 +223,7 @@ interface BatEventInterface {
    * @return bool
    *   TRUE if the event starts and ends in the same month, FALSE otherwise
    */
-  public function sameMonth();
+  public function isSameMonth();
 
   /**
    * Checks if the event starts and ends in the same day.
@@ -206,7 +231,7 @@ interface BatEventInterface {
    * @return bool
    *   TRUE if the event starts and ends in the same day, FALSE otherwise
    */
-  public function sameDay();
+  public function isSameDay();
 
   /**
    * Checks if the event starts and ends in the same hour.
@@ -214,24 +239,8 @@ interface BatEventInterface {
    * @return bool
    *   TRUE if the event starts and ends in the same hour, FALSE otherwise
    */
-  public function sameHour();
+  public function isSameHour();
 
-  /**
-   * Takes a single event that spans several months and transforms it to
-   * monthly events - this assumes that the event is contained within a year
-   *
-   * @return BatEventInterface[]
-   *   The event split if is necessary, a single item array otherwise.
-   */
-  public function transformToMonthlyEvents();
-
-  /**
-   * Takes an event that spans several years and transforms it to yearly events
-   *
-   * @return BatEventInterface[]
-   *   The event split if is necessary, a single item array otherwise.
-   */
-  public function transformToYearlyEvents();
 
   /**
    * Returns the date interval between end and start date.
