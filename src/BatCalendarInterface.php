@@ -23,26 +23,9 @@ interface BatCalendarInterface {
    * The end date of our range
    *
    * @return BatEventInterface[]
-   * An array of BookingEvent objects
+   * An array of BatEvent objects
    */
   public function getEvents(\DateTime $start_date, \DateTime $end_date);
-
-  /**
-   * Given a date range it returns all data within that range including the
-   * start and end dates of states. The MySQL queries are kept simple and then
-   * the data is cleared up.
-   *
-   * @param DateTime $start_date
-   * The starting date
-   *
-   * @param DateTime $end_date
-   * The end date of our range
-   *
-   * @return array
-   * An array of the structure data[unitid][year][month][days][d1]..[d31]
-   * as week as data[unitid][year][month][unique_states]
-   */
-  public function getRawDayData(\DateTime $start_date, \DateTime $end_date);
 
   /**
    * Given an array of BatEvents the calendar is updated with regards to the
@@ -56,22 +39,4 @@ interface BatCalendarInterface {
    */
   public function updateCalendar($events, $events_to_remove = array());
 
-  /**
-   * Adds an event to the calendar
-   *
-   * @param BatEventInterface $event
-   *   An an event of type BookingEvent
-   */
-  public function addMonthEvent(BatEventInterface $event);
-
-  /**
-   * Checks if a month exists.
-   *
-   * @param BatEventInterface $event
-   *   The event to check.
-   *
-   * @return bool
-   *   TRUE if the month is defined, FALSE otherwise.
-   */
-  public function monthDefined($event);
 }

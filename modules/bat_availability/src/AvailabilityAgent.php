@@ -5,84 +5,24 @@
  * Class AvailabilityAgent.
  */
 
-namespace Drupal\bat_event;
+namespace Drupal\bat_availability;
 
-use Drupal\bat_availability\UnitCalendar;
-use Drupal\bat_pricing\UnitPricingCalendar;
+use Drupal\bat\BatEvent;
 
 /**
- * An AvailabilityAgent provides access to the availability functionality of
- * BAT and lets you query for availability, get pricing information and create
- * products that can be bought.
+ * An AvailabilityAgent performs three tasks.
  *
- * The Agent is essentially a factory creating the appropriate responses for us
- * as needed based on the requests and the current status of our bookable units.
+ * 1. Given a start date, end date and acceptable set of states it will provide a
+ * set of units that find themselves in that state.
  *
- * An Agent reasons over a single set of information regarding a event which
- * are exposed as public variables to make it easy for us to set and or change them.
+ * 2. Given a BatEvent it will update a unit's availability to reflect that event
+ * provided the unit availability can be updated.
+ *
+ * 3. Given a date range and a set of units it will provide the availability data
+ * for those units
+ *
  */
 class AvailabilityAgent {
-
-  /**
-   * The start date for availability search.
-   *
-   * @var DateTime
-   */
-  public $start_date;
-
-  /**
-   * The departure date
-   *
-   * @var DateTime
-   */
-  public $end_date;
-
-  /**
-   * How many event units are we looking for.
-   *
-   * @var int
-   */
-  public $event_units;
-
-  /**
-   * The states to consider valid for an availability search.
-   *
-   * @var array
-   */
-  public $valid_states;
-
-  /**
-   * What unit types we are looking for.
-   *
-   * @var array
-   */
-  public $unit_types;
-
-  /**
-   * Stores available units for each event_parameters.
-   *
-   * @var array
-   */
-  public $unit_results = array();
-
-  /**
-   * Stores first valid bat combination for event_parameters in input.
-   *
-   * @var array
-   */
-  public $valid_unit_combination = array();
-
-  /**
-   * Standard availability search returns a unit as available only if in one of the
-   * valid availability states. This switch reverts the behaviour to return a
-   * unit as availability if a state not defined in valid_states within the
-   * date range provided. This is particularly useful if looking for unknown state
-   * values within a given date range (e.g. search for any events within a date range).
-   *
-   * @var boolean
-   */
-  public $revert_valid_states = FALSE;
-
 
   /**
    * Construct the AvailabilityAgent instance.
@@ -102,7 +42,7 @@ class AvailabilityAgent {
    * @param boolean $revert_valid_states
    *  If true availability is return if states other than the valid ones exist in date range
    */
-  public function __construct($start_date, $end_date, $event_parameters = array(), $event_units = 1, $valid_states = array(BAT_AVAILABLE, BAT_ON_REQUEST, BAT_UNCONFIRMED_BOOKINGS), $unit_types = array(), $revert_valid_states = FALSE) {
+  public function __construct(\DateTime $start_date, \DateTime $end_date, $valid_states = array(0), $revert_valid_states = FALSE) {
     $this->valid_states = $valid_states;
     $this->start_date = $start_date;
     // For availability purposes the end date is a day earlier than checkout.
@@ -123,7 +63,7 @@ class AvailabilityAgent {
    * @param array $states
    *   The valid states to perform the search.
    */
-  public function setValidStates($states = array(BAT_AVAILABLE, BAT_ON_REQUEST, BAT_UNCONFIRMED_BOOKINGS)) {
+  public function setValidStates($states = array()) {
     $this->valid_states = $states;
   }
 

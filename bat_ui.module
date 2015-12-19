@@ -5,6 +5,9 @@
  * Interface support to the BAT family of modules.
  */
 
+use Drupal\bat\BatEvent;
+use Drupal\bat\BatCalendar;
+
 
 /**
  * Implements hook_menu().
@@ -46,9 +49,43 @@ function bat_ui_menu() {
     'page callback' => 'bat_ui_terminology_form',
     'access arguments' => array('configure bat settings'),
   );
-
+  $items['admin/bat/test'] = array(
+    'title' => 'BAT Test',
+    'description' => 'BAT Test',
+    'page callback' => 'bat_ui_test',
+    'access arguments' => array('configure bat settings'),
+  );
 
   return $items;
+}
+
+
+/**
+ * BAT TESTS
+ */
+function bat_ui_test() {
+  $start_date = new DateTime('2014-12-12 12:59:00');
+  $end_date = new DateTime('2015-12-13 14:59:00');
+
+
+  $event = new BatEvent($start_date, $end_date, 10);
+
+
+  $itemized = $event->itemizeEvent();
+
+  dpm($itemized);
+
+  //$hours = $event->getFirstDayHourly();
+
+  //dpm($hours);
+  /*foreach ($event->getYears() as $year) {
+    foreach ($event->getMonths($year) as $month) {
+      $dec[$year] = $event->getDays($month);
+    }
+  }*/
+
+
+  return 'hi123';
 }
 
 /**
