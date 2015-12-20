@@ -10,7 +10,7 @@ namespace Drupal\bat;
 /**
  * The basic BAT event interface.
  */
-interface BatEventInterface {
+interface BatGranularEventInterface {
 
   /**
    * Returns the unit id.

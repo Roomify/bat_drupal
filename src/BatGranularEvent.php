@@ -2,12 +2,12 @@
 
 /**
  * @file
- * Class BatEvent
+ * Class BatGranularEvent
  */
 
 namespace Drupal\bat;
 
-class BatEvent extends BatAbstractEvent {
+class BatGranularEvent extends BatAbstractGranularEvent {
 
   // Redeclaring constants used in BatAbstractEvent because of no clean way to
   // have constants inherited;

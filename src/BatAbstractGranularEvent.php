@@ -13,7 +13,7 @@ const BAT_MINUTE = 'bat_minute';
 const BAT_HOURLY = 'bat_hourly';
 const BAT_DAILY = 'bat_daily';
 
-abstract class BatAbstractEvent implements BatEventInterface {
+abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
 
   /**
    * The booking unit the event is relevant to
@@ -463,7 +463,7 @@ abstract class BatAbstractEvent implements BatEventInterface {
       $itemized = $this->itemizeEvent($granularity);
 
       //Write days
-      foreach ($itemized[BatEvent::BAT_DAY] as $year => $months) {
+      foreach ($itemized[BAT_DAY] as $year => $months) {
         foreach ($months as $month => $days) {
           db_merge($store[BAT_DAY])
             ->key(array(
@@ -478,7 +478,7 @@ abstract class BatAbstractEvent implements BatEventInterface {
 
       if ($granularity == BAT_HOURLY) {
         // Write Hours
-        foreach ($itemized[BatEvent::BAT_HOUR] as $year => $months) {
+        foreach ($itemized[BAT_HOUR] as $year => $months) {
           foreach ($months as $month => $days) {
             foreach ($days as $day => $hours) {
               // Count required as we may receive empty hours for granular events that start and end on midnight
@@ -498,7 +498,7 @@ abstract class BatAbstractEvent implements BatEventInterface {
         }
 
         //If we have minutes write minutes
-        foreach ($itemized[BatEvent::BAT_MINUTE] as $year => $months) {
+        foreach ($itemized[BAT_MINUTE] as $year => $months) {
           foreach ($months as $month => $days) {
             foreach ($days as $day => $hours) {
               foreach ($hours as $hour => $minutes) {
