@@ -204,7 +204,7 @@ function bat_availability_generate_hour_schema_fields() {
 
   for ($i = 0; $i<=23; $i++) {
     $fields['h' . $i] = array(
-      'description' => 'D' . $i,
+      'description' => 'H' . $i,
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
@@ -254,8 +254,12 @@ function bat_availability_generate_minute_schema_fields() {
   );
 
   for ($i = 0; $i<=59; $i++) {
-    $fields['m' . $i] = array(
-      'description' => 'D' . $i,
+    //PHP has no clean way to get the minutes without leading zeros so setting table
+    //fields names to contain the leading zeros to save strangeness in code elsewhere
+    if ($i<=9) {$m='0' . $i;} else ($m = $i);
+
+    $fields['m' . $m] = array(
+      'description' => 'M' . $m,
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',

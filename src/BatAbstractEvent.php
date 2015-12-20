@@ -7,6 +7,12 @@
 
 namespace Drupal\bat;
 
+const BAT_DAY = 'bat_day';
+const BAT_HOUR = 'bat_hour';
+const BAT_MINUTE = 'bat_minute';
+const BAT_HOURLY = 'bat_hourly';
+const BAT_DAILY = 'bat_daily';
+
 abstract class BatAbstractEvent implements BatEventInterface {
 
   /**
@@ -299,22 +305,46 @@ abstract class BatAbstractEvent implements BatEventInterface {
    */
   public function getDayGranural($itemized = array()){
     $interval = new \DateInterval('PT1M');
-    // Creates a date period that starts form the start event to the end of the first day and split tim hourly
+
+    $sy = $this->start_date->format('Y');
+    $sm = $this->start_date->format('n');
+    $sd = $this->start_date->format('j');
+
+    $ey = $this->end_date->format('Y');
+    $em = $this->end_date->format('n');
+    $ed = $this->end_date->format('j');
+
+    // Creates a date period that starts from the start event to the end of the first day and split time by hours and minutes
     if ($this->isSameDay()) {
       $period = new \DatePeriod($this->start_date, $interval, $this->end_date);
-      $itemized = $this->createGranuralEvents($period, $this->start_date);
+      $itemized_same_day = $this->createGranuralEvents($period, $this->start_date);
+      $itemized[BAT_DAY][$sy][$sm]['d'. $sd] = -1;
+      $itemized[BAT_HOUR][$sy][$sm]['d'. $sd]  = $itemized_same_day[BAT_HOUR][$sy][$sm]['d'. $sd];
+      $itemized[BAT_MINUTE][$sy][$sm]['d'. $sd]  = $itemized_same_day[BAT_MINUTE][$sy][$sm]['d'. $sd];
     } else {
-      // Start day
-      $start_period = new \DatePeriod($this->start_date, $interval, new \DateTime($this->start_date->format("Y-n-j 23:59:59")));
-      $itemized_start = $this->createGranuralEvents($start_period, $this->start_date);
-      $itemized[$this->start_date->format('Y')][$this->start_date->format('n')]['d'. $this->start_date->format('j')]
-        = $itemized_start[$this->start_date->format('Y')][$this->start_date->format('n')]['d'. $this->start_date->format('j')];
-      // End day
-      $end_period = new \DatePeriod(new \DateTime($this->end_date->format("Y-n-j 00:00:00")), $interval, $this->end_date);
-      $itemized_end = $this->createGranuralEvents($end_period, new \DateTime($this->end_date->format("Y-n-j 00:00:00")));
-      dpm($itemized_end);
-      $itemized[$this->end_date->format('Y')][$this->end_date->format('n')]['d'. $this->end_date->format('j')] =
-         $itemized_end[$this->end_date->format('Y')][$this->end_date->format('n')]['d'. $this->end_date->format('j')];
+      // Deal with the start day unless it starts on midnight precisly at which point the whole day is booked
+      if (!($this->start_date->format('H:i') == '00:00')) {
+        $start_period = new \DatePeriod($this->start_date, $interval, new \DateTime($this->start_date->format("Y-n-j 23:59:59")));
+        $itemized_start = $this->createGranuralEvents($start_period, $this->start_date);
+        $itemized[BAT_DAY][$sy][$sm]['d' . $sd] = -1;
+        $itemized[BAT_HOUR][$sy][$sm]['d' . $sd] = $itemized_start[BAT_HOUR][$sy][$sm]['d' . $sd];
+        $itemized[BAT_MINUTE][$sy][$sm]['d' . $sd] = $itemized_start[BAT_MINUTE][$sy][$sm]['d' . $sd];
+      } else {
+        // Just set an empty hour and minute
+        $itemized[BAT_HOUR][$sy][$sm]['d' . $sd] = array();
+        $itemized[BAT_MINUTE][$sy][$sm]['d' . $sd] = array();
+      }
+      // Deal with the end date unless it ends on midnight precisely at which point the day does not count
+      if (!($this->end_date->format('H:i') == '00:00')) {
+        $end_period = new \DatePeriod(new \DateTime($this->end_date->format("Y-n-j 00:00:00")), $interval, $this->end_date);
+        $itemized_end = $this->createGranuralEvents($end_period, new \DateTime($this->end_date->format("Y-n-j 00:00:00")));
+        $itemized[BAT_DAY][$ey][$em]['d' . $ed] = -1;
+        $itemized[BAT_HOUR][$ey][$em]['d' . $ed] = $itemized_end[BAT_HOUR][$ey][$em]['d' . $ed];
+        $itemized[BAT_MINUTE][$ey][$em]['d' . $ed] = $itemized_end[BAT_MINUTE][$ey][$em]['d' . $ed];
+      } else {
+        // Get rid of the day - it does not count
+        unset ($itemized[BAT_DAY][$ey][$em]['d' . $ed]);
+      }
     }
     return $itemized;
   }
@@ -333,7 +363,10 @@ abstract class BatAbstractEvent implements BatEventInterface {
     $counter = (int)$period_start->format('i');
     $start_minute = $counter;
     foreach($period as $minute){
-      $itemized[$minute->format('Y')][$minute->format('n')]['d'. $minute->format('j')]['h'. $minute->format('G')]['m' .$minute->format('i')] = $this->getValue();
+      // Doing minutes so set the values in the minute array
+      $itemized[BAT_MINUTE][$minute->format('Y')][$minute->format('n')]['d'. $minute->format('j')]['h'. $minute->format('G')]['m' .$minute->format('i')] = $this->getValue();
+      // Let the hours know that it cannot determine availability
+      $itemized[BAT_HOUR][$minute->format('Y')][$minute->format('n')]['d'. $minute->format('j')]['h'. $minute->format('G')] = -1;
       $counter++;
 
       if ($counter == 60 && $start_minute!==0) {
@@ -342,7 +375,9 @@ abstract class BatAbstractEvent implements BatEventInterface {
         $start_minute = 0;
       } elseif ($counter == 60 && $start_minute == 0) {
         // Did a real whole hour so initialize the hour
-        $itemized[$minute->format('Y')][$minute->format('n')]['d' . $minute->format('j')]['h' . $minute->format('G')] = $this->getValue();
+        $itemized[BAT_HOUR][$minute->format('Y')][$minute->format('n')]['d' . $minute->format('j')]['h' . $minute->format('G')] = $this->getValue();
+        // We have a whole hour so get rid of the minute info
+        unset($itemized[BAT_MINUTE][$minute->format('Y')][$minute->format('n')]['d'. $minute->format('j')]['h'. $minute->format('G')]);
         $counter = 0;
         $start_minute = 0;
       }
@@ -352,11 +387,11 @@ abstract class BatAbstractEvent implements BatEventInterface {
   }
 
   /**
-   * Transforms the event is a breakdown of days, hours and minutes with associated states.
+   * Transforms the event in a breakdown of days, hours and minutes with associated states.
    *
    * @return array
    */
-  public function itemizeEvent() {
+  public function itemizeEvent($granularity = BAT_HOURLY) {
     // The largest interval we deal with are months (a row in the *_state/*_event tables)
     $interval = new \DateInterval('P1M');
 
@@ -380,7 +415,7 @@ abstract class BatAbstractEvent implements BatEventInterface {
           $dayrange = new \DatePeriod($this->start_date, $dayinterval, $this->endMonthDate($this->start_date));
         }
         foreach ($dayrange as $day) {
-          $itemized[$year][$day->format('n')]['d' . $day->format('j')] = $this->getValue();
+          $itemized[BAT_DAY][$year][$day->format('n')]['d' . $day->format('j')] = $this->getValue();
         }
       }
 
@@ -388,7 +423,7 @@ abstract class BatAbstractEvent implements BatEventInterface {
       elseif ($this->isLastMonth($date)){
         $dayrange = new \DatePeriod(new \DateTime($date->format("Y-n-1")), $dayinterval, $this->end_date);
         foreach ($dayrange as $day) {
-          $itemized[$year][$day->format('n')]['d' . $day->format('j')] = $this->getValue();
+          $itemized[BAT_DAY][$year][$day->format('n')]['d' . $day->format('j')] = $this->getValue();
         }
       }
 
@@ -396,13 +431,98 @@ abstract class BatAbstractEvent implements BatEventInterface {
       else {
         $dayrange = new \DatePeriod(new \DateTime($date->format("Y-n-1")), $dayinterval, new \DateTime($date->format("Y-n-t 23:59:59")));
         foreach ($dayrange as $day) {
-          $itemized[$year][$day->format('n')]['d' . $day->format('j')] = $this->getValue();
+          $itemized[BAT_DAY][$year][$day->format('n')]['d' . $day->format('j')] = $this->getValue();
         }
       }
     }
-    //Add granural info in
-    $itemized = $this->getDayGranural($itemized);
+
+    if ($granularity == BAT_HOURLY) {
+      //Add granural info in
+      $itemized = $this->getDayGranural($itemized);
+    }
+
     return $itemized;
+  }
+
+  /**
+   * Saves an event to whatever Drupal tables are defined in the store array
+   *
+   * @param array $store
+   * @param string $granularity
+   * @throws \Exception
+   * @throws \InvalidMergeQueryException
+   */
+  public function saveEvent($store, $granularity = BAT_HOURLY) {
+
+    $saved = TRUE;
+    $transaction = db_transaction();
+
+    try {
+
+      // Itemize an event so we can save it
+      $itemized = $this->itemizeEvent($granularity);
+
+      //Write days
+      foreach ($itemized[BatEvent::BAT_DAY] as $year => $months) {
+        foreach ($months as $month => $days) {
+          db_merge($store[BAT_DAY])
+            ->key(array(
+              'unit_id' => $this->unit_id,
+              'year' => $year,
+              'month' => $month
+            ))
+            ->fields($days)
+            ->execute();
+        }
+      }
+
+      if ($granularity == BAT_HOURLY) {
+        // Write Hours
+        foreach ($itemized[BatEvent::BAT_HOUR] as $year => $months) {
+          foreach ($months as $month => $days) {
+            foreach ($days as $day => $hours) {
+              // Count required as we may receive empty hours for granular events that start and end on midnight
+              if (count($hours) > 0) {
+                db_merge($store[BAT_HOUR])
+                  ->key(array(
+                    'unit_id' => $this->unit_id,
+                    'year' => $year,
+                    'month' => $month,
+                    'day' => substr($day, 1)
+                  ))
+                  ->fields($hours)
+                  ->execute();
+              }
+            }
+          }
+        }
+
+        //If we have minutes write minutes
+        foreach ($itemized[BatEvent::BAT_MINUTE] as $year => $months) {
+          foreach ($months as $month => $days) {
+            foreach ($days as $day => $hours) {
+              foreach ($hours as $hour => $minutes) {
+                db_merge($store[BAT_MINUTE])
+                  ->key(array(
+                    'unit_id' => $this->unit_id,
+                    'year' => $year,
+                    'month' => $month,
+                    'day' => substr($day, 1),
+                    'hour' => substr($hour, 1)
+                  ))
+                  ->fields($minutes)
+                  ->execute();
+              }
+            }
+          }
+        }
+      }
+    } catch (\Exception $e){
+      $saved = FALSE;
+      $transaction->rollback();
+      watchdog_exception('BAT Event Save Exception', $e);
+    }
+    return $saved;
   }
 
 }
