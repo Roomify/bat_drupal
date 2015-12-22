@@ -63,9 +63,9 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
 
   $form['event_mode'] = array(
     '#type' => 'select',
-    '#title' => t('Booking Mode'),
-    '#options' => (module_exists('bat_hourly_availability')) ? array('daily' => t('Daily'), 'hourly' => t('Hourly')) : array('daily' => t('Daily')),
-    '#default_value' => isset($event_type->event_mode) ? $event_type->event_mode : 'daily',
+    '#title' => t('Event Granularity'),
+    '#options' => array('Daily', 'Hourly'),
+    '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granulity : 'daily',
   );
 
   $form['actions'] = array(

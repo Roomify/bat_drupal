@@ -29,7 +29,7 @@ class BatEventUIController extends EntityDefaultUIController {
     $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%' . $this->entityType;
 
     $items[$this->path] = array(
-      'title' => 'Bookings',
+      'title' => 'Events',
       'description' => 'Add edit and update events.',
       'page callback' => 'system_admin_menu_block_page',
       'access arguments' => array('access administration pages'),
@@ -40,8 +40,8 @@ class BatEventUIController extends EntityDefaultUIController {
 
     // Change the add page menu to multiple types of entities.
     $items[$this->path . '/add'] = array(
-      'title' => 'Add a Booking',
-      'description' => 'Add a new Booking',
+      'title' => 'Add a Event',
+      'description' => 'Add a new Event',
       'page callback'  => 'bat_event_add_page',
       'access callback'  => '_bat_event_add_access',
       'type' => MENU_NORMAL_ITEM,
@@ -109,7 +109,7 @@ class BatEventUIController extends EntityDefaultUIController {
   }
 
   /**
-   * Create the markup for the add Booking Entities page within the class
+   * Create the markup for the add Event Entities page within the class
    * so it can easily be extended/overriden.
    */
   public function addPage() {
@@ -130,7 +130,7 @@ class BatEventUIController extends EntityDefaultUIController {
 }
 
 /**
- * Form callback wrapper: edit a Booking.
+ * Form callback wrapper: edit a Event.
  *
  * @param $event
  *   The  BatEvent object being edited by this form.
@@ -152,10 +152,10 @@ function bat_event_form_wrapper($event) {
 }
 
 /**
- * Form callback wrapper: create a Booking.
+ * Form callback wrapper: create a Event.
  *
  * @param $event
- *   The Booking object being edited by this form.
+ *   The Event object being edited by this form.
  *
  * @see bat_event_edit_form()
  */
@@ -215,7 +215,7 @@ function bat_event_edit_form($form, &$form_state, $event) {
   // A fieldset to hold the date range fields.
   $form['bat_date_range'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Booking dates'),
+    '#title' => t('Event dates'),
     '#attributes' => array('class' => array('bat-event-date-range-wrapper')),
     '#weight' => -1,
   );
@@ -223,7 +223,7 @@ function bat_event_edit_form($form, &$form_state, $event) {
   $form['bat_date_range'] += bat_date_range_fields();
 
   // Unset the default for max days away for events since we are on the admin.
-  drupal_add_js(array('bat' => array('batBookingStartDay' => 0)), 'setting');
+  drupal_add_js(array('bat' => array('batEventStartDay' => 0)), 'setting');
 
   // Set the default values for the dates.
   $form['bat_date_range']['bat_start_date']['#default_value'] = isset($event->start_date) ? $event->start_date : '';
@@ -276,14 +276,14 @@ function bat_event_edit_form($form, &$form_state, $event) {
 
   $form['b_status'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Booking status'),
+    '#title' => t('Event status'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#group' => 'additional_settings',
   );
   $form['b_status']['event_status'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Booking Confirmed'),
+    '#title' => t('Event Confirmed'),
     '#options' => array(
       '0' => '0',
       '1' => '1',
@@ -323,7 +323,7 @@ function bat_event_edit_form($form, &$form_state, $event) {
   // Add a log checkbox and timestamp field to a history tab.
   $form['event_history'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Booking history'),
+    '#title' => t('Event history'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#group' => 'additional_settings',
@@ -375,14 +375,14 @@ function bat_event_edit_form($form, &$form_state, $event) {
 
   $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save Booking'),
+    '#value' => t('Save Event'),
     '#submit' => $submit + array('bat_event_edit_form_submit'),
   );
 
   if (!isset($event->is_new) && bat_event_access('delete', $event)) {
     $form['actions']['delete'] = array(
       '#type' => 'submit',
-      '#value' => t('Delete Booking'),
+      '#value' => t('Delete Event'),
       '#submit' => $submit + array('bat_event_form_submit_delete'),
       '#weight' => 45,
 
@@ -504,7 +504,7 @@ function bat_event_edit_form_validate(&$form, &$form_state) {
 }
 
 /**
- * Form API submit callback for the Booking form.
+ * Form API submit callback for the Event form.
  */
 function bat_event_edit_form_submit(&$form, &$form_state) {
   // We also need appropriate named variables for start and end date.
@@ -590,7 +590,7 @@ function bat_event_delete_form($form, &$form_state, $event) {
   $form['#submit'][] = 'bat_event_delete_form_submit';
 
   $form = confirm_form($form,
-    t('Are you sure you want to delete Booking ?'),
+    t('Are you sure you want to delete Event ?'),
     'admin/bat/events/event',
     '<p>' . t('This action cannot be undone.') . '</p>',
     t('Delete'),
@@ -643,7 +643,7 @@ function theme_bat_event_add_list($variables) {
   }
   else {
     if (user_access('administer event types')) {
-      $output = '<p>' . t('Bookings cannot be added because you have not created any event types yet. Go to the <a href="@create-event-type">event type creation page</a> to add a new event type.', array('@create-event-type' => url('admin/bat/events/event-types/add'))) . '</p>';
+      $output = '<p>' . t('Events cannot be added because you have not created any event types yet. Go to the <a href="@create-event-type">event type creation page</a> to add a new event type.', array('@create-event-type' => url('admin/bat/events/event-types/add'))) . '</p>';
     }
     else {
       $output = '<p>' . t('No event types have been created yet for you to use.') . '</p>';
@@ -661,7 +661,7 @@ function bat_event_set_breadcrumb() {
     l(t('Home'), '<front>'),
     l(t('Administration'), 'admin'),
     l(t('BAT'), 'admin/bat'),
-    l(t('Bookings'), 'admin/bat/events'),
+    l(t('Events'), 'admin/bat/events'),
   );
 
   drupal_set_breadcrumb($breadcrumb);

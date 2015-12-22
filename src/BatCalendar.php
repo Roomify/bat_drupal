@@ -13,4 +13,7 @@ namespace Drupal\bat;
  */
 class BatCalendar extends BatAbstractCalendar {
 
+  public function __construct($unit_ids = array()) {
+    $this->unit_ids = $unit_ids;
+  }
 }

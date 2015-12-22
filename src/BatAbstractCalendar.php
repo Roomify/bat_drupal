@@ -74,7 +74,10 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     $events = array();
 
     $queries  = $this->buildQueries($start_date, $end_date, $store);
+    dpm($queries);
+
     $results = $this->getEventData($queries);
+    dpm($results);
 
     $db_events = array();
 
@@ -200,191 +203,120 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     return $events;
   }
 
-  /**
-   * Provides events keyed by unit_id as a set of starttime, endtime and state the unit is in during that time period
-   *
-   * @param \DateTime $start_date
-   * @param \DateTime $end_date
-   * @param $store
-   */
-  public function getEventDates(\DateTime $start_date, \DateTime $end_date, $store) {
+  public function getEventsNormalized($events) {
 
-    // Create db queries based on the start and end date
-    $queries  = $this->buildQueries($start_date, $end_date, $store);
+    $normalized_events = array();
 
-    // With the queries in place go get the data
-    $results = $this->getEventData($queries);
+    $events_copy = $events;
 
+    foreach ($events_copy as $unit => $data) {
 
-    $events = array();
+      // Make sure years are sorted
+      ksort($data[BatGranularevent::BAT_DAY]);
+      ksort($data[BatGranularevent::BAT_HOUR]);
+      ksort($data[BatGranularevent::BAT_MINUTE]);
 
-    // Initialize variables we will need to keep track of things
-    $previous_unit = 0;
-    $previous_month = 0;
-    $previous_year = 0;
-    $last_start_day = 0;
-    $current_state = 0;
-    $days_in_month = 0;
-
-    // Cycle through day results and setup an event array
-    while( $data = $results[BAT_DAY]->fetchAssoc()) {
-      $current_data = $data;
-      $current_unit = $data['unit_id'];
-      $current_year = $data['year'];
-      $current_month = $data['month'];
-
-      // Reset the start state if we are dealing with a new unit
-      if ($previous_unit == 0 || $previous_unit != $current_unit) {
-        $start_state = $data['d1'];
-        $event_start_day = new \DateTime($current_year . "-" . $current_month . "-1");
-      }
-      // We are in the cycle but switched units so there is an event to close
-      if ($previous_unit !=0 && $previous_unit != $current_unit) {
-        $events[$previous_unit][$last_start_day->format('Ynd')] = array($last_start_day, new \DateTime($previous_year . "-" . $previous_month . "-" . $days_in_month), $start_state);
-      }
-
-      // Figure out how many days the current month has
-      $temp_date = new \DateTime($current_year . "-" . $current_month);
-      $days_in_month = (int)$temp_date->format('t');
-
-      for ($i = 1; $i<=$days_in_month; $i++){
-        $current_state = $data['d'.$i];
+      // Set up variables to keep track of stuff
+      $start_event = NULL;
+      $end_event = NULL;
+      $current_value = NULL;
+      $event_value = NULL;
+      $last_day = NULL;
+      $last_hour = NULL;
+      $last_minute = NULL;
 
 
-        if ($start_state != $current_state) {
-          // We switched states so add event and reset tracking variables
-          $event_end_day = new \DateTime($current_year. "-" . $current_month . "-" . ($i-1));
-          $events[$current_unit][$event_start_day->format('Ynd')] = array($event_start_day, $event_end_day, $start_state);
-          $start_state = $current_state;
-          $event_start_day = new \DateTime($current_year. "-" . $current_month . "-" .$i);
-          $last_start_day = $event_start_day;
-        }
-      }
 
-      $previous_unit = $current_unit;
-      $previous_month = $current_month;
-      $previous_year = $current_year;
-    }
-
-    // Add the very last event which was left unclosed because we never get back in the cycle
-    $events[$previous_unit][$last_start_day->format('Ynd')] = array($last_start_day, new \DateTime($previous_year . "-" . $previous_month . "-" . $days_in_month), $current_state);
-
-    // With the day events taken care off let's cycle through hours
-    while( $data = $results[BAT_HOUR]->fetchAssoc()) {
-      dpm($data);
-      unset($data['unit_id']);
-      unset($data['year']);
-      unset($data['month']);
-      unset($data['day']);
-      dpm(array_flip($data));
-
-    }
-
-    return $events;
-  }
-
-  /**
-   * @param \DateTime $start_date
-   * @param \DateTime $end_date
-   * @param $store
-   * @return array
-   */
-  public function getEventDates2(\DateTime $start_date, \DateTime $end_date, $store) {
-
-    $queries  = $this->buildQueries($start_date, $end_date, $store);
-    $results = $this->getEventData($queries);
-
-    $events = array();
-
-    // Cycle through day results and setup an event array
-    while( $data = $results[BAT_DAY]->fetchAssoc()) {
-
-      // Get the key columns and leave the day data on its own
-      $unit_id = $data['unit_id'];
-      unset($data['unit_id']);
-
-      $year = $data['year'];
-      unset($data['year']);
-
-      $month = $data['month'];
-      unset($data['month']);
-
-      // Figure out how many days the current month has
-      $temp_date = new \DateTime($year . "-" . $month);
-      $days_in_month = (int)$temp_date->format('t');
-
-      $flipped = array();
-      $e = 0;
-      $j = 0;
-      $old_value = 0;
-
-      // Cycle through day data and create events
-      foreach ($data as $day => $value) {
-        $j++;
-        if ($j <= $days_in_month) {
-          // If the value has changed and we are not just starting
-          if (($value != $old_value)) {
-            $e++;
-            $flipped[$e][$value][$day] = $day;
-            $old_value = $value;
-          }
-          else {
-            $flipped[$e][$value][$day] = $day;
-          }
-        }
-      }
-
-      $events[BAT_DAY][$unit_id][$year][$month] = $flipped;
-    }
-
-    $dated_events = array();
-
-    // Turn the array of split events into a set of continuous events
-    foreach ($events[BAT_DAY] as $unit => $dates) {
-      foreach ($dates as $year => $months) {
-        foreach ($months as $month => $event_data) {
-          foreach ($event_data as $event_id => $event) {
-            foreach ($event as $value => $days) {
-              dpm($days, 'days');
-              // Get the last day
-              $last_day = array_pop($days);
-              // Flip the array around and pop again to get the first day
-              $days = array_reverse($days);
-              $first_day = array_pop($days);
-
-              $last_day = new \DateTime($year . "-" . $month . "-" . substr($last_day,1));
-              dpm($last_day);
-              if ($first_day == ''){
-                dpm('same_day_event');
-                $first_day = $last_day;
-              } else {
-                $first_day = new \DateTime($year . "-" . $month . "-" . substr($first_day,1));
+      foreach ($data[BatGranularevent::BAT_DAY] as $year => $months) {
+        // Make sure months are in right order
+        ksort($months);
+        foreach ($months as $month => $days) {
+          foreach ($days as $day => $value) {
+            if ($value == -1) {
+              // Retrieve hour data
+              $hour_data = $events[$unit][BatGranularEvent::BAT_HOUR][$year][$month][$day];
+              ksort($hour_data, SORT_NATURAL);
+              foreach ($hour_data as $hour => $hour_value) {
+                if ($hour_value == -1) {
+                  // We are going to need minute values
+                  $minute_data = $events[$unit][BatGranularEvent::BAT_MINUTE][$year][$month][$day][$hour];
+                  ksort($minute_data, SORT_NATURAL);
+                  foreach ($minute_data as $minute => $minute_value) {
+                    if ($current_value === $minute_value) {
+                      // We are still in minutes and going through so add a minute
+                      $end_event->add(new \DateInterval('PT1M'));
+                    } elseif (($current_value != $minute_value) && ($current_value !== NULL)) {
+                      // Value just switched - let us wrap up with current event and start a new one
+                      $normalized_events[$unit][] = array(clone($start_event), clone($end_event), $current_value);
+                      $start_event = clone($end_event->add(new \DateInterval('PT1M')));
+                      $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . substr($minute,1));
+                      $current_value = $minute_value;
+                    }
+                    if ($current_value === NULL) {
+                      // We are down to minutes and haven't created and even yet - do one now
+                      $start_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . substr($minute,1));
+                      $end_event = clone($start_event);
+                    }
+                    $current_value = $minute_value;
+                  }
+                } elseif ($current_value === $hour_value) {
+                  // We are in hours and can add something
+                  $end_event->add(new \DateInterval('PT1H'));
+                } elseif (($current_value != $hour_value) && ($current_value !== NULL)) {
+                  // Value just switched - let us wrap up with current event and start a new one
+                  $normalized_events[$unit][] = array(clone($start_event), clone($end_event), $current_value);
+                  // Start event becomes the end event with a minute added
+                  $start_event = clone($end_event->add(new \DateInterval('PT1M')));
+                  // End event comes the current point in time
+                  $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . ':00');
+                  $current_value = $hour_value;
+                }
+                if ($current_value === NULL) {
+                  // Got into hours and still haven't created an event so
+                  $start_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . ':00');
+                  // We will be occupying at least this hour so might as well mark it
+                  $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . ':59');
+                  $current_value = $hour_value;
+                }
               }
-              $dated_events[BAT_DAY][$unit][] = array($first_day, $last_day, $value);
+            } elseif ($current_value === $value) {
+              // We are adding a whole day so the end event gets moved to the end of the day we are adding
+              $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . '23:59');
+            } elseif ($current_value != $value) {
+              // Value just switched - let us wrap up with current event and start a new one
+              $normalized_events[$unit][] = array(clone($start_event), clone($end_event), $current_value);
+              // Start event becomes the end event with a minute added
+              $start_event = clone($end_event->add(new \DateInterval('PT1M')));
+              // End event becomes the current day which we have not account for yet
+              $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . '23:59');
+              $current_value = $value;
+            }
+            if ($current_value === NULL) {
+              // We have not created an event yet so let's do it now
+              $start_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . '23:59');
+              $end_event = clone($start_event);
             }
           }
         }
       }
+
+      // Add the last event in for which there is nothing in the loop to catch it
+      $normalized_events[$unit][] = array(clone($start_event), clone($end_event), $current_value);
     }
 
-    dpm($dated_events);
-
-
-
-    // With the day events taken care off let's cycle through hours
-    while( $data = $results[BAT_HOUR]->fetchAssoc()) {
-      dpm($data, 'HOURS');
-      unset($data['unit_id']);
-      unset($data['year']);
-      unset($data['month']);
-      unset($data['day']);
-      dpm(array_flip($data));
-
-    }
-
-    return $events;
+    return $normalized_events;
   }
 
+  public function getEventDates(\DateTime $start_date, \DateTime $end_date, $store) {
+
+    $events = array();
+
+    $events = $this->getEventsItemized($start_date, $end_date, $store);
+    $events = $this->getEventsNormalized($events);
+
+    return $events;
+
+  }
 
   public function getEventData($queries) {
     $results = array();

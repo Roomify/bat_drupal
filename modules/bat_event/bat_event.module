@@ -2,12 +2,11 @@
 
 /**
  * @file
- * Manage Bookings - Bookings are tied to a customer profile and possible a
+ * Manage Events - Events are tied to a customer profile and possible a
  * Unit ID and Order ID.
  */
 
-use Drupal\bat_availability\BookingEvent;
-use Drupal\bat_availability\UnitCalendar;
+use Drupal\bat\BatGranularEvent;
 
 /**
  * Implements hook_menu().
@@ -219,7 +218,7 @@ function bat_event_ctools_plugin_type() {
  * FORM_ID = views_exposed_form
  */
 function bat_event_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
-  // Bookings admin view exposed filters.
+  // Events admin view exposed filters.
   if ($form['#id'] == 'views-exposed-form-events-page-1') {
     $form['start_date']['#type'] = 'date_popup';
     $form['start_date']['#date_format'] = 'd/m/Y';
@@ -701,7 +700,7 @@ function bat_event_create($values = array()) {
  * Saves a event to the database.
  *
  * @param BatEvent $event
- *   The Booking object.
+ *   The Event object.
  */
 function bat_event_save(BatEvent $event) {
   return $event->save();
@@ -745,7 +744,7 @@ function bat_event_page_title(BatEvent $event) {
 }
 
 /**
- * Get a list of Booking keyed by id and name in value.
+ * Get a list of Event keyed by id and name in value.
  */
 function bat_event_ids($conditions = array()) {
   $events = array();
@@ -844,7 +843,7 @@ function bat_event_get_unit_types($bat_event_type_name = '') {
 }
 
 /**
- * The class used for Booking entities.
+ * The class used for Event entities.
  */
 class BatEvent extends Entity {
 
@@ -954,7 +953,7 @@ class BatEventController extends EntityAPIController {
       $unit_id = $event_unit_reference[0]['target_id'];
 
       // Create an event representing the event to remove.
-      $be = new BookingEvent($unit_id, BAT_AVAILABLE, new DateTime($entity->original->start_date), new DateTime($entity->original->end_date), $event_type->event_mode);
+      $be = new BatGranularEvent($unit_id, BAT_AVAILABLE, new DateTime($entity->original->start_date), new DateTime($entity->original->end_date), $event_type->event_mode);
 
       $events_to_remove = array($be);
     }
@@ -970,7 +969,7 @@ class BatEventController extends EntityAPIController {
       $unit_id = $event_unit_reference[0]['target_id'];
 
       // Create an event.
-      $be = new BookingEvent($unit_id, $event_id, new DateTime($entity->start_date), new DateTime($entity->end_date), $event_type->event_mode);
+      $be = new BatGranularEvent($unit_id, $event_id, new DateTime($entity->start_date), new DateTime($entity->end_date), $event_type->event_mode);
 
       $events = array($be);
     }

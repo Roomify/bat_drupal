@@ -303,7 +303,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
    * @param array $itemized
    * @return array
    */
-  public function getDayGranural($itemized = array()){
+  public function createDayGranural($itemized = array()){
     $interval = new \DateInterval('PT1M');
 
     $sy = $this->start_date->format('Y');
@@ -325,7 +325,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
       // Deal with the start day unless it starts on midnight precisly at which point the whole day is booked
       if (!($this->start_date->format('H:i') == '00:00')) {
         $start_period = new \DatePeriod($this->start_date, $interval, new \DateTime($this->start_date->format("Y-n-j 23:59:59")));
-        $itemized_start = $this->createGranuralEvents($start_period, $this->start_date);
+        $itemized_start = $this->createHourlyEvents($start_period, $this->start_date);
         $itemized[BAT_DAY][$sy][$sm]['d' . $sd] = -1;
         $itemized[BAT_HOUR][$sy][$sm]['d' . $sd] = $itemized_start[BAT_HOUR][$sy][$sm]['d' . $sd];
         $itemized[BAT_MINUTE][$sy][$sm]['d' . $sd] = $itemized_start[BAT_MINUTE][$sy][$sm]['d' . $sd];
@@ -337,7 +337,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
       // Deal with the end date unless it ends on midnight precisely at which point the day does not count
       if (!($this->end_date->format('H:i') == '00:00')) {
         $end_period = new \DatePeriod(new \DateTime($this->end_date->format("Y-n-j 00:00:00")), $interval, $this->end_date);
-        $itemized_end = $this->createGranuralEvents($end_period, new \DateTime($this->end_date->format("Y-n-j 00:00:00")));
+        $itemized_end = $this->createHourlyEvents($end_period, new \DateTime($this->end_date->format("Y-n-j 00:00:00")));
         $itemized[BAT_DAY][$ey][$em]['d' . $ed] = -1;
         $itemized[BAT_HOUR][$ey][$em]['d' . $ed] = $itemized_end[BAT_HOUR][$ey][$em]['d' . $ed];
         $itemized[BAT_MINUTE][$ey][$em]['d' . $ed] = $itemized_end[BAT_MINUTE][$ey][$em]['d' . $ed];
@@ -356,7 +356,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
    * @param \DatePeriod $period
    * @return array
    */
-  public function createGranuralEvents(\DatePeriod $period, \DateTime $period_start) {
+  public function createHourlyEvents(\DatePeriod $period, \DateTime $period_start) {
     $interval = new \DateInterval('PT1M');
     $itemized = array();
 
@@ -438,7 +438,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
 
     if ($granularity == BAT_HOURLY) {
       //Add granural info in
-      $itemized = $this->getDayGranural($itemized);
+      $itemized = $this->createDayGranural($itemized);
     }
 
     return $itemized;

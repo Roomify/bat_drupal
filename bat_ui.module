@@ -5,7 +5,7 @@
  * Interface support to the BAT family of modules.
  */
 
-use Drupal\bat\BatEvent;
+use Drupal\bat\BatGranularEvent;
 use Drupal\bat\BatCalendar;
 
 
@@ -64,25 +64,50 @@ function bat_ui_menu() {
  * BAT TESTS
  */
 function bat_ui_test() {
-  $start_date = new DateTime('2014-12-12 12:59:00');
-  $end_date = new DateTime('2015-12-13 14:59:00');
+
+  $state_store = array(
+    BatGranularEvent::BAT_DAY => 'bat_event_day_state',
+    BatGranularEvent::BAT_HOUR => 'bat_event_hour_state',
+    BatGranularEvent::BAT_MINUTE => 'bat_event_minute_state'
+  );
+
+  $start_date1 = new DateTime('2014-10-12 14:00:00');
+  $end_date1 = new DateTime('2014-10-15 13:34:00');
+
+  $start_date2 = new DateTime('2014-10-16 10:01:00');
+  $end_date2 = new DateTime('2015-11-14 14:30:00');
+
+  $start_date3 = new DateTime('2014-5-12 10:10:00');
+  $end_date3 = new DateTime('2016-5-12 10:01:00');
 
 
-  $event = new BatEvent($start_date, $end_date, 10);
+  $event1 = new BatGranularEvent($start_date1, $end_date1, 1, 30);
+  //dpm($event1->itemizeEvent());
+  //$event2 = new BatGranularEvent($start_date2, $end_date2, 1, 10);
+
+  if ($event1->saveEvent($state_store)) {}
+  else{
+    dpm('Not Saved!');
+  };
+
+  //if ($event2->saveEvent($state_store)) {}
+  //else{
+  //  dpm('Not Saved!');
+  //};
 
 
-  $itemized = $event->itemizeEvent();
 
-  dpm($itemized);
 
-  //$hours = $event->getFirstDayHourly();
+  $calendar = new BatCalendar(array(1,2));
+  $events = $calendar->getEventsItemized($start_date1, $end_date1, $state_store);
 
-  //dpm($hours);
-  /*foreach ($event->getYears() as $year) {
-    foreach ($event->getMonths($year) as $month) {
-      $dec[$year] = $event->getDays($month);
-    }
-  }*/
+  dpm($events);
+
+  $normalized = $calendar->getEventsNormalized($events);
+
+  dpm($normalized);
+
+
 
 
   return 'hi123';

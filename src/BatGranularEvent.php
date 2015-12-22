@@ -17,7 +17,14 @@ class BatGranularEvent extends BatAbstractGranularEvent {
   const BAT_HOURLY = 'bat_hourly';
   const BAT_DAILY = 'bat_daily';
 
-  public function __construct($unit, \DateTime $start_date, \DateTime $end_date, $value) {
+  /**
+   * BatGranularEvent constructor.
+   * @param \DateTime $start_date
+   * @param \DateTime $end_date
+   * @param $unit
+   * @param $value
+   */
+  public function __construct(\DateTime $start_date, \DateTime $end_date, $unit = NULL, $value = 0) {
     $this->unit_id = $unit;
     $this->start_date = clone($start_date);
     $this->end_date = clone($end_date);

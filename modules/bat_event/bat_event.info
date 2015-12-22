@@ -1,4 +1,4 @@
-name = BAT Booking
+name = BAT Event
 description = Create and administer events for BAT.
 core = 7.x
 
