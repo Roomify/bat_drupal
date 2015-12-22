@@ -162,7 +162,7 @@ function bat_event_entity_insert($entity, $type) {
         'cardinality' => 1,
         'locked' => 1,
         'settings' => array(
-          'target_type' => 'event_unit',
+          'target_type' => 'bat_unit',
         ),
       );
       field_create_field($field);
@@ -253,6 +253,7 @@ function bat_event_get_states() {
       'color' => $event_state->color,
       'calendar_label' => $event_state->calendar_label,
       'locked' => $event_state->locked,
+      'blocking' => $event_state->blocking,
     );
   }
 
@@ -280,7 +281,7 @@ function bat_event_load_state($state_id) {
 function bat_event_states_form($form, &$form_state) {
   $event_states = bat_event_get_states();
 
-  $header = array(t('ID'), t('Label'), t('Operations'));
+  $header = array(t('ID'), t('Label'), t('Blocking'), t('Operations'));
 
   foreach ($event_states as $event_state) {
     $operations = array();
@@ -300,6 +301,7 @@ function bat_event_states_form($form, &$form_state) {
     $rows[] = array(
       $event_state['id'],
       $event_state['label'],
+      $event_state['blocking'],
       theme('links', array('links' => $operations, 'attributes' => array('class' => array('links', 'inline')))),
     );
   }
@@ -348,6 +350,11 @@ function bat_event_states_form($form, &$form_state) {
     '#required' => TRUE,
   );
 
+  $form['new_state']['blocking'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Blocking'),
+  ); 
+
   $form['new_state']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Add state'),
@@ -367,6 +374,7 @@ function bat_event_states_form_submit($form, &$form_state) {
     'label' => $form_state['values']['label'],
     'color' => $form_state['values']['color'],
     'calendar_label' => $form_state['values']['calendar_label'],
+    'blocking' => $form_state['values']['blocking'],
   );
 
   drupal_write_record('bat_event_state', $event_state);
@@ -423,6 +431,12 @@ function bat_event_states_edit_event_form($form, &$form_state, $event_id) {
     '#maxlength' => 50,
     '#default_value' => $state['calendar_label'],
     '#required' => TRUE,
+  );
+
+  $form['new_state']['blocking'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Blocking'),
+    '#default_value' => $state['blocking'],
   );
 
   $form['submit'] = array(
@@ -512,7 +526,7 @@ function bat_event_access($op, $event = NULL, $account = NULL) {
  *
  * @see node_menu()
  */
-function _bat_eventg_add_access() {
+function _bat_event_add_access() {
   if (user_access('administer bat_event_type entities')) {
     // There are no event types defined that the user has permission to create
     // but the user does have the permission to administer the content types, so
@@ -953,7 +967,7 @@ class BatEventController extends EntityAPIController {
       $unit_id = $event_unit_reference[0]['target_id'];
 
       // Create an event representing the event to remove.
-      $be = new BatGranularEvent($unit_id, BAT_AVAILABLE, new DateTime($entity->original->start_date), new DateTime($entity->original->end_date), $event_type->event_mode);
+      $be = new BatGranularEvent(new DateTime($entity->original->start_date), new DateTime($entity->original->end_date), $event_type->event_granularity, $unit_id, BAT_AVAILABLE);
 
       $events_to_remove = array($be);
     }
@@ -968,19 +982,15 @@ class BatEventController extends EntityAPIController {
       $event_unit_reference = field_get_items('bat_event', $entity, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
 
+      $state_store = array(
+        BatGranularEvent::BAT_DAY => 'bat_event_day_state',
+        BatGranularEvent::BAT_HOUR => 'bat_event_hour_state',
+        BatGranularEvent::BAT_MINUTE => 'bat_event_minute_state'
+      );
+
       // Create an event.
-      $be = new BatGranularEvent($unit_id, $event_id, new DateTime($entity->start_date), new DateTime($entity->end_date), $event_type->event_mode);
-
-      $events = array($be);
-    }
-
-    if ($unit_id > 0) {
-      // Create UnitCalendar.
-      $uc = new UnitCalendar($unit_id);
-
-      $responses = $uc->updateCalendar($events, $events_to_remove);
-
-      $entity->bat_av_update = $responses[$event_id];
+      $be = new BatGranularEvent(new DateTime($entity->start_date), new DateTime($entity->end_date), $unit_id, $event_id);
+      $be->saveEvent($state_store);
     }
   }
 
@@ -1012,11 +1022,11 @@ class BatEventController extends EntityAPIController {
       // absolute value).
       $event_id = bat_availability_assign_id($event->event_id);
 
-      $be = new BookingEvent($unit_id, $event_id, $event->start_date_object, $event->end_date_object, $event_type->event_mode);
+      $be = new BookingEvent($unit_id, $event_id, $event->start_date_object, $event->end_date_object, $event_type->event_granularity);
 
       $events = array($be);
 
-      if ($event_type->event_mode == 'hourly') {
+      if ($event_type->event_granularity == 'hourly') {
         $corrected_end_date = clone($event->end_date_object);
         $corrected_end_date->add(new \DateInterval('P1D'));
 

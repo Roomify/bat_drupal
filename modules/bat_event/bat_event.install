@@ -105,6 +105,13 @@ function bat_event_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'blocking' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Blocking.',
+      ),
       'data' => array(
         'type' => 'blob',
         'not null' => FALSE,
@@ -141,6 +148,13 @@ function bat_event_schema() {
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
+      ),
+      'event_granularity' => array(
+        'description' => 'Event Granularity (daily/hourly).',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'daily',
       ),
       'weight' => array(
         'type' => 'int',
@@ -211,6 +225,13 @@ function bat_event_schema() {
         'default' => 0,
         'size' => 'tiny',
         'description' => 'Lock.',
+      ),
+      'blocking' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Blocking.',
       ),
     ),
     'primary key' => array('id'),

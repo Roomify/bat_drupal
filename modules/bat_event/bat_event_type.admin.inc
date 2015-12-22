@@ -61,7 +61,7 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
     '#description' => t('A unique machine-readable name for this event type. It must only contain lowercase letters, numbers, and underscores.'),
   );
 
-  $form['event_mode'] = array(
+  $form['event_granularity'] = array(
     '#type' => 'select',
     '#title' => t('Event Granularity'),
     '#options' => array('Daily', 'Hourly'),
@@ -74,7 +74,7 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
   );
   $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save Booking type'),
+    '#value' => t('Save Event type'),
     '#weight' => 40,
     '#submit' => array('bat_event_type_form_submit'),
   );
