@@ -312,7 +312,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
 
   /**
    * Based on the start and end dates of the event it creates the appropriate granular events
-   * and adds them to the $itemized array.
+   * and adds them to an array appropriate for manipulating easily or storing in the database.
    *
    * @param array $itemized
    * @return array
@@ -328,18 +328,24 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
     $em = $this->end_date->format('n');
     $ed = $this->end_date->format('j');
 
-    // Creates a date period that starts from the start event to the end of the first day and split time by hours and minutes
+    // Clone the dates otherwise changes will change the event itself
+    $start_date = clone($this->start_date);
+    $end_date = clone($this->end_date);
+
     if ($this->isSameDay()) {
-      $period = new \DatePeriod($this->start_date, $interval, $this->end_date);
-      $itemized_same_day = $this->createGranuralEvents($period, $this->start_date);
-      $itemized[BAT_DAY][$sy][$sm]['d'. $sd] = -1;
-      $itemized[BAT_HOUR][$sy][$sm]['d'. $sd]  = $itemized_same_day[BAT_HOUR][$sy][$sm]['d'. $sd];
-      $itemized[BAT_MINUTE][$sy][$sm]['d'. $sd]  = $itemized_same_day[BAT_MINUTE][$sy][$sm]['d'. $sd];
-    } else {
-      // Deal with the start day unless it starts on midnight precisly at which point the whole day is booked
+      if (!($this->end_date->format('H:i') == '23:59')) {
+        $period = new \DatePeriod($start_date, $interval, $end_date->add(new \DateInterval('PT1M')));
+        $itemized_same_day = $this->createHourlyGranular($period, $start_date);
+        $itemized[BAT_DAY][$sy][$sm]['d' . $sd] = -1;
+        $itemized[BAT_HOUR][$sy][$sm]['d' . $sd] = $itemized_same_day[BAT_HOUR][$sy][$sm]['d' . $sd];
+        $itemized[BAT_MINUTE][$sy][$sm]['d' . $sd] = $itemized_same_day[BAT_MINUTE][$sy][$sm]['d' . $sd];
+      }
+    }
+    else {
+      // Deal with the start day unless it starts on midnight precisely at which point the whole day is booked
       if (!($this->start_date->format('H:i') == '00:00')) {
-        $start_period = new \DatePeriod($this->start_date, $interval, new \DateTime($this->start_date->format("Y-n-j 23:59:59")));
-        $itemized_start = $this->createHourlyGranular($start_period, $this->start_date);
+        $start_period = new \DatePeriod($start_date, $interval, new \DateTime($start_date->format("Y-n-j 23:59:59")));
+        $itemized_start = $this->createHourlyGranular($start_period, $start_date);
         $itemized[BAT_DAY][$sy][$sm]['d' . $sd] = -1;
         $itemized[BAT_HOUR][$sy][$sm]['d' . $sd] = $itemized_start[BAT_HOUR][$sy][$sm]['d' . $sd];
         $itemized[BAT_MINUTE][$sy][$sm]['d' . $sd] = $itemized_start[BAT_MINUTE][$sy][$sm]['d' . $sd];
@@ -349,16 +355,11 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
         $itemized[BAT_MINUTE][$sy][$sm]['d' . $sd] = array();
       }
       // Deal with the end date unless it ends on midnight precisely at which point the day does not count
-      if (!($this->end_date->format('H:i') == '00:00')) {
-        $end_period = new \DatePeriod(new \DateTime($this->end_date->format("Y-n-j 00:00:00")), $interval, $this->end_date);
-        $itemized_end = $this->createHourlyGranular($end_period, new \DateTime($this->end_date->format("Y-n-j 00:00:00")));
-        $itemized[BAT_DAY][$ey][$em]['d' . $ed] = -1;
-        $itemized[BAT_HOUR][$ey][$em]['d' . $ed] = $itemized_end[BAT_HOUR][$ey][$em]['d' . $ed];
-        $itemized[BAT_MINUTE][$ey][$em]['d' . $ed] = $itemized_end[BAT_MINUTE][$ey][$em]['d' . $ed];
-      } else {
-        // Get rid of the day - it does not count
-        unset ($itemized[BAT_DAY][$ey][$em]['d' . $ed]);
-      }
+      $end_period = new \DatePeriod(new \DateTime($end_date->format("Y-n-j 00:00:00")), $interval, $end_date->add(new \DateInterval('PT1M')));
+      $itemized_end = $this->createHourlyGranular($end_period, new \DateTime($end_date->format("Y-n-j 00:00:00")));
+      $itemized[BAT_DAY][$ey][$em]['d' . $ed] = -1;
+      $itemized[BAT_HOUR][$ey][$em]['d' . $ed] = $itemized_end[BAT_HOUR][$ey][$em]['d' . $ed];
+      $itemized[BAT_MINUTE][$ey][$em]['d' . $ed] = $itemized_end[BAT_MINUTE][$ey][$em]['d' . $ed];
     }
     return $itemized;
   }
