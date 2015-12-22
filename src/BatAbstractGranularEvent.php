@@ -296,6 +296,20 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
     return $interval;
   }
 
+  public function inRange(\DateTime $start, \DateTime $end){
+    $in_range = FALSE;
+
+    $t1 = $start->getTimestamp();
+    $t2 = $end->getTimestamp();
+    $t3 = $this->start_date->getTimeStamp();
+    $t4 = $this->end_date->getTimeStamp();
+
+    if ((($t1 <= $t3) && ($t2 >= $t3)) || (($t1 <= $t4) && ($t2 >= $t4))) {
+      $in_range = TRUE;
+    }
+    return $in_range;
+  }
+
   /**
    * Based on the start and end dates of the event it creates the appropriate granular events
    * and adds them to the $itemized array.
@@ -325,7 +339,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
       // Deal with the start day unless it starts on midnight precisly at which point the whole day is booked
       if (!($this->start_date->format('H:i') == '00:00')) {
         $start_period = new \DatePeriod($this->start_date, $interval, new \DateTime($this->start_date->format("Y-n-j 23:59:59")));
-        $itemized_start = $this->createHourlyEvents($start_period, $this->start_date);
+        $itemized_start = $this->createHourlyGranular($start_period, $this->start_date);
         $itemized[BAT_DAY][$sy][$sm]['d' . $sd] = -1;
         $itemized[BAT_HOUR][$sy][$sm]['d' . $sd] = $itemized_start[BAT_HOUR][$sy][$sm]['d' . $sd];
         $itemized[BAT_MINUTE][$sy][$sm]['d' . $sd] = $itemized_start[BAT_MINUTE][$sy][$sm]['d' . $sd];
@@ -337,7 +351,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
       // Deal with the end date unless it ends on midnight precisely at which point the day does not count
       if (!($this->end_date->format('H:i') == '00:00')) {
         $end_period = new \DatePeriod(new \DateTime($this->end_date->format("Y-n-j 00:00:00")), $interval, $this->end_date);
-        $itemized_end = $this->createHourlyEvents($end_period, new \DateTime($this->end_date->format("Y-n-j 00:00:00")));
+        $itemized_end = $this->createHourlyGranular($end_period, new \DateTime($this->end_date->format("Y-n-j 00:00:00")));
         $itemized[BAT_DAY][$ey][$em]['d' . $ed] = -1;
         $itemized[BAT_HOUR][$ey][$em]['d' . $ed] = $itemized_end[BAT_HOUR][$ey][$em]['d' . $ed];
         $itemized[BAT_MINUTE][$ey][$em]['d' . $ed] = $itemized_end[BAT_MINUTE][$ey][$em]['d' . $ed];
@@ -356,7 +370,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
    * @param \DatePeriod $period
    * @return array
    */
-  public function createHourlyEvents(\DatePeriod $period, \DateTime $period_start) {
+  public function createHourlyGranular(\DatePeriod $period, \DateTime $period_start) {
     $interval = new \DateInterval('PT1M');
     $itemized = array();
 
@@ -395,7 +409,10 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
     // The largest interval we deal with are months (a row in the *_state/*_event tables)
     $interval = new \DateInterval('P1M');
 
-    $daterange = new \DatePeriod($this->start_date, $interval ,$this->end_date);
+    // Set the end date to the last day of the month so that we are sure to get that last month
+    $adjusted_end_day = new \DateTime($this->end_date->format('Y-n-t'));
+
+    $daterange = new \DatePeriod($this->start_date, $interval ,$adjusted_end_day);
 
     $itemized = array();
 
@@ -461,6 +478,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
 
       // Itemize an event so we can save it
       $itemized = $this->itemizeEvent($granularity);
+      dpm($itemized,'BAT_EVENT');
 
       //Write days
       foreach ($itemized[BAT_DAY] as $year => $months) {

@@ -74,10 +74,8 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     $events = array();
 
     $queries  = $this->buildQueries($start_date, $end_date, $store);
-    dpm($queries);
 
     $results = $this->getEventData($queries);
-    dpm($results);
 
     $db_events = array();
 
@@ -143,7 +141,6 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
             foreach ($hours as $hour => $value) {
               if (isset($db_events[$unit][BAT_HOUR][$year][$month][$day][$hour])) {
                 $events[$unit][BAT_HOUR][$year][$month]['d' . $day][$hour] = (int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour];
-                //dpm($events[$unit][BAT_HOUR][$year][$month][$day], 'added_day');
               }
               else {
                 // If nothing from db - then revert to the defaults
@@ -155,6 +152,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       }
 
       // Now fill in hour data coming from the database which the mock event did *not* cater for
+      // but the mock event
       foreach ($db_events[$unit][BAT_HOUR] as $year => $months) {
         foreach ($months as $month => $days) {
           foreach ($days as $day => $hours) {
@@ -199,11 +197,10 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       }
 
     }
-
     return $events;
   }
 
-  public function getEventsNormalized($events) {
+  public function getEventsNormalized(\DateTime $start_date, \DateTime $end_date, $events) {
 
     $normalized_events = array();
 
@@ -247,7 +244,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
                       $end_event->add(new \DateInterval('PT1M'));
                     } elseif (($current_value != $minute_value) && ($current_value !== NULL)) {
                       // Value just switched - let us wrap up with current event and start a new one
-                      $normalized_events[$unit][] = array(clone($start_event), clone($end_event), $current_value);
+                      $normalized_events[$unit][] = new BatGranularEvent($start_event, $end_event, $unit, $current_value);
                       $start_event = clone($end_event->add(new \DateInterval('PT1M')));
                       $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . substr($minute,1));
                       $current_value = $minute_value;
@@ -264,7 +261,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
                   $end_event->add(new \DateInterval('PT1H'));
                 } elseif (($current_value != $hour_value) && ($current_value !== NULL)) {
                   // Value just switched - let us wrap up with current event and start a new one
-                  $normalized_events[$unit][] = array(clone($start_event), clone($end_event), $current_value);
+                  $normalized_events[$unit][] = new BatGranularEvent($start_event, $end_event, $unit, $current_value);
                   // Start event becomes the end event with a minute added
                   $start_event = clone($end_event->add(new \DateInterval('PT1M')));
                   // End event comes the current point in time
@@ -284,7 +281,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
               $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . '23:59');
             } elseif ($current_value != $value) {
               // Value just switched - let us wrap up with current event and start a new one
-              $normalized_events[$unit][] = array(clone($start_event), clone($end_event), $current_value);
+              $normalized_events[$unit][] = new BatGranularEvent($start_event, $end_event, $unit, $current_value);
               // Start event becomes the end event with a minute added
               $start_event = clone($end_event->add(new \DateInterval('PT1M')));
               // End event becomes the current day which we have not account for yet
@@ -301,7 +298,20 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       }
 
       // Add the last event in for which there is nothing in the loop to catch it
-      $normalized_events[$unit][] = array(clone($start_event), clone($end_event), $current_value);
+      $normalized_events[$unit][] = new BatGranularEvent($start_event, $end_event, $unit, $current_value);
+    }
+
+    // Given the database structure we may get events that are not with the date ranges we were looking for
+    // We get rid of them here so that the user has a clean result.
+    foreach ($normalized_events as $unit => $events){
+      dpm($unit);
+      dpm($events);
+      foreach ($events as $key => $event) {
+        dpm($event);
+        if ($event->inRange($start_date, $end_date)) {
+          dpm('Yo dog');
+        }
+      }
     }
 
     return $normalized_events;
@@ -402,8 +412,6 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
         }
       }
     }
-
-    dpm($flipped, 'fllipped');
 
   }
 
