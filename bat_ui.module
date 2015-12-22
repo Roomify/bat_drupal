@@ -77,33 +77,43 @@ function bat_ui_test() {
   $start_date2 = new DateTime('2014-10-16 10:01:00');
   $end_date2 = new DateTime('2015-11-14 14:30:00');
 
-  $start_date3 = new DateTime('2014-5-12 10:10:00');
-  $end_date3 = new DateTime('2016-5-12 10:01:00');
+  $start_date3 = new DateTime('2015-10-21 14:30:00');
+  $end_date3 = new DateTime('2015-11-12 14:30:00');
+
+  //$nd = new \DateTime($end_date3->format('Y-n-t'));
+
+  //$interval = new \DateInterval('P1M');
+
+  //$daterange = new \DatePeriod($start_date3, $interval ,$nd);
+  //foreach($daterange as $date) {
+  //  dpm($date);
+  //}
 
 
-  $event1 = new BatGranularEvent($start_date1, $end_date1, 1, 30);
-  //dpm($event1->itemizeEvent());
-  //$event2 = new BatGranularEvent($start_date2, $end_date2, 1, 10);
 
-  if ($event1->saveEvent($state_store)) {}
-  else{
-    dpm('Not Saved!');
-  };
+    $event1 = new BatGranularEvent($start_date1, $end_date1, 1, 30);
+    //dpm($event1->itemizeEvent());
+    $event2 = new BatGranularEvent($start_date2, $end_date2, 1, 10);
 
-  //if ($event2->saveEvent($state_store)) {}
-  //else{
-  //  dpm('Not Saved!');
-  //};
+    if ($event1->saveEvent($state_store)) {}
+    else{
+      dpm('Not Saved!');
+    };
+
+    if ($event2->saveEvent($state_store)) {}
+    else{
+      dpm('Not Saved!');
+    };
 
 
 
 
   $calendar = new BatCalendar(array(1,2));
-  $events = $calendar->getEventsItemized($start_date1, $end_date1, $state_store);
+  $events = $calendar->getEventsItemized($start_date1, $end_date2, $state_store);
 
   dpm($events);
 
-  $normalized = $calendar->getEventsNormalized($events);
+  $normalized = $calendar->getEventsNormalized($start_date1, $end_date2, $events);
 
   dpm($normalized);
 
