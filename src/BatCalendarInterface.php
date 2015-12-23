@@ -14,7 +14,7 @@ namespace Drupal\bat;
 interface BatCalendarInterface {
   /**
    * Given a date range returns an array of BatEvents. The heavy lifting really takes place in
-   * the getRawDayData function - here we are simply acting as a factory for event objects
+   * the getRawDayData function - here we are simply acting as a factory for event objects.
    *
    * @param $start_date
    * The starting date
@@ -25,24 +25,21 @@ interface BatCalendarInterface {
    * @param $store
    * The set of table names from which to retrieve data
    *
-   * @return BatEventInterface[]
+   * @return BatGranularEventInterface[]
    * An array of BatEvent objects
    */
-  public function getEventDates(\DateTime $start_date, \DateTime $end_date, $store);
+  public function getEvents(\DateTime $start_date, \DateTime $end_date);
 
   /**
    * Given an array of BatEvents the calendar is updated with regards to the
-   * events that are relevant to the Unit this calendar refers to
+   * events that are relevant to the Unit this calendar refers to.
    *
    * @param BatEventInterface[] $events
    *   An array of events to update the calendar with
    *
-   * @param Boolean remove
-   *   If set to TRUE the events are removed from calendar and state set to default
-   *
-   * @return array
-   *   An array of response on whether event updates were successful or not
+   * @param $store
+   * The set of table names to use as an event store.
    */
-  public function updateCalendar($events, $remove = FALSE);
+  public function addEvents($events);
 
 }

@@ -10,17 +10,8 @@ namespace Drupal\bat;
 use Drupal\bat\BatGranularEventInterface;
 use Drupal\bat\BatGranularEvent;
 
-
-define('BAT_EVENT_DAY_EVENT', 'bat_event_day_event');
-define('BAT_EVENT_DAY_STATE', 'bat_event_day_state');
-define('BAT_EVENT_HOUR_EVENT', 'bat_event_hour_event');
-define('BAT_EVENT_HOUR_STATE', 'bat_event_hour_state');
-define('BAT_EVENT_MINUTE_EVENT', 'bat_event_minute_event');
-define('BAT_EVENT_MINUTE_STATE', 'bat_event_minute_state');
-
 /**
- * Handles querying and updating the availability information
- * relative to a single bookable unit based on BAT's data structure
+ * Handles querying and updating state stores
  */
 abstract class BatAbstractCalendar implements BatCalendarInterface {
 
@@ -30,14 +21,8 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
    *
    * @var array
    */
-  protected $unit_ids;
+  public $unit_ids;
 
-  /**
-   * The default value for state or event
-   *
-   * @var int
-   */
-  protected $default_state;
 
   /**
    * Granularity
@@ -46,17 +31,62 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
    * what level of granularity the event should be saved as. This is one of daily or
    * hourly.
    */
-  protected $granularity;
-
-  public $start_date;
-
-  public $end_date;
+  public $granularity;
 
   /**
-   * {@inheritdoc}
+   * An array holding the names of the day, hour and minute tables we should be retrieving
+   * or adding data to.
+   * @var
    */
-  public function updateCalendar($events, $remove = FALSE) {
+  public $store;
 
+
+  /**
+   *@inheritdoc
+   */
+  public function addEvents($events) {
+
+    $added = TRUE;
+
+    foreach ($events as $event){
+      // Events save themselves so here we cycle through each and return true if all events
+      // were saved
+
+      $check = $event->saveEvent($this->store, $this->granularity);
+
+      if ($check == FALSE) {
+        $added = FALSE;
+        watchdog('BAT', t('Event with @id, start date @start_date and end date @end_date was not added.', array('@id' => $event->value, '@start_date' => $event->startDateToString(), '@end_date' => $event->endDateToString())));
+        break;
+      } else {
+        watchdog('BAT', t('Event with @id, start date @start_date and end date @end_date added.', array('@id' => $event->value, '@start_date' => $event->startDateToString(), '@end_date' => $event->endDateToString())));
+      }
+
+    }
+
+    return $added;
+  }
+
+  /**
+   * Given a start and end time will retrieve events from the defined store.
+   *
+   * If unit_ids where defined it will filter for those unit ids.
+   *
+   * @param \DateTime $start_date
+   * @param \DateTime $end_date
+   * @return array
+   */
+  public function getEvents(\DateTime $start_date, \DateTime $end_date) {
+
+    $events = array();
+
+    // We first get events in the itemized format
+    $itemized_events = $this->getEventsItemized($start_date, $end_date);
+
+    // We then normalize those events to creat BatGranularEvents that get added to an array
+    $events = $this->getEventsNormalized($start_date, $end_date, $itemized_events);
+
+    return $events;
   }
 
 
@@ -69,11 +99,11 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
    * @param $store
    * @return array
    */
-  public function getEventsItemized(\DateTime $start_date, \DateTime $end_date, $store) {
+  public function getEventsItemized(\DateTime $start_date, \DateTime $end_date) {
     // The final events we will return
     $events = array();
 
-    $queries  = $this->buildQueries($start_date, $end_date, $store);
+    $queries  = $this->buildQueries($start_date, $end_date);
 
     $results = $this->getEventData($queries);
 
@@ -200,6 +230,14 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     return $events;
   }
 
+  /**
+   * Given an itemized set of event data it will return an array of BatGranularEvents
+   *
+   * @param \DateTime $start_date
+   * @param \DateTime $end_date
+   * @param $events
+   * @return array
+   */
   public function getEventsNormalized(\DateTime $start_date, \DateTime $end_date, $events) {
 
     $normalized_events = array();
@@ -214,9 +252,9 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       ksort($data[BatGranularevent::BAT_MINUTE]);
 
       // Set up variables to keep track of stuff
+      $current_value = NULL;
       $start_event = NULL;
       $end_event = NULL;
-      $current_value = NULL;
       $event_value = NULL;
       $last_day = NULL;
       $last_hour = NULL;
@@ -279,7 +317,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
             } elseif ($current_value === $value) {
               // We are adding a whole day so the end event gets moved to the end of the day we are adding
               $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . '23:59');
-            } elseif ($current_value != $value) {
+            } elseif (($current_value !== $value) && ($current_value !== NULL)) {
               // Value just switched - let us wrap up with current event and start a new one
               $normalized_events[$unit][] = new BatGranularEvent($start_event, $end_event, $unit, $current_value);
               // Start event becomes the end event with a minute added
@@ -290,8 +328,9 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
             }
             if ($current_value === NULL) {
               // We have not created an event yet so let's do it now
-              $start_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . '23:59');
-              $end_event = clone($start_event);
+              $start_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . '00:00');
+              $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . '23:59');
+              $current_value = $value;
             }
           }
         }
@@ -304,12 +343,19 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     // Given the database structure we may get events that are not with the date ranges we were looking for
     // We get rid of them here so that the user has a clean result.
     foreach ($normalized_events as $unit => $events){
-      dpm($unit);
-      dpm($events);
       foreach ($events as $key => $event) {
-        dpm($event);
         if ($event->inRange($start_date, $end_date)) {
-          dpm('Yo dog');
+          // Adjust start or end dates of events so everything is within range
+          if ($event->startsEarlier($start_date)) {
+            $event->setStartDate($start_date);
+          }
+          if ($event->endsLater($end_date)) {
+            $event->setEndDate($end_date);
+          }
+        }
+        else {
+          // Event completely not in range so unset it
+          unset($normalized_events[$unit][$key]);
         }
       }
     }
@@ -317,18 +363,14 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     return $normalized_events;
   }
 
-  public function getEventDates(\DateTime $start_date, \DateTime $end_date, $store) {
 
-    $events = array();
-
-    $events = $this->getEventsItemized($start_date, $end_date, $store);
-    $events = $this->getEventsNormalized($events);
-
-    return $events;
-
-  }
-
-  public function getEventData($queries) {
+  /**
+   * Given a set of queries (see buildQueries) it will use Drupal's db_query to get results.
+   *
+   * @param $queries
+   * @return array
+   */
+  private function getEventData($queries) {
     $results = array();
     // Run each query and store results
     foreach ($queries as $type => $query) {
@@ -338,12 +380,20 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     return $results;
   }
 
-  public function buildQueries($start_date, $end_date, $store) {
+  /**
+   * Constructs the appropriate queries for a specific store.
+   *
+   * @param $start_date
+   * @param $end_date
+   * @param $store
+   * @return array
+   */
+  public function buildQueries($start_date, $end_date) {
     $queries = array();
 
-    $queries[BAT_DAY] = 'SELECT * FROM ' . $store[BAT_DAY] . ' WHERE ';
-    $queries[BAT_HOUR] = 'SELECT * FROM ' . $store[BAT_HOUR] . ' WHERE ';
-    $queries[BAT_MINUTE] = 'SELECT * FROM ' . $store[BAT_MINUTE] . ' WHERE ';
+    $queries[BAT_DAY] = 'SELECT * FROM ' . $this->store[BatGranularEvent::BAT_DAY] . ' WHERE ';
+    $queries[BAT_HOUR] = 'SELECT * FROM ' . $this->store[BatGranularEvent::BAT_HOUR] . ' WHERE ';
+    $queries[BAT_MINUTE] = 'SELECT * FROM ' . $this->store[BatGranularEvent::BAT_MINUTE] . ' WHERE ';
 
     $hours_query = TRUE;
     $minutes_query = TRUE;
@@ -354,7 +404,6 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     // know what the event break-down is going to be we need to get the full range of data from
     // days, hours and minutes.
     $itemized = $mock_event->itemizeEvent(BAT_DAILY);
-
 
     $year_count = 0;
     $hour_count = 0;
@@ -389,6 +438,13 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     return $queries;
   }
 
+  /**
+   * A simple utility funciton that given an array of datum=>value will group results based on
+   * those that have the same value. Useful for grouping events based on state.
+   *
+   * @param $data
+   * @param $length
+   */
   public function groupData($data, $length) {
     // Given an array of the structure $date => $value we create another array
     // of structure $event, $length, $value
@@ -413,29 +469,6 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       }
     }
 
-  }
-
-
-  /**
-   * {@inheritdoc}
-   */
-  public function monthDefined($event) {
-    $month = $event->startMonth();
-    $year = $event->startYear();
-    $unit_id = $event->unit_id;
-
-    $query = db_select($this->base_table, 'a');
-    $query->addField('a', 'unit_id');
-    $query->addField('a', 'year');
-    $query->addField('a', 'month');
-    $query->condition('a.unit_id', $unit_id);
-    $query->condition('a.year', $year);
-    $query->condition('a.month', $month);
-    $result = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
-    if (count($result) > 0) {
-      return TRUE;
-    }
-    return FALSE;
   }
 
 }

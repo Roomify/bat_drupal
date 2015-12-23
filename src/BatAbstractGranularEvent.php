@@ -89,6 +89,14 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
   }
 
   /**
+   * Utility function to always give us a standard format for viewing the start date.
+   * @return mixed
+   */
+  public function startDateToString() {
+    return $this->start_date->format('Y-m-d H:i:s');
+  }
+
+  /**
    * Set the start date.
    *
    * @param DateTime $start_date
@@ -105,6 +113,16 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
   public function getEndDate() {
     return clone($this->end_date);
   }
+
+  /**
+   * Utility function to always give us a standard format for viewing the end date.
+   * @return mixed
+   */
+  public function endDateToString() {
+    return $this->end_date->format('Y-m-d H:i:s');
+  }
+
+
 
   /**
    * Set the end date.
@@ -296,6 +314,14 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
     return $interval;
   }
 
+  /**
+   * Returns true if the event overlaps at all with the time period within
+   * the start and end time.
+   *
+   * @param \DateTime $start
+   * @param \DateTime $end
+   * @return bool
+   */
   public function inRange(\DateTime $start, \DateTime $end){
     $in_range = FALSE;
 
@@ -308,6 +334,40 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
       $in_range = TRUE;
     }
     return $in_range;
+  }
+
+  /**
+   * Checks if our event startsEarlier than the start date provided
+   * @param \DateTime $date
+   * @return bool
+   */
+  public function startsEarlier(\DateTime $date) {
+    $early = FALSE;
+
+    $t1 = $date->getTimestamp();
+    $our_start = $this->start_date->getTimeStamp();
+
+    if ($our_start < $t1) {
+      $early = TRUE;
+    }
+    return $early;
+  }
+
+  /**
+   * Checks if our event ends after than the date provided
+   * @param \DateTime $date
+   * @return bool
+   */
+  public function endsLater(\DateTime $date) {
+    $later = FALSE;
+
+    $t1 = $date->getTimestamp();
+    $our_end = $this->end_date->getTimeStamp();
+
+    if ($our_end > $t1) {
+      $later = TRUE;
+    }
+    return $later;
   }
 
   /**
@@ -479,7 +539,6 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
 
       // Itemize an event so we can save it
       $itemized = $this->itemizeEvent($granularity);
-      dpm($itemized,'BAT_EVENT');
 
       //Write days
       foreach ($itemized[BAT_DAY] as $year => $months) {
