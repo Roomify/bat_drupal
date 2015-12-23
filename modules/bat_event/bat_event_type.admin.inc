@@ -40,7 +40,7 @@ class BatEventTypeUIController extends EntityDefaultUIController {
 }
 
 /**
- * Generates the Booking type editing form.
+ * Generates the Event type editing form.
  */
 function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
 

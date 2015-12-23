@@ -64,7 +64,7 @@ function bat_event_views_data_alter(&$data) {
     ),
   );
   $data['bat_events']['type']['field'] = array(
-    'title' => t('Booking Type'),
+    'title' => t('Event Type'),
     'help' => t('The event type label.'),
     'handler' => 'bat_event_handler_event_type_field',
   );
@@ -95,7 +95,7 @@ function bat_event_views_data_alter(&$data) {
       'base' => 'users',
       'base field' => 'uid',
       'field' => 'uid',
-      'label' => t('Booking owner'),
+      'label' => t('Event owner'),
     ),
   );
 
@@ -104,7 +104,7 @@ function bat_event_views_data_alter(&$data) {
 
   $data['bat_events']['nights'] = array(
     'title' => t('Nights'),
-    'help' => t("Booking's number of nights."),
+    'help' => t("Event's number of nights."),
     'field' => array(
       'float' => TRUE,
       'handler' => 'bat_event_handler_nights_field',

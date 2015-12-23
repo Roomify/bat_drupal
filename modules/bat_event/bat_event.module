@@ -1057,8 +1057,6 @@ class BatEventController extends EntityAPIController {
   public function delete($ids) {
     foreach ($ids as $id) {
       $event = bat_event_load($id);
-
-      // Update the availability calendar.
       $this->delete_event($event);
     }
 
@@ -1071,13 +1069,18 @@ class BatEventController extends EntityAPIController {
     if (field_get_items('bat_event', $event, 'event_unit_reference') !== FALSE &&
         isset($event->start_date) && isset($event->end_date)) {
 
-      $event_unit_reference = field_get_items('bat_event', $entity, 'event_state_reference');
-      $event_id = $event_unit_reference[0]['state_id'];
-
       $event_unit_reference = field_get_items('bat_event', $event, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
 
-      $be = new BatGranularEvent($event->start_date_object, $event->end_date_object, $unit_id, $event_id);
+      $state_store = array(
+        BatGranularEvent::BAT_DAY => 'bat_event_' . $event->type . '_day_state',
+        BatGranularEvent::BAT_HOUR => 'bat_event_' . $event->type . '_hour_state',
+        BatGranularEvent::BAT_MINUTE => 'bat_event_' . $event->type . '_minute_state'
+      );
+
+      // Delete an event.
+      $be = new BatGranularEvent($event->start_date_object, $event->end_date_object, $unit_id, 0);
+      $be->saveEvent($state_store);
     }
   }
 
@@ -1093,7 +1096,7 @@ class BatEventController extends EntityAPIController {
 }
 
 /**
- * The Controller for Booking Type entities
+ * The Controller for Event Type entities
  */
 class BatEventTypeController extends EntityAPIControllerExportable {
 
@@ -1109,7 +1112,7 @@ class BatEventTypeController extends EntityAPIControllerExportable {
    *   A event type object with all default fields initialized.
    */
   public function create(array $values = array()) {
-    // Add values that are specific to our Booking Type.
+    // Add values that are specific to our Event Type.
     $values += array(
       'id' => '',
       'is_new' => TRUE,

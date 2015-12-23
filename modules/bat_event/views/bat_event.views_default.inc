@@ -101,7 +101,7 @@ function bat_event_views_default_views() {
   $handler->display->display_options['fields']['event_id']['id'] = 'event_id';
   $handler->display->display_options['fields']['event_id']['table'] = 'bat_events';
   $handler->display->display_options['fields']['event_id']['field'] = 'event_id';
-  $handler->display->display_options['fields']['event_id']['label'] = 'Booking';
+  $handler->display->display_options['fields']['event_id']['label'] = 'Event';
   /* Field: Events: Start Date */
   $handler->display->display_options['fields']['start_date']['id'] = 'start_date';
   $handler->display->display_options['fields']['start_date']['table'] = 'bat_events';
@@ -127,7 +127,7 @@ function bat_event_views_default_views() {
   $handler->display->display_options['fields']['event_unit_reference']['settings'] = array(
     'link' => 1,
   );
-  /* Field: Events: Booking Type */
+  /* Field: Events: Event Type */
   $handler->display->display_options['fields']['type']['id'] = 'type';
   $handler->display->display_options['fields']['type']['table'] = 'bat_events';
   $handler->display->display_options['fields']['type']['field'] = 'type';
@@ -151,7 +151,7 @@ function bat_event_views_default_views() {
   $handler->display->display_options['filters']['event_id']['group'] = 1;
   $handler->display->display_options['filters']['event_id']['exposed'] = TRUE;
   $handler->display->display_options['filters']['event_id']['expose']['operator_id'] = 'event_id_op';
-  $handler->display->display_options['filters']['event_id']['expose']['label'] = 'Booking ID';
+  $handler->display->display_options['filters']['event_id']['expose']['label'] = 'Event ID';
   $handler->display->display_options['filters']['event_id']['expose']['operator'] = 'event_id_op';
   $handler->display->display_options['filters']['event_id']['expose']['identifier'] = 'event_id';
   $handler->display->display_options['filters']['event_id']['expose']['remember_roles'] = array(
