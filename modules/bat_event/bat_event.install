@@ -173,6 +173,12 @@ function bat_event_schema() {
         'not null' => TRUE,
         'default' => 'daily',
       ),
+      'fixed_event_states' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Fixed event states (0/1).',
+      ),
       'weight' => array(
         'type' => 'int',
         'not null' => TRUE,
@@ -270,6 +276,7 @@ function bat_event_create_availability_event_type() {
   $event = new BatEventType(array(
     'label' => 'Availability Event',
     'type' => 'availability_event',
+    'fixed_event_states' => 1,
   ));
   bat_event_type_save($event);
 }

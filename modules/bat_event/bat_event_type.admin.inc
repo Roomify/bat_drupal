@@ -72,6 +72,13 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
     '#description' => t('A unique machine-readable name for this event type. It must only contain lowercase letters, numbers, and underscores.'),
   );
 
+  if ($op == 'add') {
+    $form['fixed_event_states'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Fixed event states'),
+    );
+  }
+
   $form['event_granularity'] = array(
     '#type' => 'select',
     '#title' => t('Event Granularity'),

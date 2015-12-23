@@ -316,94 +316,101 @@ function bat_event_load_state($state_id) {
  *
  */
 function bat_event_states_form($form, &$form_state, $event_type) {
-  $event_states = bat_event_get_states($event_type->type);
+  if ($event_type->fixed_event_states) {
+    $event_states = bat_event_get_states($event_type->type);
 
-  $header = array(t('ID'), t('Label'), t('Blocking'), t('Operations'));
+    $header = array(t('ID'), t('Label'), t('Blocking'), t('Operations'));
 
-  $rows = array();
-  foreach ($event_states as $event_state) {
-    $operations = array();
+    $rows = array();
+    foreach ($event_states as $event_state) {
+      $operations = array();
 
-    $operations[] = array(
-      'title' => t('Edit'),
-      'href' => 'admin/bat/config/events/event/' . $event_state['id'] . '/edit',
-    );
-
-    if (!$event_state['locked']) {
       $operations[] = array(
-        'title' => t('Delete'),
-        'href' => 'admin/bat/config/events/event/' . $event_state['id'] . '/delete',
+        'title' => t('Edit'),
+        'href' => 'admin/bat/config/events/event/' . $event_state['id'] . '/edit',
+      );
+
+      if (!$event_state['locked']) {
+        $operations[] = array(
+          'title' => t('Delete'),
+          'href' => 'admin/bat/config/events/event/' . $event_state['id'] . '/delete',
+        );
+      }
+
+      $rows[] = array(
+        $event_state['id'],
+        $event_state['label'],
+        $event_state['blocking'],
+        theme('links', array('links' => $operations, 'attributes' => array('class' => array('links', 'inline')))),
       );
     }
 
-    $rows[] = array(
-      $event_state['id'],
-      $event_state['label'],
-      $event_state['blocking'],
-      theme('links', array('links' => $operations, 'attributes' => array('class' => array('links', 'inline')))),
+    if (!empty($rows)) {
+      $form['states'] = array(
+        '#markup' => theme('table', array('header' => $header, 'rows' => $rows)),
+      );
+    }
+
+    $form['new_state'] = array(
+      '#type' => 'fieldset',
+      '#title' => 'Create new state',
     );
-  }
 
-  if (!empty($rows)) {
-    $form['states'] = array(
-      '#markup' => theme('table', array('header' => $header, 'rows' => $rows)),
+    $form['event_type'] = array(
+      '#type' => 'hidden',
+      '#value' => $event_type->type,
     );
-  }
 
-  $form['new_state'] = array(
-    '#type' => 'fieldset',
-    '#title' => 'Create new state',
-  );
+    $form['new_state']['label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#required' => TRUE,
+    );
 
-  $form['event_type'] = array(
-    '#type' => 'hidden',
-    '#value' => $event_type->type,
-  );
-
-  $form['new_state']['label'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Label'),
-    '#required' => TRUE,
-  );
-
-  $form['new_state']['color'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Color'),
-    '#size' => 12,
-    '#maxlength' => 7,
-    '#element_validate' => array('bat_event_validate_hex_color'),
-    '#dependency' => array('edit-row-options-colors-legend' => array('type')),
-    '#prefix' => '<div class="bat-colorpicker-wrapper form-wrapper">',
-    '#suffix' => '<div class="bat-colorpicker"></div></div>',
-    '#attributes' => array('class' => array('bat-edit-colorpicker')),
-    '#attached' => array(
-      // Add Farbtastic color picker.
-      'library' => array(
-        array('system', 'farbtastic'),
+    $form['new_state']['color'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Color'),
+      '#size' => 12,
+      '#maxlength' => 7,
+      '#element_validate' => array('bat_event_validate_hex_color'),
+      '#dependency' => array('edit-row-options-colors-legend' => array('type')),
+      '#prefix' => '<div class="bat-colorpicker-wrapper form-wrapper">',
+      '#suffix' => '<div class="bat-colorpicker"></div></div>',
+      '#attributes' => array('class' => array('bat-edit-colorpicker')),
+      '#attached' => array(
+        // Add Farbtastic color picker.
+        'library' => array(
+          array('system', 'farbtastic'),
+        ),
+        // Add javascript to trigger the colorpicker.
+        'js' => array(drupal_get_path('module', 'bat_availability') . '/js/bat_color.js'),
       ),
-      // Add javascript to trigger the colorpicker.
-      'js' => array(drupal_get_path('module', 'bat_availability') . '/js/bat_color.js'),
-    ),
-    '#required' => TRUE,
-  );
+      '#required' => TRUE,
+    );
 
-  $form['new_state']['calendar_label'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Calendar label'),
-    '#size' => 10,
-    '#maxlength' => 50,
-    '#required' => TRUE,
-  );
+    $form['new_state']['calendar_label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Calendar label'),
+      '#size' => 10,
+      '#maxlength' => 50,
+      '#required' => TRUE,
+    );
 
-  $form['new_state']['blocking'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Blocking'),
-  ); 
+    $form['new_state']['blocking'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Blocking'),
+    ); 
 
-  $form['new_state']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Add state'),
-  );
+    $form['new_state']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Add state'),
+    );
+  }
+  else {
+    $form['empty'] = array(
+      '#markup' => t('This event type cannot define fixed states!'),
+    );
+  }
 
   return $form;
 }
@@ -1464,7 +1471,7 @@ function bat_event_field_widget_error($element, $error, $form, &$form_state) {
  *
  */
 function bat_event_delete_event_type_schema($machine_name) {
-  foreach (bat_event_get_event_type_tables() as $name) {
+  foreach (bat_event_get_event_type_tables($machine_name) as $name) {
     db_drop_table($name);
   }
 }
