@@ -1071,31 +1071,13 @@ class BatEventController extends EntityAPIController {
     if (field_get_items('bat_event', $event, 'event_unit_reference') !== FALSE &&
         isset($event->start_date) && isset($event->end_date)) {
 
-      $event_type = bat_event_type_load($event->type);
+      $event_unit_reference = field_get_items('bat_event', $entity, 'event_state_reference');
+      $event_id = $event_unit_reference[0]['state_id'];
 
       $event_unit_reference = field_get_items('bat_event', $event, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
 
-      $uc = new UnitCalendar($unit_id);
-      // We are not concerned with the state of the event id (confirmed or
-      // unconfirmed here) because we will unlock it no matter what (we look for
-      // absolute value).
-      $event_id = bat_availability_assign_id($event->event_id);
-
-      $be = new BookingEvent($unit_id, $event_id, $event->start_date_object, $event->end_date_object, $event_type->event_granularity);
-
-      $events = array($be);
-
-      if ($event_type->event_granularity == 'hourly') {
-        $corrected_end_date = clone($event->end_date_object);
-        $corrected_end_date->add(new \DateInterval('P1D'));
-
-        $hourly_be = new BookingEvent($unit_id, $event_id, $event->start_date_object, $corrected_end_date);
-
-        $events = array_merge($events, array($hourly_be));
-      }
-
-      $uc->updateCalendar(array(), $events);
+      $be = new BatGranularEvent($event->start_date_object, $event->end_date_object, $unit_id, $event_id);
     }
   }
 

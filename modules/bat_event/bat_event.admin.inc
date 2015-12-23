@@ -404,6 +404,12 @@ function bat_event_edit_form($form, &$form_state, $event) {
     );
   }
 
+  $event_type = bat_event_type_load($event->type);
+  if ($event_type->event_granularity == 'hourly') {
+    $form['bat_date_range']['bat_start_date']['#date_format'] = 'd/m/Y H:i';
+    $form['bat_date_range']['bat_end_date']['#date_format'] = 'd/m/Y H:i';
+  }
+
   // We append the validate handler to #validate in case a form callback_wrapper
   // is used to add validate handlers earlier.
   $form['#validate'][] = 'bat_form_start_end_dates_validate';
