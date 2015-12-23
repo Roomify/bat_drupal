@@ -547,16 +547,6 @@ function bat_event_edit_form_submit(&$form, &$form_state) {
   $event_unit_reference = field_get_items('bat_event', $event, 'event_unit_reference');
   if ($event_unit_reference !== FALSE) {
     $unit_id = $event_unit_reference[0]['target_id'];
-
-    // We have a unit defined so lets block availability there.
-    if ($unit_id != 0) {
-      if ($event->bat_av_update == BAT_UPDATED) {
-        drupal_set_message(t('Unit availability has been updated.'));
-      }
-      else {
-        drupal_set_message(t('Unit availability could not be updated.'), 'error');
-      }
-    }
   }
 
   $form_state['redirect'] = 'admin/bat/events';

@@ -796,12 +796,3 @@ function bat_availability_form_bat_event_settings_alter(&$form, &$form_state, $f
     )
   );
 }
-
-/**
- * Utility function to validate hex color numbers.
- */
-function bat_availability_validate_hex_color($element, &$form_state) {
-  if (!preg_match('/^#[a-f0-9]{6}$/i', $element['#value'])) {
-    form_error($element, t('This is not a valid hexadecimal color!'));
-  }
-}

@@ -26,6 +26,17 @@ class BatEventTypeUIController extends EntityDefaultUIController {
     return $items;
   }
 
+  protected function overviewTableRow($conditions, $id, $entity, $additional_cols = array()) {
+    $row = parent::overviewTableRow($conditions, $id, $entity, $additional_cols);
+    $row[] = l(t('manage states'), $this->path . '/manage/' . $id . '/states');
+
+    return $row;
+  }
+
+  protected function operationCount() {
+    return parent::operationCount() + 1;
+  }
+
 }
 
 /**
@@ -65,7 +76,7 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
     '#type' => 'select',
     '#title' => t('Event Granularity'),
     '#options' => array('Daily', 'Hourly'),
-    '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granulity : 'daily',
+    '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granularity : 'daily',
   );
 
   $form['actions'] = array(

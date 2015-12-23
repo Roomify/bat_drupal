@@ -12,14 +12,14 @@ function bat_event_views_default_views() {
   $view->description = 'A list of all events';
   $view->tag = 'bat';
   $view->base_table = 'bat_events';
-  $view->human_name = 'Bookings';
+  $view->human_name = 'Events';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Bookings';
+  $handler->display->display_options['title'] = 'Events';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'perm';
   $handler->display->display_options['access']['perm'] = 'bypass bat_event entities access';
@@ -92,17 +92,17 @@ function bat_event_views_default_views() {
   $handler->display->display_options['empty']['area']['label'] = 'Empty Message';
   $handler->display->display_options['empty']['area']['content'] = 'No events have been created yet.';
   $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
-  /* Relationship: Bookings: Owner */
+  /* Relationship: Events: Owner */
   $handler->display->display_options['relationships']['uid']['id'] = 'uid';
   $handler->display->display_options['relationships']['uid']['table'] = 'bat_events';
   $handler->display->display_options['relationships']['uid']['field'] = 'uid';
   $handler->display->display_options['relationships']['uid']['required'] = TRUE;
-  /* Field: Bookings: Bookings ID */
+  /* Field: Events: Events ID */
   $handler->display->display_options['fields']['event_id']['id'] = 'event_id';
   $handler->display->display_options['fields']['event_id']['table'] = 'bat_events';
   $handler->display->display_options['fields']['event_id']['field'] = 'event_id';
   $handler->display->display_options['fields']['event_id']['label'] = 'Booking';
-  /* Field: Bookings: Start Date */
+  /* Field: Events: Start Date */
   $handler->display->display_options['fields']['start_date']['id'] = 'start_date';
   $handler->display->display_options['fields']['start_date']['table'] = 'bat_events';
   $handler->display->display_options['fields']['start_date']['field'] = 'start_date';
@@ -110,7 +110,7 @@ function bat_event_views_default_views() {
   $handler->display->display_options['fields']['start_date']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['start_date']['date_format'] = 'custom';
   $handler->display->display_options['fields']['start_date']['custom_date_format'] = 'd-m-Y';
-  /* Field: Bookings: End Date */
+  /* Field: Events: End Date */
   $handler->display->display_options['fields']['end_date']['id'] = 'end_date';
   $handler->display->display_options['fields']['end_date']['table'] = 'bat_events';
   $handler->display->display_options['fields']['end_date']['field'] = 'end_date';
@@ -118,7 +118,7 @@ function bat_event_views_default_views() {
   $handler->display->display_options['fields']['end_date']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['end_date']['date_format'] = 'custom';
   $handler->display->display_options['fields']['end_date']['custom_date_format'] = 'd-m-Y';
-  /* Field: Bookings: Booking Type */
+  /* Field: Events: Booking Type */
   $handler->display->display_options['fields']['type']['id'] = 'type';
   $handler->display->display_options['fields']['type']['table'] = 'bat_events';
   $handler->display->display_options['fields']['type']['field'] = 'type';
@@ -130,12 +130,12 @@ function bat_event_views_default_views() {
   $handler->display->display_options['fields']['name_1']['field'] = 'name';
   $handler->display->display_options['fields']['name_1']['relationship'] = 'uid';
   $handler->display->display_options['fields']['name_1']['label'] = 'Owner';
-  /* Field: Bookings: Operations links */
+  /* Field: Events: Operations links */
   $handler->display->display_options['fields']['operations']['id'] = 'operations';
   $handler->display->display_options['fields']['operations']['table'] = 'bat_events';
   $handler->display->display_options['fields']['operations']['field'] = 'operations';
   $handler->display->display_options['fields']['operations']['hide_alter_empty'] = FALSE;
-  /* Filter criterion: Bookings: Bookings ID */
+  /* Filter criterion: Events: Events ID */
   $handler->display->display_options['filters']['event_id']['id'] = 'event_id';
   $handler->display->display_options['filters']['event_id']['table'] = 'bat_events';
   $handler->display->display_options['filters']['event_id']['field'] = 'event_id';
@@ -150,7 +150,7 @@ function bat_event_views_default_views() {
     1 => 0,
     3 => 0,
   );
-  /* Filter criterion: Bookings: Unit */
+  /* Filter criterion: Events: Unit */
   $handler->display->display_options['filters']['unit_id']['id'] = 'unit_id';
   $handler->display->display_options['filters']['unit_id']['table'] = 'bat_events';
   $handler->display->display_options['filters']['unit_id']['field'] = 'unit_id';
@@ -183,7 +183,7 @@ function bat_event_views_default_views() {
     1 => 0,
     3 => 0,
   );
-  /* Filter criterion: Bookings: Start Date */
+  /* Filter criterion: Events: Start Date */
   $handler->display->display_options['filters']['start_date']['id'] = 'start_date';
   $handler->display->display_options['filters']['start_date']['table'] = 'bat_events';
   $handler->display->display_options['filters']['start_date']['field'] = 'start_date';
@@ -199,7 +199,7 @@ function bat_event_views_default_views() {
     1 => 0,
     3 => 0,
   );
-  /* Filter criterion: Bookings: End Date */
+  /* Filter criterion: Events: End Date */
   $handler->display->display_options['filters']['end_date']['id'] = 'end_date';
   $handler->display->display_options['filters']['end_date']['table'] = 'bat_events';
   $handler->display->display_options['filters']['end_date']['field'] = 'end_date';
@@ -220,12 +220,12 @@ function bat_event_views_default_views() {
   $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->display->display_options['path'] = 'admin/bat/events/list';
   $handler->display->display_options['menu']['type'] = 'default tab';
-  $handler->display->display_options['menu']['title'] = 'Bookings List';
+  $handler->display->display_options['menu']['title'] = 'Events List';
   $handler->display->display_options['menu']['description'] = 'List of events';
   $handler->display->display_options['menu']['weight'] = '-10';
   $handler->display->display_options['tab_options']['type'] = 'normal';
-  $handler->display->display_options['tab_options']['title'] = 'Bookings';
-  $handler->display->display_options['tab_options']['description'] = 'A list of all events. Bookings can be created, edited or deleted manually or can be created following a purchase from a client using Drupal Commerce.';
+  $handler->display->display_options['tab_options']['title'] = 'Events';
+  $handler->display->display_options['tab_options']['description'] = 'A list of all events.';
   $handler->display->display_options['tab_options']['weight'] = '0';
   $handler->display->display_options['tab_options']['name'] = 'management';
 
