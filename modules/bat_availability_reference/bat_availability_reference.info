@@ -1,7 +1,0 @@
-name = BAT Availability Reference
-description = Provides a field to reference and display availability information on any fieldable entity.
-core = 7.x
-
-package = BAT
-
-dependencies[] = bat_availability

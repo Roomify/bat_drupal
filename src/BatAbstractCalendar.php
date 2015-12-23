@@ -303,12 +303,12 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
                       // Value just switched - let us wrap up with current event and start a new one
                       $normalized_events[$unit][] = new BatGranularEvent($start_event, $end_event, $unit, $current_value);
                       $start_event = clone($end_event->add(new \DateInterval('PT1M')));
-                      $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . substr($minute,1));
+                      $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . ':' . substr($minute,1));
                       $current_value = $minute_value;
                     }
                     if ($current_value === NULL) {
                       // We are down to minutes and haven't created and even yet - do one now
-                      $start_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . substr($minute,1));
+                      $start_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . ':' . substr($minute,1));
                       $end_event = clone($start_event);
                     }
                     $current_value = $minute_value;
@@ -438,8 +438,6 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       $query_parameters .= 'year IN (' . $year . ') ';
       $query_parameters .= 'AND month IN (' . implode("," ,array_keys($months)) .') ';
       if (count($this->unit_ids) > 0) {
-        dpm(count($this->unit_ids));
-        dpm($this->unit_ids);
         // Unit ids are defined so add this as a filter
         $query_parameters .= 'AND unit_id in (' . implode("," , $this->unit_ids) .') ';
       }

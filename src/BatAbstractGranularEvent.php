@@ -603,4 +603,15 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
     return $saved;
   }
 
+  function formatJson($style = BAT_EVENT_CALENDAR_ADMIN_STYLE, $unit_name = '') {
+    $event = array(
+      'start' => $this->startYear() . '-' . $this->startMonth('m') . '-' . $this->startDay('d') . 'T' . $this->startHour('H') . ':' . $this->startMinute() . ':00Z',
+      'end' => $this->endYear() . '-' . $this->endMonth('m') . '-' . $this->endDay('d') . 'T' . $this->endHour('H') . ':' . $this->endMinute() . ':00Z',
+      'title' => $this->value,
+      'color' => '#CC2727',
+    );
+
+    return $event;
+  }
+
 }

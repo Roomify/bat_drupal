@@ -6,11 +6,168 @@
  * FullCalendar plugin.
  */
 
-use Drupal\bat_availability\BookingEvent;
-use Drupal\bat_availability\UnitCalendar;
+define('BAT_EVENT_CALENDAR_ADMIN_STYLE', 1);
+define('BAT_EVENT_CALENDAR_GENERIC_STYLE', 2);
 
-define('BAT_AVAILABILITY_ADMIN_STYLE', 1);
-define('BAT_AVAILABILITY_GENERIC_STYLE', 2);
+/**
+ * Implements hook_libraries_info().
+ */
+function bat_event_ui_libraries_info() {
+  $libraries['moment'] = array(
+    'name' => 'Moment',
+    'vendor url' => 'http://momentjs.com',
+    'download url' => 'http://momentjs.com/downloads/moment.min.js',
+    'version arguments' => array(
+      'file' => 'moment.min.js',
+      // 2.10.6
+      'pattern' => '/(\d+\.\d+\.\d)/',
+    ),
+    'files' => array(
+      'js' => array(
+        'moment.min.js',
+      ),
+    ),
+    'variants' => array(
+      'minified' => array(
+        'files' => array(
+          'js' => array(
+            'moment.min.js',
+          ),
+        ),
+      ),
+      'source' => array(
+        'files' => array(
+          'js' => array(
+            'moment.js',
+          ),
+        ),
+      ),
+    ),
+  );
+
+  $libraries['fullcalendar'] = array(
+    'name' => 'Full Calendar',
+    'vendor url' => 'http://fullcalendar.io',
+    'download url' => 'https://github.com/arshaw/fullcalendar/releases/download/v2.5.0/fullcalendar-2.5.0.zip',
+    'version arguments' => array(
+      'file' => 'fullcalendar.js',
+      // 2.5.0
+      'pattern' => '/v(\d+\.\d+\.\d)/',
+      'lines' => 3,
+    ),
+    'files' => array(
+      'js' => array(
+        'fullcalendar.js',
+        'gcal.js',
+      ),
+      'css' => array(
+        'fullcalendar.css',
+      ),
+    ),
+    'variants' => array(
+      'minified' => array(
+        'files' => array(
+          'js' => array(
+            'fullcalendar.min.js',
+            'gcal.js',
+          ),
+          'css' => array(
+            'fullcalendar.min.css',
+          ),
+        ),
+        'dependencies' => array('moment (>=2.10.6)'),
+      ),
+      'source' => array(
+        'files' => array(
+          'js' => array(
+            'fullcalendar.js',
+            'gcal.js',
+          ),
+          'css' => array(
+            'fullcalendar.css',
+          ),
+        ),
+        'dependencies' => array('moment (>=2.10.6)'),
+      ),
+    ),
+  );
+
+  $libraries['fullcalendar-scheduler'] = array(
+    'name' => 'Fullcalendar Scheduler',
+    'vendor url' => 'http://fullcalendar.io',
+    'download url' => 'https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.1.0/fullcalendar-scheduler-1.1.0.zip',
+    'version arguments' => array(
+      'file' => 'scheduler.min.js',
+      // 1.1.0
+      'pattern' => '/(\d+\.\d+\.\d)/',
+    ),
+    'files' => array(
+      'js' => array(
+        'scheduler.min.js',
+      ),
+    ),
+    'variants' => array(
+      'minified' => array(
+        'files' => array(
+          'js' => array(
+            'scheduler.min.js',
+          ),
+          'css' => array(
+            'scheduler.min.css',
+          ),
+        ),
+        'dependencies' => array('moment (>=2.10.6)', 'fullcalendar (>=2.5.0)'),
+      ),
+      'source' => array(
+        'files' => array(
+          'js' => array(
+            'scheduler.js',
+          ),
+          'css' => array(
+            'scheduler.css',
+          ),
+        ),
+        'dependencies' => array('moment (>=2.10.6)', 'fullcalendar (>=2.5.0)'),
+      ),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
+ * Checks if the FullCalendar Library is loaded.
+ *
+ * @return bool
+ *   A boolean indicating the FullCalendar status.
+ */
+function bat_fullcalendar_loaded() {
+  if (bat_library_loaded('fullcalendar', 'minified')) {
+    return TRUE;
+  }
+  else {
+    // Alert the authorized user/administrator to the abscence of the library.
+    drupal_set_message(t('The FullCalendar Library could not be found.
+                          Please check the installation instructions and the <a href="@status">Status Report</a>. Make sure
+                          to clear cache after updating settings and/or library locations.',
+      array('@status' => url('admin/reports/status'))), 'warning');
+    return FALSE;
+  }
+}
+
+function bat_fullcalendar_scheduler_loaded() {
+  if (bat_library_loaded('fullcalendar-scheduler', 'minified')) {
+    return TRUE;
+  }
+  else {
+    // Alert the authorized user/administrator to the abscence of the library.
+    drupal_set_message(t('The FullCalendar Scheduler Library could not be found.
+                          Please check the installation instructions and the <a href="@status">Status Report</a>. Make sure
+                          to clear cache after updating settings and/or library locations.',
+      array('@status' => url('admin/reports/status'))), 'warning');
+    return FALSE;
+  }
+}
 
 /**
  * Implements hook_permission().
@@ -61,12 +218,12 @@ function bat_availability_permission() {
 /**
  * Implements hook_menu().
  */
-function bat_availability_menu() {
+function bat_event_ui_menu() {
   $items = array();
 
-  $items['admin/bat/units/unit/%bat_unit/availability'] = array(
-    'title' => 'Manage Availability',
-    'page callback' => 'bat_availability_page',
+  $items['admin/bat/units/unit/%bat_unit/events'] = array(
+    'title' => 'Calendar events',
+    'page callback' => 'bat_event_calendar_page',
     'page arguments' => array(4, 6, 7),
     'access callback' => 'bat_unit_access',
     'access arguments' => array('update availability', 4),
@@ -98,33 +255,6 @@ function bat_availability_menu() {
 }
 
 /**
- * Implements hook_query_TAG_alter().
- */
-function bat_availability_query_bat_availability_access_alter(QueryAlterableInterface $query) {
-  // Look for unit base table to pass to the query altering function or else
-  // assume we don't have the tables we need to establish order related altering
-  // right now.
-  foreach ($query->getTables() as $table) {
-    if ($table['table'] === 'bat_units') {
-      bat_entity_access_query_alter($query, 'bat_unit', $table['alias'], NULL, 'update availability');
-      break;
-    }
-  }
-}
-
-/**
- * Implements hook_entity_delete().
- */
-function bat_availability_entity_delete($entity, $type) {
-  if ($type == 'bat_unit') {
-    // Remove data related to entity from bat_availability table.
-    db_delete('bat_availability')
-      ->condition('unit_id', $entity->unit_id)
-      ->execute();
-  }
-}
-
-/**
  * Form for the Bulk Availability Management.
  *
  * Could receive date params for the interested interval to edit.
@@ -144,7 +274,7 @@ function bat_availability_bulk_unit_management($year = '', $month = '', $type = 
   bat_fullcalendar_loaded();
 
   // Modal includes and style.
-  bat_availability_modal_style();
+  bat_event_ui_modal_style();
 
   drupal_add_library('system', 'drupal.vertical-tabs');
 
@@ -182,16 +312,16 @@ function bat_availability_bulk_unit_management($year = '', $month = '', $type = 
     }
   }
 
-  $js_file = drupal_get_path('module', 'bat_availability') . '/js/bat_unit_management.js';
-  $css_file = drupal_get_path('module', 'bat_availability') . '/css/bat_availability.css';
+  $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_unit_management.js';
+  $css_file = drupal_get_path('module', 'bat_event_ui') . '/css/bat_event_ui.css';
   // Show full day events on calendar.
   if (variable_get('bat_calendar_events_view', '0') == '1') {
-    $js_file = drupal_get_path('module', 'bat_availability') . '/js/bat_unit_management_full_day.js';
+    $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_unit_management_full_day.js';
   }
   // Return the full render array.
   return array(
     drupal_get_form('bat_filter_month_form', $month, $year),
-    drupal_get_form('bat_availability_update_status_form', $month, $year, $type, $units),
+    array(),
     array(
       '#theme' => 'pager',
     ),
@@ -217,168 +347,14 @@ function bat_availability_bulk_unit_management($year = '', $month = '', $type = 
 }
 
 /**
- * Form to manage the availability for specific month.
- *
- * @see bat_availability_bulk_unit_management()
+ * Callback for admin/bat/units/unit/%unit/events
  */
-function bat_availability_update_status_form($form, &$form_state, $month, $year, $type, $bat_units) {
-
-  $form['#attributes']['class'][] = 'bat-management-form bat-bulk-availability-form';
-
-  $form['bat_availability_update'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Update Availability'),
-    '#description' => t('Change the availability status of the units selected below for the specified date range.'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-
-  $form['bat_update_availability']['curr_month'] = array(
-    '#type' => 'hidden',
-    '#value' => $month,
-  );
-
-  $form['bat_update_availability']['curr_year'] = array(
-    '#type' => 'hidden',
-    '#value' => $year,
-  );
-
-  $form['bat_update_availability']['curr_type'] = array(
-    '#type' => 'hidden',
-    '#value' => $type,
-  );
-
-  $form['bat_availability_update']['bat_date_range'] = bat_date_range_fields($year, $month);
-
-  $state_options = bat_unit_state_options();
-  $form['bat_availability_update']['change_event_status'] = array(
-    '#title' => t('Bookable Unit State'),
-    '#type' => 'select',
-    '#options' => $state_options,
-    '#empty_option' => t('- Select -'),
-  );
-
-  $form['bat_availability_update']['actions'] = array(
-    '#type' => 'container',
-    '#attributes' => array('class' => array('form-actions')),
-    '#weight' => 400,
-  );
-
-  $form['bat_availability_update']['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Update Unit Availability'),
-  );
-
-  $form['#validate'][] = 'bat_form_start_end_dates_validate';
-  $form['#validate'][] = 'bat_availability_update_status_form_validate';
-
-  $form['bat_data'] = array(
-    '#prefix' => '<table class="bat-month-manager">',
-    '#type' => 'container',
-    '#suffix' => '</tbody></table>',
-  );
-
-  if (count($bat_units) > 0) {
-    $date = new DateTime();
-    $date->setDate($year, $month, '01');
-    $form['bat_data']['select-all'] = array(
-      '#type' => 'select',
-      '#prefix' => '<thead><tr><th class="unit-bulk-select">',
-      '#options' => array(
-        BAT_THIS_PAGE => t('All (this page)'),
-        BAT_ALL_PAGES => t('All (all pages)'),
-        BAT_NONE => t('None')),
-      '#empty_option' => t('- Select -'),
-      '#suffix' => '</th><th class="month-name"><div class="fc-header-title"><h2>' . format_date($date->getTimestamp(), 'custom', 'F Y') . '</h2></div></th></tr></thead><tbody>',
-    );
-  }
-
-  foreach ($bat_units as $key => $value) {
-    $form['bat_data']['bat-' . $value->unit_id] = array(
-      '#type' => 'checkbox',
-      '#title' => $value->name,
-      '#prefix' => '<tr><th class="unit-name">',
-      '#suffix' => '</th><td  class="unit-days"><div id="calendar' . $key . '"></div></td></tr>',
-    );
-
-  }
-
-  return $form;
-}
-
-/**
- * Validate callback for bat_availability_update_status_form form.
- */
-function bat_availability_update_status_form_validate(&$form, &$form_state) {
-  if ($form_state['values']['change_event_status'] == '') {
-    form_set_error('change_event_status', t('Select a valid status.'));
-  }
-  // Validate that a unit is selected.
-  bat_validate_unit($form_state);
-}
-
-/**
- * Submit callback for bat_availability_update_status_form form.
- */
-function bat_availability_update_status_form_submit(&$form, &$form_state) {
-  list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
-  $type = $form_state['values']['curr_type'];
-  $event_id = $form_state['values']['change_event_status'];
-
-  if ($form_state['values']['select-all'] == BAT_ALL_PAGES) {
-    $query = db_select('bat_units', 'n')->fields('n', array('unit_id', 'name'));
-    if ($type != 'all') {
-      $query->condition('type', $type, '=');
-    }
-    $bat_units = $query->execute()->fetchAll();
-
-    foreach ($bat_units as $unit) {
-      $unit_id = $unit->unit_id;
-
-      // Create a new Booking Event.
-      $be = new BookingEvent($unit_id, $event_id, $start_date, $end_date);
-      $events = array($be);
-      $rc = new UnitCalendar($unit_id);
-      $response = $rc->updateCalendar($events);
-      if ($response[$event_id] == BAT_BLOCKED) {
-        drupal_set_message($unit->name . ' - ' . t('Could not update calendar because a locked event is blocking the update - you need to unlock any locked events in that period.'), 'warning');
-      }
-      elseif ($response[$event_id] == BAT_UPDATED) {
-        drupal_set_message($unit->name . ' - ' . t('Calendar Updated'));
-      }
-    }
-  }
-  else {
-    foreach ($form_state['values'] as $key => $value) {
-      if (strpos($key, 'bat-') === 0 && $value == '1') {
-        $unit_id = str_replace('bat-', '', $key);
-
-        // Create a new Booking Event.
-        $be = new BookingEvent($unit_id, $event_id, $start_date, $end_date);
-        $events = array($be);
-        $rc = new UnitCalendar($unit_id);
-        $response = $rc->updateCalendar($events);
-        if ($response[$event_id] == BAT_BLOCKED) {
-          drupal_set_message($form_state['complete form']['bat_data'][$key]['#title'] . ' - ' . t('Could not update calendar because a locked event is blocking the update - you need to unlock any locked events in that period.'), 'warning');
-        }
-        elseif ($response[$event_id] == BAT_UPDATED) {
-          drupal_set_message($form_state['complete form']['bat_data'][$key]['#title'] . ' - ' . t('Calendar Updated'));
-        }
-      }
-    }
-  }
-}
-
-/**
- * Callback for admin/bat/units/unit/%unit/availability - builds availability
- * page by adding calendar and pulling events from availability table.
- */
-function bat_availability_page(BatUnit $bat_unit, $year = '', $month = '') {
+function bat_event_calendar_page(BatUnit $bat_unit, $year = '', $month = '') {
   // Set the page title.
   drupal_set_title(t('Edit @unit_name Availability', array('@unit_name' => $bat_unit->name)));
 
   // Add styles.
-  bat_availability_modal_style();
+  bat_event_ui_modal_style();
 
   drupal_add_library('system', 'drupal.vertical-tabs');
 
@@ -387,16 +363,16 @@ function bat_availability_page(BatUnit $bat_unit, $year = '', $month = '') {
   // unit/%/availability  or  admin/bat/units/unit/%/availability
   list($url) = explode('/' . $year . '/' . $month, current_path());
 
-  $js_file = drupal_get_path('module', 'bat_availability') . '/js/bat_availability.js';
-  $css_file = drupal_get_path('module', 'bat_availability') . '/css/bat_availability.css';
+  $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_event_ui.js';
+  $css_file = drupal_get_path('module', 'bat_event_ui') . '/css/bat_event_ui.css';
   // Show full day events on calendar.
   if (variable_get('bat_calendar_events_view', '0') == '1') {
-    $js_file = drupal_get_path('module', 'bat_availability') . '/js/bat_availability_full_day.js';
+    $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_availability_full_day.js';
   }
   return array(
     '#theme' => 'bat_three_month_calendar',
     '#url' => $url,
-    '#form' => drupal_get_form('update_availability_calendar_form', $bat_unit->unit_id, $year, $month),
+    '#form' => array(),
     '#year' => $year,
     '#month' => $month,
     '#attached' => array(
@@ -415,96 +391,15 @@ function bat_availability_page(BatUnit $bat_unit, $year = '', $month = '') {
 }
 
 /**
- * A basic form that allows us to update the state of the calendar.
- */
-function update_availability_calendar_form($form, &$form_state, $unit_id, $year, $month) {
-
-  $form['#attributes']['class'][] = 'bat-management-form bat-availability-calendar-form';
-
-  $form['bat_update_availability'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Update Unit Availability'),
-    '#description' => t('Change the availability status for a specified date range.'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-
-  $form['bat_update_availability']['unit_id'] = array(
-    '#type' => 'hidden',
-    '#value' => $unit_id,
-  );
-
-  $form['bat_update_availability']['bat_date_range'] = bat_date_range_fields();
-  // Unset a js setting.
-  drupal_add_js(array('bat' => array('batBookingStartDay' => 0)), 'setting');
-
-  $state_options = bat_unit_state_options();
-  $form['bat_update_availability']['unit_state'] = array(
-    '#type' => 'select',
-    '#title' => t('Change status to'),
-    '#options' => $state_options,
-  );
-
-  $form['bat_update_availability']['actions'] = array(
-    '#type' => 'container',
-    '#attributes' => array('class' => array('form-actions')),
-    '#weight' => 400,
-  );
-
-  // We add the form's #submit array to this button along with the actual submit
-  // handler to preserve any submit handlers added by a form callback_wrapper.
-  $submit = array();
-
-  if (!empty($form['bat_update_availability']['#submit'])) {
-    $submit += $form['bat_update_availability']['#submit'];
-  }
-
-  $form['bat_update_availability']['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Update Availability'),
-    '#submit' => $submit + array('update_availability_calendar_form_submit'),
-  );
-
-  // We append the validate handler to #validate in case a form callback_wrapper
-  // is used to add validate handlers earlier.
-  $form['#validate'][] = 'bat_form_start_end_dates_validate';
-
-  return $form;
-}
-
-/**
- * Update Availability submit function.
- */
-function update_availability_calendar_form_submit(&$form, &$form_state) {
-  list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
-  $event_id = $form_state['values']['unit_state'];
-  $unit_id = $form_state['values']['unit_id'];
-
-  // Consider right START DATE and END DATE for all events.
-  $end_date->sub(new DateInterval('P1D'));
-  // Create a new Booking Event.
-  $be = new BookingEvent($unit_id, $event_id, $start_date, $end_date);
-  $events = array($be);
-  $rc = new UnitCalendar($unit_id);
-  $response = $rc->updateCalendar($events);
-  if ($response[$event_id] == BAT_BLOCKED) {
-    drupal_set_message(t('Could not update calendar because a locked event is blocking the update - you need to unlock any locked events in that period.'), 'warning');
-  }
-  elseif ($response[$event_id] == BAT_UPDATED) {
-    drupal_set_message(t('Calendar Updated'));
-  }
-}
-
-/**
  * Helper function to determine the $event style depending on permissions.
  */
 function bat_availability_get_style($event_style, $unit) {
-  $event_style = is_numeric($event_style) ? (int) $event_style : (int) BAT_AVAILABILITY_ADMIN_STYLE;
+  $event_style = is_numeric($event_style) ? (int) $event_style : (int) BAT_EVENT_CALENDAR_ADMIN_STYLE;
 
   // If user don't have 'view named availability information' permission.
   if (!(user_access('view named availability information') || bat_unit_access('update availability', $unit))
-    && $event_style == BAT_AVAILABILITY_ADMIN_STYLE) {
-    $event_style = (int) BAT_AVAILABILITY_GENERIC_STYLE;
+    && $event_style == BAT_EVENT_CALENDAR_ADMIN_STYLE) {
+    $event_style = (int) BAT_EVENT_CALENDAR_GENERIC_STYLE;
   }
 
   return $event_style;
@@ -585,7 +480,7 @@ function bat_availability_event_manager_page($unit, $event_id = NULL, $start_dat
 /**
  * Define modal JS style and dependencies.
  */
-function bat_availability_modal_style() {
+function bat_event_ui_modal_style() {
   // Include libraries.
   ctools_include('modal');
   ctools_include('ajax');
@@ -768,31 +663,114 @@ function bat_availability_return_id($id) {
 }
 
 /**
- * Implements hook_form__FORM_ID_alter().
- *
- * FORM_ID = bat_event_settings
+ * Implements hook_theme().
  */
-function bat_availability_form_bat_event_settings_alter(&$form, &$form_state, $form_id) {
-  $form['label_settings'] = array(
-    '#type' => 'fieldset',
-    '#group' => 'bat_settings',
-    '#title' => t('Calendar settings'),
+function bat_event_ui_theme() {
+  return array(
+    'bat_one_month_calendar' => array(
+      'template' => 'bat_one_month_calendar',
+      'variables' => array(
+        'url' => NULL,
+        'form' => NULL,
+        'year' => NULL,
+        'month' => NULL,
+        'link_options' => NULL,
+      ),
+    ),
+    'bat_three_month_calendar' => array(
+      'template' => 'bat_three_month_calendar',
+      'variables' => array(
+        'url' => NULL,
+        'form' => NULL,
+        'year' => NULL,
+        'month' => NULL,
+        'link_options' => NULL,
+      ),
+    ),
   );
+}
 
-  $form['label_settings']['bat_view_unit_name'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Display unit name in place of availability state label.'),
-    '#default_value' => variable_get('bat_view_unit_name', ''),
-  );
+/**
+ * Default implementation of hook_preprocess_bat_one_month_calendar().
+ */
+function bat_event_ui_preprocess_bat_one_month_calendar(&$vars) {
 
-  $form['label_settings']['bat_calendar_events_view'] = array(
-    '#type' => 'radios',
-    '#title' => t('Calendar Events Display Mode'),
-    '#description' => t('Select how to display events on calendars.'),
-    '#default_value' => variable_get('bat_calendar_events_view', '0'),
-    '#options' => array (
-      '0' => t('Display events as starting at middle of day (check-in day) and ending at middle of check-out day'),
-      '1' => t('Display events occupying full day box at start and ending on day of last night (day before check-out date)'),
-    )
-  );
+  // Load FullCalendar Scheduler.
+  bat_fullcalendar_scheduler_loaded();
+
+  // Add css styles for one-month-calendar.
+  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_one_month_calendar.css');
+  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');
+
+  // If dates are not provided then use the current date.
+  $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
+  $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
+
+  $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', 'non-commercial');
+  if ($schedulerlicense == 'gpl') {
+    $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
+  }
+  elseif ($schedulerlicense == 'non-commercial') {
+    $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
+  }
+  elseif ($schedulerlicense == 'commercial') {
+    $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
+  }
+
+  // Inject settings in javascript that will be used to setup the one months
+  // display.
+  drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
+  drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
+  drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
+  drupal_add_js(array('batCalendar' => array('schedulerLicenseKey' => $schedulerlicensekey)), 'setting');
+}
+
+/**
+ * Default implementation of hook_preprocess_bat_three_month_calendar().
+ *
+ * Here we setup the three-month calendar based on a specified year,
+ * month, and url.
+ */
+function bat_event_ui_preprocess_bat_three_month_calendar(&$vars) {
+
+  // Load FullCalendar.
+  bat_fullcalendar_loaded();
+
+  // Add css styles for three-month-calendar.
+  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_three_month_calendar.css');
+  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');
+
+  // If dates are not provided then use the current date.
+  $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
+  $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
+
+  // Inject settings in javascript that will be used to setup the three months
+  // display.
+  drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
+  drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
+  drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
+
+  // Calculate forward and back dates for the 3-month view calendar.
+  $date1 = new DateTime("$year-$month-1");
+  $date2 = new DateTime("$year-$month-1");
+  $date_current = new DateTime("now");
+
+  $forward = $date1->add(new DateInterval('P3M'));
+  $backward = $date2->sub(new DateInterval('P3M'));
+
+  // Create the links based off the url variable passed in.
+  if (!isset($vars['url'])) {
+    $vars['url'] = '';
+  }
+
+  $forward_path = $vars['url'] . '/' . $forward->format('Y') . '/' . $forward->format('n');
+  $backward_path = $vars['url'] . '/' . $backward->format('Y') . '/' . $backward->format('n');
+  $current_path = $vars['url'] . '/' . $date_current->format('Y') . '/' . $date_current->format('n');
+
+  if (!is_array($vars['link_options']) || empty($vars['link_options'])) {
+    $vars['link_options'] = array();
+  }
+  $vars['forward_link'] = l(t('Forward'), $forward_path, $vars['link_options']);
+  $vars['backward_link'] = l(t('Back'), $backward_path, $vars['link_options']);
+  $vars['current_link'] = l(t('Current'), $current_path, $vars['link_options']);
 }

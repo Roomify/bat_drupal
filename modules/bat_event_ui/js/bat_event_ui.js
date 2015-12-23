@@ -1,15 +1,14 @@
 (function ($) {
 // define object
-Drupal.BatPricing = Drupal.BatPricing || {};
-Drupal.BatPricing.Modal = Drupal.BatPricing.Modal || {};
+Drupal.BatAvailability = Drupal.BatAvailability || {};
+Drupal.BatAvailability.Modal = Drupal.BatAvailability.Modal || {};
 
-Drupal.behaviors.bat_pricing = {
+Drupal.behaviors.bat_availability = {
   attach: function(context) {
 
-    unit_id = Drupal.settings.batPricing.batID;
+    unit_id = Drupal.settings.batAvailability.unitID;
 
-    // Current month is whatever comes through -1 since js counts months starting
-    // from 0
+    // Current month is whatever comes through -1 since js counts months starting from 0
     currentMonth = Drupal.settings.batCalendar.currentMonth - 1;
     currentYear = Drupal.settings.batCalendar.currentYear;
     firstDay = Drupal.settings.batCalendar.firstDay;
@@ -18,8 +17,7 @@ Drupal.behaviors.bat_pricing = {
     month1 = currentMonth;
     year1 = currentYear;
 
-    // Second month is the next one obviously unless it is 11 in
-    // which case we need to move a year ahead
+    // Second month is the next one obviously unless it is 11 in which case we need to move a year ahead
     if (currentMonth == 11) {
       month2 = 0;
       year2 = year1 + 1;
@@ -30,8 +28,7 @@ Drupal.behaviors.bat_pricing = {
     }
 
     currentMonth = month2;
-    // And finally the last month where we do the same as above
-    // worth streamlining this probably
+    // And finally the last month where we do the same as above worth streamlining this probably
     if (currentMonth == 11) {
       month3 = 0;
       year3 = year2 + 1;
@@ -47,11 +44,15 @@ Drupal.behaviors.bat_pricing = {
     calendars[2] = new Array('#calendar2', month3, year3);
 
     events = [];
-    var url = Drupal.settings.basePath + '?q=bat/v1/pricing&units=' + unit_id + '&start_date=' + year1 + '-' + (month1+1) + '-01&duration=3M';
+    var url = Drupal.settings.basePath + '?q=bat/v1/availability&units=' + unit_id + '&start_date=' + year1 + '-' + (month1+1) + '-01&duration=3M';
     $.ajax({
       url: url,
       success: function(data) {
         events = data['events'];
+
+        for (i in events[unit_id]) {
+          events[unit_id][i].end = moment(events[unit_id][i].end).subtract(1, 'days').format();
+        }
 
         $.each(calendars, function(key, value) {
           $(value[0]).fullCalendar('refetchEvents');
@@ -60,7 +61,10 @@ Drupal.behaviors.bat_pricing = {
     });
 
     $.each(calendars, function(key, value) {
+      // phpmonth is what we send via the url and need to add one since php handles
+      // months starting from 1 not zero
       phpmonth = value[1]+1;
+
       $(value[0]).once().fullCalendar({
         editable: false,
         selectable: true,
@@ -72,7 +76,10 @@ Drupal.behaviors.bat_pricing = {
         header:{
           left: 'title',
           center: '',
-          right: ''
+          right: '',
+        },
+        windowResize: function(view) {
+          $(this).fullCalendar('refetchEvents');
         },
         events: function(start, end, timezone, callback) {
           callback(events[unit_id]);
@@ -87,45 +94,42 @@ Drupal.behaviors.bat_pricing = {
           var sd = calEvent.start.unix();
           var ed = calEvent.end.unix();
           // Open the modal for edit
-          Drupal.BatPricing.Modal(view, calEvent.id, sd, ed);
+          Drupal.BatAvailability.Modal(view, calEvent.id, sd, ed);
         },
         select: function(start, end, jsEvent, view) {
           var ed = end.subtract(1, 'days');
           var sd = start.unix();
           ed = end.unix();
           // Open the modal for edit
-          Drupal.BatPricing.Modal(this, -2, sd, ed);
+          Drupal.BatAvailability.Modal(this, -2, sd, ed);
           $(value[0]).fullCalendar('unselect');
         },
-        // Remove Time from events
         eventRender: function(event, el, view) {
+          // Remove Time from events.
           el.find('.fc-time').remove();
         },
         eventAfterRender: function(event, element, view) {
           // Hide events that are outside this month.
           if (event.start.month() != view.intervalStart.month()) {
             element.css('visibility', 'hidden');
-            return;
           }
         }
       });
     });
-    // Resize takes care of some quirks on occasion
-    $(window).resize();
   }
 };
 
 /**
 * Initialize the modal box.
 */
-Drupal.BatPricing.Modal = function(element, eid, sd, ed) {
-  // prepare the modal show with the bat-pricing settings.
+Drupal.BatAvailability.Modal = function(element, eid, sd, ed) {
+  // prepare the modal show with the bat-availability settings.
   Drupal.CTools.Modal.show('bat-modal-style');
   // base url the part that never change is used to identify our ajax instance
   var base = Drupal.settings.basePath + '?q=admin/bat/units/unit/';
-  // Create a drupal ajax object that points to the unit pricing form.
+  // Create a drupal ajax object that points to the unit availability form.
   var element_settings = {
-    url : base + Drupal.settings.batPricing.batID + '/price/' + eid + '/' + sd + '/' + ed,
+    url : base + Drupal.settings.batAvailability.unitID + '/event/' + eid + '/' + sd + '/' + ed,
     event : 'getResponse',
     progress : { type: 'throbber' }
   };

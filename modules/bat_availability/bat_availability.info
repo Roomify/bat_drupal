@@ -1,7 +1,0 @@
-name = BAT Availability
-description = Manages availability for BAT units.
-core = 7.x
-
-package = BAT
-
-dependencies[] = bat_unit
