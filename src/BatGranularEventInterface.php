@@ -250,4 +250,6 @@ interface BatGranularEventInterface {
    */
   public function diff();
 
+  public function formatJson($style = BAT_EVENT_CALENDAR_ADMIN_STYLE);
+
 }

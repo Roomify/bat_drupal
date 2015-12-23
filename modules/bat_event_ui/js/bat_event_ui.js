@@ -50,10 +50,6 @@ Drupal.behaviors.bat_availability = {
       success: function(data) {
         events = data['events'];
 
-        for (i in events[unit_id]) {
-          events[unit_id][i].end = moment(events[unit_id][i].end).subtract(1, 'days').format();
-        }
-
         $.each(calendars, function(key, value) {
           $(value[0]).fullCalendar('refetchEvents');
         });

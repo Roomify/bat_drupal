@@ -314,6 +314,22 @@ function bat_event_load_state($state_id) {
 }
 
 /**
+ * @param $event_type
+ *
+ * @return array
+ */
+function bat_event_states_get_default($event_type) {
+  $state_id = db_select('bat_event_state', 'n')
+                ->fields('n', array('id'))
+                ->condition('event_type', $event_type)
+                ->condition('default_state', 1)
+                ->execute()
+                ->fetchField();
+
+  return bat_event_load_state($state_id);
+}
+
+/**
  *
  */
 function bat_event_states_form($form, &$form_state, $event_type) {
