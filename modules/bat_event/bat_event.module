@@ -291,6 +291,7 @@ function bat_event_get_states($event_type = NULL) {
       'calendar_label' => $event_state->calendar_label,
       'locked' => $event_state->locked,
       'blocking' => $event_state->blocking,
+      'default_state' => $event_state->default_state,
     );
   }
 
@@ -321,6 +322,8 @@ function bat_event_states_form($form, &$form_state, $event_type) {
 
     $header = array(t('ID'), t('Label'), t('Blocking'), t('Operations'));
 
+    $default_state = 0;
+
     $rows = array();
     foreach ($event_states as $event_state) {
       $operations = array();
@@ -343,11 +346,32 @@ function bat_event_states_form($form, &$form_state, $event_type) {
         $event_state['blocking'],
         theme('links', array('links' => $operations, 'attributes' => array('class' => array('links', 'inline')))),
       );
+
+      if ($event_state['default_state']) {
+        $default_state = count($rows) - 1;
+      }
     }
 
     if (!empty($rows)) {
       $form['states'] = array(
-        '#markup' => theme('table', array('header' => $header, 'rows' => $rows)),
+        '#type' => 'tableselect',
+        '#header' => $header,
+        '#options' => $rows,
+        '#multiple' => FALSE,
+        '#default_value' => $default_state,
+        '#prefix' => '<div id="event-state-wrapper">',
+        '#suffix' => '</div>',
+      );
+
+      $form['set_default'] = array(
+        '#type' => 'submit',
+        '#value' => t('Set default state'),
+        '#limit_validation_errors' => array(array('states')),
+        '#submit' => 'bat_event_states_form_set_default',
+        '#ajax' => array(
+          'callback' => 'bat_event_states_form_set_default',
+          'wrapper' => 'event-state-wrapper',
+        ),
       );
     }
 
@@ -399,7 +423,7 @@ function bat_event_states_form($form, &$form_state, $event_type) {
     $form['new_state']['blocking'] = array(
       '#type' => 'checkbox',
       '#title' => t('Blocking'),
-    ); 
+    );
 
     $form['new_state']['submit'] = array(
       '#type' => 'submit',
@@ -413,6 +437,27 @@ function bat_event_states_form($form, &$form_state, $event_type) {
   }
 
   return $form;
+}
+
+/**
+ *
+ */
+function bat_event_states_form_set_default($form, &$form_state) {
+  $state = $form_state['values']['states'];
+
+  db_update('bat_event_state')
+    ->fields(array('default_state' => 0))
+    ->condition('event_type', $form['event_type']['#value'])
+    ->execute();
+
+  db_update('bat_event_state')
+    ->fields(array('default_state' => 1))
+    ->condition('id', $form['states']['#options'][$state][0])
+    ->execute();
+
+  drupal_set_message('Default state setted!');
+
+  return $form['states'];
 }
 
 /**

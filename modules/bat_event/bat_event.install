@@ -262,6 +262,13 @@ function bat_event_schema() {
         'size' => 'tiny',
         'description' => 'Blocking.',
       ),
+      'default_state' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Default state.',
+      ),
     ),
     'primary key' => array('id'),
   );
@@ -313,6 +320,7 @@ function bat_event_create_standard_event_states() {
     'color' => '#8BA175',
     'calendar_label' => 'AV',
     'locked' => 1,
+    'default' => 1,
   );
   drupal_write_record('bat_event_state', $available_state);
 }
