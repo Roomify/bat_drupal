@@ -63,29 +63,6 @@ function bat_event_views_data_alter(&$data) {
       'handler' => 'bat_event_handler_date_filter',
     ),
   );
-  $data['bat_events']['unit_id'] = array(
-    'title' => t('Unit'),
-    'help' => t('The unit for which this event was made.'),
-    'field' => array(
-      'handler' => 'bat_event_handler_unit_field',
-    ),
-    'filter' => array(
-      'title' => t('Unit'),
-      'handler' => 'bat_event_handler_unit_filter',
-    ),
-    'sort' => array(
-      'handler' => 'views_handler_sort',
-    ),
-    'relationship' => array(
-      'title' => t('Unit ID'),
-      'help' => t("Relate this event to its bookable unit"),
-      'handler' => 'views_handler_relationship',
-      'base' => 'bat_units',
-      'base field' => 'unit_id',
-      'field' => 'unit_id',
-      'label' => t('Booking unit'),
-    ),
-  );
   $data['bat_events']['type']['field'] = array(
     'title' => t('Booking Type'),
     'help' => t('The event type label.'),
@@ -135,52 +112,4 @@ function bat_event_views_data_alter(&$data) {
     ),
   );
 
-}
-
-/**
- * Page callback for views bat_unit autocomplete.
- *
- * @param $units_typed
- *   The typed string of the user.
- */
-function bat_event_views_ajax_autocomplete_unit($units_typed = '') {
-  // The user enters a comma-separated list of units. We only autocomplete the last unit.
-  $units_typed = drupal_explode_tags($units_typed);
-  $unit_last = drupal_strtolower(array_pop($units_typed));
-
-  $unit_matches = array();
-  if ($unit_last != '') {
-
-    $query = db_select('bat_units', 't');
-
-    // Do not select already entered units.
-    if (!empty($units_typed)) {
-      $query->condition('t.name', $units_typed, 'NOT IN');
-    }
-    // Select rows that match by unit name.
-    $units_return = $query
-      ->fields('t', array('unit_id', 'name'))
-      ->condition('t.name', '%' . db_like($unit_last) . '%', 'LIKE')
-      ->range(0, 10)
-      ->execute()
-      ->fetchAllKeyed();
-
-    $prefix = count($units_typed) ? drupal_implode_tags($units_typed) . ', ' : '';
-
-    foreach ($units_return as $unit_id => $name) {
-      $unit = bat_unit_load($unit_id);
-
-      if (bat_unit_access('update', $unit)) {
-        $n = $name;
-        // Unit names containing commas or quotes must be wrapped in quotes.
-        if (strpos($name, ',') !== FALSE || strpos($name, '"') !== FALSE) {
-          $n = '"' . str_replace('"', '""', $name) . '"';
-        }
-        // Add unit name to list of matches.
-        $unit_matches[$prefix . $n] = check_plain($name);
-      }
-    }
-  }
-
-  drupal_json_output($unit_matches);
 }
