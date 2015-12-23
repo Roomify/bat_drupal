@@ -89,6 +89,25 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     return $events;
   }
 
+  /**
+   * Given a start and end time this will return the states untis find themselves in for that range.
+   *
+   * @param \DateTime $start_date
+   * @param \DateTime $end_date
+   * @return array
+   *  An array of states keyed by unit
+   */
+  public function getStates(\DateTime $start_date, \DateTime $end_date) {
+    $events = $this->getEvents($start_date, $end_date);
+    $states = array();
+    foreach ($events as $unit => $unit_events) {
+      foreach ($unit_events as $event){
+        $states[$unit][$event->getValue()] = $event->getValue();
+      }
+    }
+    return $states;
+  }
+
 
   /**
    * Provides an itemized array of events keyed by the unit_id and divided by day,
@@ -419,6 +438,8 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       $query_parameters .= 'year IN (' . $year . ') ';
       $query_parameters .= 'AND month IN (' . implode("," ,array_keys($months)) .') ';
       if (count($this->unit_ids) > 0) {
+        dpm(count($this->unit_ids));
+        dpm($this->unit_ids);
         // Unit ids are defined so add this as a filter
         $query_parameters .= 'AND unit_id in (' . implode("," , $this->unit_ids) .') ';
       }
