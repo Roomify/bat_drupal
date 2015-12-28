@@ -568,10 +568,10 @@ function bat_unit_form_bat_unit_type_operation_form_alter(&$form, &$form_state, 
  * @return array
  *   Array of available unit states keyed by id.
  */
-function bat_unit_state_options() {
+function bat_unit_state_options($event_type = NULL) {
   $event_states = array();
 
-  $states = bat_event_get_states();
+  $states = bat_event_get_states($event_type);
 
   foreach ($states as $event_state) {
     $event_states[$event_state['id']] = t($event_state['label']);

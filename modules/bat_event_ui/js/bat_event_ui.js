@@ -17,43 +17,31 @@ Drupal.behaviors.bat_availability = {
     month1 = currentMonth;
     year1 = currentYear;
 
-    // Second month is the next one obviously unless it is 11 in which case we need to move a year ahead
-    if (currentMonth == 11) {
-      month2 = 0;
-      year2 = year1 + 1;
-    }
-    else {
-      month2 = currentMonth+1;
-      year2 = currentYear;
-    }
+    openingTime = '';
 
-    currentMonth = month2;
-    // And finally the last month where we do the same as above worth streamlining this probably
-    if (currentMonth == 11) {
-      month3 = 0;
-      year3 = year2 + 1;
+    if (openingTime.length === 0) {
+      businessHours = {
+        start: '00:00',
+        end: '24:00',
+        dow: [0, 1, 2, 3, 4, 5, 6],
+      };
     }
     else {
-      month3 = currentMonth+1;
-      year3 = year2;
+      businessHours = {
+        start: openingTime.opening,
+        end: openingTime.closing,
+        dow: openingTime.dow
+      };
     }
 
     var calendars = [];
     calendars[0] = new Array('#calendar', month1, year1);
-    calendars[1] = new Array('#calendar1', month2, year2);
-    calendars[2] = new Array('#calendar2', month3, year3);
 
-    events = [];
-    var url = Drupal.settings.basePath + '?q=bat/v1/availability&units=' + unit_id + '&start_date=' + year1 + '-' + (month1+1) + '-01&duration=3M';
-    $.ajax({
-      url: url,
-      success: function(data) {
-        events = data['events'];
-
-        $.each(calendars, function(key, value) {
-          $(value[0]).fullCalendar('refetchEvents');
-        });
-      }
+    // refresh the events once the modal is closed
+    $(document).one("CToolsDetachBehaviors", function() {
+      $.each(calendars, function(key, value) {
+        $(value[0]).fullCalendar('refetchEvents');
+      });
     });
 
     $.each(calendars, function(key, value) {
@@ -71,14 +59,57 @@ Drupal.behaviors.bat_availability = {
         defaultDate: moment([value[2],phpmonth-1]),
         header:{
           left: 'title',
-          center: '',
-          right: '',
+          center: 'month, agendaWeek, agendaDay',
+          right: 'today, prev, next',
+        },
+        businessHours: businessHours,
+        selectOverlap: function(event) {
+          // allowing selections over background events but not allowing selections over any other types of events
+          return event.rendering === 'background';
+        },
+        viewRender: function(view, element) {
+          view.calendar.removeEvents();
+
+          if (view.name == 'month') {
+            var url = Drupal.settings.basePath + '?q=bat/v1/availability&units=' + unit_id + '&start_date=' + moment(view.intervalStart).format('YYYY') + '-' + moment(view.intervalStart).format('M') + '-01&duration=1M';
+            $.ajax({
+              url: url,
+              success: function(data) {
+                events = data['events'];
+
+                for (i in events[unit_id]) {
+                  events[unit_id][i].end = moment(events[unit_id][i].end).subtract(1, 'days').format();
+                }
+
+                view.calendar.addEventSource(events[unit_id]);
+              }
+            });
+          }
+          else if (view.name == 'agendaDay') {
+            var url_day = Drupal.settings.basePath + '?q=bat/units/unit/' + unit_id + '/day-availability/json/' + moment(view.start).format();
+ 
+            $.ajax({
+              url: url_day,
+              dataType: 'json',
+              success: function(data) {
+                view.calendar.addEventSource(data);
+              }
+            });
+          }
+          else if (view.name == 'agendaWeek') {
+            var url_week = Drupal.settings.basePath + '?q=bat/units/unit/' + unit_id + '/day-availability/json/' + moment(view.start).format() + '/7D';
+ 
+            $.ajax({
+              url: url_week,
+              dataType: 'json',
+              success: function(data) {
+                view.calendar.addEventSource(data);
+              }
+            });
+          }
         },
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
-        },
-        events: function(start, end, timezone, callback) {
-          callback(events[unit_id]);
         },
         eventClick: function(calEvent, jsEvent, view) {
           // Getting the Unix timestamp - JS will only give us milliseconds

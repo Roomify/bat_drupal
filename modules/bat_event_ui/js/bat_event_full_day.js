@@ -16,31 +16,8 @@ Drupal.behaviors.bat_availability = {
     month1 = currentMonth;
     year1 = currentYear;
 
-    // Second month is the next one obviously unless it is 11 in which case we need to move a year ahead
-    if (currentMonth == 11) {
-      month2 = 0;
-      year2 = year1 + 1;
-    }
-    else {
-      month2 = currentMonth+1;
-      year2 = currentYear;
-    }
-
-    currentMonth = month2;
-    // And finally the last month where we do the same as above worth streamlining this probably
-    if (currentMonth == 11) {
-      month3 = 0;
-      year3 = year2 + 1;
-    }
-    else {
-      month3 = currentMonth+1;
-      year3 = year2;
-    }
-
     var calendars = [];
     calendars[0] = new Array('#calendar', month1, year1);
-    calendars[1] = new Array('#calendar1', month2, year2);
-    calendars[2] = new Array('#calendar2', month3, year3);
 
     events = [];
     var url = Drupal.settings.basePath + '?q=bat/v1/availability&units=' + unit_id + '&start_date=' + year1 + '-' + (month1+1) + '-01&duration=3M';

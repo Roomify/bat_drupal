@@ -92,46 +92,6 @@ function bat_event_ui_libraries_info() {
     ),
   );
 
-  $libraries['fullcalendar-scheduler'] = array(
-    'name' => 'Fullcalendar Scheduler',
-    'vendor url' => 'http://fullcalendar.io',
-    'download url' => 'https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.1.0/fullcalendar-scheduler-1.1.0.zip',
-    'version arguments' => array(
-      'file' => 'scheduler.min.js',
-      // 1.1.0
-      'pattern' => '/(\d+\.\d+\.\d)/',
-    ),
-    'files' => array(
-      'js' => array(
-        'scheduler.min.js',
-      ),
-    ),
-    'variants' => array(
-      'minified' => array(
-        'files' => array(
-          'js' => array(
-            'scheduler.min.js',
-          ),
-          'css' => array(
-            'scheduler.min.css',
-          ),
-        ),
-        'dependencies' => array('moment (>=2.10.6)', 'fullcalendar (>=2.5.0)'),
-      ),
-      'source' => array(
-        'files' => array(
-          'js' => array(
-            'scheduler.js',
-          ),
-          'css' => array(
-            'scheduler.css',
-          ),
-        ),
-        'dependencies' => array('moment (>=2.10.6)', 'fullcalendar (>=2.5.0)'),
-      ),
-    ),
-  );
-
   return $libraries;
 }
 
@@ -148,20 +108,6 @@ function bat_fullcalendar_loaded() {
   else {
     // Alert the authorized user/administrator to the abscence of the library.
     drupal_set_message(t('The FullCalendar Library could not be found.
-                          Please check the installation instructions and the <a href="@status">Status Report</a>. Make sure
-                          to clear cache after updating settings and/or library locations.',
-      array('@status' => url('admin/reports/status'))), 'warning');
-    return FALSE;
-  }
-}
-
-function bat_fullcalendar_scheduler_loaded() {
-  if (bat_library_loaded('fullcalendar-scheduler', 'minified')) {
-    return TRUE;
-  }
-  else {
-    // Alert the authorized user/administrator to the abscence of the library.
-    drupal_set_message(t('The FullCalendar Scheduler Library could not be found.
                           Please check the installation instructions and the <a href="@status">Status Report</a>. Make sure
                           to clear cache after updating settings and/or library locations.',
       array('@status' => url('admin/reports/status'))), 'warning');
@@ -269,7 +215,7 @@ function bat_event_calendar_page(BatUnit $bat_unit, $year = '', $month = '') {
     $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_availability_full_day.js';
   }
   return array(
-    '#theme' => 'bat_three_month_calendar',
+    '#theme' => 'bat_one_month_calendar',
     '#url' => $url,
     '#form' => array(),
     '#year' => $year,
@@ -576,16 +522,6 @@ function bat_event_ui_theme() {
         'link_options' => NULL,
       ),
     ),
-    'bat_three_month_calendar' => array(
-      'template' => 'bat_three_month_calendar',
-      'variables' => array(
-        'url' => NULL,
-        'form' => NULL,
-        'year' => NULL,
-        'month' => NULL,
-        'link_options' => NULL,
-      ),
-    ),
   );
 }
 
@@ -594,8 +530,8 @@ function bat_event_ui_theme() {
  */
 function bat_event_ui_preprocess_bat_one_month_calendar(&$vars) {
 
-  // Load FullCalendar Scheduler.
-  bat_fullcalendar_scheduler_loaded();
+  // Load FullCalendar.
+  bat_fullcalendar_loaded();
 
   // Add css styles for one-month-calendar.
   drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_one_month_calendar.css');
@@ -621,55 +557,4 @@ function bat_event_ui_preprocess_bat_one_month_calendar(&$vars) {
   drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
   drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
   drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
-  drupal_add_js(array('batCalendar' => array('schedulerLicenseKey' => $schedulerlicensekey)), 'setting');
-}
-
-/**
- * Default implementation of hook_preprocess_bat_three_month_calendar().
- *
- * Here we setup the three-month calendar based on a specified year,
- * month, and url.
- */
-function bat_event_ui_preprocess_bat_three_month_calendar(&$vars) {
-
-  // Load FullCalendar.
-  bat_fullcalendar_loaded();
-
-  // Add css styles for three-month-calendar.
-  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_three_month_calendar.css');
-  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');
-
-  // If dates are not provided then use the current date.
-  $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
-  $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
-
-  // Inject settings in javascript that will be used to setup the three months
-  // display.
-  drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
-  drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
-  drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
-
-  // Calculate forward and back dates for the 3-month view calendar.
-  $date1 = new DateTime("$year-$month-1");
-  $date2 = new DateTime("$year-$month-1");
-  $date_current = new DateTime("now");
-
-  $forward = $date1->add(new DateInterval('P3M'));
-  $backward = $date2->sub(new DateInterval('P3M'));
-
-  // Create the links based off the url variable passed in.
-  if (!isset($vars['url'])) {
-    $vars['url'] = '';
-  }
-
-  $forward_path = $vars['url'] . '/' . $forward->format('Y') . '/' . $forward->format('n');
-  $backward_path = $vars['url'] . '/' . $backward->format('Y') . '/' . $backward->format('n');
-  $current_path = $vars['url'] . '/' . $date_current->format('Y') . '/' . $date_current->format('n');
-
-  if (!is_array($vars['link_options']) || empty($vars['link_options'])) {
-    $vars['link_options'] = array();
-  }
-  $vars['forward_link'] = l(t('Forward'), $forward_path, $vars['link_options']);
-  $vars['backward_link'] = l(t('Back'), $backward_path, $vars['link_options']);
-  $vars['current_link'] = l(t('Current'), $current_path, $vars['link_options']);
 }
