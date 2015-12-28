@@ -83,14 +83,14 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     // We first get events in the itemized format
     $itemized_events = $this->getEventsItemized($start_date, $end_date);
 
-    // We then normalize those events to creat BatGranularEvents that get added to an array
+    // We then normalize those events to create BatGranularEvents that get added to an array
     $events = $this->getEventsNormalized($start_date, $end_date, $itemized_events);
 
     return $events;
   }
 
   /**
-   * Given a start and end time this will return the states untis find themselves in for that range.
+   * Given a start and end time this will return the states units find themselves in for that range.
    *
    * @param \DateTime $start_date
    * @param \DateTime $end_date
