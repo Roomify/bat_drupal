@@ -236,17 +236,6 @@ function bat_event_permission() {
 }
 
 /**
- * Implements hook_ctools_plugin_type().
- */
-function bat_event_ctools_plugin_type() {
-  return array(
-    'availabilityagent_filter' => array(
-      'use hooks' => TRUE,
-    ),
-  );
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  *
  * FORM_ID = views_exposed_form

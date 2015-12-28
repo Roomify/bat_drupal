@@ -1,0 +1,13 @@
+name = BAT Facets
+description = Facet API facets for BAT.
+core = 7.x
+
+package = BAT
+
+dependencies[] = bat_event
+dependencies[] = facetapi
+dependencies[] = search_api
+dependencies[] = search_api_facetapi
+
+files[] = src/BatStateSearchAPIQuery.php
+files[] = src/BatStateWidget.php

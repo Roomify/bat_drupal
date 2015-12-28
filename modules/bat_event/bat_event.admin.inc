@@ -9,8 +9,6 @@
  * more often than not, be end-user facing.
  */
 
-use Drupal\bat_event\AvailabilityAgent;
-
 /**
  * UI controller.
  */
@@ -478,13 +476,13 @@ function bat_event_edit_form_get_units($unit_type, $current_event, $start_date, 
     $event_parameters = array(array('adults' => 1, 'children' => 0));
   }
 
-  if (!empty($current_event->event_id)) {
+  /*if (!empty($current_event->event_id)) {
     $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array(bat_availability_assign_id($current_event->event_id, '0'), bat_availability_assign_id($current_event->event_id))), $unit_types);
   }
   else {
     $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array($current_event_state)), $unit_types);
   }
-  $available_units = $ac->checkAvailability(TRUE);
+  $available_units = $ac->checkAvailability(TRUE);*/
 
   if (is_array($available_units)) {
     foreach ($available_units as $type => $units_per_price) {
