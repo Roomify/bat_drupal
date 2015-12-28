@@ -7,33 +7,6 @@
  */
 
 
-define('BAT_ADD', 'add');
-define('BAT_ADD_DAILY', 'add-daily');
-define('BAT_SUB', 'sub');
-define('BAT_SUB_DAILY', 'sub-daily');
-define('BAT_REPLACE', 'replace');
-define('BAT_INCREASE', 'increase');
-define('BAT_DECREASE', 'decrease');
-define('BAT_DYNAMIC_MODIFIER', 'dynamic_modifier');
-
-define('BAT_ACCESS_ALLOW', 'allow');
-define('BAT_ACCESS_DENY', 'deny');
-define('BAT_ACCESS_IGNORE', NULL);
-
-define('BAT_THIS_PAGE', 'this');
-define('BAT_ALL_PAGES', 'all');
-define('BAT_NONE', 'none');
-
-define('BAT_AVAILABILITY_FAILURE', 1);
-define('BAT_NO_MATCH', 2);
-define('BAT_PER_TYPE', 'bat_per_type');
-define('BAT_INDIVIDUAL', 'bat_individual');
-
-define('BAT_OPTION_OPTIONAL', 'optional');
-define('BAT_OPTION_MANDATORY', 'mandatory');
-define('BAT_OPTION_ONREQUEST', 'on_request');
-
-
 /**
  * Implements hook_permission().
  */
@@ -60,7 +33,7 @@ function bat_library_loaded($name, $variant = NULL) {
 }
 
 /**
- * Generic access control for bookable entities.
+ * Generic access control for entities that BAT defines.
  *
  * @param string $op
  *   The operation being performed. One of 'view', 'update', 'create' or
@@ -401,40 +374,6 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
 }
 
 /**
- * Returns the available price options for booking_unit options field.
- */
-function bat_price_options_options() {
-  return array(
-    BAT_ADD => t('Add to price'),
-    BAT_ADD_DAILY => t('Add to price per night'),
-    BAT_SUB => t('Subtract from price'),
-    BAT_SUB_DAILY => t('Subtract from price per night'),
-    BAT_REPLACE => t('Replace price'),
-    BAT_INCREASE => t('Increase price by % amount'),
-    BAT_DECREASE => t('Decrease price by % amount'),
-  );
-}
-
-/**
- * Utility function that returns the last day of each month given a year.
- *
- * @param int $year
- *   The year to get the end of month dates for
- *
- * @return array
- *   An array keyed by months
- */
-function bat_end_of_month_dates($year) {
-  $end_of_month_dates = array();
-
-  for ($i = 1; $i <= 12; $i++) {
-    $end_of_month_dates[$i] = date('t', mktime(0, 0, 0, $i, 1, $year));
-  }
-
-  return $end_of_month_dates;
-}
-
-/**
  * Utility function to create two related datepickers.
  *
  * We have a few forms that need a start and end date field
@@ -731,27 +670,6 @@ function bat_assoc_range($start, $end) {
   return drupal_map_assoc(bat_range($start, $end));
 }
 
-/**
- * Helper validate function to ensure that at least one unit is selected.
- */
-function bat_validate_unit($form_state) {
-  $select_bat = FALSE;
-  if ($form_state['values']['select-all'] == BAT_ALL_PAGES || $form_state['values']['select-all'] == BAT_THIS_PAGE) {
-    $select_bat = TRUE;
-  }
-  else {
-    foreach ($form_state['values'] as $key => $value) {
-      if (strpos($key, 'bat-') === 0 && $value == '1') {
-        $select_bat = TRUE;
-      }
-    }
-  }
-
-  if (!$select_bat) {
-    form_set_error('select-all', t('You have to select at least one unit to update.'));
-  }
-}
-
 function bat_filter_month_form($form, &$form_state, $month, $year, $unit_types = NULL) {
 
   $form['#attributes']['class'][] = 'bat-management-form bat-filter-month-form';
@@ -862,26 +780,4 @@ function bat_element_validate_integer_positive_less_than_100($element, &$form_st
       form_error($element, t('%name must be less than 100.', array('%name' => $element['#title'])));
     }
   }
-}
-
-/**
- * A string transformation function specific to BAT to allow modules to use
- * contextual information about bookings to change what is shown to the user.
- *
- * @param $string - The string to be altered.
- * @param $context - Contextual information about the string.
- *
- * @return mixed
- */
-function bat_string($string, $context) {
-
-  // The string_suggestions array will hold information about all the
-  // suggestions coming from modules. The default behaviour now is to simply
-  // return the suggestion made by the module with the highest weight.
-  $string_suggestions = array();
-  $string_suggestions[] = $string;
-  drupal_alter('bat_string', $string_suggestions, $context);
-
-  // Return the highest option string.
-  return max($string_suggestions);
 }

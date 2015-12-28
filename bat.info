@@ -1,5 +1,5 @@
 name = BAT - Booking and Availability Management Tools 
-description = A generalized Booking and Availability Management framework - the base module provides generic functionality
+description = A generic booking framework for building booking applications
 core = 7.x
 php = 5.3.9
 
