@@ -422,6 +422,7 @@ abstract class AbstractEvent implements EventInterface {
       $itemized[BAT_HOUR][$ey][$em]['d' . $ed] = $itemized_end[BAT_HOUR][$ey][$em]['d' . $ed];
       $itemized[BAT_MINUTE][$ey][$em]['d' . $ed] = $itemized_end[BAT_MINUTE][$ey][$em]['d' . $ed];
     }
+
     return $itemized;
   }
 
@@ -526,82 +527,13 @@ abstract class AbstractEvent implements EventInterface {
   /**
    * Saves an event to whatever Drupal tables are defined in the store array
    *
-   * @param array $store
+   * @param \Drupal\Bat\Store $store
    * @param string $granularity
    * @throws \Exception
    * @throws \InvalidMergeQueryException
    */
-  public function saveEvent($store, $granularity = BAT_HOURLY) {
-
-    $saved = TRUE;
-    $transaction = db_transaction();
-
-    try {
-
-      // Itemize an event so we can save it
-      $itemized = $this->itemizeEvent($granularity);
-
-      //Write days
-      foreach ($itemized[BAT_DAY] as $year => $months) {
-        foreach ($months as $month => $days) {
-          db_merge($store[BAT_DAY])
-            ->key(array(
-              'unit_id' => $this->unit_id,
-              'year' => $year,
-              'month' => $month
-            ))
-            ->fields($days)
-            ->execute();
-        }
-      }
-
-      if ($granularity == BAT_HOURLY) {
-        // Write Hours
-        foreach ($itemized[BAT_HOUR] as $year => $months) {
-          foreach ($months as $month => $days) {
-            foreach ($days as $day => $hours) {
-              // Count required as we may receive empty hours for granular events that start and end on midnight
-              if (count($hours) > 0) {
-                db_merge($store[BAT_HOUR])
-                  ->key(array(
-                    'unit_id' => $this->unit_id,
-                    'year' => $year,
-                    'month' => $month,
-                    'day' => substr($day, 1)
-                  ))
-                  ->fields($hours)
-                  ->execute();
-              }
-            }
-          }
-        }
-
-        //If we have minutes write minutes
-        foreach ($itemized[BAT_MINUTE] as $year => $months) {
-          foreach ($months as $month => $days) {
-            foreach ($days as $day => $hours) {
-              foreach ($hours as $hour => $minutes) {
-                db_merge($store[BAT_MINUTE])
-                  ->key(array(
-                    'unit_id' => $this->unit_id,
-                    'year' => $year,
-                    'month' => $month,
-                    'day' => substr($day, 1),
-                    'hour' => substr($hour, 1)
-                  ))
-                  ->fields($minutes)
-                  ->execute();
-              }
-            }
-          }
-        }
-      }
-    } catch (\Exception $e) {
-      $saved = FALSE;
-      $transaction->rollback();
-      watchdog_exception('BAT Event Save Exception', $e);
-    }
-    return $saved;
+  public function saveEvent(Store $store, $granularity = BAT_HOURLY) {
+    return $store->storeEvent($this, $granularity);
   }
 
   public function formatJson($style = BAT_EVENT_CALENDAR_ADMIN_STYLE) {

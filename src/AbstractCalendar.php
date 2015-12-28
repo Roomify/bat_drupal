@@ -7,8 +7,8 @@
 
 namespace Drupal\bat;
 
-use Drupal\bat\EventInterface;
 use Drupal\bat\Event;
+use Drupal\bat\CalendarInterface;
 
 /**
  * Handles querying and updating state stores
@@ -21,21 +21,11 @@ abstract class AbstractCalendar implements CalendarInterface {
    *
    * @var array
    */
-  public $unit_ids;
+  public $units;
 
 
   /**
-   * Granularity
-   *
-   * Irrespective of the actual values of the start and end dates we need to know
-   * what level of granularity the event should be saved as. This is one of daily or
-   * hourly.
-   */
-  public $granularity;
-
-  /**
-   * An array holding the names of the day, hour and minute tables we should be retrieving
-   * or adding data to.
+   * The class that will access the actual event store where event data is held.
    * @var
    */
   public $store;
@@ -52,7 +42,7 @@ abstract class AbstractCalendar implements CalendarInterface {
   /**
    *@inheritdoc
    */
-  public function addEvents($events) {
+  public function addEvents($events, $granularity) {
 
     $added = TRUE;
 
@@ -60,7 +50,7 @@ abstract class AbstractCalendar implements CalendarInterface {
       // Events save themselves so here we cycle through each and return true if all events
       // were saved
 
-      $check = $event->saveEvent($this->store, $this->granularity);
+      $check = $event->saveEvent($this->store, $granularity);
 
       if ($check == FALSE) {
         $added = FALSE;
@@ -157,40 +147,9 @@ abstract class AbstractCalendar implements CalendarInterface {
     // The final events we will return
     $events = array();
 
-    $queries  = $this->buildQueries($start_date, $end_date);
+    $keyed_units = $this->keyUnitsById();
 
-    $results = $this->getEventData($queries);
-
-    $db_events = array();
-
-    // Cycle through day results and setup an event array
-    while( $data = $results[BAT_DAY]->fetchAssoc()) {
-      // Figure out how many days the current month has
-      $temp_date = new \DateTime($data['year'] . "-" . $data['month']);
-      $days_in_month = (int)$temp_date->format('t');
-      for ($i = 1; $i<=$days_in_month; $i++) {
-        $db_events[$data['unit_id']][BAT_DAY][$data['year']][$data['month']]['d' . $i] = $data['d'.$i];
-      }
-    }
-
-    // With the day events taken care off let's cycle through hours
-    while( $data = $results[BAT_HOUR]->fetchAssoc()) {
-      for ($i = 0; $i<=23; $i++) {
-        $db_events[$data['unit_id']][BAT_HOUR][$data['year']][$data['month']][$data['day']]['h'. $i] = $data['h'.$i];
-      }
-    }
-
-    // With the hour events taken care off let's cycle through minutes
-    while( $data = $results[BAT_MINUTE]->fetchAssoc()) {
-      for ($i = 0; $i<=59; $i++) {
-        if ($i <= 9) {
-          $index = 'm0'.$i;
-        } else {
-          $index = 'm'.$i;
-        }
-        $db_events[$data['unit_id']][BAT_MINUTE][$data['year']][$data['month']][$data['day']][$data['hour']][$index] = $data[$index];
-      }
-    }
+    $db_events = $this->store->getEventData($start_date, $end_date, array_keys($keyed_units));
 
     // Create a mock itemized event for the period in question - since event data is either
     // in the database or the default value we first create a mock event and then fill it in
@@ -209,10 +168,13 @@ abstract class AbstractCalendar implements CalendarInterface {
           // Check if month is defined in DB otherwise set to default value
           if (isset($db_events[$unit][BAT_DAY][$year][$month])) {
             foreach ($days as $day => $value) {
-              $events[$unit][BAT_DAY][$year][$month][$day] = ((int)$db_events[$unit][BAT_DAY][$year][$month][$day] == 0 ? $this->default_value : (int)$db_events[$unit][BAT_DAY][$year][$month][$day]);
+              $events[$unit][BAT_DAY][$year][$month][$day] = ((int)$db_events[$unit][BAT_DAY][$year][$month][$day] == 0 ? $keyed_units[$unit]->getDefaultValue() : (int)$db_events[$unit][BAT_DAY][$year][$month][$day]);
             }
           }
           else {
+            foreach ($days as $day => $value) {
+              $events[$unit][BAT_DAY][$year][$month][$day] = $keyed_units[$unit]->getDefaultValue();
+            }
           }
 
         }
@@ -225,11 +187,11 @@ abstract class AbstractCalendar implements CalendarInterface {
           foreach ($days as $day => $hours) {
             foreach ($hours as $hour => $value) {
               if (isset($db_events[$unit][BAT_HOUR][$year][$month][$day][$hour])) {
-                $events[$unit][BAT_HOUR][$year][$month]['d' . $day][$hour] = ((int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour] == 0 ? $this->default_value : (int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour]);
+                $events[$unit][BAT_HOUR][$year][$month]['d' . $day][$hour] = ((int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour] == 0 ? $keyed_units[$unit]->getDefaultValue() : (int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour]);
               }
               else {
                 // If nothing from db - then revert to the defaults
-                $events[$unit][BAT_HOUR][$year][$month][$day][$hour] = (int)$value;
+                $events[$unit][BAT_HOUR][$year][$month][$day][$hour] = (int)$keyed_units[$unit]->getDefaultValue();
               }
             }
           }
@@ -242,7 +204,7 @@ abstract class AbstractCalendar implements CalendarInterface {
         foreach ($months as $month => $days) {
           foreach ($days as $day => $hours) {
             foreach ($hours as $hour => $value) {
-              $events[$unit][BAT_HOUR][$year][$month]['d'.$day][$hour] = ((int)$value == 0 ? $this->default_value : (int)$value);
+              $events[$unit][BAT_HOUR][$year][$month]['d'.$day][$hour] = ((int)$value == 0 ? $keyed_units[$unit]->getDefaultValue() : (int)$value);
             }
           }
         }
@@ -256,11 +218,11 @@ abstract class AbstractCalendar implements CalendarInterface {
             foreach ($hours as $hour => $minutes) {
               foreach ($minutes as $minute => $value) {
                 if (isset($db_events[$unit][BAT_MINUTE][$year][$month][$day][$hour][$minute])) {
-                  $events[$unit][BAT_MINUTE][$year][$month]['d' .$day]['h'.$hour][$minute] = ((int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour][$minute] == 0 ? $this->default_value : (int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour][$minute]);
+                  $events[$unit][BAT_MINUTE][$year][$month]['d' .$day]['h'.$hour][$minute] = ((int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour][$minute] == 0 ? $keyed_units[$unit]->getDefaultValue() : (int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour][$minute]);
                 }
                 else {
                   // If nothing from db - then revert to the defaults
-                  $events[$unit][BAT_MINUTE][$year][$month][$day][$hour][$minute] = (int)$value;
+                  $events[$unit][BAT_MINUTE][$year][$month][$day][$hour][$minute] = (int)$keyed_units[$unit]->getDefaultValue();
                 }
               }
             }
@@ -274,7 +236,7 @@ abstract class AbstractCalendar implements CalendarInterface {
           foreach ($days as $day => $hours) {
             foreach ($hours as $hour => $minutes) {
               foreach ($minutes as $minute => $value) {
-                $events[$unit][BAT_MINUTE][$year][$month]['d'.$day]['h'.$hour][$minute] = ((int)$value == 0 ? $this->default_value : (int)$value);
+                $events[$unit][BAT_MINUTE][$year][$month]['d'.$day]['h'.$hour][$minute] = ((int)$value == 0 ? $keyed_units[$unit]->getDefaultValue() : (int)$value);
               }
             }
           }
@@ -286,9 +248,9 @@ abstract class AbstractCalendar implements CalendarInterface {
     // Check to see if any events came back from the db
     if (count($events) == 0) {
       // If we don't have any db events add mock events (itemized)
-      foreach ($this->unit_ids as $unit) {
-        $empty_event = new Event($start_date, $end_date, $unit, $this->default_value);
-        $events[$unit] = $empty_event->itemizeEvent();
+      foreach ($keyed_units as $id => $unit) {
+        $empty_event = new Event($start_date, $end_date, $id, $unit->getDefaultValue());
+        $events[$id] = $empty_event->itemizeEvent();
       }
     }
 
@@ -351,7 +313,7 @@ abstract class AbstractCalendar implements CalendarInterface {
                       $current_value = $minute_value;
                     }
                     if ($current_value === NULL) {
-                      // We are down to minutes and haven't created and even yet - do one now
+                      // We are down to minutes and haven't created and event yet - do one now
                       $start_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . ':' . substr($minute,1));
                       $end_event = clone($start_event);
                     }
@@ -426,81 +388,6 @@ abstract class AbstractCalendar implements CalendarInterface {
     return $normalized_events;
   }
 
-
-  /**
-   * Given a set of queries (see buildQueries) it will use Drupal's db_query to get results.
-   *
-   * @param $queries
-   * @return array
-   */
-  private function getEventData($queries) {
-    $results = array();
-    // Run each query and store results
-    foreach ($queries as $type => $query) {
-      $results[$type] = db_query($query);
-    }
-
-    return $results;
-  }
-
-  /**
-   * Constructs the appropriate queries for a specific store.
-   *
-   * @param $start_date
-   * @param $end_date
-   * @param $store
-   * @return array
-   */
-  public function buildQueries($start_date, $end_date) {
-    $queries = array();
-
-    $queries[BAT_DAY] = 'SELECT * FROM ' . $this->store[Event::BAT_DAY] . ' WHERE ';
-    $queries[BAT_HOUR] = 'SELECT * FROM ' . $this->store[Event::BAT_HOUR] . ' WHERE ';
-    $queries[BAT_MINUTE] = 'SELECT * FROM ' . $this->store[Event::BAT_MINUTE] . ' WHERE ';
-
-    $hours_query = TRUE;
-    $minutes_query = TRUE;
-
-    // Create a mock event which we will use to determine how to query the database
-    $mock_event = new Event($start_date, $end_date, 0, -10);
-    // We don't need a granular event even if we are retrieving granular data - since we don't
-    // know what the event break-down is going to be we need to get the full range of data from
-    // days, hours and minutes.
-    $itemized = $mock_event->itemizeEvent(BAT_DAILY);
-
-    $year_count = 0;
-    $hour_count = 0;
-    $minute_count = 0;
-
-    $query_parameters = '';
-
-    foreach($itemized[BAT_DAY] as $year => $months) {
-      if ($year_count > 0) {
-        // We are dealing with multiple years so add an OR
-        $query_parameters .= ' OR ';
-      }
-      $query_parameters .= 'year IN (' . $year . ') ';
-      $query_parameters .= 'AND month IN (' . implode("," ,array_keys($months)) .') ';
-      if (count($this->unit_ids) > 0) {
-        // Unit ids are defined so add this as a filter
-        $query_parameters .= 'AND unit_id in (' . implode("," , $this->unit_ids) .') ';
-      }
-      $year_count++;
-    }
-    // Add parameters to each query
-
-    $queries[BAT_DAY] .= $query_parameters;
-    $queries[BAT_HOUR] .= $query_parameters;
-    $queries[BAT_MINUTE] .= $query_parameters;
-
-    // Clean up and add ordering information
-    $queries[BAT_DAY] .= ' ORDER BY unit_id, year, month';
-    $queries[BAT_HOUR] .= ' ORDER BY unit_id, year, month, day';
-    $queries[BAT_MINUTE] .= ' ORDER BY unit_id, year, month, day, hour';
-
-    return $queries;
-  }
-
   /**
    * A simple utility funciton that given an array of datum=>value will group results based on
    * those that have the same value. Useful for grouping events based on state.
@@ -532,6 +419,23 @@ abstract class AbstractCalendar implements CalendarInterface {
       }
     }
 
+  }
+
+  public function getUnitIds() {
+    $unit_ids = array();
+    foreach ($this->units as $unit) {
+      $unit_ids[] = $unit->getUnitId();
+    }
+
+    return $unit_ids;
+  }
+
+  public function keyUnitsById() {
+    $keyed_units = array();
+    foreach ($this->units as $unit) {
+      $keyed_units[$unit->getUnitId()] = $unit;
+    }
+    return $keyed_units;
   }
 
 }
