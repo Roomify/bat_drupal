@@ -108,6 +108,31 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     return $states;
   }
 
+  /**
+   * Given a date range and a set of valid states it will return then units that are withing that
+   * set of valid states.
+   * @param \DateTime $start_date
+   * @param \DateTime $end_date
+   * @param $valid_states
+   * @return array
+   */
+  public function getValidUnits(\DateTime $start_date, \DateTime $end_date, $valid_states) {
+    $units = array();
+
+    $states = $this->getStates($start_date, $end_date);
+    foreach ($states as $unit => $unit_states) {
+      // Create an array with just the states
+      $current_states = array_keys($unit_states);
+      // Compare the current states with the set of valid states
+      $remaining_states = array_diff($current_states, $valid_states);
+      if (count($remaining_states) == 0 ){
+        // Unit is in a state that is within the set of valid states so add to result set
+        $units[$unit] = $unit;
+      }
+    }
+    return $units;
+  }
+
 
   /**
    * Provides an itemized array of events keyed by the unit_id and divided by day,
@@ -246,6 +271,16 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       }
 
     }
+
+    // Check to see if any events came back from the db
+    if (count($events) == 0){
+      // If we don't have any db events add mock events (itemized)
+      foreach ($this->unit_ids as $unit){
+        $empty_event = new BatGranularEvent($start_date, $end_date, $unit, 0);
+        $events[$unit] = $empty_event->itemizeEvent();
+      }
+    }
+
     return $events;
   }
 
