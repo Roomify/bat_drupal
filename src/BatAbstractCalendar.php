@@ -40,6 +40,14 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
    */
   public $store;
 
+  /**
+   * The default value for events. In the event store this is represented by 0 which is then
+   * replaced by the default value provided in the constructor.
+   *
+   * @var
+   */
+  public $default_value;
+
 
   /**
    *@inheritdoc
@@ -185,7 +193,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     // Create a mock itemized event for the period in question - since event data is either
     // in the database or the default value we first create a mock event and then fill it in
     // accordingly
-    $mock_event = new BatGranularEvent($start_date, $end_date);
+    $mock_event = new BatGranularEvent($start_date, $end_date, NULL, $this->default_value);
     $itemized = $mock_event->itemizeEvent();
 
     // Cycle through each unit retrieved and provide it with a fully configured itemized mock event
@@ -199,9 +207,10 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
           // Check if month is defined in DB otherwise set to default value
           if (isset($db_events[$unit][BAT_DAY][$year][$month])) {
             foreach ($days as $day => $value) {
-              $events[$unit][BAT_DAY][$year][$month][$day] = (int)$db_events[$unit][BAT_DAY][$year][$month][$day];
+              $events[$unit][BAT_DAY][$year][$month][$day] = ((int)$db_events[$unit][BAT_DAY][$year][$month][$day] == 0 ? $this->default_value : (int)$db_events[$unit][BAT_DAY][$year][$month][$day]);
             }
-          } else {
+          }
+          else {
           }
 
         }
@@ -214,11 +223,11 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
           foreach ($days as $day => $hours) {
             foreach ($hours as $hour => $value) {
               if (isset($db_events[$unit][BAT_HOUR][$year][$month][$day][$hour])) {
-                $events[$unit][BAT_HOUR][$year][$month]['d' . $day][$hour] = (int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour];
+                $events[$unit][BAT_HOUR][$year][$month]['d' . $day][$hour] = ((int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour] == 0 ? $this->default_value : (int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour]);
               }
               else {
                 // If nothing from db - then revert to the defaults
-                $events[$unit][BAT_HOUR][$year][$month][$day][$hour] = $value;
+                $events[$unit][BAT_HOUR][$year][$month][$day][$hour] = (int)$value;
               }
             }
           }
@@ -231,7 +240,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
         foreach ($months as $month => $days) {
           foreach ($days as $day => $hours) {
             foreach ($hours as $hour => $value) {
-              $events[$unit][BAT_HOUR][$year][$month]['d'.$day][$hour] = (int)$value;
+              $events[$unit][BAT_HOUR][$year][$month]['d'.$day][$hour] = ((int)$value == 0 ? $this->default_value : (int)$value);
             }
           }
         }
@@ -245,7 +254,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
             foreach ($hours as $hour => $minutes) {
               foreach ($minutes as $minute => $value) {
                 if (isset($db_events[$unit][BAT_MINUTE][$year][$month][$day][$hour][$minute])) {
-                  $events[$unit][BAT_MINUTE][$year][$month]['d' .$day]['h'.$hour][$minute] = (int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour][$minute];
+                  $events[$unit][BAT_MINUTE][$year][$month]['d' .$day]['h'.$hour][$minute] = ((int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour][$minute] == 0 ? $this->default_value : (int)$db_events[$unit][BAT_DAY][$year][$month][$day][$hour][$minute]);
                 }
                 else {
                   // If nothing from db - then revert to the defaults
@@ -263,7 +272,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
           foreach ($days as $day => $hours) {
             foreach ($hours as $hour => $minutes) {
               foreach ($minutes as $minute => $value) {
-                $events[$unit][BAT_MINUTE][$year][$month]['d'.$day]['h'.$hour][$minute] = (int)$value;
+                $events[$unit][BAT_MINUTE][$year][$month]['d'.$day]['h'.$hour][$minute] = ((int)$value == 0 ? $this->default_value : (int)$value);
               }
             }
           }
@@ -276,7 +285,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     if (count($events) == 0){
       // If we don't have any db events add mock events (itemized)
       foreach ($this->unit_ids as $unit){
-        $empty_event = new BatGranularEvent($start_date, $end_date, $unit, 0);
+        $empty_event = new BatGranularEvent($start_date, $end_date, $unit, $this->default_value);
         $events[$unit] = $empty_event->itemizeEvent();
       }
     }
