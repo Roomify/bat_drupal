@@ -132,14 +132,6 @@
   padding: 0 5% 0;
 }
 
-/* Visual separator between weeks in single-row-month */
-.fc-view-singleRowMonth th.fc-sun {
-  border-left-width: 1px;
-}
-.fc-view-singleRowMonth th.fc-sun.fc-first {
-  border-left-width: 0;
-}
-
 .fc-cell-overlay {
   background: rgb(0, 122, 255);
   opacity: .7;
