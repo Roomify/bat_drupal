@@ -543,7 +543,14 @@ function bat_event_ui_preprocess_bat_one_month_calendar(&$vars) {
   $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
   $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
 
-  $event_type = $vars['event_type'];
+  if (empty($vars['event_type'])) {
+    $event_types = bat_event_get_types();
+    $ev_type = reset($event_types);
+    $event_type = $ev_type->type;
+  }
+  else {
+    $event_type = $vars['event_type'];
+  }
 
   // Inject settings in javascript that will be used to setup the one months
   // display.

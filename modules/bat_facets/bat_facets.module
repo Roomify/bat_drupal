@@ -176,15 +176,25 @@ function bat_facets_search_api_query_alter($query) {
         $unit_ids = bat_unit_ids();
 
         $rc = new BatCalendar(array_keys($unit_ids), $state_store);
-        $unit_ids = $rc->getValidUnits($arrivalDateTime, $departureDateTime, $valid_states);
+        $valid_unit_ids = $rc->getValidUnits($arrivalDateTime, $departureDateTime, $valid_states);
+
+        $context = array(
+          'units_before_search' => $unit_ids,
+          'start_date' => $arrivalDateTime,
+          'end_date' => $departureDateTime,
+          'event_type' => $event_type,
+          'valid_states' => $valid_states,
+        );
+
+        drupal_alter('bat_facets_search_results', $valid_unit_ids, $context);
 
         // If no units are available, zero out results.
-        if (empty($unit_ids)) {
+        if (empty($valid_unit_ids)) {
           $query->condition($info['entity keys']['id'], 1, '<');
         }
         else {
           // Limit the search API query to entity ids with availability.
-          $query->condition($info['entity keys']['id'], $unit_ids, 'IN');
+          $query->condition($info['entity keys']['id'], $valid_unit_ids, 'IN');
         }
       }
     }
