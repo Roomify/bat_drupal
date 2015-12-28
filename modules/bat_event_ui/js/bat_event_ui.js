@@ -71,7 +71,7 @@ Drupal.behaviors.bat_availability = {
           view.calendar.removeEvents();
 
           if (view.name == 'month') {
-            var url = Drupal.settings.basePath + '?q=bat/v1/availability&units=' + unit_id + '&start_date=' + moment(view.intervalStart).format('YYYY') + '-' + moment(view.intervalStart).format('M') + '-01&duration=1M';
+            var url = Drupal.settings.basePath + '?q=bat/v2/events&units=' + unit_id + '&start_date=' + moment(view.intervalStart).format('YYYY') + '-' + moment(view.intervalStart).format('M') + '-01&duration=1M&type=' + Drupal.settings.batCalendar.eventType;
             $.ajax({
               url: url,
               success: function(data) {

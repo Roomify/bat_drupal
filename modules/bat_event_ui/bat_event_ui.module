@@ -170,7 +170,7 @@ function bat_event_ui_menu() {
   $items['admin/bat/units/unit/%bat_unit/events'] = array(
     'title' => 'Calendar events',
     'page callback' => 'bat_event_calendar_page',
-    'page arguments' => array(4, 6, 7),
+    'page arguments' => array(4, 6, 7, 8),
     'access callback' => 'bat_unit_access',
     'access arguments' => array('update availability', 4),
     'type' => MENU_LOCAL_TASK,
@@ -194,7 +194,7 @@ function bat_event_ui_menu() {
 /**
  * Callback for admin/bat/units/unit/%unit/events
  */
-function bat_event_calendar_page(BatUnit $bat_unit, $year = '', $month = '') {
+function bat_event_calendar_page(BatUnit $bat_unit, $year = '', $month = '', $event_type = '') {
   // Set the page title.
   drupal_set_title(t('Edit @unit_name Availability', array('@unit_name' => $bat_unit->name)));
 
@@ -217,9 +217,10 @@ function bat_event_calendar_page(BatUnit $bat_unit, $year = '', $month = '') {
   return array(
     '#theme' => 'bat_one_month_calendar',
     '#url' => $url,
-    '#form' => array(),
+    '#form' => drupal_get_form('bat_event_ui_event_type_form'),
     '#year' => $year,
     '#month' => $month,
+    '#event_type' => $event_type,
     '#attached' => array(
       'css' => array(
         $css_file,
@@ -519,6 +520,7 @@ function bat_event_ui_theme() {
         'form' => NULL,
         'year' => NULL,
         'month' => NULL,
+        'event_type' => NULL,
         'link_options' => NULL,
       ),
     ),
@@ -541,20 +543,42 @@ function bat_event_ui_preprocess_bat_one_month_calendar(&$vars) {
   $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
   $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
 
-  $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', 'non-commercial');
-  if ($schedulerlicense == 'gpl') {
-    $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
-  }
-  elseif ($schedulerlicense == 'non-commercial') {
-    $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
-  }
-  elseif ($schedulerlicense == 'commercial') {
-    $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
-  }
+  $event_type = $vars['event_type'];
 
   // Inject settings in javascript that will be used to setup the one months
   // display.
   drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
   drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
   drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
+  drupal_add_js(array('batCalendar' => array('eventType' => $event_type)), 'setting');
+}
+
+function bat_event_ui_event_type_form($form, &$form_state) {
+  $form = array();
+
+  $event_types = bat_event_get_types();
+  foreach ($event_types as $event_type) {
+    $event_types_options[$event_type->type] = $event_type->label;
+  }
+
+  $ev_types = array_keys($event_types_options);
+  $ev_type = reset($ev_types);
+
+  $form['event_types'] = array(
+    '#type' => 'select',
+    '#title' => 'Event type',
+    '#options' => $event_types_options,
+    '#default_value' => (arg(8)) ? arg(8) : $ev_type,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Change',
+  );
+
+  return $form;
+}
+
+function bat_event_ui_event_type_form_submit($form, &$form_state) {
+  $form_state['redirect'] = arg(0) . '/' . arg(1) . '/' . arg(2) . '/' . arg(3) . '/' . arg(4) . '/' . arg(5) . '/' . arg(6) . '/' . arg(7) . '/' . $form_state['values']['event_types'];
 }

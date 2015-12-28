@@ -20,7 +20,7 @@ Drupal.behaviors.bat_availability = {
     calendars[0] = new Array('#calendar', month1, year1);
 
     events = [];
-    var url = Drupal.settings.basePath + '?q=bat/v1/availability&units=' + unit_id + '&start_date=' + year1 + '-' + (month1+1) + '-01&duration=3M';
+    var url = Drupal.settings.basePath + '?q=bat/v2/events&units=' + unit_id + '&start_date=' + year1 + '-' + (month1+1) + '-01&duration=1M&type=availability_event';
     $.ajax({
       url: url,
       success: function(data) {
