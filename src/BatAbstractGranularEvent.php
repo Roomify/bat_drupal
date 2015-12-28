@@ -164,7 +164,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
   /**
    *{@inheritdoc)
    */
-  public function endMonthDate(\DateTime $date){
+  public function endMonthDate(\DateTime $date) {
     // The time is added so that the end date is included
     $date_format = $date->format('Y-n-t 23:59:59');
     return new \DateTime($date_format);
@@ -248,7 +248,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
     }
   }
 
-  public function isFirstDay($date){
+  public function isFirstDay($date) {
     if (($date->format('j') == $this->startDay()) && ($this->isFirstMonth($date))) {
       return TRUE;
     } else {
@@ -257,7 +257,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
   }
 
   public function isFirstHour($date) {
-    if ($date->format('G') == $this->startHour() && $this->isFirstDay($date)){
+    if ($date->format('G') == $this->startHour() && $this->isFirstDay($date)) {
       return TRUE;
     } else {
       return FALSE;
@@ -322,7 +322,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
    * @param \DateTime $end
    * @return bool
    */
-  public function inRange(\DateTime $start, \DateTime $end){
+  public function inRange(\DateTime $start, \DateTime $end) {
     $in_range = FALSE;
 
     $t1 = $start->getTimestamp();
@@ -330,9 +330,10 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
     $t3 = $this->start_date->getTimeStamp();
     $t4 = $this->end_date->getTimeStamp();
 
-    if ((($t1 <= $t3) && ($t2 >= $t3)) || (($t1 <= $t4) && ($t2 >= $t4))) {
+    if ((($t1 <= $t3) && ($t2 >= $t3)) || (($t1 <= $t4) && ($t2 >= $t4)) || (($t1 >= $t3) && ($t2 <= $t4))) {
       $in_range = TRUE;
     }
+
     return $in_range;
   }
 
@@ -377,7 +378,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
    * @param array $itemized
    * @return array
    */
-  public function createDayGranural($itemized = array()){
+  public function createDayGranural($itemized = array()) {
     $interval = new \DateInterval('PT1M');
 
     $sy = $this->start_date->format('Y');
@@ -437,7 +438,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
 
     $counter = (int)$period_start->format('i');
     $start_minute = $counter;
-    foreach($period as $minute){
+    foreach($period as $minute) {
       // Doing minutes so set the values in the minute array
       $itemized[BAT_MINUTE][$minute->format('Y')][$minute->format('n')]['d'. $minute->format('j')]['h'. $minute->format('G')]['m' .$minute->format('i')] = $this->getValue();
       // Let the hours know that it cannot determine availability
@@ -478,7 +479,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
     $itemized = array();
 
     // Cycle through each month
-    foreach($daterange as $date){
+    foreach($daterange as $date) {
 
       $year = $date->format("Y");
       $dayinterval = new \DateInterval('P1D');
@@ -498,7 +499,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
       }
 
       // Handle the last month (will be skipped if event is same month)
-      elseif ($this->isLastMonth($date)){
+      elseif ($this->isLastMonth($date)) {
         $dayrange = new \DatePeriod(new \DateTime($date->format("Y-n-1")), $dayinterval, $this->end_date);
         foreach ($dayrange as $day) {
           $itemized[BAT_DAY][$year][$day->format('n')]['d' . $day->format('j')] = $this->getValue();
@@ -595,7 +596,7 @@ abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
           }
         }
       }
-    } catch (\Exception $e){
+    } catch (\Exception $e) {
       $saved = FALSE;
       $transaction->rollback();
       watchdog_exception('BAT Event Save Exception', $e);

@@ -4,6 +4,7 @@
  * @file
  */
 
+use Drupal\bat\BatCalendar;
 use Drupal\bat\BatGranularEvent;
 
 /**
@@ -159,39 +160,32 @@ function bat_facets_search_api_query_alter($query) {
           !empty($params['bat_start_date']) &&
           isset($params['bat_end_date']) &&
           !empty($params['bat_end_date'])) {
-        $arrivalDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_start_date']);
-        $departureDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_end_date']);
+        $arrivalDateTime = new DateTime($params['bat_start_date']);
+        $departureDateTime = new DateTime($params['bat_end_date']);
+
+        $event_type = $settings->settings['event_type'];
 
         $state_store = array(
-          BatGranularEvent::BAT_DAY => 'bat_event_availability_event_day_state',
-          BatGranularEvent::BAT_HOUR => 'bat_event_availability_event_hour_state',
-          BatGranularEvent::BAT_MINUTE => 'bat_event_availability_event_minute_state'
+          BatGranularEvent::BAT_DAY => 'bat_event_' . $event_type . '_day_state',
+          BatGranularEvent::BAT_HOUR => 'bat_event_' . $event_type . '_hour_state',
+          BatGranularEvent::BAT_MINUTE => 'bat_event_' . $event_type . '_minute_state'
         );
 
-        //$agent = new AvailabilityAgent($arrivalDateTime, $departureDateTime, $options);
+        $valid_states = array(0) + $settings->settings['states'];
 
-        // Search for units in the states configured on the facet widget settings.
-        /*$agent->setValidStates($settings->settings['states']);
-        $units = $agent->checkAvailability();*/
+        $unit_ids = bat_unit_ids();
+
+        $rc = new BatCalendar(array_keys($unit_ids), $state_store);
+        $unit_ids = $rc->getValidUnits($arrivalDateTime, $departureDateTime, $valid_states);
 
         // If no units are available, zero out results.
-        if (!is_array($units)) {
+        if (empty($unit_ids)) {
           $query->condition($info['entity keys']['id'], 1, '<');
-          return;
         }
-
-        // Make array of unit IDs with availability.
-        $ids = array();
-        foreach ($units as $units_per_type) {
-          foreach ($units_per_type as $units) {
-            foreach ($units as $id => $unit) {
-              $ids[] = $id;
-            }
-          }
+        else {
+          // Limit the search API query to entity ids with availability.
+          $query->condition($info['entity keys']['id'], $unit_ids, 'IN');
         }
-
-        // Limit the search API query to entity ids with availability.
-        $query->condition($info['entity keys']['id'], $ids, 'IN');
       }
     }
   }

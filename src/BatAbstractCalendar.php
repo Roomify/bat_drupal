@@ -56,7 +56,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
 
     $added = TRUE;
 
-    foreach ($events as $event){
+    foreach ($events as $event) {
       // Events save themselves so here we cycle through each and return true if all events
       // were saved
 
@@ -109,10 +109,11 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     $events = $this->getEvents($start_date, $end_date);
     $states = array();
     foreach ($events as $unit => $unit_events) {
-      foreach ($unit_events as $event){
+      foreach ($unit_events as $event) {
         $states[$unit][$event->getValue()] = $event->getValue();
       }
     }
+
     return $states;
   }
 
@@ -133,11 +134,12 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       $current_states = array_keys($unit_states);
       // Compare the current states with the set of valid states
       $remaining_states = array_diff($current_states, $valid_states);
-      if (count($remaining_states) == 0 ){
+      if (count($remaining_states) == 0 ) {
         // Unit is in a state that is within the set of valid states so add to result set
         $units[$unit] = $unit;
       }
     }
+
     return $units;
   }
 
@@ -166,22 +168,22 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       // Figure out how many days the current month has
       $temp_date = new \DateTime($data['year'] . "-" . $data['month']);
       $days_in_month = (int)$temp_date->format('t');
-      for ($i = 1; $i<=$days_in_month; $i++){
+      for ($i = 1; $i<=$days_in_month; $i++) {
         $db_events[$data['unit_id']][BAT_DAY][$data['year']][$data['month']]['d' . $i] = $data['d'.$i];
       }
     }
 
     // With the day events taken care off let's cycle through hours
     while( $data = $results[BAT_HOUR]->fetchAssoc()) {
-      for ($i = 0; $i<=23; $i++){
+      for ($i = 0; $i<=23; $i++) {
         $db_events[$data['unit_id']][BAT_HOUR][$data['year']][$data['month']][$data['day']]['h'. $i] = $data['h'.$i];
       }
     }
 
     // With the hour events taken care off let's cycle through minutes
     while( $data = $results[BAT_MINUTE]->fetchAssoc()) {
-      for ($i = 0; $i<=59; $i++){
-        if ($i <= 9){
+      for ($i = 0; $i<=59; $i++) {
+        if ($i <= 9) {
           $index = 'm0'.$i;
         } else {
           $index = 'm'.$i;
@@ -197,7 +199,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     $itemized = $mock_event->itemizeEvent();
 
     // Cycle through each unit retrieved and provide it with a fully configured itemized mock event
-    foreach ($db_events as $unit => $event){
+    foreach ($db_events as $unit => $event) {
       // Add the mock event
       $events[$unit] = $itemized;
 
@@ -218,7 +220,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
 
       // Fill in hour data coming from the database for our event that is represented
       // in the mock event
-      foreach ($itemized[BAT_HOUR] as $year => $months){
+      foreach ($itemized[BAT_HOUR] as $year => $months) {
         foreach ($months as $month => $days) {
           foreach ($days as $day => $hours) {
             foreach ($hours as $hour => $value) {
@@ -248,7 +250,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
 
       // Fill in minute data coming from the database for our event that is represented
       // in the mock event
-      foreach ($itemized[BAT_MINUTE] as $year => $months){
+      foreach ($itemized[BAT_MINUTE] as $year => $months) {
         foreach ($months as $month => $days) {
           foreach ($days as $day => $hours) {
             foreach ($hours as $hour => $minutes) {
@@ -282,9 +284,9 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     }
 
     // Check to see if any events came back from the db
-    if (count($events) == 0){
+    if (count($events) == 0) {
       // If we don't have any db events add mock events (itemized)
-      foreach ($this->unit_ids as $unit){
+      foreach ($this->unit_ids as $unit) {
         $empty_event = new BatGranularEvent($start_date, $end_date, $unit, $this->default_value);
         $events[$unit] = $empty_event->itemizeEvent();
       }
@@ -322,8 +324,6 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       $last_day = NULL;
       $last_hour = NULL;
       $last_minute = NULL;
-
-
 
       foreach ($data[BatGranularevent::BAT_DAY] as $year => $months) {
         // Make sure months are in right order
@@ -405,7 +405,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
 
     // Given the database structure we may get events that are not with the date ranges we were looking for
     // We get rid of them here so that the user has a clean result.
-    foreach ($normalized_events as $unit => $events){
+    foreach ($normalized_events as $unit => $events) {
       foreach ($events as $key => $event) {
         if ($event->inRange($start_date, $end_date)) {
           // Adjust start or end dates of events so everything is within range
