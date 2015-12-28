@@ -2,14 +2,14 @@
 
 /**
  * @file
- * Class BatGranularEvent
+ * Class Event
  */
 
 namespace Drupal\bat;
 
-class BatGranularEvent extends BatAbstractGranularEvent {
+class Event extends AbstractEvent {
 
-  // Redeclaring constants used in BatAbstractEvent because of no clean way to
+  // Redeclaring constants used in AbstractEvent because of no clean way to
   // have constants inherited;
   const BAT_DAY = 'bat_day';
   const BAT_HOUR = 'bat_hour';
@@ -18,7 +18,7 @@ class BatGranularEvent extends BatAbstractGranularEvent {
   const BAT_DAILY = 'bat_daily';
 
   /**
-   * BatGranularEvent constructor.
+   * Event constructor.
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $unit

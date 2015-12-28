@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Interface BatCalendarInterface
+ * Interface CalendarInterface
  */
 
 namespace Drupal\bat;
@@ -13,7 +13,7 @@ namespace Drupal\bat;
  */
 interface BatCalendarInterface {
   /**
-   * Given a date range returns an array of BatEvents. The heavy lifting really takes place in
+   * Given a date range returns an array of Events. The heavy lifting really takes place in
    * the getRawDayData function - here we are simply acting as a factory for event objects.
    *
    * @param $start_date
@@ -25,16 +25,16 @@ interface BatCalendarInterface {
    * @param $store
    * The set of table names from which to retrieve data
    *
-   * @return BatGranularEventInterface[]
-   * An array of BatEvent objects
+   * @return EventInterface[]
+   * An array of Event objects
    */
   public function getEvents(\DateTime $start_date, \DateTime $end_date);
 
   /**
-   * Given an array of BatEvents the calendar is updated with regards to the
+   * Given an array of Events the calendar is updated with regards to the
    * events that are relevant to the Unit this calendar refers to.
    *
-   * @param BatEventInterface[] $events
+   * @param EventInterface[] $events
    *   An array of events to update the calendar with
    *
    * @param $store

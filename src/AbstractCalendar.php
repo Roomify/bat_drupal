@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Class BatCalendar
+ * Class Calendar
  */
 
 namespace Drupal\bat;
 
-use Drupal\bat\BatGranularEventInterface;
-use Drupal\bat\BatGranularEvent;
+use Drupal\bat\EventInterface;
+use Drupal\bat\Event;
 
 /**
  * Handles querying and updating state stores
  */
-abstract class BatAbstractCalendar implements BatCalendarInterface {
+abstract class AbstractCalendar implements CalendarInterface {
 
   /**
    * The units we are dealing with. If no unit ids set the calendar will return
@@ -91,7 +91,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     // We first get events in the itemized format
     $itemized_events = $this->getEventsItemized($start_date, $end_date);
 
-    // We then normalize those events to create BatGranularEvents that get added to an array
+    // We then normalize those events to create Events that get added to an array
     $events = $this->getEventsNormalized($start_date, $end_date, $itemized_events);
 
     return $events;
@@ -195,7 +195,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     // Create a mock itemized event for the period in question - since event data is either
     // in the database or the default value we first create a mock event and then fill it in
     // accordingly
-    $mock_event = new BatGranularEvent($start_date, $end_date, NULL, $this->default_value);
+    $mock_event = new Event($start_date, $end_date, NULL, $this->default_value);
     $itemized = $mock_event->itemizeEvent();
 
     // Cycle through each unit retrieved and provide it with a fully configured itemized mock event
@@ -287,7 +287,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     if (count($events) == 0) {
       // If we don't have any db events add mock events (itemized)
       foreach ($this->unit_ids as $unit) {
-        $empty_event = new BatGranularEvent($start_date, $end_date, $unit, $this->default_value);
+        $empty_event = new Event($start_date, $end_date, $unit, $this->default_value);
         $events[$unit] = $empty_event->itemizeEvent();
       }
     }
@@ -296,7 +296,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
   }
 
   /**
-   * Given an itemized set of event data it will return an array of BatGranularEvents
+   * Given an itemized set of event data it will return an array of Events
    *
    * @param \DateTime $start_date
    * @param \DateTime $end_date
@@ -312,9 +312,9 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
     foreach ($events_copy as $unit => $data) {
 
       // Make sure years are sorted
-      ksort($data[BatGranularevent::BAT_DAY]);
-      ksort($data[BatGranularevent::BAT_HOUR]);
-      ksort($data[BatGranularevent::BAT_MINUTE]);
+      ksort($data[Event::BAT_DAY]);
+      ksort($data[Event::BAT_HOUR]);
+      ksort($data[Event::BAT_MINUTE]);
 
       // Set up variables to keep track of stuff
       $current_value = NULL;
@@ -325,19 +325,19 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       $last_hour = NULL;
       $last_minute = NULL;
 
-      foreach ($data[BatGranularevent::BAT_DAY] as $year => $months) {
+      foreach ($data[Event::BAT_DAY] as $year => $months) {
         // Make sure months are in right order
         ksort($months);
         foreach ($months as $month => $days) {
           foreach ($days as $day => $value) {
             if ($value == -1) {
               // Retrieve hour data
-              $hour_data = $events[$unit][BatGranularEvent::BAT_HOUR][$year][$month][$day];
+              $hour_data = $events[$unit][Event::BAT_HOUR][$year][$month][$day];
               ksort($hour_data, SORT_NATURAL);
               foreach ($hour_data as $hour => $hour_value) {
                 if ($hour_value == -1) {
                   // We are going to need minute values
-                  $minute_data = $events[$unit][BatGranularEvent::BAT_MINUTE][$year][$month][$day][$hour];
+                  $minute_data = $events[$unit][Event::BAT_MINUTE][$year][$month][$day][$hour];
                   ksort($minute_data, SORT_NATURAL);
                   foreach ($minute_data as $minute => $minute_value) {
                     if ($current_value === $minute_value) {
@@ -345,7 +345,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
                       $end_event->add(new \DateInterval('PT1M'));
                     } elseif (($current_value != $minute_value) && ($current_value !== NULL)) {
                       // Value just switched - let us wrap up with current event and start a new one
-                      $normalized_events[$unit][] = new BatGranularEvent($start_event, $end_event, $unit, $current_value);
+                      $normalized_events[$unit][] = new Event($start_event, $end_event, $unit, $current_value);
                       $start_event = clone($end_event->add(new \DateInterval('PT1M')));
                       $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . substr($hour, 1) . ':' . substr($minute,1));
                       $current_value = $minute_value;
@@ -362,7 +362,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
                   $end_event->add(new \DateInterval('PT1H'));
                 } elseif (($current_value != $hour_value) && ($current_value !== NULL)) {
                   // Value just switched - let us wrap up with current event and start a new one
-                  $normalized_events[$unit][] = new BatGranularEvent($start_event, $end_event, $unit, $current_value);
+                  $normalized_events[$unit][] = new Event($start_event, $end_event, $unit, $current_value);
                   // Start event becomes the end event with a minute added
                   $start_event = clone($end_event->add(new \DateInterval('PT1M')));
                   // End event comes the current point in time
@@ -382,7 +382,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
               $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . '23:59');
             } elseif (($current_value !== $value) && ($current_value !== NULL)) {
               // Value just switched - let us wrap up with current event and start a new one
-              $normalized_events[$unit][] = new BatGranularEvent($start_event, $end_event, $unit, $current_value);
+              $normalized_events[$unit][] = new Event($start_event, $end_event, $unit, $current_value);
               // Start event becomes the end event with a minute added
               $start_event = clone($end_event->add(new \DateInterval('PT1M')));
               // End event becomes the current day which we have not account for yet
@@ -400,7 +400,7 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
       }
 
       // Add the last event in for which there is nothing in the loop to catch it
-      $normalized_events[$unit][] = new BatGranularEvent($start_event, $end_event, $unit, $current_value);
+      $normalized_events[$unit][] = new Event($start_event, $end_event, $unit, $current_value);
     }
 
     // Given the database structure we may get events that are not with the date ranges we were looking for
@@ -454,15 +454,15 @@ abstract class BatAbstractCalendar implements BatCalendarInterface {
   public function buildQueries($start_date, $end_date) {
     $queries = array();
 
-    $queries[BAT_DAY] = 'SELECT * FROM ' . $this->store[BatGranularEvent::BAT_DAY] . ' WHERE ';
-    $queries[BAT_HOUR] = 'SELECT * FROM ' . $this->store[BatGranularEvent::BAT_HOUR] . ' WHERE ';
-    $queries[BAT_MINUTE] = 'SELECT * FROM ' . $this->store[BatGranularEvent::BAT_MINUTE] . ' WHERE ';
+    $queries[BAT_DAY] = 'SELECT * FROM ' . $this->store[Event::BAT_DAY] . ' WHERE ';
+    $queries[BAT_HOUR] = 'SELECT * FROM ' . $this->store[Event::BAT_HOUR] . ' WHERE ';
+    $queries[BAT_MINUTE] = 'SELECT * FROM ' . $this->store[Event::BAT_MINUTE] . ' WHERE ';
 
     $hours_query = TRUE;
     $minutes_query = TRUE;
 
     // Create a mock event which we will use to determine how to query the database
-    $mock_event = new BatGranularEvent($start_date, $end_date, 0, -10);
+    $mock_event = new Event($start_date, $end_date, 0, -10);
     // We don't need a granular event even if we are retrieving granular data - since we don't
     // know what the event break-down is going to be we need to get the full range of data from
     // days, hours and minutes.

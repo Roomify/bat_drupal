@@ -5,8 +5,8 @@
  * Interface support to the BAT family of modules.
  */
 
-use Drupal\bat\BatGranularEvent;
-use Drupal\bat\BatCalendar;
+use Drupal\bat\Event;
+use Drupal\bat\Calendar;
 
 
 /**

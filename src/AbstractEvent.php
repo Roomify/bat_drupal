@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Class BatEvent
+ * Class Event
  */
 
 namespace Drupal\bat;
@@ -13,7 +13,7 @@ const BAT_MINUTE = 'bat_minute';
 const BAT_HOURLY = 'bat_hourly';
 const BAT_DAILY = 'bat_daily';
 
-abstract class BatAbstractGranularEvent implements BatGranularEventInterface {
+abstract class AbstractEvent implements EventInterface {
 
   /**
    * The booking unit the event is relevant to

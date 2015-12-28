@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Interface BatEventInterface
+ * Interface EventInterface
  */
 
 namespace Drupal\bat;
@@ -10,7 +10,7 @@ namespace Drupal\bat;
 /**
  * The basic BAT event interface.
  */
-interface BatGranularEventInterface {
+interface EventInterface {
 
   /**
    * Returns the unit id.
