@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Class AbstractEventStyle
+ * Class DefaultEventStyle
  */
 
 use Drupal\bat\Event;

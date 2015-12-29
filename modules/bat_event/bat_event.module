@@ -1330,7 +1330,7 @@ function bat_event_field_instance_settings_form($field, $instance) {
     '#type' => 'select',
     '#title' => t('Event type'),
     '#options' => $event_types_options,
-    '#default_value' => $settings['event_type'],
+    '#default_value' => (isset($settings['event_type'])) ? $settings['event_type'] : '',
     '#required' => TRUE,
     '#empty_option' => t('- Select -'),
   );
