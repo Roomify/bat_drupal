@@ -1162,16 +1162,15 @@ class BatEventController extends EntityAPIController {
 
       $bat_unit = bat_unit_load($unit_id);
       $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event->type));
-
       $event_type = bat_event_type_load($event->type);
 
       $this->batStoreSave($unit,
         clone($event->start_date_object),
         clone($event->end_date_object),
         $event->type,
-        $event_type->granularity,
-        $unit->default_state,
-        $this->event_id,
+        $event_type->event_granularity,
+        $unit->getDefaultValue(),
+        $event->event_id,
         TRUE
       );
 
