@@ -31,4 +31,3 @@ abstract class AbstractUnit implements UnitInterface {
     $this->default_value = $default_value;
   }
 }
-

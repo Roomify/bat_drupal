@@ -181,6 +181,9 @@ function bat_event_type_add_event_state_reference($entity) {
       'widget' => array(
         'type' => 'bat_event_reference_autocomplete',
       ),
+      'settings' => array(
+        'event_type' => $entity->type,
+      ),
     );
     field_create_instance($instance);
   }
@@ -1227,8 +1230,10 @@ class BatEventTypeController extends EntityAPIControllerExportable {
       // Create a field of type 'Entity Reference' to reference a Bat Unit.
       bat_event_type_add_unit_reference($entity);
 
-      // Create a field of type 'Bat Event State Reference' to reference an Event State.
-      bat_event_type_add_event_state_reference($entity);
+      if ($entity->fixed_event_states) {
+        // Create a field of type 'Bat Event State Reference' to reference an Event State.
+        bat_event_type_add_event_state_reference($entity);
+      }
     }
 
     return parent::save($entity);
@@ -1306,10 +1311,10 @@ function bat_event_field_formatter_view($entity_type, $entity, $field, $instance
 }
 
 /**
- * Implements hook_field_settings_form().
+ * Implements hook_field_instance_settings_form().
  */
-function bat_event_field_settings_form($field, $instance, $has_data) {
-  $settings = $field['settings'];
+function bat_event_field_instance_settings_form($field, $instance) {
+  $settings = $instance['settings'];
 
   $form = array();
 
@@ -1437,7 +1442,7 @@ function bat_event_reference_autocomplete($entity_type, $bundle, $field_name, $s
     'string' => $string,
     'match' => $instance['widget']['settings']['autocomplete_match'],
     'limit' => 10,
-    'event_type' => $field['settings']['event_type'],
+    'event_type' => $instance['settings']['event_type'],
   );
   $references = bat_event_potential_references($field, $options);
 
