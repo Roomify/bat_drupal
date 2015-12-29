@@ -1,9 +1,9 @@
-/* Some BAT admin pages use tables for layout, so let's kill this default. */
+/* Some BAT admin pages use tables for layout, override the default top border.. */
 tbody {
   border-top: none;
 }
 
-/* General styles for all BAT management forms */
+/* General styles for all BAT management forms. */
 .bat-management-form:after {
   content: ".";
   display: block;

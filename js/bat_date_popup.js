@@ -21,7 +21,7 @@ Drupal.behaviors.bat_datepicker = {
           }
         }
 
-        // If you think this is ugly you are right - read this though:
+        // If you think this is ugly, you are right - read this though:
         // http://blog.foersom.dk/post/598839422/dealing-with-z-index-in-jquery-uis-datepicker
         setTimeout(function() {
           $(".ui-datepicker").css("z-index", 12);

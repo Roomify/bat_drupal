@@ -2,12 +2,11 @@
 
 /**
  * @file
- * Interface support to the BAT family of modules.
+ * Interface support for the BAT family of modules.
  */
 
 use Drupal\bat\Event;
 use Drupal\bat\Calendar;
-
 
 /**
  * Implements hook_menu().
