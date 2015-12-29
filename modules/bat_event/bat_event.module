@@ -144,13 +144,6 @@ function bat_event_entity_info_alter(&$entity_info) {
 }
 
 /**
- * Implements hook_entity_property_info_alter().
- */
-function bat_event_entity_property_info_alter(&$info) {
-  $info['bat_event']['properties']['event_status']['setter callback'] = 'entity_property_verbatim_set';
-}
-
-/**
  * Create a field of type 'Bat Event State Reference' to reference an Event State.
  */
 function bat_event_type_add_event_state_reference($entity) {

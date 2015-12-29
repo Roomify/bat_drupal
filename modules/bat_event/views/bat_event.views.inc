@@ -99,9 +99,6 @@ function bat_event_views_data_alter(&$data) {
     ),
   );
 
-  $data['bat_events']['event_status']['field']['handler'] = 'bat_event_handler_field_event_status';
-  $data['bat_events']['event_status']['filter']['handler'] = 'bat_event_handler_filter_event_status';
-
   $data['bat_events']['nights'] = array(
     'title' => t('Nights'),
     'help' => t("Event's number of nights."),
