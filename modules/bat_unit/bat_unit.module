@@ -704,7 +704,7 @@ class BatUnit extends Entity {
     $unit_type = bat_unit_type_load($this->type);
 
     $field = $unit_type->data[$event_type];
-    if ($field == '_none') {
+    if ($field == '') {
       return FALSE;
     }
     else {

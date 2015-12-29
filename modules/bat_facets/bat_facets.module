@@ -4,8 +4,10 @@
  * @file
  */
 
-use Drupal\bat\BatCalendar;
-use Drupal\bat\BatGranularEvent;
+use Drupal\bat\Calendar;
+use Drupal\bat\Event;
+use Drupal\bat\DrupalDBStore;
+use Drupal\bat\Unit;
 
 /**
  * Implements hook_ctools_plugin_api().
@@ -165,17 +167,21 @@ function bat_facets_search_api_query_alter($query) {
 
         $event_type = $settings->settings['event_type'];
 
-        $state_store = array(
-          BatGranularEvent::BAT_DAY => 'bat_event_' . $event_type . '_day_state',
-          BatGranularEvent::BAT_HOUR => 'bat_event_' . $event_type . '_hour_state',
-          BatGranularEvent::BAT_MINUTE => 'bat_event_' . $event_type . '_minute_state'
-        );
+        $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE);
 
         $valid_states = array(0) + $settings->settings['states'];
 
         $unit_ids = bat_unit_ids();
 
-        $rc = new BatCalendar(array_keys($unit_ids), $state_store);
+        $units = array();
+        foreach ($unit_ids as $id => $name) {
+          $bat_unit = bat_unit_load($id);
+          $unit = new Unit($id, $bat_unit->getDefaultValue($event_type));
+
+          $units[] = $unit;
+        }
+
+        $rc = new Calendar($units, $state_store);
         $valid_unit_ids = $rc->getValidUnits($arrivalDateTime, $departureDateTime, $valid_states);
 
         $context = array(

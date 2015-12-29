@@ -193,9 +193,9 @@ class DrupalDBStore extends Store {
   public function buildQueries(\DateTime $start_date, \DateTime $end_date, $unit_ids){
     $queries = array();
 
-    $queries[BAT_DAY] = 'SELECT * FROM ' . $this->day_table . ' WHERE ';
-    $queries[BAT_HOUR] = 'SELECT * FROM ' . $this->hour_table . ' WHERE ';
-    $queries[BAT_MINUTE] = 'SELECT * FROM ' . $this->minute_table . ' WHERE ';
+    $queries[Event::BAT_DAY] = 'SELECT * FROM ' . $this->day_table . ' WHERE ';
+    $queries[Event::BAT_HOUR] = 'SELECT * FROM ' . $this->hour_table . ' WHERE ';
+    $queries[Event::BAT_MINUTE] = 'SELECT * FROM ' . $this->minute_table . ' WHERE ';
 
     $hours_query = TRUE;
     $minutes_query = TRUE;
@@ -228,14 +228,14 @@ class DrupalDBStore extends Store {
     }
     // Add parameters to each query
 
-    $queries[BAT_DAY] .= $query_parameters;
-    $queries[BAT_HOUR] .= $query_parameters;
-    $queries[BAT_MINUTE] .= $query_parameters;
+    $queries[Event::BAT_DAY] .= $query_parameters;
+    $queries[Event::BAT_HOUR] .= $query_parameters;
+    $queries[Event::BAT_MINUTE] .= $query_parameters;
 
     // Clean up and add ordering information
-    $queries[BAT_DAY] .= ' ORDER BY unit_id, year, month';
-    $queries[BAT_HOUR] .= ' ORDER BY unit_id, year, month, day';
-    $queries[BAT_MINUTE] .= ' ORDER BY unit_id, year, month, day, hour';
+    $queries[Event::BAT_DAY] .= ' ORDER BY unit_id, year, month';
+    $queries[Event::BAT_HOUR] .= ' ORDER BY unit_id, year, month, day';
+    $queries[Event::BAT_MINUTE] .= ' ORDER BY unit_id, year, month, day, hour';
 
     return $queries;
 

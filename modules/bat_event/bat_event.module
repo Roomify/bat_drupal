@@ -1327,7 +1327,7 @@ function bat_event_field_settings_form($field, $instance, $has_data) {
     '#options' => $event_types_options,
     '#default_value' => $settings['event_type'],
     '#required' => TRUE,
-    '#empty_option' => '- Select -',
+    '#empty_option' => t('- Select -'),
   );
 
   return $form;
@@ -1887,8 +1887,9 @@ function bat_event_form_bat_unit_type_form_alter(&$form, &$form_state) {
     $form['events'][$event_type->type] = array(
       '#type' => 'select',
       '#title' => t('Select your default @event field', array('@event' => $event_type->label)),
-      '#options' => array('_none' => '-- select a field --') + $fields,
+      '#options' => $fields,
       '#default_value' => isset($unit_type->data[$event_type->type]) ? $unit_type->data[$event_type->type] : NULL,
+      '#empty_option' => t('- Select a field -'),
     );
   }
 
