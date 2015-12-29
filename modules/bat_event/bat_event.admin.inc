@@ -204,10 +204,7 @@ function bat_event_edit_form($form, &$form_state, $event) {
     '#type' => 'value',
     '#value' => $event->type,
   );
-
-  $currency_setting = commerce_currency_load(commerce_default_currency());
-  $currency_symbol = $currency_setting['symbol'];
-
+  
   $form['data']['#tree'] = TRUE;
 
   // A fieldset to hold the date range fields.

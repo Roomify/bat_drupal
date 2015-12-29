@@ -242,15 +242,6 @@ function bat_unit_edit_form($form, &$form_state, $unit) {
     '#default_value' => isset($unit->bookable) ? $unit->bookable : 1,
   );
 
-  $state_options = bat_unit_state_options();
-  $form['availability']['default_state'] = array(
-    '#type' => 'select',
-    '#title' => t('Default availability'),
-    '#options' => $state_options,
-    '#default_value' => isset($unit->default_state) ? $unit->default_state : 1,
-    '#description' => t('Choose what state to leave the unit in by default.'),
-  );
-
   // Unit author information for administrators.
   $form['author'] = array(
     '#type' => 'fieldset',
