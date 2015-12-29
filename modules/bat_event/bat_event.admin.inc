@@ -204,7 +204,7 @@ function bat_event_edit_form($form, &$form_state, $event) {
     '#type' => 'value',
     '#value' => $event->type,
   );
-  
+
   $form['data']['#tree'] = TRUE;
 
   // A fieldset to hold the date range fields.

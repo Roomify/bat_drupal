@@ -1080,8 +1080,8 @@ class BatEventController extends EntityAPIController {
         new \DateTime($entity->original->start_date),
         new \DateTime($entity->original->end_date),
         $event_type->type,
-        $event_type->granularity,
-        $unit->default_state,
+        $event_type->event_granularity,
+        $unit->getDefaultValue(),
         $entity->event_id,
         TRUE
       );
@@ -1104,7 +1104,7 @@ class BatEventController extends EntityAPIController {
         new \DateTime($entity->start_date),
         new \DateTime($entity->end_date),
         $event_type->type,
-        $event_type->granularity,
+        $event_type->event_granularity,
         $event_state,
         $entity->event_id
       );
@@ -1145,7 +1145,7 @@ class BatEventController extends EntityAPIController {
   public function delete($ids) {
     foreach ($ids as $id) {
       $event = bat_event_load($id);
-      $this->deleteEent($event);
+      $this->deleteEvent($event);
     }
 
     parent::delete($ids);
@@ -1163,15 +1163,15 @@ class BatEventController extends EntityAPIController {
       $bat_unit = bat_unit_load($unit_id);
       $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event->type));
 
-      $event_type = bat_event_type_load($entity->type);
+      $event_type = bat_event_type_load($event->type);
 
-      bat_store_save($unit,
-        new \DateTime($event->start_date_object),
-        new \DateTime($event->end_date_object),
+      $this->batStoreSave($unit,
+        clone($event->start_date_object),
+        clone($event->end_date_object),
         $event->type,
         $event_type->granularity,
         $unit->default_state,
-        $entity->event_id,
+        $this->event_id,
         TRUE
       );
 
