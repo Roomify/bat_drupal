@@ -14,7 +14,7 @@ function bat_permission() {
   $permissions = array(
     'configure BAT settings' => array(
       'title' => t('Configure BAT'),
-      'description' => t('Allows users to manage site-wide BAT configurations.'),
+      'description' => t('Allows users to manage site-wide BAT configuration settings.'),
       'restrict access' => TRUE,
     ),
   );
@@ -57,8 +57,8 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
     $cid = $entity->type;
   }
 
-  // If we've already checked access for this node, user and op, return from
-  // cache.
+  // If we've already checked access for this node, user and op, return the
+  // cached result.
   if (isset($rights[$account->uid][$cid][$op])) {
     return $rights[$account->uid][$cid][$op];
   }
@@ -97,7 +97,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
       return $access;
     }
   }
-  else {
+  else { // Non-view operations.
     // First grant access to the entity for the specified operation if no other
     // module denies it and at least one other module says to grant access.
     $access_results = module_invoke_all('bat_entity_access', $op, $entity, $account, $entity_type);
@@ -141,7 +141,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
       // For the delete and delete operations, first perform the entity type and
       // bundle-level access check for any entity.
       if (user_access($op . ' any ' . $entity_type . ' entity', $account) ||
-        user_access($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name, $account)) {
+          user_access($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name, $account)) {
         $rights[$account->uid][$cid][$op] = TRUE;
         return TRUE;
       }
@@ -149,7 +149,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
       // Then check an authenticated user's access to delete his own entities.
       if ($account->uid && !empty($entity_info['access arguments']['user key']) && isset($entity->{$entity_info['access arguments']['user key']}) && $entity->{$entity_info['access arguments']['user key']} == $account->uid) {
         if (user_access($op . ' own ' . $entity_type . ' entities', $account) ||
-          user_access($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name, $account)) {
+            user_access($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name, $account)) {
           $rights[$account->uid][$cid][$op] = TRUE;
           return TRUE;
         }
@@ -248,19 +248,22 @@ function bat_entity_access_permissions($entity_type) {
 }
 
 /**
- * Generic implementation of hook_query_alter() for bookable entities.
+ * Implements hook_query_alter().
+ *
+ * Enforces access control for bookable entities during database queries.
  */
 function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL, $account = NULL, $op = 'view') {
   global $user;
 
-  // Read the account from the query if available or current user by default.
+  // Get the Drupal user account from the query if available, or
+  // default to the logged in user if not.
   if (!isset($account) && !$account = $query->getMetaData('account')) {
     $account = $user;
   }
 
   // Do not apply any conditions for users with administrative view permissions.
-  if (user_access('bypass ' . $entity_type . ' access', $account)
-    || user_access($op . ' any ' . $entity_type . ' entity', $account)) {
+  if (user_access('bypass ' . $entity_type . ' access', $account) ||
+      user_access($op . ' any ' . $entity_type . ' entity', $account)) {
     return;
   }
 
@@ -367,8 +370,8 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
  * Utility function to create two related datepickers.
  *
  * We have a few forms that need a start and end date field
- * and we need to apply the same javascript to these forms in order to have a
- * specific consistent behaviour and groups the form elements and javascript
+ * and we need to apply the same javascript to these forms in order to enforce
+ * specific consistent behaviours and group the form elements and javascript
  * injection in one place.
  *
  * @param int $year
@@ -380,7 +383,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
 function bat_date_range_fields($year = NULL, $month = NULL) {
   $date_range_fields = array();
 
-  // Create unique ids and selectors for each picker.
+  // Create unique ids and selectors for each datepicker.
   $start_date_id = drupal_html_id('datepicker-start-date');
   $start_date_selector = '#' . $start_date_id . ' .form-text';
 
@@ -390,9 +393,9 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
   // Specify the default datepicker parameters (see date_popup_element_info())
   $datepicker_options = array(
     'dateFormat' => 'dd/mm/yy',
-    // Limit bookings to X days in advance, depending on the
-    // chosen configuration in your BAT installation, defaults
-    // to one day in advance.
+    // Limit bookings to X days in advance according to the
+    // chosen configuration in your BAT installation.
+    // Defaults to one day in advance.
     'minDate' => '+' . variable_get('bat_event_start_date', 1) . 'd',
   );
 
@@ -478,13 +481,13 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
 }
 
 /**
- * Given a form_state locate the start/end dates in the input array and
- * instantiate and return DateTime objects.
+ * Given a form state array, locate the start/end dates in the input array
+ * and instantiate and return DateTime objects.
  */
 function bat_form_input_get_start_end_dates($form_state) {
-  // If form_state['values']['bat_X_date'] is not set it is an empty array
-  // hence the need to check and set values so that _constructor below will not
-  // fail.
+  // If form_state['values']['bat_X_date'] is not set, it is an empty array.
+  // In this case, we need to check and set values so that
+  // _constructor below will not fail.
   if (is_array($form_state['values']['bat_start_date'])) {
     if ($form_state['values']['bat_start_date']['date'] == '') {
       $start = new DateTime();
@@ -513,19 +516,21 @@ function bat_form_input_get_start_end_dates($form_state) {
 }
 
 /**
- * Given a form_state locate the start/end dates in the values array and
- * instantiate and return DateTime objects.
+ * Given a form state array, locate the start/end dates in the
+ * values array and instantiate and return DateTime objects.
  */
 function bat_form_values_get_start_end_dates($form_state) {
-  // As values dates has a format of year-month-day that is one of the default
-  // expected formats there is no need to explicit define format.
-  // http://www.php.net/manual/en/datetime.formats.date.php
+  // Date values have a format of year-month-day.
+  // This is one of the default expected formats, so there
+  // is no need to explicitly define the format.
+  // (see http://www.php.net/manual/en/datetime.formats.date.php)
   $start_date = $form_state['values']['bat_start_date'];
   $end_date = $form_state['values']['bat_end_date'];
 
-  // If the input format is numeric we assume that is a unixtime seconds format.
+  // If the input format is numeric we assume that is a Unix timestamp.
   if (is_numeric($start_date) && is_numeric($end_date)) {
-    // The @ indicate DateTime that the format is unixtime.
+    // The @ lets the DateTime class know that the date is
+    // formatted as a Unix timestamp.
     $start_date = '@' . $start_date;
     $end_date = '@' . $end_date;
   }
@@ -537,13 +542,16 @@ function bat_form_values_get_start_end_dates($form_state) {
 }
 
 /**
- * Validation callback that could be reused in all the forms that need to
- * validate dates. End date must be greater than start date.
+ * Validation callback that can be reused in all forms that need to
+ * validate dates.
+ *
+ * The end date must be greater than start date.
  */
 function bat_form_start_end_dates_validate($form, &$form_state) {
   list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
   $single_day = FALSE;
-  // Skip if no dates are provided.
+
+  // Fail validation if no dates are provided.
   if (empty($start_date) || empty($end_date)) {
     form_set_error('date_range', t('Please choose dates.'));
     return;
@@ -556,20 +564,23 @@ function bat_form_start_end_dates_validate($form, &$form_state) {
   // Check date validity.
   $errors = bat_check_dates_validity($start_date, $end_date, $single_day);
 
-  // For some forms as bat_availability_pricing_update_form and
-  // bat_availability_update_status_form we need to validate that the selected
-  // date match with current values.
+  // For some forms, such as bat_availability_pricing_update_form and
+  // bat_availability_update_status_form, we need to ensure that the selected
+  // date matches with current values.
   if (isset($form_state['values']['curr_month']) && isset($form_state['values']['curr_year'])) {
     $curr_month = $form_state['values']['curr_month'];
     $curr_year = $form_state['values']['curr_year'];
-    if ($start_date->format('n') != $curr_month || $end_date->format('n') != $curr_month
-      || $start_date->format('Y') != $curr_year || $end_date->format('Y') != $curr_year) {
-      $errors[] = t('Start and end date must be within the current month.');
+    if ($start_date->format('n') != $curr_month ||
+        $end_date->format('n') != $curr_month   ||
+        $start_date->format('Y') != $curr_year  ||
+        $end_date->format('Y') != $curr_year) {
+      $errors[] = t('Both the start and end date must be within the current month.');
     }
   }
 
-  // When there are multiples errors for the same form element Drupal only
-  // display the first. Here we concatenate to display all at once.
+  // When there are multiple errors for the same form element, Drupal only
+  // displays the first. Here we concatenate all errors so that they will all
+  // be displayed.
   if ($errors) {
     $error_msg = implode(' ', $errors);
     form_set_error('date_range', $error_msg);
@@ -591,7 +602,7 @@ function bat_form_start_end_dates_validate($form, &$form_state) {
  */
 function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $single_day = FALSE) {
   $errors = array();
-  // End date must be greater than start date unless single day bookings are
+  // The end date must be greater than start date, unless same day bookings are
   // enabled, in which case it must not be before the start date.
   if (($end_date < $start_date) || (($end_date == $start_date) && !$single_day)) {
     if ($single_day) {
@@ -602,12 +613,12 @@ function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $sin
     }
   }
 
-  // End date must not be more that the allowed number of days in advance for booking
+  // The end date must not be more that the allowed number of days in advance for booking.
   $current_date = new DateTime();
   $booking_interval = $current_date->diff($end_date);
 
-  // The following necessary to get a properly instantiated date interval when starting with
-  // just seconds
+  // The following exercise is necessary in order to get a properly
+  // instantiated date interval when starting with only seconds.
   $d1 = new DateTime();
   $d2 = new DateTime();
   $d2->add(new DateInterval('PT' . variable_get('bat_advance_bookings_period', 15552000).'S'));
@@ -621,8 +632,8 @@ function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $sin
 }
 
 /**
- * Alternative numeric range generator considering users that use PHP < v5.3.6
- * and experience the bug: https://bugs.php.net/bug.php?id=51894
+ * Alternative numeric range generator for PHP < v5.3.6
+ * This is a workaround for this bug: https://bugs.php.net/bug.php?id=51894
  *
  * @param int $start
  *   First value of the sequence.
