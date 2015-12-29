@@ -8,6 +8,7 @@ dependencies[] = bat_unit
 
 files[] = bat_event.admin.inc
 files[] = bat_event_type.admin.inc
+files[] = src/DefaultEventStyle.php
 files[] = views/bat_event.views.inc
 files[] = views/bat_event_handler_link_field.inc
 files[] = views/bat_event_handler_date_field.inc

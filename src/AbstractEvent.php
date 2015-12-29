@@ -536,29 +536,4 @@ abstract class AbstractEvent implements EventInterface {
     return $store->storeEvent($this, $granularity);
   }
 
-  public function formatJson($style = BAT_EVENT_CALENDAR_ADMIN_STYLE) {
-    $state_event = bat_event_load_state($this->value);
-
-    if ($state_event === FALSE) {
-      $default_state = bat_event_states_get_default('availability_event');
-
-      $event = array(
-        'start' => $this->startYear() . '-' . $this->startMonth('m') . '-' . $this->startDay('d') . 'T' . $this->startHour('H') . ':' . $this->startMinute() . ':00Z',
-        'end' => $this->endYear() . '-' . $this->endMonth('m') . '-' . $this->endDay('d') . 'T' . $this->endHour('H') . ':' . $this->endMinute() . ':00Z',
-        'title' => $default_state['calendar_label'],
-        'color' => $default_state['color'],
-      );
-    }
-    else {
-      $event = array(
-        'start' => $this->startYear() . '-' . $this->startMonth('m') . '-' . $this->startDay('d') . 'T' . $this->startHour('H') . ':' . $this->startMinute() . ':00Z',
-        'end' => $this->endYear() . '-' . $this->endMonth('m') . '-' . $this->endDay('d') . 'T' . $this->endHour('H') . ':' . $this->endMinute() . ':00Z',
-        'title' => $state_event['calendar_label'],
-        'color' => $state_event['color'],
-      );
-    }
-
-    return $event;
-  }
-
 }
