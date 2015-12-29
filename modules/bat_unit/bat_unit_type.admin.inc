@@ -67,14 +67,6 @@ function bat_unit_type_form($form, &$form_state, $unit_type, $op = 'edit') {
     '#weight' => -99,
   );
 
-  $form['booking_mode'] = array(
-    '#type' => 'select',
-    '#title' => t('Booking Mode'),
-    '#options' => (module_exists('bat_hourly_availability')) ? array('daily' => t('Daily'), 'hourly' => t('Hourly')) : array('daily' => t('Daily')),
-    '#default_value' => isset($unit_type->booking_mode) ? $unit_type->booking_mode : 'daily',
-    '#weight' => -98,
-  );
-
   // Add the field related form elements.
   $form_state['bat_unit_type'] = $unit_type;
   field_attach_form('bat_unit_type', $unit_type, $form, $form_state);

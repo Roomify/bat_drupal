@@ -699,6 +699,35 @@ class BatUnit extends Entity {
     return array('path' => 'unit/' . $this->unit_id);
   }
 
+
+  public function getDefaultValue($event_type) {
+    $unit_type = bat_unit_type_load($this->type);
+
+    $field = $unit_type->data[$event_type];
+    if ($field == '_none') {
+      return FALSE;
+    }
+    else {
+      $field_info = field_info_field($field);
+      $values = field_get_items('bat_unit', $this, $field);
+
+      if (!empty($values)) {
+        if ($field_info['type'] == 'bat_event_state_reference') {
+          return $values[0]['state_id'];
+        }
+        elseif ($field_info['type'] == 'commerce_price') {
+          return $values[0]['amount'];
+        }
+        elseif ($field_info['type'] == 'text') {
+          return $values[0]['value'];
+        }
+      }
+      else {
+        return FALSE;
+      }
+    }
+  }
+
 }
 
 /**

@@ -1074,9 +1074,9 @@ class BatEventController extends EntityAPIController {
       $event_unit_reference = field_get_items('bat_event', $entity->original, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
       $bat_unit = bat_unit_load($unit_id);
-      $unit = new Unit($unit_id, $bat_unit->default_state);
+      $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event_type->type));
 
-      bat_store_save($unit,
+      $this->batStoreSave($unit,
         new \DateTime($entity->original->start_date),
         new \DateTime($entity->original->end_date),
         $event_type->type,
@@ -1098,9 +1098,9 @@ class BatEventController extends EntityAPIController {
       $event_unit_reference = field_get_items('bat_event', $entity, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
       $bat_unit = bat_unit_load($unit_id);
-      $unit = new Unit($unit_id, $bat_unit->default_state);
+      $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event_type->type));
 
-      bat_store_save($unit,
+      $this->batStoreSave($unit,
         new \DateTime($entity->start_date),
         new \DateTime($entity->end_date),
         $event_type->type,
@@ -1123,7 +1123,7 @@ class BatEventController extends EntityAPIController {
    * @param $event_id
    * @param bool|FALSE $remove - set to TRUE if the event is to be removed (event_id set to zero)
    */
-  public function bat_store_save(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE ) {
+  public function batStoreSave(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE ) {
     $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE);
     $event_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_EVENT);
 
@@ -1145,13 +1145,13 @@ class BatEventController extends EntityAPIController {
   public function delete($ids) {
     foreach ($ids as $id) {
       $event = bat_event_load($id);
-      $this->delete_event($event);
+      $this->deleteEent($event);
     }
 
     parent::delete($ids);
   }
 
-  public function delete_event($event) {
+  public function deleteEvent($event) {
     // Check if the event had a unit associated with it and if so update the
     // availability calendar.
     if (field_get_items('bat_event', $event, 'event_unit_reference') !== FALSE &&
@@ -1161,7 +1161,7 @@ class BatEventController extends EntityAPIController {
       $unit_id = $event_unit_reference[0]['target_id'];
 
       $bat_unit = bat_unit_load($unit_id);
-      $unit = new Unit($unit_id, $bat_unit->default_state);
+      $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event->type));
 
       $event_type = bat_event_type_load($entity->type);
 
@@ -1884,38 +1884,4 @@ function bat_event_form_bat_unit_type_form_submit($form, &$form_state) {
   }
 
   $form_state['bat_unit_type']->save();
-}
-
-/**
- * @param $unit
- * @param $event_type
- *
- * return
- */
-function bat_event_get_default_unit_state($unit, $event_type) {
-  $unit_type = bat_unit_type_load($unit->type);
-
-  $field = $unit_type->data[$event_type];
-  if ($field == '_none') {
-    return FALSE;
-  }
-  else {
-    $field_info = field_info_field($field);
-    $values = field_get_items('bat_unit', $unit, $field);
-
-    if (!empty($values)) {
-      if ($field_info['type'] == 'bat_event_state_reference') {
-        return $values[0]['state_id'];
-      }
-      elseif ($field_info['type'] == 'commerce_price') {
-        return $values[0]['amount'];
-      }
-      elseif ($field_info['type'] == 'text') {
-        return $values[0]['value'];
-      }
-    }
-    else {
-      return FALSE;
-    }
-  }
 }
