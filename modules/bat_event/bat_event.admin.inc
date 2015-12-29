@@ -38,7 +38,7 @@ class BatEventUIController extends EntityDefaultUIController {
 
     // Change the add page menu to multiple types of entities.
     $items[$this->path . '/add'] = array(
-      'title' => 'Add a Event',
+      'title' => 'Add an Event',
       'description' => 'Add a new Event',
       'page callback'  => 'bat_event_add_page',
       'access callback'  => '_bat_event_add_access',
