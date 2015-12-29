@@ -17,10 +17,12 @@ tbody {
   margin-top: 0;
   margin-bottom: 0;
 }
+
 .bat-management-form .form-item label {
   margin: 0;
   display: block;
 }
+
 .bat-management-form .form-type-item label {
   display: inline;
 }
@@ -39,8 +41,8 @@ tbody {
 .bat-management-form .form-item-amount,
 .bat-management-form .bat-date-range,
 .bat-management-form .form-actions {
-  float: left; /* LTR */
-  margin: 0 20px 0 0; /* LTR */
+  float: left;
+  margin: 0 20px 0 0;
   clear: none;
 }
 
@@ -50,20 +52,20 @@ tbody {
   float: none;
 }
 
-/* Fieldsets are floated by default, but if its collapsible, dont float it*/
 .bat-management-form fieldset {
   padding: 0;
   margin: 0;
   border: none;
-  float: left; /* LTR */
   width: auto;
 }
+
 .bat-management-form fieldset.collapsible {
   float: none;
   clear: both;
   padding: 0;
   margin: 20px 0;
 }
+
 .bat-management-form .fieldset-legend,
 .bat-management-form .fieldset-wrapper {
   margin: 0;
@@ -71,44 +73,7 @@ tbody {
   position: relative;
   text-transform: none;
 }
+
 .bat-management-form .fieldset-description {
   padding: 15px 0;
-}
-
-/* Fix for floated fieldsets around vertical tabs */
-.bat-management-form .vertical-tabs,
-.bat-management-form .field-group-tab-wrapper {
-  clear: both;
-}
-
-.bat-month-manager .unit-name,
-.bat-month-manager .unit-days {
-  border-bottom: 1px solid #ccc !important;
-}
-
-/* Booking */
-.view-booking-cart-form table,
-.view-booking-checkout-form table,
-.commerce-checkout-form-review table {
-  width: 100%;
-}
-.views-field-line-item-title,
-.views-field-line-item-label {
-  width: 67%;
-}
-.page-bookings .views-field-commerce-total {
-  text-align: right;
-  padding-right: 1em;
-}
-.page-bookings .component-total {
-  text-align: right;
-  padding-right: 1em;
-}
-.page-bookings .views-field-commerce-unit-price,
-.page-bookings .component-title {
-  padding-left: 1em;
-  padding-right: 1em;
-}
-.commerce-line-item-actions {
-  margin: 20px 1em 20px 0;
 }

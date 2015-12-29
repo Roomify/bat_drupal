@@ -370,6 +370,7 @@ function bat_availability_event_manager_form($form, $form_state, $unit, $event_i
 
   $state_options = bat_unit_state_options();
 
+  $form['#attacched']['css'][] = drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css';
   $form['#attributes']['class'][] = 'bat-management-form bat-event-form';
 
   // This entire form element will be replaced whenever 'changethis' is updated.

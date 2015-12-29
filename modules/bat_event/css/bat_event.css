@@ -9,18 +9,3 @@
   padding: 0;
   margin: 0 0 1em;
 }
-
-.bat-event-form .bat-event-availability-button-wrapper {
-  clear: both;
-}
-
-.bat-event-form .bat-event-availability-wrapper fieldset {
-  background: none;
-  float: none;
-  clear: both;
-  margin-bottom: 0;
-}
-
-.bat-event-form .bat-event-availability-wrapper .fieldset-description {
-  padding: 0;
-}

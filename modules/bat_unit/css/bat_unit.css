@@ -31,12 +31,6 @@
   float: none;
 }
 
-.bat-unit-edit-form .field-widget-bat-availability-constraints-range {
-  max-width: inherit;
-  margin-right: 0;
-  clear: both;
-}
-
 .bat-unit-edit-form .form-item-name {
   width: 15em;
 }

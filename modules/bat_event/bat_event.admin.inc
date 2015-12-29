@@ -196,7 +196,10 @@ function bat_event_delete_form_wrapper($event) {
 function bat_event_edit_form($form, &$form_state, $event) {
   $form['#attributes']['class'][] = 'bat-management-form bat-event-form';
   $form['#attached'] = array(
-    'css' => array(drupal_get_path('module', 'bat_event') . '/css/bat_event.css'),
+    'css' => array(
+      drupal_get_path('module', 'bat_event') . '/css/bat_event.css',
+      drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css',
+    ),
     'js' => array(drupal_get_path('module', 'bat') . '/js/bat_date_popup.js'),
   );
 

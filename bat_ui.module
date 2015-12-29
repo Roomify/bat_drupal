@@ -40,13 +40,6 @@ function bat_ui_menu() {
 }
 
 /**
- * Implements hook_page_build().
- */
-function bat_ui_page_build(&$page) {
-  drupal_add_css(drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css');
-}
-
-/**
  * Main booking settings form.
  */
 function bat_event_settings($form, &$form_state) {

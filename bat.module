@@ -672,6 +672,7 @@ function bat_assoc_range($start, $end) {
 
 function bat_filter_month_form($form, &$form_state, $month, $year, $unit_types = NULL) {
 
+  $form['#attacched']['css'][] = drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css';
   $form['#attributes']['class'][] = 'bat-management-form bat-filter-month-form';
 
   $month_options = array(
