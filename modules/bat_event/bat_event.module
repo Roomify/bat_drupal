@@ -6,7 +6,10 @@
  * Unit ID and Order ID.
  */
 
-use Drupal\bat\BatGranularEvent;
+use Drupal\bat\Event;
+use Drupal\bat\Calendar;
+use Drupal\bat\DrupalDBStore;
+use Drupal\bat\Unit;
 
 /**
  * Implements hook_menu().
@@ -1063,10 +1066,6 @@ class BatEventController extends EntityAPIController {
 
     $event_type = bat_event_type_load($entity->type);
 
-    $unit_id = 0;
-    $events = array();
-    $events_to_remove = array();
-
     // We are going to be updating the event - so the first step is to remove
     // the old event.
     if ((!isset($entity->is_new)) && ($entity->original->start_date != '') && ($entity->original->end_date != '') &&
@@ -1074,11 +1073,18 @@ class BatEventController extends EntityAPIController {
 
       $event_unit_reference = field_get_items('bat_event', $entity->original, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
+      $bat_unit = bat_unit_load($unit_id);
+      $unit = new Unit($unit_id, $bat_unit->default_state);
 
-      // Create an event representing the event to remove.
-      $be = new BatGranularEvent(new DateTime($entity->original->start_date), new DateTime($entity->original->end_date), $event_type->event_granularity, $unit_id, BAT_AVAILABLE);
-
-      $events_to_remove = array($be);
+      bat_store_save($unit,
+        new \DateTime($entity->original->start_date),
+        new \DateTime($entity->original->end_date),
+        $event_type->type,
+        $event_type->granularity,
+        $unit->default_state,
+        $entity->event_id,
+        TRUE
+      );
     }
 
     parent::save($entity);
@@ -1086,22 +1092,54 @@ class BatEventController extends EntityAPIController {
     // We have a unit defined so lets block availability there unless its a
     // event that is to be deleted.
     if (field_get_items('bat_event', $entity, 'event_unit_reference') !== FALSE) {
-      $event_unit_reference = field_get_items('bat_event', $entity, 'event_state_reference');
-      $event_id = $event_unit_reference[0]['state_id'];
+      $event_state_reference = field_get_items('bat_event', $entity, 'event_state_reference');
+      $event_state = $event_state_reference[0]['state_id'];
 
       $event_unit_reference = field_get_items('bat_event', $entity, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
+      $bat_unit = bat_unit_load($unit_id);
+      $unit = new Unit($unit_id, $bat_unit->default_state);
 
-      $state_store = array(
-        BatGranularEvent::BAT_DAY => 'bat_event_' . $entity->type . '_day_state',
-        BatGranularEvent::BAT_HOUR => 'bat_event_' . $entity->type . '_hour_state',
-        BatGranularEvent::BAT_MINUTE => 'bat_event_' . $entity->type . '_minute_state'
+      bat_store_save($unit,
+        new \DateTime($entity->start_date),
+        new \DateTime($entity->end_date),
+        $event_type->type,
+        $event_type->granularity,
+        $event_state,
+        $entity->event_id
       );
-
-      // Create an event.
-      $be = new BatGranularEvent(new DateTime($entity->start_date), new DateTime($entity->end_date), $unit_id, $event_id);
-      $be->saveEvent($state_store);
     }
+  }
+
+  /**
+   * Handles saving to the BatStore
+   *
+   * @param \Drupal\bat\Unit $unit - The unit to save
+   * @param \DateTime $start_date
+   * @param \DateTime $end_date
+   * @param $event_type
+   * @param $granularity
+   * @param $event_state
+   * @param $event_id
+   * @param bool|FALSE $remove - set to TRUE if the event is to be removed (event_id set to zero)
+   */
+  public function bat_store_save(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE ) {
+    $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE);
+    $event_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_EVENT);
+
+    $units = array($unit);
+    $state_calendar = new Calendar($units, $state_store);
+    $event_calendar = new Calendar($units, $event_store);
+
+    $state_event = new Event($start_date, $end_date, $unit->getUnitId(), $event_state);
+    if (!$remove) {
+      $event_id_event = new Event($start_date, $end_date, $unit->getUnitId(), $event_id);
+    } else {
+      $event_id_event = new Event($start_date, $end_date, $unit->getUnitId(), 0);
+    }
+
+    $state_calendar->addEvents(array($state_event), $granularity);
+    $event_calendar->addEvents(array($event_id_event), $granularity);
   }
 
   public function delete($ids) {
@@ -1122,15 +1160,21 @@ class BatEventController extends EntityAPIController {
       $event_unit_reference = field_get_items('bat_event', $event, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
 
-      $state_store = array(
-        BatGranularEvent::BAT_DAY => 'bat_event_' . $event->type . '_day_state',
-        BatGranularEvent::BAT_HOUR => 'bat_event_' . $event->type . '_hour_state',
-        BatGranularEvent::BAT_MINUTE => 'bat_event_' . $event->type . '_minute_state'
+      $bat_unit = bat_unit_load($unit_id);
+      $unit = new Unit($unit_id, $bat_unit->default_state);
+
+      $event_type = bat_event_type_load($entity->type);
+
+      bat_store_save($unit,
+        new \DateTime($event->start_date_object),
+        new \DateTime($event->end_date_object),
+        $event->type,
+        $event_type->granularity,
+        $unit->default_state,
+        $entity->event_id,
+        TRUE
       );
 
-      // Delete an event.
-      $be = new BatGranularEvent($event->start_date_object, $event->end_date_object, $unit_id, 0);
-      $be->saveEvent($state_store);
     }
   }
 
