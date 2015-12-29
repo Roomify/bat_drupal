@@ -272,22 +272,6 @@ function bat_event_edit_form($form, &$form_state, $event) {
     '#weight' => 99,
   );
 
-  $form['b_status'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Event status'),
-    '#collapsible' => TRUE,
-    '#collapsed' => FALSE,
-    '#group' => 'additional_settings',
-  );
-  $form['b_status']['event_status'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Event Confirmed'),
-    '#options' => array(
-      '0' => '0',
-      '1' => '1',
-    ),
-    '#default_value' => isset($event->event_status) ? $event->event_status : '0',
-  );
 
   // Add the user account and e-mail fields.
   $form['user'] = array(

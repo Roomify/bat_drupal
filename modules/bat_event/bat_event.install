@@ -116,19 +116,6 @@ function bat_event_schema() {
         'not null' => FALSE,
         'description' => 'The end date for the event.',
       ),
-      'event_status' => array(
-        'description' => 'The event status (1 relevant, 0 irrelevant).',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'blocking' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-        'size' => 'tiny',
-        'description' => 'Blocking.',
-      ),
       'data' => array(
         'type' => 'blob',
         'not null' => FALSE,
