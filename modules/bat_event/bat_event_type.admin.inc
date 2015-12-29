@@ -79,6 +79,9 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
       '#title' => t('Fixed event states'),
     );
   }
+  elseif ($op == 'edit') {
+    $form['type']['#disabled'] = TRUE;
+  }
 
   $form['event_granularity'] = array(
     '#type' => 'select',

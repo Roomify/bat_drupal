@@ -750,53 +750,9 @@ function bat_event_load_multiple($event_ids = array(), $conditions = array(), $r
  *
  * @param BatEvent $event
  *   The BatEvent object that represents the event to delete
- * @param bool $delete_line_item
- *   Flag indicating if the associated line_item should be deleted or not.
  */
-function bat_event_delete(BatEvent $event, $delete_line_item = TRUE) {
-  bat_event_delete_multiple(array($event->event_id), $delete_line_item);
-}
-
-/**
- * Implements hook_commerce_line_item_delete().
- */
-function bat_event_commerce_line_item_delete($line_item) {
-  if (isset($line_item->bat_event_reference[LANGUAGE_NONE][0]['target_id'])) {
-    $event = bat_event_load($line_item->bat_event_reference[LANGUAGE_NONE][0]['target_id']);
-
-    if ($event !== FALSE) {
-      if ($line_item->order_id == $event->order_id) {
-        bat_event_delete($event, FALSE);
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_commerce_order_delete().
- *
- * Delete events associated with an order when deleting the order.
- */
-function bat_event_commerce_order_delete($order) {
-
-  // Load the events associated with this order.
-  $query = new EntityFieldQuery();
-
-  $query->entityCondition('entity_type', 'bat_event');
-
-  $events = $query->execute();
-
-  // Delete all events associated with this order.
-  if (isset($events['bat_event']) && count($events['bat_event'])) {
-    foreach ($events['bat_event'] as $result) {
-      $event = bat_event_load($result->event_id);
-
-      if ($event !== FALSE) {
-        bat_event_delete($event);
-        drupal_set_message(t('Deleted event with id: %id', array('%id' => $result->event_id)));
-      }
-    }
-  }
+function bat_event_delete(BatEvent $event) {
+  bat_event_delete_multiple(array($event->event_id));
 }
 
 /**
@@ -804,10 +760,8 @@ function bat_event_commerce_order_delete($order) {
  *
  * @param array $event_ids
  *   An array of event IDs.
- * @param bool $delete_line_item
- *   Flag indicating if the associated line_item should be deleted or not.
  */
-function bat_event_delete_multiple(array $event_ids, $delete_line_item = TRUE) {
+function bat_event_delete_multiple(array $event_ids) {
   entity_get_controller('bat_event')->delete($event_ids);
 }
 
@@ -1865,34 +1819,37 @@ function bat_event_validate_hex_color($element, &$form_state) {
 function bat_event_form_bat_unit_type_form_alter(&$form, &$form_state) {
   $unit_type = $form_state['bat_unit_type'];
 
-  $fields = array();
+  if (!isset($unit_type->is_new)) {
+    $fields_options = array();
 
-  $fields = field_info_instances('bat_unit', $unit_type->type);
-  foreach ($fields as $field) {
-    $field_info = field_info_field($field['field_name']);
-    $fields[$field['field_name']] = $field['field_name'];
-  }
+    $fields = field_info_instances('bat_unit', $unit_type->type);
 
-  $form['events'] = array(
-    '#type' => 'fieldset',
-    '#group' => 'additional_settings',
-    '#title' => t('Events'),
-    '#tree' => TRUE,
-    '#weight' => 80,
-  );
+    foreach ($fields as $field) {
+      $field_info = field_info_field($field['field_name']);
+      $fields_options[$field['field_name']] = $field['field_name'];
+    }
 
-  $event_types = bat_event_get_types();
-  foreach ($event_types as $event_type) {
-    $form['events'][$event_type->type] = array(
-      '#type' => 'select',
-      '#title' => t('Select your default @event field', array('@event' => $event_type->label)),
-      '#options' => $fields,
-      '#default_value' => isset($unit_type->data[$event_type->type]) ? $unit_type->data[$event_type->type] : NULL,
-      '#empty_option' => t('- Select a field -'),
+    $form['events'] = array(
+      '#type' => 'fieldset',
+      '#group' => 'additional_settings',
+      '#title' => t('Events'),
+      '#tree' => TRUE,
+      '#weight' => 80,
     );
-  }
 
-  $form['actions']['submit']['#submit'][] = 'bat_event_form_bat_unit_type_form_submit';
+    $event_types = bat_event_get_types();
+    foreach ($event_types as $event_type) {
+      $form['events'][$event_type->type] = array(
+        '#type' => 'select',
+        '#title' => t('Select your default @event field', array('@event' => $event_type->label)),
+        '#options' => $fields_options,
+        '#default_value' => isset($unit_type->data[$event_type->type]) ? $unit_type->data[$event_type->type] : NULL,
+        '#empty_option' => t('- Select a field -'),
+      );
+    }
+
+    $form['actions']['submit']['#submit'][] = 'bat_event_form_bat_unit_type_form_submit';
+  }
 }
 
 /**

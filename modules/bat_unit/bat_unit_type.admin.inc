@@ -67,6 +67,10 @@ function bat_unit_type_form($form, &$form_state, $unit_type, $op = 'edit') {
     '#weight' => -99,
   );
 
+  if ($op == 'edit') {
+    $form['type']['#disabled'] = TRUE;
+  }
+
   // Add the field related form elements.
   $form_state['bat_unit_type'] = $unit_type;
   field_attach_form('bat_unit_type', $unit_type, $form, $form_state);
