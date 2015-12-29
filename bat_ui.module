@@ -25,6 +25,7 @@ function bat_ui_menu() {
     'file' => 'system.admin.inc',
     'weight' => -7,
   );
+
   $items['admin/bat/config'] = array(
     'title' => 'Configuration',
     'description' => 'Configure settings and business rules for BAT management.',

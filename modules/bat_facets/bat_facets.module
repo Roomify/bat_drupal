@@ -54,11 +54,11 @@ function bat_facets_availability($form, &$form_state, $elements) {
   );
 
   if (isset($params['bat_start_date']) && !empty($params['bat_start_date'])) {
-    $arrivalDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_start_date']);
+    $arrivalDateTime = new DateTime($params['bat_start_date']);
     $arrival = $arrivalDateTime->format('Y-m-d');
   }
   if (isset($params['bat_end_date']) && !empty($params['bat_end_date'])) {
-    $departureDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_end_date']);
+    $departureDateTime = new DateTime($params['bat_end_date']);
     $departure = $departureDateTime->format('Y-m-d');
   }
 

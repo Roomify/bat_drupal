@@ -23,16 +23,6 @@ function bat_permission() {
 }
 
 /**
- * Helper function to check if a library is loaded properly or not.
- *
- * @return bool
- *   Boolean indicating if the library is properly loaded or not.
- */
-function bat_library_loaded($name, $variant = NULL) {
-  return ($library = libraries_load($name, $variant)) && !empty($library['loaded']);
-}
-
-/**
  * Generic access control for entities that BAT defines.
  *
  * @param string $op
@@ -653,21 +643,6 @@ function bat_range($start, $end) {
   else {
     return range($start, $end, 1);
   }
-}
-
-/**
- * Returns a range array keyed by value.
- *
- * @param int $start
- *   First value of the sequence.
- * @param int $end
- *   The sequence is ended upon reaching the end value.
- *
- * @return array
- *   An array of elements from start to end, inclusive keyed by values.
- */
-function bat_assoc_range($start, $end) {
-  return drupal_map_assoc(bat_range($start, $end));
 }
 
 function bat_filter_month_form($form, &$form_state, $month, $year, $unit_types = NULL) {

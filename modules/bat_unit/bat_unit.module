@@ -611,7 +611,7 @@ function bat_unit_unit_type_new() {
  * @throws \Exception
  * @throws \FieldException
  */
-function bat_unit_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = false, $calculation = false, $display = array()) {
+function bat_unit_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = FALSE, $calculation = FALSE, $display = array()) {
 
   $field = field_info_field($field_name);
   $instance = field_info_instance($entity_type, $field_name, $bundle);

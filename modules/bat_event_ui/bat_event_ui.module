@@ -96,6 +96,16 @@ function bat_event_ui_libraries_info() {
 }
 
 /**
+ * Helper function to check if a library is loaded properly or not.
+ *
+ * @return bool
+ *   Boolean indicating if the library is properly loaded or not.
+ */
+function bat_library_loaded($name, $variant = NULL) {
+  return ($library = libraries_load($name, $variant)) && !empty($library['loaded']);
+}
+
+/**
  * Checks if the FullCalendar Library is loaded.
  *
  * @return bool

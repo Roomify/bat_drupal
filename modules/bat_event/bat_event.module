@@ -468,7 +468,7 @@ function bat_event_states_form_set_default($form, &$form_state) {
  *
  */
 function bat_event_states_form_submit($form, &$form_state) {
-  $max_id = db_query("SELECT MAX(id) as max_id FROM bat_event_state")->fetchCol();
+  $max_id = db_query("SELECT MAX(id) as max_id FROM {bat_event_state}")->fetchCol();
 
   $event_state = array(
     'id' => reset($max_id) + 1,
@@ -1130,7 +1130,8 @@ class BatEventController extends EntityAPIController {
     $state_event = new Event($start_date, $end_date, $unit->getUnitId(), $event_state);
     if (!$remove) {
       $event_id_event = new Event($start_date, $end_date, $unit->getUnitId(), $event_id);
-    } else {
+    }
+    else {
       $event_id_event = new Event($start_date, $end_date, $unit->getUnitId(), 0);
     }
 
