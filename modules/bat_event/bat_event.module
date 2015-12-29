@@ -415,7 +415,7 @@ function bat_event_states_form($form, &$form_state, $event_type) {
           array('system', 'farbtastic'),
         ),
         // Add javascript to trigger the colorpicker.
-        'js' => array(drupal_get_path('module', 'bat_availability') . '/js/bat_color.js'),
+        'js' => array(drupal_get_path('module', 'bat_event') . '/js/bat_color.js'),
       ),
       '#required' => TRUE,
     );
@@ -530,7 +530,7 @@ function bat_event_states_edit_event_form($form, &$form_state, $event_id) {
         array('system', 'farbtastic'),
       ),
       // Add javascript to trigger the colorpicker.
-      'js' => array(drupal_get_path('module', 'bat_availability') . '/js/bat_color.js'),
+      'js' => array(drupal_get_path('module', 'bat_event') . '/js/bat_color.js'),
     ),
     '#required' => TRUE,
   );
@@ -1257,7 +1257,7 @@ function bat_event_field_info() {
     'bat_event_state_reference' => array(
       'label' => t('BAT Event State Reference'),
       'description' => t('A reference to an Event State.'),
-      'settings' => array(),
+      'settings' => array('event_type' => ''),
       'default_widget' => 'bat_event_state_reference_autocomplete',
       'default_formatter' => 'bat_event_state_reference_default',
     ),
@@ -1313,6 +1313,24 @@ function bat_event_field_settings_form($field, $instance, $has_data) {
   $settings = $field['settings'];
 
   $form = array();
+
+  $event_types_options = array();
+  $event_types = bat_event_get_types();
+  foreach ($event_types as $event_type) {
+    if ($event_type->fixed_event_states) {
+      $event_types_options[$event_type->type] = $event_type->label;
+    }
+  }
+
+  $form['event_type'] = array(
+    '#type' => 'select',
+    '#title' => t('Event type'),
+    '#options' => $event_types_options,
+    '#default_value' => $settings['event_type'],
+    '#required' => TRUE,
+    '#empty_option' => '- Select -',
+  );
+
   return $form;
 }
 
@@ -1378,6 +1396,8 @@ function _bat_event_potential_references($field, $options) {
   $event_id_alias = $query->addField('u', 'id');
   $event_label_alias = $query->addField('u', 'label');
 
+  $query->condition('event_type', $options['event_type']);
+
   if ($options['string'] !== '') {
     switch ($options['match']) {
       case 'contains':
@@ -1418,6 +1438,7 @@ function bat_event_reference_autocomplete($entity_type, $bundle, $field_name, $s
     'string' => $string,
     'match' => $instance['widget']['settings']['autocomplete_match'],
     'limit' => 10,
+    'event_type' => $field['settings']['event_type'],
   );
   $references = bat_event_potential_references($field, $options);
 
