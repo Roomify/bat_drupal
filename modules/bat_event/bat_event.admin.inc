@@ -4,8 +4,8 @@
  * @file
  * Unit event editing UI.
  *
- * We make very little use of the EntityAPI interface for this - preferring
- * instead to use views. That offers more flexibility to change a UI that will,
+ * We make very little use of the EntityAPI interface for this, preferring
+ * instead to use views. This offers more flexibility to change a UI that will,
  * more often than not, be end-user facing.
  */
 
@@ -17,7 +17,7 @@ class BatEventUIController extends EntityDefaultUIController {
   /**
    * Overrides hook_menu() defaults.
    *
-   * Main reason for doing this is that
+   * The main reason for doing this is that the
    * parent class hook_menu() is optimized for entity type administration.
    */
   public function hook_menu() {
@@ -62,7 +62,7 @@ class BatEventUIController extends EntityDefaultUIController {
       );
     }
 
-    // Loading and editing Unit entities.
+    // Menu items for loading and editing Unit entities.
     $items[$this->path . '/event/' . $wildcard] = array(
       'page callback' => 'bat_event_form_wrapper',
       'page arguments' => array($id_count + 1),
@@ -131,7 +131,7 @@ class BatEventUIController extends EntityDefaultUIController {
  * Form callback wrapper: edit a Event.
  *
  * @param $event
- *   The  BatEvent object being edited by this form.
+ *   The BatEvent object being edited by this form.
  *
  * @see bat_event_edit_form()
  */
@@ -190,8 +190,8 @@ function bat_event_delete_form_wrapper($event) {
  * Form callback: create or edit a event.
  *
  * @param $event
- *   The BatEvent object to edit or for a create form an empty event object
- *     with only a event type defined.
+ *   The BatEvent object to edit, or for a new event form, an empty event object
+ *     with only an event type defined.
  */
 function bat_event_edit_form($form, &$form_state, $event) {
   $form['#attributes']['class'][] = 'bat-management-form bat-event-form';
@@ -227,7 +227,7 @@ function bat_event_edit_form($form, &$form_state, $event) {
   $form['bat_date_range']['bat_start_date']['#default_value'] = isset($event->start_date) ? $event->start_date : '';
   $form['bat_date_range']['bat_end_date']['#default_value'] = isset($event->end_date) ? $event->end_date : '';
 
-  // Check startdate and enddate to avoid damage from dirty input.
+  // Check the start and end dates to avoid damage from dirty input.
   $startdate = '';
   if (isset($_GET['startdate'])) {
     $startdate = (is_numeric(check_plain($_GET['startdate']))) ? check_plain($_GET['startdate']) : '';
