@@ -115,7 +115,7 @@ abstract class AbstractCalendar implements CalendarInterface {
    * @param $valid_states
    * @return array
    */
-  public function getValidUnits(\DateTime $start_date, \DateTime $end_date, $valid_states) {
+  public function getMatchedUnits(\DateTime $start_date, \DateTime $end_date, $valid_states) {
     $units = array();
 
     $states = $this->getStates($start_date, $end_date);

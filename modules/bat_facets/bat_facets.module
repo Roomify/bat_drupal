@@ -182,7 +182,7 @@ function bat_facets_search_api_query_alter($query) {
         }
 
         $rc = new Calendar($units, $state_store);
-        $valid_unit_ids = $rc->getValidUnits($arrivalDateTime, $departureDateTime, $valid_states);
+        $valid_unit_ids = $rc->getMatchedUnits($arrivalDateTime, $departureDateTime, $valid_states);
 
         $context = array(
           'units_before_search' => $unit_ids,
