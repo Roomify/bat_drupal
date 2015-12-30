@@ -630,38 +630,3 @@ function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $sin
 
   return $errors;
 }
-
-/**
- * Alternative numeric range generator for PHP < v5.3.6
- * This is a workaround for this bug: https://bugs.php.net/bug.php?id=51894
- *
- * @param int $start
- *   First value of the sequence.
- * @param int $end
- *   The sequence is ended upon reaching the end value.
- *
- * @return array
- *   The expected range.
- */
-function bat_range($start, $end) {
-  if (version_compare(phpversion(), '5.3.6', '<')) {
-    $range = array();
-    for ($index = $start; $index <= $end; $index++) {
-      $range[] = $index;
-    }
-    return $range;
-  }
-  else {
-    return range($start, $end, 1);
-  }
-}
-
-/**
- * Form element validation handler for integer elements greater than or equal to 0.
- */
-function bat_element_validate_integer_zero_positive($element, &$form_state) {
-  $value = $element['#value'];
-  if ($value !== '' && (!is_numeric($value) || intval($value) != $value || $value < 0)) {
-    form_error($element, t('%name must be a positive integer.', array('%name' => $element['#title'])));
-  }
-}
