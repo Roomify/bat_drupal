@@ -53,7 +53,7 @@ class MinMaxConstraint extends Constraint {
     parent::applyConstraint($calendar_response);
 
     if ($this->start_date->getTimestamp() <= $calendar_response->getStartDate()->getTimestamp() &&
-        $this->end_date->getTimestamp() >= $calendar_response->getEndDate()->getTimestamp() && 
+        $this->end_date->getTimestamp() >= $calendar_response->getEndDate()->getTimestamp() &&
         ($this->checkin_day === NULL || $this->checkin_day == $calendar_response->getStartDate()->format('N'))) {
 
       $units = $this->getUnits();
@@ -79,6 +79,81 @@ class MinMaxConstraint extends Constraint {
         }
       }
     }
+  }
+
+  /**
+   * Generates a text describing an availability_constraint.
+   *
+   * @return string
+   *   The formatted message.
+   */
+  public function toString() {
+    $text = '';
+
+    // Min/max stay length constraint variables.
+    $minimum_stay = empty($this->min_days) ? '' : format_plural($this->min_days, '@count day', '@count days', array('@count' => $this->min_days));
+    $maximum_stay = empty($this->max_days) ? '' : format_plural($this->max_days, '@count day', '@count days', array('@count' => $this->max_days));
+
+    // Day of the week constraint variable.
+    $day_of_the_week = rooms_availability_constraints_get_weekday($this->checkin_day);
+
+    // Date range constraint variables.
+    $start_date = $this->start_date->format('Y-m-d');
+    $end_date = $this->end_date->format('Y-m-d');
+
+    // Next create replacement placeholders to be used in t() below.
+    $args = array(
+      '@minimum_stay' => $minimum_stay,
+      '@maximum_stay' => $maximum_stay,
+      '@start_date' => $start_date,
+      '@end_date' => $end_date,
+      '@day_of_the_week' => $day_of_the_week,
+    );
+
+    // Finally, build out the constraint text string adding components
+    // as necessary.
+
+    // Specify a date range constraint.
+    if ($start_date && $end_date) {
+      $text = t('From @start_date to @end_date', $args);
+    }
+
+    // Specify the day of the week constraint.
+    if ($day_of_the_week) {
+      if ($start_date && $end_date) {
+        $text = t('From @start_date to @end_date, if booking starts on @day_of_the_week', $args);
+      }
+      else {
+        $text = t('If booking starts on @day_of_the_week', $args);
+      }
+    }
+
+    // Specify the min/max stay length constraint.
+    if ($minimum_stay || $maximum_stay) {
+      if (empty($text)) {
+        $text = t('The stay') . ' ';
+      }
+      else {
+        $text .=   ' ' . t('the stay') . ' ';
+      }
+    }
+    if ($minimum_stay && $maximum_stay) {
+      // Special case when min stay and max stay are the same.
+      if ($minimum_stay == $maximum_stay) {
+        $text .= t('must be for @minimum_stay', $args);
+      }
+      else {
+        $text .= t('must be at least @minimum_stay and at most @maximum_stay', $args);
+      }
+    }
+    elseif ($minimum_stay) {
+      $text .= t('must be for at least @minimum_stay', $args);
+    }
+    elseif ($maximum_stay) {
+      $text .= t('cannot be more than @maximum_stay', $args);
+    }
+
+    return $text;
   }
 
 }
