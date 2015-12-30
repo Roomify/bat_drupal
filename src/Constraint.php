@@ -19,5 +19,5 @@ class Constraint extends AbstractConstraint {
   public function __construct() {
 
   }
-  
+
 }

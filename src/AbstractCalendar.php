@@ -9,6 +9,7 @@ namespace Drupal\bat;
 
 use Drupal\bat\Event;
 use Drupal\bat\CalendarInterface;
+use Drupal\bat\CalendarResponse;
 
 /**
  * Handles querying and updating state stores
@@ -113,10 +114,12 @@ abstract class AbstractCalendar implements CalendarInterface {
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $valid_states
-   * @return array
+   * @return CalendarResponse
    */
-  public function getMatchedUnits(\DateTime $start_date, \DateTime $end_date, $valid_states) {
+  public function getMatchingUnits(\DateTime $start_date, \DateTime $end_date, $valid_states, $constraints) {
     $units = array();
+    $response = new CalendarResponse();
+    $keyed_units = $this->keyUnitsById();
 
     $states = $this->getStates($start_date, $end_date);
     foreach ($states as $unit => $unit_states) {
@@ -127,9 +130,16 @@ abstract class AbstractCalendar implements CalendarInterface {
       if (count($remaining_states) == 0 ) {
         // Unit is in a state that is within the set of valid states so add to result set
         $units[$unit] = $unit;
+        $response->addMatch($unit, CalendarResponse::VALID_STATE);
+      } else {
+        $response->addMiss($unit, CalendarResponse::INVALID_STATE);
       }
     }
 
+    foreach ($constraints as $constraint) {
+      $constraint->applyConstraint($response);
+    }
+    
     return $units;
   }
 
@@ -421,6 +431,12 @@ abstract class AbstractCalendar implements CalendarInterface {
 
   }
 
+  /**
+   * Return an array of unit ids from the set of units
+   * supplied to the Calendar.
+   *
+   * @return array
+   */
   public function getUnitIds() {
     $unit_ids = array();
     foreach ($this->units as $unit) {
@@ -430,6 +446,11 @@ abstract class AbstractCalendar implements CalendarInterface {
     return $unit_ids;
   }
 
+  /**
+   * Return an array of units keyed by unit id
+   *
+   * @return array
+   */
   public function keyUnitsById() {
     $keyed_units = array();
     foreach ($this->units as $unit) {

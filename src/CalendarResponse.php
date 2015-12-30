@@ -16,26 +16,47 @@ use Drupal\bat\Constraint;
  */
 class CalendarResponse {
 
+  const VALID_STATE = 'valid_state';
+  const INVALID_STATE = 'invalid_state';
 
-  public $matched = array();
-  public $missed = array();
+  /**
+   * @var array
+   */
+  public $included_set;
+
+  public $excluded_set;
 
 
-  public function __construct() {
-
+  public function __construct($included = array(), $excluded = array()) {
+    $this->included = $included;
+    $this->excluded = $excluded;
   }
 
-  public function addMatch(Unit $unit, $reason = '') {
-
+  public function addMatch($unit, $reason = '') {
+    $this->included_set[$unit] = $reason;
   }
 
-  public function addMiss(Unit $unit, $reason = '') {
-
+  public function addMiss($unit, $reason = '') {
+    $this->excluded_set[$unit] = $reason;
   }
 
-  public function applyConstraint(Constraint $constraint) {
-
+  public function getIncluded(){
+    return $this->included_set();
   }
 
+  public function getExcluded(){
+    return $this->excluded_set;
+  }
+
+  public function removeFromMatched($unit, $reason = '') {
+    if (isset($this->included_set[$unit])) {
+      // Remove a unit from matched and add to the missed set
+      unset($this->include_set[$unit]);
+      $this->addMiss($unit, $reason);
+      return TRUE;
+    } else {
+      return FALSE;
+    }
+  }
 
 }

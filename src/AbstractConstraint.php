@@ -15,15 +15,16 @@ namespace Drupal\bat;
  */
 class AbstractConstraint implements ConstraintInterface {
 
-  public $input_set = array();
-
   public $start_date;
 
   public $end_date;
 
   public $valid_states;
 
-  public function applyConstraint() {
+  public $calendar_response;
 
+  public function applyConstraint(){
+    return $this->calendar_response;
   }
+
 }
