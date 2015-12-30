@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Interface UnitInterface
+ * Class Unit
  */
 
 namespace Drupal\bat;
@@ -10,7 +10,7 @@ namespace Drupal\bat;
 use Drupal\bat\AbstractUnit;
 
 /**
- * The basic BAT unit interface.
+ * The basic BAT unit class.
  */
 class Unit extends AbstractUnit {
 

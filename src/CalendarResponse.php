@@ -18,6 +18,7 @@ class CalendarResponse {
 
   const VALID_STATE = 'valid_state';
   const INVALID_STATE = 'invalid_state';
+  const CONSTRAINT = 'constraint';
 
   /**
    * @var array
@@ -74,36 +75,40 @@ class CalendarResponse {
    * @param $unit
    * @param $reason
    */
-  public function addMiss(Unit $unit, $reason = '') {
+  public function addMiss(Unit $unit, $reason = '', Constraint $constraint = NULL) {
     $this->excluded_set[$unit->getUnitId()] = array(
       'unit' => $unit,
       'reason' => $reason,
     );
+
+    if ($constraint !== NULL) {
+      $this->excluded_set[$unit->getUnitId()]['constraint'] = $constraint;
+    }
   }
 
   /**
-   * @return
+   * @return array
    */
   public function getIncluded() {
     return $this->included_set;
   }
 
   /**
-   * @return
+   * @return array
    */
   public function getExcluded() {
     return $this->excluded_set;
   }
 
   /**
-   * @return
+   * @return DateTime
    */
   public function getStartDate() {
     return $this->start_date;
   }
 
   /**
-   * @return
+   * @return DateTime
    */
   public function getEndDate() {
     return $this->end_date;
@@ -113,13 +118,13 @@ class CalendarResponse {
    * @param $unit
    * @param $reason
    *
-   * @return
+   * @return bool
    */
-  public function removeFromMatched(Unit $unit, $reason = '') {
+  public function removeFromMatched(Unit $unit, $reason = '', Constraint $constraint = NULL) {
     if (isset($this->included_set[$unit->getUnitId()])) {
       // Remove a unit from matched and add to the missed set
       unset($this->included_set[$unit->getUnitId()]);
-      $this->addMiss($unit, $reason);
+      $this->addMiss($unit, $reason, $constraint);
       return TRUE;
     }
     else {

@@ -1168,7 +1168,7 @@ class BatEventTypeController extends EntityAPIControllerExportable {
   }
 
   /**
-   *
+   * @param $entity
    */
   public function save($entity) {
     if (empty($entity->{$this->idKey})) {
@@ -1188,7 +1188,7 @@ class BatEventTypeController extends EntityAPIControllerExportable {
   }
 
   /**
-   *
+   * @param $ids
    */
   public function delete($ids) {
     parent::delete($ids);
@@ -1692,7 +1692,7 @@ function bat_event_generate_day_schema_fields() {
     ),
   );
 
-  for ($i = 1; $i<=31; $i++) {
+  for ($i = 1; $i <= 31; $i++) {
     $fields['d' . $i] = array(
       'description' => 'D' . $i,
       'type' => 'int',
@@ -1737,7 +1737,7 @@ function bat_event_generate_hour_schema_fields() {
     ),
   );
 
-  for ($i = 0; $i<=23; $i++) {
+  for ($i = 0; $i <= 23; $i++) {
     $fields['h' . $i] = array(
       'description' => 'H' . $i,
       'type' => 'int',
@@ -1788,10 +1788,10 @@ function bat_event_generate_minute_schema_fields() {
     ),
   );
 
-  for ($i = 0; $i<=59; $i++) {
+  for ($i = 0; $i <= 59; $i++) {
     // PHP has no clean way to get the minutes without leading zeros so setting table
     // fields names to contain the leading zeros to save strangeness in code elsewhere
-    if ($i<=9) {$m='0' . $i;} else ($m = $i);
+    if ($i <= 9) { $m='0' . $i; } else { $m = $i; }
 
     $fields['m' . $m] = array(
       'description' => 'M' . $m,

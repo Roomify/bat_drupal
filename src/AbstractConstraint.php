@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Class Constraint
+ * Class AbstractConstraint
  */
 
 namespace Drupal\bat;
@@ -12,7 +12,7 @@ namespace Drupal\bat;
  * further reduce the set of matching units based on criteria beyond their
  * specific state over the time range the Calendar was queried.
  */
-class AbstractConstraint implements ConstraintInterface {
+abstract class AbstractConstraint implements ConstraintInterface {
 
   /**
    * @var DateTime
@@ -109,7 +109,7 @@ class AbstractConstraint implements ConstraintInterface {
    * {@inheritdoc}
    */
   public function applyConstraint(&$calendar_response) {
-    return $this->calendar_response;
+    $this->calendar_response = $calendar_response;
   }
 
 }

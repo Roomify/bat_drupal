@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Class Event
+ * Class AbstractEvent
  */
 
 namespace Drupal\bat;
@@ -534,6 +534,7 @@ abstract class AbstractEvent implements EventInterface {
    *
    * @param \Drupal\Bat\Store $store
    * @param string $granularity
+   *
    * @throws \Exception
    * @throws \InvalidMergeQueryException
    */

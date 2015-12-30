@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Class Calendar
+ * Class AbstractCalendar
  */
 
 namespace Drupal\bat;
@@ -143,8 +143,6 @@ abstract class AbstractCalendar implements CalendarInterface {
     }
 
     $response->applyConstraints($constraints);
-
-    // provide response with global constraints and apply those
 
     return $response;
   }
@@ -322,7 +320,8 @@ abstract class AbstractCalendar implements CalendarInterface {
                     if ($current_value === $minute_value) {
                       // We are still in minutes and going through so add a minute
                       $end_event->add(new \DateInterval('PT1M'));
-                    } elseif (($current_value != $minute_value) && ($current_value !== NULL)) {
+                    }
+                    elseif (($current_value != $minute_value) && ($current_value !== NULL)) {
                       // Value just switched - let us wrap up with current event and start a new one
                       $normalized_events[$unit][] = new Event($start_event, $end_event, $unit, $current_value);
                       $start_event = clone($end_event->add(new \DateInterval('PT1M')));
@@ -336,10 +335,12 @@ abstract class AbstractCalendar implements CalendarInterface {
                     }
                     $current_value = $minute_value;
                   }
-                } elseif ($current_value === $hour_value) {
+                }
+                elseif ($current_value === $hour_value) {
                   // We are in hours and can add something
                   $end_event->add(new \DateInterval('PT1H'));
-                } elseif (($current_value != $hour_value) && ($current_value !== NULL)) {
+                }
+                elseif (($current_value != $hour_value) && ($current_value !== NULL)) {
                   // Value just switched - let us wrap up with current event and start a new one
                   $normalized_events[$unit][] = new Event($start_event, $end_event, $unit, $current_value);
                   // Start event becomes the end event with a minute added
@@ -356,10 +357,12 @@ abstract class AbstractCalendar implements CalendarInterface {
                   $current_value = $hour_value;
                 }
               }
-            } elseif ($current_value === $value) {
+            }
+            elseif ($current_value === $value) {
               // We are adding a whole day so the end event gets moved to the end of the day we are adding
               $end_event = new \DateTime($year . '-' . $month . '-' . substr($day, 1) . ' ' . '23:59');
-            } elseif (($current_value !== $value) && ($current_value !== NULL)) {
+            }
+            elseif (($current_value !== $value) && ($current_value !== NULL)) {
               // Value just switched - let us wrap up with current event and start a new one
               $normalized_events[$unit][] = new Event($start_event, $end_event, $unit, $current_value);
               // Start event becomes the end event with a minute added

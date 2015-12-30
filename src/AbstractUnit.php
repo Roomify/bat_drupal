@@ -12,17 +12,17 @@ use Drupal\bat\UnitInterface;
 abstract class AbstractUnit implements UnitInterface {
 
   /**
-   *
+   * @var
    */
   protected $unit_id;
 
   /**
-   *
+   * @var
    */
   protected $default_value;
 
   /**
-   *
+   * @var
    */
   protected $constraints;
 

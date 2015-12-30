@@ -15,17 +15,17 @@ use Drupal\bat\Constraint;
 class MinMaxConstraint extends Constraint {
 
   /**
-   * @var
+   * @var int
    */
   public $min_days = 0;
 
   /**
-   * @var
+   * @var int
    */
   public $max_days = 0;
 
   /**
-   * @var
+   * @var int
    */
   public $checkin_day = NULL;
 
@@ -50,6 +50,8 @@ class MinMaxConstraint extends Constraint {
    * {@inheritdoc}
    */
   public function applyConstraint(&$calendar_response) {
+    parent::applyConstraint($calendar_response);
+
     if ($this->start_date->getTimestamp() <= $calendar_response->getStartDate()->getTimestamp() &&
         $this->end_date->getTimestamp() >= $calendar_response->getEndDate()->getTimestamp() && 
         ($this->checkin_day === NULL || $this->checkin_day == $calendar_response->getStartDate()->format('N'))) {
@@ -65,12 +67,12 @@ class MinMaxConstraint extends Constraint {
 
           $diff = $end_date->diff($start_date)->days;
           if (is_numeric($this->min_days) && $diff < $this->min_days) {
-            $calendar_response->removeFromMatched($included_set[$unit_id]['unit'], CalendarResponse::INVALID_STATE);
+            $calendar_response->removeFromMatched($included_set[$unit_id]['unit'], CalendarResponse::CONSTRAINT, $this);
 
             $this->affected_units[$unit_id] = $included_set[$unit_id]['unit'];
           }
           elseif (is_numeric($this->max_days) && $diff > $this->max_days) {
-            $calendar_response->removeFromMatched($included_set[$unit_id]['unit'], CalendarResponse::INVALID_STATE);
+            $calendar_response->removeFromMatched($included_set[$unit_id]['unit'], CalendarResponse::CONSTRAINT, $this);
 
             $this->affected_units[$unit_id] = $included_set[$unit_id]['unit'];
           }

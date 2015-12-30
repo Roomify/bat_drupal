@@ -33,6 +33,8 @@ class CheckInDayConstraint extends Constraint {
    * {@inheritdoc}
    */
   public function applyConstraint(&$calendar_response) {
+    parent::applyConstraint($calendar_response);
+
     if ($this->start_date <= $calendar_response->getStartDate() || $this->end_date >= $calendar_response->getEndDate()) {
       $units = $this->getUnits();
 
