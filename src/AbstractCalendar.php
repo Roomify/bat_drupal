@@ -27,6 +27,7 @@ abstract class AbstractCalendar implements CalendarInterface {
 
   /**
    * The class that will access the actual event store where event data is held.
+   *
    * @var
    */
   public $store;
@@ -41,7 +42,7 @@ abstract class AbstractCalendar implements CalendarInterface {
 
 
   /**
-   *@inheritdoc
+   * {@inheritdoc}
    */
   public function addEvents($events, $granularity) {
 

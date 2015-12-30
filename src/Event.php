@@ -19,6 +19,7 @@ class Event extends AbstractEvent {
 
   /**
    * Event constructor.
+   *
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $unit

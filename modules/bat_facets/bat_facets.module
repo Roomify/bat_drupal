@@ -54,12 +54,12 @@ function bat_facets_availability($form, &$form_state, $elements) {
   );
 
   if (isset($params['bat_start_date']) && !empty($params['bat_start_date'])) {
-    $arrivalDateTime = new DateTime($params['bat_start_date']);
-    $arrival = $arrivalDateTime->format('Y-m-d');
+    $start_date = new DateTime($params['bat_start_date']);
+    $arrival = $start_date->format('Y-m-d');
   }
   if (isset($params['bat_end_date']) && !empty($params['bat_end_date'])) {
-    $departureDateTime = new DateTime($params['bat_end_date']);
-    $departure = $departureDateTime->format('Y-m-d');
+    $end_date = new DateTime($params['bat_end_date']);
+    $departure = $end_date->format('Y-m-d');
   }
 
   // Create unique ids and selectors for each picker.
@@ -162,8 +162,8 @@ function bat_facets_search_api_query_alter($query) {
           !empty($params['bat_start_date']) &&
           isset($params['bat_end_date']) &&
           !empty($params['bat_end_date'])) {
-        $arrivalDateTime = new DateTime($params['bat_start_date']);
-        $departureDateTime = new DateTime($params['bat_end_date']);
+        $start_date = new DateTime($params['bat_start_date']);
+        $end_date = new DateTime($params['bat_end_date']);
 
         $event_type = $settings->settings['event_type'];
 
@@ -190,13 +190,13 @@ function bat_facets_search_api_query_alter($query) {
          * @TODO on to drupal alter as we are currently doing.
          */
 
-        $response = $calendar->getMatchingUnits($arrivalDateTime, $departureDateTime, $valid_states, $constraints);
+        $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints);
         $valid_unit_ids = array_keys($response->getIncluded());
 
         $context = array(
           'units_before_search' => $unit_ids,
-          'start_date' => $arrivalDateTime,
-          'end_date' => $departureDateTime,
+          'start_date' => $start_date,
+          'end_date' => $end_date,
           'event_type' => $event_type,
           'valid_states' => $valid_states,
         );

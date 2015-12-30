@@ -35,12 +35,14 @@ interface EventInterface {
 
   /**
    * Returns the SndDate object
+   *
    * @return \DateTime
    */
   public function getEndDate();
 
   /**
    * Sets the StartDate
+   *
    * @param \DateTime
    */
   public function setStartDate(\DateTime $start_date);
@@ -189,6 +191,7 @@ interface EventInterface {
    * day of that month
    *
    * @param $date
+   *
    * @return \DateTime
    */
   public function endMonthDate(\DateTime $date);
@@ -197,6 +200,7 @@ interface EventInterface {
   /**
    * Returns TRUE if the date supplied is the first month of the event
    * @param $date
+   *
    * @return bool
    */
   public function isFirstMonth($date);
@@ -204,6 +208,7 @@ interface EventInterface {
   /**
    * Returns TRUE if the date supplied is the first month of the event
    * @param $date
+   *
    * @return bool
    */
   public function isLastMonth($date);

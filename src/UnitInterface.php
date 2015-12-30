@@ -44,7 +44,7 @@ interface UnitInterface {
   public function setConstraints($constraints);
 
   /**
-   *
+   * @return
    */
   public function getConstraints();
 

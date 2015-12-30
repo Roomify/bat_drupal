@@ -657,8 +657,7 @@ function bat_range($start, $end) {
 }
 
 /**
- * Form element validation handler for integer elements greater than or equal 
- * to 0.
+ * Form element validation handler for integer elements greater than or equal to 0.
  */
 function bat_element_validate_integer_zero_positive($element, &$form_state) {
   $value = $element['#value'];

@@ -14,68 +14,100 @@ namespace Drupal\bat;
  */
 class AbstractConstraint implements ConstraintInterface {
 
+  /**
+   * @var DateTime
+   */
   public $start_date;
 
+  /**
+   * @var DateTime
+   */
   public $end_date;
 
+  /**
+   * @var array
+   */
   public $valid_states;
 
+  /**
+   * @var array
+   */
   public $affected_units;
 
+  /**
+   * @var CalendarResponse
+   */
   public $calendar_response;
 
   /**
-	 * {@inheritdoc}
-	 */
+   * @var array
+   */
+  public $units = array();
+
+  /**
+   * {@inheritdoc}
+   */
   public function setStartDate(\DateTime $start_date) {
-  	$this->start_date = $start_date;
+    $this->start_date = $start_date;
   }
 
   /**
-	 * {@inheritdoc}
-	 */
+   * {@inheritdoc}
+   */
   public function getStartDate() {
-  	return $this->start_date;
+    return $this->start_date;
   }
 
   /**
-	 * {@inheritdoc}
-	 */
+   * {@inheritdoc}
+   */
   public function setEndDate(\DateTime $end_date) {
-  	$this->end_date = $end_date;
+    $this->end_date = $end_date;
   }
 
   /**
-	 * {@inheritdoc}
-	 */
+   * {@inheritdoc}
+   */
   public function getEndDate() {
-  	return $this->end_date;
+    return $this->end_date;
   }
 
   /**
-	 * {@inheritdoc}
-	 */
+   * {@inheritdoc}
+   */
   public function setValidStates($valid_states) {
-  	$this->valid_states = $valid_states;
+    $this->valid_states = $valid_states;
   }
 
   /**
-	 * {@inheritdoc}
-	 */
+   * {@inheritdoc}
+   */
   public function getValidStates() {
-  	return $this->valid_states;
+    return $this->valid_states;
   }
 
   /**
-	 * {@inheritdoc}
-	 */
+   * {@inheritdoc}
+   */
   public function getAffectedUnits() {
-  	return $this->affected_units;
+    return $this->affected_units;
   }
 
   /**
-	 * {@inheritdoc}
-	 */
+   * {@inheritdoc}
+   */
+  public function getUnits() {
+    $keyed_units = array();
+    foreach ($this->units as $unit) {
+      $keyed_units[$unit->unit_id] = $unit;
+    }
+
+    return $keyed_units;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function applyConstraint(&$calendar_response) {
     return $this->calendar_response;
   }

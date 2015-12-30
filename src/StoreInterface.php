@@ -22,14 +22,17 @@ interface StoreInterface {
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $unit_ids
+   *
    * @return array
    */
   public function getEventData(\DateTime $start_date, \DateTime $end_date, $unit_ids);
 
   /**
    * Given an event it will save it and return true if successful.
+   *
    * @param \Drupal\bat\Event $event
    * @param $granularity
+   *
    * @return bookean
    */
   public function storeEvent(Event $event, $granularity);

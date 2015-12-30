@@ -29,13 +29,25 @@ class CalendarResponse {
    */
   public $excluded_set;
 
+  /**
+   * @var DateTime
+   */
   public $start_date;
 
+  /**
+   * @var DateTime
+   */
   public $end_date;
 
+  /**
+   * @var array
+   */
   public $valid_states;
 
   /**
+   * @param $start_date
+   * @param $end_date
+   * @param $valid_states
    * @param $included
    * @param $excluded
    */
@@ -116,7 +128,7 @@ class CalendarResponse {
   }
 
   /**
-   *
+   * @param $constraints
    */
   public function applyConstraints($constraints) {
     foreach ($constraints as $constraint) {

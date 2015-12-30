@@ -13,7 +13,7 @@ BAT on its own is a **booking and availability management framework** - much in 
 
 BAT aims to address the following tasks.
 
-- **Define bookable things**. Entities that could represent anything within an application domain that have information associated with them about what *availability state* they find themselves in any given period of time. In addition, you may also need to associate *pricing information* related to the cost of changing the *availability state* a *thing* over a given time (e.g. booking a hotel room for a few nights). 
+- **Define bookable things**. Entities that could represent anything within an application domain that have information associated with them about what *availability state* they find themselves in any given period of time. In addition, you may also need to associate *pricing information* related to the cost of changing the *availability state* a *thing* over a given time (e.g. booking a hotel room for a few nights).
 
 - **Manage availability states**. *Bookable things* will find themselves in various states (e.g. "available to book", "unavailable", "currently in use by Bruce", etc). BAT allows you to define such states and provides both GUI-based tools (e.g. interactive calendars) as well as API-based tools to change such states (because machines want to have fun too).
 
@@ -47,13 +47,13 @@ To display calendars and dates we use the following libraries:
  - Enable all the BAT modules
  - The BAT API module is in a separate project - http://drupal.org/project/bat_api - and you need branch 7.x-2.x
  - Make sure to set the jQuery for the admin theme to at least 1.10 by visiting *admin/config/development/jquery_update*
- 
+
 ### Creating Booking Units
 The first thing you will want to do is create a bookable unit which you can then manage the availability of.
 
 Visit *admin/bat/units/unit-types* to create a unit. Bookable units are basic entities that you can manage the permissions off and add any fields you require.
- 
+
 ### Pricing
 To add price information to your bookable units you will need to:
-- Add a Commerce Price field to your Bookable Unit Entity Type. 
+- Add a Commerce Price field to your Bookable Unit Entity Type.
 - Under *bat/units/unit-types/<yourunittype>* make sure that you have the correct price field selected under the pricing tab.

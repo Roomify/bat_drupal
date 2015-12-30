@@ -15,6 +15,11 @@ use Drupal\bat\Store;
  */
 class Calendar extends AbstractCalendar {
 
+	/**
+	 * @param $units
+	 * @param $store
+	 * @param $default_value
+	 */
   public function __construct($units, $store, $default_value = 0) {
     $this->units = $units;
     $this->store = $store;

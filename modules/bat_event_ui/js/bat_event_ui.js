@@ -87,7 +87,7 @@ Drupal.behaviors.bat_availability = {
           }
           else if (view.name == 'agendaDay') {
             var url_day = Drupal.settings.basePath + '?q=bat/units/unit/' + unit_id + '/day-availability/json/' + moment(view.start).format();
- 
+
             $.ajax({
               url: url_day,
               dataType: 'json',
@@ -98,7 +98,7 @@ Drupal.behaviors.bat_availability = {
           }
           else if (view.name == 'agendaWeek') {
             var url_week = Drupal.settings.basePath + '?q=bat/units/unit/' + unit_id + '/day-availability/json/' + moment(view.start).format() + '/7D';
- 
+
             $.ajax({
               url: url_week,
               dataType: 'json',

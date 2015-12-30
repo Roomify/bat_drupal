@@ -15,8 +15,11 @@ namespace Drupal\bat;
  */
 class Constraint extends AbstractConstraint {
 
-  public function __construct() {
-
+  /**
+   * @param $units
+   */
+  public function __construct($units = array()) {
+    $this->units = $units;
   }
 
 }
