@@ -656,93 +656,6 @@ function bat_range($start, $end) {
   }
 }
 
-function bat_filter_month_form($form, &$form_state, $month, $year, $unit_types = NULL) {
-
-  $form['#attacched']['css'][] = drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css';
-  $form['#attributes']['class'][] = 'bat-management-form bat-filter-month-form';
-
-  $month_options = array(
-    1 => t('January'),
-    2 => t('February'),
-    3 => t('March'),
-    4 => t('April'),
-    5 => t('May'),
-    6 => t('June'),
-    7 => t('July'),
-    8 => t('August'),
-    9 => t('September'),
-    10 => t('October'),
-    11 => t('November'),
-    12 => t('December'),
-  );
-
-  $form['bat_availability_filter_month']['month'] = array(
-    '#title' => t('Month'),
-    '#type' => 'select',
-    '#options' => $month_options,
-    '#default_value' => $month,
-  );
-
-  $year_options = range(date('Y', time()) - 2, date('Y', time()) + 5);
-
-  $form['bat_availability_filter_month']['year'] = array(
-    '#title' => t('Year'),
-    '#type' => 'select',
-    '#options' => $year_options,
-    '#default_value' => $year - date('Y', time()) + 2,
-  );
-
-  $type_options['all'] = t('All types');
-  $unit_types = isset($unit_types) ? $unit_types : bat_unit_get_types();
-  foreach ($unit_types as $unit_type_name => $unit_type) {
-    $type_options[$unit_type_name] = $unit_type->label;
-  }
-
-  $form['bat_availability_filter_month']['type'] = array(
-    '#title' => t('Type'),
-    '#type' => 'select',
-    '#options' => $type_options,
-    '#default_value' => (arg(6) == '') ? 'all' : arg(6),
-  );
-
-  $form['bat_availability_filter_month']['actions'] = array(
-    '#type' => 'container',
-    '#attributes' => array('class' => array('form-actions')),
-    '#weight' => 400,
-  );
-
-  $form['bat_availability_filter_month']['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Filter'),
-  );
-
-  hide($form['bat_availability_filter_month']['actions']['submit']);
-
-  return $form;
-}
-
-/**
- * Submit callback for bat_filter_month_form form.
- *
- * @see bat_filter_month_form()
- */
-function bat_filter_month_form_submit(&$form, &$form_state) {
-  $year = $form_state['values']['year'] + date('Y', time()) - 2;
-  $month = $form_state['values']['month'];
-  $type = $form_state['values']['type'];
-
-  $address = 'admin/bat/units/' . arg(3) . '/' . $year . '/' . $month;
-  if ($type != 'all') {
-    $address .= '/' . $type;
-  }
-
-  if (arg(7) != '') {
-    $address .= ($type == 'all') ? '/all/' . arg(7) : $type . arg(7);
-  }
-
-  $form_state['redirect'] = $address;
-}
-
 /**
  * Form element validation handler for integer elements greater than or equal 
  * to 0.
@@ -751,20 +664,5 @@ function bat_element_validate_integer_zero_positive($element, &$form_state) {
   $value = $element['#value'];
   if ($value !== '' && (!is_numeric($value) || intval($value) != $value || $value < 0)) {
     form_error($element, t('%name must be a positive integer.', array('%name' => $element['#title'])));
-  }
-}
-
-/**
- * Form element validation handler for integer elements positive less than 100.
- */
-function bat_element_validate_integer_positive_less_than_100($element, &$form_state) {
-  $value = $element['#value'];
-  if ($value !== '' && (!is_numeric($value) || intval($value) != $value || $value < 0 || $value > 100)) {
-    if ($value < 0) {
-      form_error($element, t('%name must be greater than 0.', array('%name' => $element['#title'])));
-    }
-    elseif ($value > 100) {
-      form_error($element, t('%name must be less than 100.', array('%name' => $element['#title'])));
-    }
   }
 }

@@ -699,7 +699,10 @@ class BatUnit extends Entity {
     return array('path' => 'unit/' . $this->unit_id);
   }
 
-
+  /**
+   * @param $event_type
+   * @return
+   */
   public function getDefaultValue($event_type) {
     $unit_type = bat_unit_type_load($this->type);
 
@@ -726,6 +729,15 @@ class BatUnit extends Entity {
         return FALSE;
       }
     }
+  }
+
+  /**
+   * @return
+   */
+  public function getConstraints() {
+    $constraints = module_invoke_all('bat_unit_constraints', $this);
+
+    return $constraints;
   }
 
 }

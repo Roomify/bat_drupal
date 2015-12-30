@@ -57,10 +57,10 @@ abstract class AbstractCalendar implements CalendarInterface {
         $added = FALSE;
         watchdog('BAT', t('Event with @id, start date @start_date and end date @end_date was not added.', array('@id' => $event->value, '@start_date' => $event->startDateToString(), '@end_date' => $event->endDateToString())));
         break;
-      } else {
+      }
+      else {
         watchdog('BAT', t('Event with @id, start date @start_date and end date @end_date added.', array('@id' => $event->value, '@start_date' => $event->startDateToString(), '@end_date' => $event->endDateToString())));
       }
-
     }
 
     return $added;
@@ -76,7 +76,6 @@ abstract class AbstractCalendar implements CalendarInterface {
    * @return array
    */
   public function getEvents(\DateTime $start_date, \DateTime $end_date) {
-
     $events = array();
 
     // We first get events in the itemized format
@@ -111,14 +110,16 @@ abstract class AbstractCalendar implements CalendarInterface {
   /**
    * Given a date range and a set of valid states it will return then units that are withing that
    * set of valid states.
+   *
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $valid_states
+   *
    * @return CalendarResponse
    */
   public function getMatchingUnits(\DateTime $start_date, \DateTime $end_date, $valid_states, $constraints) {
     $units = array();
-    $response = new CalendarResponse();
+    $response = new CalendarResponse($start_date, $end_date, $valid_states);
     $keyed_units = $this->keyUnitsById();
 
     $states = $this->getStates($start_date, $end_date);
@@ -130,19 +131,22 @@ abstract class AbstractCalendar implements CalendarInterface {
       if (count($remaining_states) == 0 ) {
         // Unit is in a state that is within the set of valid states so add to result set
         $units[$unit] = $unit;
-        $response->addMatch($unit, CalendarResponse::VALID_STATE);
-      } else {
-        $response->addMiss($unit, CalendarResponse::INVALID_STATE);
+        $response->addMatch($keyed_units[$unit], CalendarResponse::VALID_STATE);
       }
+      else {
+        $response->addMiss($keyed_units[$unit], CalendarResponse::INVALID_STATE);
+      }
+
+      $unit_constraints = $keyed_units[$unit]->getConstraints();
+      $response->applyConstraints($unit_constraints);
     }
 
-    foreach ($constraints as $constraint) {
-      $constraint->applyConstraint($response);
-    }
-    
-    return $units;
+    $response->applyConstraints($constraints);
+
+    // provide response with global constraints and apply those
+
+    return $response;
   }
-
 
   /**
    * Provides an itemized array of events keyed by the unit_id and divided by day,
@@ -151,6 +155,7 @@ abstract class AbstractCalendar implements CalendarInterface {
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $store
+   *
    * @return array
    */
   public function getEventsItemized(\DateTime $start_date, \DateTime $end_date) {
@@ -273,6 +278,7 @@ abstract class AbstractCalendar implements CalendarInterface {
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $events
+   *
    * @return array
    */
   public function getEventsNormalized(\DateTime $start_date, \DateTime $end_date, $events) {
@@ -428,7 +434,6 @@ abstract class AbstractCalendar implements CalendarInterface {
         }
       }
     }
-
   }
 
   /**
@@ -456,6 +461,7 @@ abstract class AbstractCalendar implements CalendarInterface {
     foreach ($this->units as $unit) {
       $keyed_units[$unit->getUnitId()] = $unit;
     }
+
     return $keyed_units;
   }
 

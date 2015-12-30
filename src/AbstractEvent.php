@@ -122,8 +122,6 @@ abstract class AbstractEvent implements EventInterface {
     return $this->end_date->format('Y-m-d H:i:s');
   }
 
-
-
   /**
    * Set the end date.
    *
@@ -232,9 +230,9 @@ abstract class AbstractEvent implements EventInterface {
   public function isFirstMonth($date) {
     if ($date->format("n") == $this->startMonth() && $date->format("Y") == $this->startYear()) {
       return TRUE;
-    } else {
-      return FALSE;
     }
+
+    return FALSE;
   }
 
   /**
@@ -243,26 +241,25 @@ abstract class AbstractEvent implements EventInterface {
   public function isLastMonth($date) {
     if ($date->format("n") == $this->endMonth() && $date->format("Y") == $this->endYear()) {
       return TRUE;
-    } else {
-      return FALSE;
     }
+
+    return FALSE;
   }
 
   public function isFirstDay($date) {
     if (($date->format('j') == $this->startDay()) && ($this->isFirstMonth($date))) {
       return TRUE;
-    } else {
-      return FALSE;
     }
+
+    return FALSE;
   }
 
   public function isFirstHour($date) {
     if ($date->format('G') == $this->startHour() && $this->isFirstDay($date)) {
       return TRUE;
-    } else {
-      return FALSE;
     }
 
+    return FALSE;
   }
 
   /**
@@ -272,6 +269,7 @@ abstract class AbstractEvent implements EventInterface {
     if ($this->startYear() == $this->endYear()) {
       return TRUE;
     }
+
     return FALSE;
   }
 
@@ -282,6 +280,7 @@ abstract class AbstractEvent implements EventInterface {
     if (($this->startMonth() == $this->endMonth()) && $this->isSameYear()) {
       return TRUE;
     }
+
     return FALSE;
   }
 
@@ -292,6 +291,7 @@ abstract class AbstractEvent implements EventInterface {
     if (($this->startDay() == $this->endDay()) && $this->isSameMonth()) {
       return TRUE;
     }
+
     return FALSE;
   }
 
@@ -302,9 +302,9 @@ abstract class AbstractEvent implements EventInterface {
     if (($this->startHour() == $this->endHour()) && $this->sameDay()) {
       return TRUE;
     }
+
     return FALSE;
   }
-
 
   /**
    * {@inheritdoc}
@@ -351,6 +351,7 @@ abstract class AbstractEvent implements EventInterface {
     if ($our_start < $t1) {
       $early = TRUE;
     }
+
     return $early;
   }
 
@@ -368,6 +369,7 @@ abstract class AbstractEvent implements EventInterface {
     if ($our_end > $t1) {
       $later = TRUE;
     }
+
     return $later;
   }
 
@@ -410,7 +412,8 @@ abstract class AbstractEvent implements EventInterface {
         $itemized[BAT_DAY][$sy][$sm]['d' . $sd] = -1;
         $itemized[BAT_HOUR][$sy][$sm]['d' . $sd] = $itemized_start[BAT_HOUR][$sy][$sm]['d' . $sd];
         $itemized[BAT_MINUTE][$sy][$sm]['d' . $sd] = $itemized_start[BAT_MINUTE][$sy][$sm]['d' . $sd];
-      } else {
+      }
+      else {
         // Just set an empty hour and minute
         $itemized[BAT_HOUR][$sy][$sm]['d' . $sd] = array();
         $itemized[BAT_MINUTE][$sy][$sm]['d' . $sd] = array();
@@ -450,7 +453,8 @@ abstract class AbstractEvent implements EventInterface {
         // Not a real hour - leave as is and move on
         $counter = 0;
         $start_minute = 0;
-      } elseif ($counter == 60 && $start_minute == 0) {
+      }
+      elseif ($counter == 60 && $start_minute == 0) {
         // Did a real whole hour so initialize the hour
         $itemized[BAT_HOUR][$minute->format('Y')][$minute->format('n')]['d' . $minute->format('j')]['h' . $minute->format('G')] = $this->getValue();
         // We have a whole hour so get rid of the minute info
@@ -491,7 +495,8 @@ abstract class AbstractEvent implements EventInterface {
         // If we are in the same month the end date is the end date of the event
         if ($this->isSameMonth()) {
           $dayrange = new \DatePeriod($this->start_date, $dayinterval, new \DateTime($this->end_date->format("Y-n-j 23:59:59")));
-        } else { // alternatively it is the last day of the start month
+        }
+        else { // alternatively it is the last day of the start month
           $dayrange = new \DatePeriod($this->start_date, $dayinterval, $this->endMonthDate($this->start_date));
         }
         foreach ($dayrange as $day) {
@@ -517,7 +522,7 @@ abstract class AbstractEvent implements EventInterface {
     }
 
     if ($granularity == BAT_HOURLY) {
-      //Add granural info in
+      // Add granural info in
       $itemized = $this->createDayGranural($itemized);
     }
 

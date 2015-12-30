@@ -29,6 +29,6 @@ class Event extends AbstractEvent {
     $this->start_date = clone($start_date);
     $this->end_date = clone($end_date);
     $this->value = $value;
-
   }
+
 }

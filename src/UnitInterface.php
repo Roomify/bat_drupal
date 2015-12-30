@@ -37,4 +37,15 @@ interface UnitInterface {
    * @param $default_value
    */
   public function setDefaultValue($default_value);
+
+  /**
+   * @param $constraints
+   */
+  public function setConstraints($constraints);
+
+  /**
+   *
+   */
+  public function getConstraints();
+
 }

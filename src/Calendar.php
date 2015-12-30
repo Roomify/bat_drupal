@@ -20,4 +20,5 @@ class Calendar extends AbstractCalendar {
     $this->store = $store;
     $this->default_value = $default_value;
   }
+
 }

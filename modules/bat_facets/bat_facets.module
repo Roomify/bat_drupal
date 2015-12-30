@@ -176,22 +176,22 @@ function bat_facets_search_api_query_alter($query) {
         $units = array();
         foreach ($unit_ids as $id => $name) {
           $bat_unit = bat_unit_load($id);
-          $unit = new Unit($id, $bat_unit->getDefaultValue($event_type));
-
+          $unit = new Unit($id, $bat_unit->getDefaultValue($event_type), $bat_unit->getConstraints());
           $units[] = $unit;
         }
 
-        $rc = new Calendar($units, $state_store);
+        $calendar = new Calendar($units, $state_store);
+
+        $constraints = module_invoke_all('bat_global_constraints', $units);
 
         /**
          * @TODO 1. We should add a hook that allows modules to insert constraints that are then passed to the getMatchingUnits fuction
-         * @TODO 2. Valid states should be expressed as a constraint
          * @TODO 3. The response from valid unit ids needs to be a CalendarResponse, we then extract the valid unit ids and pass it
          * @TODO on to drupal alter as we are currently doing.
          */
 
-
-        $valid_unit_ids = $rc->getMatchingUnits($arrivalDateTime, $departureDateTime, $valid_states);
+        $response = $calendar->getMatchingUnits($arrivalDateTime, $departureDateTime, $valid_states, $constraints);
+        $valid_unit_ids = array_keys($response->getIncluded());
 
         $context = array(
           'units_before_search' => $unit_ids,

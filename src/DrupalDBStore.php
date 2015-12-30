@@ -17,16 +17,28 @@ class DrupalDBStore extends Store {
   const BAT_EVENT = 'event';
   const BAT_STATE = 'state';
 
-  // The table that holds day data
+  /**
+   * The table that holds day data.
+   * @var
+   */
   public $day_table;
 
-  // The table that holds hour data
+  /**
+   * The table that holds hour data.
+   * @var
+   */
   public $hour_table;
 
-  // The table that holds minute data
+  /**
+   * The table that holds minute data.
+   * @var
+   */
   public $minute_table;
 
-  // The event type we are dealing with
+  /**
+   * The event type we are dealing with.
+   * @var
+   */
   public $event_type;
 
 
@@ -61,6 +73,7 @@ class DrupalDBStore extends Store {
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $unit_ids
+   *
    * @return array
    */
   public function getEventData(\DateTime $start_date, \DateTime $end_date, $unit_ids) {
@@ -97,7 +110,8 @@ class DrupalDBStore extends Store {
       for ($i = 0; $i<=59; $i++) {
         if ($i <= 9) {
           $index = 'm0'.$i;
-        } else {
+        }
+        else {
           $index = 'm'.$i;
         }
         $db_events[$data['unit_id']][Event::BAT_MINUTE][$data['year']][$data['month']][$data['day']][$data['hour']][$index] = $data[$index];
@@ -110,14 +124,14 @@ class DrupalDBStore extends Store {
   /**
    * @param \Drupal\bat\Event $event
    * @param $granularity
+   *
    * @return bool
    */
-  public function storeEvent(Event $event, $granularity = BAT_HOURLY){
+  public function storeEvent(Event $event, $granularity = BAT_HOURLY) {
     $stored = TRUE;
     $transaction = db_transaction();
 
     try {
-
       // Itemize an event so we can save it
       $itemized = $event->itemizeEvent($granularity);
 
@@ -176,11 +190,13 @@ class DrupalDBStore extends Store {
           }
         }
       }
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $saved = FALSE;
       $transaction->rollback();
       watchdog_exception('BAT Event Save Exception', $e);
     }
+
     return $stored;
   }
 
@@ -188,9 +204,10 @@ class DrupalDBStore extends Store {
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $unit_ids
+   *
    * @return array
    */
-  public function buildQueries(\DateTime $start_date, \DateTime $end_date, $unit_ids){
+  public function buildQueries(\DateTime $start_date, \DateTime $end_date, $unit_ids) {
     $queries = array();
 
     $queries[Event::BAT_DAY] = 'SELECT * FROM ' . $this->day_table . ' WHERE ';
@@ -226,8 +243,8 @@ class DrupalDBStore extends Store {
       }
       $year_count++;
     }
-    // Add parameters to each query
 
+    // Add parameters to each query
     $queries[Event::BAT_DAY] .= $query_parameters;
     $queries[Event::BAT_HOUR] .= $query_parameters;
     $queries[Event::BAT_MINUTE] .= $query_parameters;
@@ -238,6 +255,5 @@ class DrupalDBStore extends Store {
     $queries[Event::BAT_MINUTE] .= ' ORDER BY unit_id, year, month, day, hour';
 
     return $queries;
-
   }
 }
