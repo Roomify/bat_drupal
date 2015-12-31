@@ -24,5 +24,3 @@ BAT aims to address the following tasks.
 
 # Installation
 
-## Dependencies
-
