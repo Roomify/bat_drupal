@@ -5,7 +5,7 @@
  * Interface EventInterface
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
 /**
  * The basic BAT event interface.

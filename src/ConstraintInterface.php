@@ -5,7 +5,7 @@
  * Interface ConstraintInterface
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
 /**
  * The Constraint Interface

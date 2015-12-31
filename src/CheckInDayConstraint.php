@@ -5,9 +5,9 @@
  * Class CheckInDayConstraint
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
-use Drupal\bat\Constraint;
+use Roomify\bat\Constraint;
 
 /**
  *

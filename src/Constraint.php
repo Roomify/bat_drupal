@@ -5,7 +5,7 @@
  * Class Constraint
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
 
 /**

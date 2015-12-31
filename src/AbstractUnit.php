@@ -5,9 +5,9 @@
  * Class AbstractUnit
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
-use Drupal\bat\UnitInterface;
+use Roomify\bat\UnitInterface;
 
 abstract class AbstractUnit implements UnitInterface {
 

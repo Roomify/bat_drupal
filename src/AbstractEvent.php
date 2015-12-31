@@ -5,7 +5,7 @@
  * Class AbstractEvent
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
 const BAT_DAY = 'bat_day';
 const BAT_HOUR = 'bat_hour';
@@ -530,9 +530,9 @@ abstract class AbstractEvent implements EventInterface {
   }
 
   /**
-   * Saves an event to whatever Drupal tables are defined in the store array
+   * Saves an event to whatever Roomify tables are defined in the store array
    *
-   * @param \Drupal\Bat\Store $store
+   * @param \Roomify\Bat\Store $store
    * @param string $granularity
    *
    * @throws \Exception

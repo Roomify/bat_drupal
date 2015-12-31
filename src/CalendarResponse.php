@@ -5,10 +5,10 @@
  * Class CalendarResponse
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
-use Drupal\bat\Unit;
-use Drupal\bat\Constraint;
+use Roomify\bat\Unit;
+use Roomify\bat\Constraint;
 
 /**
  * A CalendarResponse contains the units that are matched or missed following

@@ -5,7 +5,7 @@
  * Class AbstractConstraint
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
 /**
  * A constraint acts as a filter that can be applied to a Calendar Response to

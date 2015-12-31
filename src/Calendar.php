@@ -5,9 +5,9 @@
  * Class Calendar
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
-use Drupal\bat\Store;
+use Roomify\bat\Store;
 
 /**
  * Handles querying and updating the availability information

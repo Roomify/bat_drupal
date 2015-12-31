@@ -5,13 +5,13 @@
  * Interface StoreInterface
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
-use Drupal\bat\Event;
+use Roomify\bat\Event;
 
 /**
  * A store is a place where event data is held. The purpose of separating these
- * classes is so as to isolate (currently) Drupal-specific code and to allow for
+ * classes is so as to isolate (currently) Roomify-specific code and to allow for
  * other stores to be introduced.
  */
 interface StoreInterface {
@@ -30,7 +30,7 @@ interface StoreInterface {
   /**
    * Given an event it will save it and return true if successful.
    *
-   * @param \Drupal\bat\Event $event
+   * @param \Roomify\bat\Event $event
    * @param $granularity
    *
    * @return bookean

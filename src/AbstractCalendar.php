@@ -5,11 +5,11 @@
  * Class AbstractCalendar
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
-use Drupal\bat\Event;
-use Drupal\bat\CalendarInterface;
-use Drupal\bat\CalendarResponse;
+use Roomify\bat\Event;
+use Roomify\bat\CalendarInterface;
+use Roomify\bat\CalendarResponse;
 
 /**
  * Handles querying and updating state stores

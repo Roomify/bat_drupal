@@ -5,7 +5,7 @@
  * Interface CalendarInterface
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
 /**
  * Handles querying and updating the availability information

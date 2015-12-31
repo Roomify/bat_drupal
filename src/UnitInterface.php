@@ -5,7 +5,7 @@
  * Interface UnitInterface
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
 /**
  * The basic BAT unit interface.

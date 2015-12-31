@@ -5,9 +5,9 @@
  * Class Unit
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
-use Drupal\bat\AbstractUnit;
+use Roomify\bat\AbstractUnit;
 
 /**
  * The basic BAT unit class.

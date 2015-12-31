@@ -5,7 +5,7 @@
  * Class Event
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
 class Event extends AbstractEvent {
 

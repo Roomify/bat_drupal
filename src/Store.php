@@ -5,9 +5,9 @@
  * Class Store
  */
 
-namespace Drupal\bat;
+namespace Roomify\bat;
 
-use Drupal\bat\StoreInterface;
+use Roomify\bat\StoreInterface;
 
 /**
  * The basic Store class
