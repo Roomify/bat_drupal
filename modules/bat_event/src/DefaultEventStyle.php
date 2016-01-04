@@ -5,7 +5,7 @@
  * Class DefaultEventStyle
  */
 
-use Drupal\bat\Event;
+use Roomify\Bat\Event\Event;
 use Drupal\bat_event\EventStyle;
 use Drupal\bat_event\AbstractEventStyle;
 

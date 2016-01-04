@@ -7,7 +7,7 @@
 
 namespace Drupal\bat_event;
 
-use Drupal\bat\Event;
+use Roomify\Bat\Event\Event;
 use Drupal\bat_event\EventStyle;
 
 class EventFormatter {

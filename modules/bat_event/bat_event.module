@@ -6,10 +6,10 @@
  * Unit ID and Order ID.
  */
 
-use Drupal\bat\Event;
-use Drupal\bat\Calendar;
-use Drupal\bat\DrupalDBStore;
-use Drupal\bat\Unit;
+use Roomify\Bat\Event\Event;
+use Roomify\Bat\Calendar\Calendar;
+use Roomify\Bat\Store\DrupalDBStore;
+use Roomify\Bat\Unit\Unit;
 
 /**
  * Implements hook_menu().

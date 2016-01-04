@@ -4,10 +4,10 @@
  * @file
  */
 
-use Drupal\bat\Calendar;
-use Drupal\bat\Event;
-use Drupal\bat\DrupalDBStore;
-use Drupal\bat\Unit;
+use Roomify\Bat\Calendar\Calendar;
+use Roomify\Bat\Event\Event;
+use Roomify\Bat\Store\DrupalDBStore;
+use Roomify\Bat\Unit\Unit;
 
 /**
  * Implements hook_ctools_plugin_api().
