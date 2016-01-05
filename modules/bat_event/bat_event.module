@@ -1177,10 +1177,11 @@ class BatEventTypeController extends EntityAPIControllerExportable {
 
       // Create a field of type 'Entity Reference' to reference a Bat Unit.
       bat_event_type_add_unit_reference($entity);
-
-      if ($entity->fixed_event_states) {
-        // Create a field of type 'Bat Event State Reference' to reference an Event State.
-        bat_event_type_add_event_state_reference($entity);
+      if (isset($entity->fixed_event_states)) {
+        if ($entity->fixed_event_states) {
+          // Create a field of type 'Bat Event State Reference' to reference an Event State.
+          bat_event_type_add_event_state_reference($entity);
+        }
       }
     }
 
