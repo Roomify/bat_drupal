@@ -90,6 +90,34 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
     '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granularity : 'daily',
   );
 
+
+  if (!isset($event_type->is_new) && $event_type->fixed_event_states == 0) {
+    $fields_options = array();
+
+    $fields = field_info_instances('bat_event', $event_type->type);
+
+    foreach ($fields as $field) {
+      $field_info = field_info_field($field['field_name']);
+      $fields_options[$field['field_name']] = $field['field_name'];
+    }
+
+    $form['events'] = array(
+      '#type' => 'fieldset',
+      '#group' => 'additional_settings',
+      '#title' => t('Events'),
+      '#tree' => TRUE,
+      '#weight' => 80,
+    );
+
+    $form['events'][$event_type->type] = array(
+      '#type' => 'select',
+      '#title' => t('Select your default @event field', array('@event' => $event_type->label)),
+      '#options' => $fields_options,
+      '#default_value' => isset($event_type->data[$event_type->type]) ? $event_type->data[$event_type->type] : NULL,
+      '#empty_option' => t('- Select a field -'),
+    );
+  }
+
   $form['actions'] = array(
     '#type' => 'actions',
     '#tree' => FALSE,
@@ -108,10 +136,18 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
  * Form API submit callback for the event type form.
  */
 function bat_event_type_form_submit(&$form, &$form_state) {
+
+  if (isset($form_state['values']['events'][$form_state['values']['type']])) {
+    foreach ($form_state['values']['events'] as $event => $field) {
+      $form_state['bat_event_type']->data[$event] = $field;
+    }
+  }
+
   $event_type = entity_ui_form_submit_build_entity($form, $form_state);
   // Save and go back.
   $event_type->save();
   $form_state['redirect'] = 'admin/bat/events/event-types';
+
 }
 
 /**
