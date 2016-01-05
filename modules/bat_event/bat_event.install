@@ -7,20 +7,6 @@
  */
 
 /**
- * Implements hook_install().
- */
-function bat_event_install() {
-  // Create an availability event type.
-  bat_event_create_availability_event_type();
-
-  // Create a pricing event type.
-  bat_event_create_pricing_event_type();
-
-  // Create default event states.
-  bat_event_create_standard_event_states();
-}
-
-/**
  * Implements hook_uninstall().
  */
 function bat_event_uninstall() {
@@ -261,53 +247,4 @@ function bat_event_schema() {
   );
 
   return $schema;
-}
-
-/**
- * Creates the default Availability event type.
- */
-function bat_event_create_availability_event_type() {
-  $event = new BatEventType(array(
-    'label' => 'Availability Event',
-    'type' => 'availability_event',
-    'fixed_event_states' => 1,
-  ));
-  bat_event_type_save($event);
-}
-
-/**
- * Creates the default Pricing event type.
- */
-function bat_event_create_pricing_event_type() {
-  $event = new BatEventType(array(
-    'label' => 'Pricing Event',
-    'type' => 'pricing_event',
-  ));
-  bat_event_type_save($event);
-}
-
-/**
- * Creates the default event states.
- */
-function bat_event_create_standard_event_states() {
-  $not_available_state = array(
-    'id' => BAT_NOT_AVAILABLE,
-    'event_type' => 'availability_event',
-    'label' => 'Not Available',
-    'color' => '#CC2727',
-    'calendar_label' => 'N/A',
-    'locked' => 1,
-  );
-  drupal_write_record('bat_event_state', $not_available_state);
-
-  $available_state = array(
-    'id' => BAT_AVAILABLE,
-    'event_type' => 'availability_event',
-    'label' => 'Available',
-    'color' => '#8BA175',
-    'calendar_label' => 'AV',
-    'locked' => 1,
-    'default' => 1,
-  );
-  drupal_write_record('bat_event_state', $available_state);
 }

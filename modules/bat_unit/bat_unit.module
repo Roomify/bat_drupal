@@ -706,7 +706,10 @@ class BatUnit extends Entity {
   public function getDefaultValue($event_type) {
     $unit_type = bat_unit_type_load($this->type);
 
-    $field = $unit_type->data[$event_type];
+    $field = '';
+    if (isset($unit_type->data[$event_type])) {
+      $field = $unit_type->data[$event_type];
+    }
     if ($field == '') {
       return FALSE;
     }
