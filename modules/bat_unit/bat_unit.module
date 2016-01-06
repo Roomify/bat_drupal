@@ -7,19 +7,6 @@
  */
 
 /**
- * Defining some unit availability states that will be used throughout.
- */
-define ('BAT_NOT_AVAILABLE', 1);
-define ('BAT_AVAILABLE', 2);
-
-
-/**
- * Defining responses for Calendar Updated.
- */
-define ('BAT_BLOCKED', 100);
-define ('BAT_UPDATED', 200);
-
-/**
  * Implements hook_entity_info().
  */
 function bat_unit_entity_info() {
