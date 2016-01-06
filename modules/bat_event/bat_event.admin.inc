@@ -254,6 +254,11 @@ function bat_event_edit_form($form, &$form_state, $event) {
   $form_state['bat_event'] = $event;
   field_attach_form('bat_event', $event, $form, $form_state);
 
+  isset($form['event_unit_reference']['#language']) ? $language = $form['event_unit_reference']['#language'] : $language = LANGUAGE_NONE;
+
+  // The unit reference value should be mandatory.
+  $form['event_unit_reference'][$language][0]['target_id']['#required'] = TRUE;
+
   // Set an #ajax callback for start/end date elements for edited events.
   if (is_numeric($event->event_id)) {
     $form['bat_date_range']['bat_start_date']['#ajax'] = array(
