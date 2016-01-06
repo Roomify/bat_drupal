@@ -9,14 +9,9 @@
 /**
  * Defining some unit availability states that will be used throughout.
  */
-define ('BAT_NOT_AVAILABLE', 0);
-define ('BAT_AVAILABLE', 1);
-define ('BAT_ON_REQUEST', 2);
-define ('BAT_ANON_BOOKED', 3);
+define ('BAT_NOT_AVAILABLE', 1);
+define ('BAT_AVAILABLE', 2);
 
-define ('BAT_HOURLY_BOOKED', 5);
-
-define ('BAT_UNCONFIRMED_BOOKINGS', -1);
 
 /**
  * Defining responses for Calendar Updated.
@@ -573,13 +568,16 @@ function bat_unit_form_bat_unit_type_operation_form_alter(&$form, &$form_state, 
  * @return array
  *   Array of available unit states keyed by id.
  */
-function bat_unit_state_options() {
-  return array(
-    BAT_NOT_AVAILABLE => t('Unavailable'),
-    BAT_AVAILABLE => t('Available'),
-    BAT_ON_REQUEST => t('On Request'),
-    BAT_ANON_BOOKED => t('Anonymous Booking'),
-  );
+function bat_unit_state_options($event_type = NULL) {
+  $event_states = array();
+
+  $states = bat_event_get_states($event_type);
+
+  foreach ($states as $event_state) {
+    $event_states[$event_state['id']] = t($event_state['label']);
+  }
+
+  return $event_states;
 }
 
 /**
@@ -613,7 +611,7 @@ function bat_unit_unit_type_new() {
  * @throws \Exception
  * @throws \FieldException
  */
-function bat_unit_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = false, $calculation = false, $display = array()) {
+function bat_unit_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = FALSE, $calculation = FALSE, $display = array()) {
 
   $field = field_info_field($field_name);
   $instance = field_info_instance($entity_type, $field_name, $bundle);
@@ -699,6 +697,47 @@ class BatUnit extends Entity {
    */
   protected function defaultUri() {
     return array('path' => 'unit/' . $this->unit_id);
+  }
+
+  /**
+   * @param $event_type
+   * @return
+   */
+  public function getDefaultValue($event_type) {
+    $unit_type = bat_unit_type_load($this->type);
+
+    $field = $unit_type->data[$event_type];
+    if ($field == '') {
+      return FALSE;
+    }
+    else {
+      $field_info = field_info_field($field);
+      $values = field_get_items('bat_unit', $this, $field);
+
+      if (!empty($values)) {
+        if ($field_info['type'] == 'bat_event_state_reference') {
+          return $values[0]['state_id'];
+        }
+        elseif ($field_info['type'] == 'commerce_price') {
+          return $values[0]['amount'];
+        }
+        elseif ($field_info['type'] == 'text') {
+          return $values[0]['value'];
+        }
+      }
+      else {
+        return FALSE;
+      }
+    }
+  }
+
+  /**
+   * @return
+   */
+  public function getConstraints() {
+    $constraints = module_invoke_all('bat_unit_constraints', $this);
+
+    return $constraints;
   }
 
 }

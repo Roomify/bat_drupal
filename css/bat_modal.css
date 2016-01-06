@@ -1,4 +1,4 @@
-/* When modals are enabled, add hover effect to calendar */
+/* When modals are enabled, add hover effect to calendar. */
 .fc-event:hover {
   cursor: pointer;
 }
@@ -7,7 +7,7 @@
   background: rgba(230,230,230, 0.2);
 }
 
-/* Make modals responsive */
+/* Make modals responsive. */
 .page-admin-bat #modalContent,
 .page-admin-bat #modalContent .ctools-modal-content,
 .page-admin-bat #modalContent .ctools-modal-content .modal-content {
@@ -80,7 +80,7 @@
   margin-right: 0;
 }
 
-/* Override unit form layouts when they appear inside CTools modals */
+/* Override unit form layouts when they appear inside CTools modals. */
 .page-admin-bat .modal-content .bat-management-form fieldset,
 .page-admin-bat .modal-content .bat-management-form .form-wrapper {
   float: none !important;

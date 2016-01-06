@@ -7,33 +7,6 @@
  */
 
 
-define('BAT_ADD', 'add');
-define('BAT_ADD_DAILY', 'add-daily');
-define('BAT_SUB', 'sub');
-define('BAT_SUB_DAILY', 'sub-daily');
-define('BAT_REPLACE', 'replace');
-define('BAT_INCREASE', 'increase');
-define('BAT_DECREASE', 'decrease');
-define('BAT_DYNAMIC_MODIFIER', 'dynamic_modifier');
-
-define('BAT_ACCESS_ALLOW', 'allow');
-define('BAT_ACCESS_DENY', 'deny');
-define('BAT_ACCESS_IGNORE', NULL);
-
-define('BAT_THIS_PAGE', 'this');
-define('BAT_ALL_PAGES', 'all');
-define('BAT_NONE', 'none');
-
-define('BAT_AVAILABILITY_FAILURE', 1);
-define('BAT_NO_MATCH', 2);
-define('BAT_PER_TYPE', 'bat_per_type');
-define('BAT_INDIVIDUAL', 'bat_individual');
-
-define('BAT_OPTION_OPTIONAL', 'optional');
-define('BAT_OPTION_MANDATORY', 'mandatory');
-define('BAT_OPTION_ONREQUEST', 'on_request');
-
-
 /**
  * Implements hook_permission().
  */
@@ -41,7 +14,7 @@ function bat_permission() {
   $permissions = array(
     'configure BAT settings' => array(
       'title' => t('Configure BAT'),
-      'description' => t('Allows users to manage site-wide BAT configurations.'),
+      'description' => t('Allows users to manage site-wide BAT configuration settings.'),
       'restrict access' => TRUE,
     ),
   );
@@ -50,205 +23,7 @@ function bat_permission() {
 }
 
 /**
- * Implements hook_libraries_info().
- */
-function bat_libraries_info() {
-  $libraries['moment'] = array(
-    'name' => 'Moment',
-    'vendor url' => 'http://momentjs.com',
-    'download url' => 'http://momentjs.com/downloads/moment.min.js',
-    'version arguments' => array(
-      'file' => 'moment.min.js',
-      // 2.10.6
-      'pattern' => '/(\d+\.\d+\.\d)/',
-    ),
-    'files' => array(
-      'js' => array(
-        'moment.min.js',
-      ),
-    ),
-    'variants' => array(
-      'minified' => array(
-        'files' => array(
-          'js' => array(
-            'moment.min.js',
-          ),
-        ),
-      ),
-      'source' => array(
-        'files' => array(
-          'js' => array(
-            'moment.js',
-          ),
-        ),
-      ),
-    ),
-  );
-
-  $libraries['fullcalendar'] = array(
-    'name' => 'Full Calendar',
-    'vendor url' => 'http://fullcalendar.io',
-    'download url' => 'https://github.com/arshaw/fullcalendar/releases/download/v2.5.0/fullcalendar-2.5.0.zip',
-    'version arguments' => array(
-      'file' => 'fullcalendar.js',
-      // 2.5.0
-      'pattern' => '/v(\d+\.\d+\.\d)/',
-      'lines' => 3,
-    ),
-    'files' => array(
-      'js' => array(
-        'fullcalendar.js',
-        'gcal.js',
-      ),
-      'css' => array(
-        'fullcalendar.css',
-      ),
-    ),
-    'variants' => array(
-      'minified' => array(
-        'files' => array(
-          'js' => array(
-            'fullcalendar.min.js',
-            'gcal.js',
-          ),
-          'css' => array(
-            'fullcalendar.min.css',
-          ),
-        ),
-        'dependencies' => array('moment (>=2.10.6)'),
-      ),
-      'source' => array(
-        'files' => array(
-          'js' => array(
-            'fullcalendar.js',
-            'gcal.js',
-          ),
-          'css' => array(
-            'fullcalendar.css',
-          ),
-        ),
-        'dependencies' => array('moment (>=2.10.6)'),
-      ),
-    ),
-  );
-
-  $libraries['fullcalendar-scheduler'] = array(
-    'name' => 'Fullcalendar Scheduler',
-    'vendor url' => 'http://fullcalendar.io',
-    'download url' => 'https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.1.0/fullcalendar-scheduler-1.1.0.zip',
-    'version arguments' => array(
-      'file' => 'scheduler.min.js',
-      // 1.1.0
-      'pattern' => '/(\d+\.\d+\.\d)/',
-    ),
-    'files' => array(
-      'js' => array(
-        'scheduler.min.js',
-      ),
-    ),
-    'variants' => array(
-      'minified' => array(
-        'files' => array(
-          'js' => array(
-            'scheduler.min.js',
-          ),
-          'css' => array(
-            'scheduler.min.css',
-          ),
-        ),
-        'dependencies' => array('moment (>=2.10.6)', 'fullcalendar (>=2.5.0)'),
-      ),
-      'source' => array(
-        'files' => array(
-          'js' => array(
-            'scheduler.js',
-          ),
-          'css' => array(
-            'scheduler.css',
-          ),
-        ),
-        'dependencies' => array('moment (>=2.10.6)', 'fullcalendar (>=2.5.0)'),
-      ),
-    ),
-  );
-
-  return $libraries;
-}
-
-/**
- * Checks if the FullCalendar Library is loaded.
- *
- * @return bool
- *   A boolean indicating the FullCalendar status.
- */
-function bat_fullcalendar_loaded() {
-  if (bat_library_loaded('fullcalendar', 'minified')) {
-    return TRUE;
-  }
-  else {
-    // Alert the authorized user/administrator to the abscence of the library.
-    drupal_set_message(t('The FullCalendar Library could not be found.
-                          Please check the installation instructions and the <a href="@status">Status Report</a>. Make sure
-                          to clear cache after updating settings and/or library locations.',
-      array('@status' => url('admin/reports/status'))), 'warning');
-    return FALSE;
-  }
-}
-
-function bat_fullcalendar_scheduler_loaded() {
-  if (bat_library_loaded('fullcalendar-scheduler', 'minified')) {
-    return TRUE;
-  }
-  else {
-    // Alert the authorized user/administrator to the abscence of the library.
-    drupal_set_message(t('The FullCalendar Scheduler Library could not be found.
-                          Please check the installation instructions and the <a href="@status">Status Report</a>. Make sure
-                          to clear cache after updating settings and/or library locations.',
-      array('@status' => url('admin/reports/status'))), 'warning');
-    return FALSE;
-  }
-}
-
-/**
- * Implements hook_theme().
- */
-function bat_theme() {
-  return array(
-    'bat_one_month_calendar' => array(
-      'template' => 'bat_one_month_calendar',
-      'variables' => array(
-        'url' => NULL,
-        'form' => NULL,
-        'year' => NULL,
-        'month' => NULL,
-        'link_options' => NULL,
-      ),
-    ),
-    'bat_three_month_calendar' => array(
-      'template' => 'bat_three_month_calendar',
-      'variables' => array(
-        'url' => NULL,
-        'form' => NULL,
-        'year' => NULL,
-        'month' => NULL,
-        'link_options' => NULL,
-      ),
-    ),
-  );
-}
-
-/**
- * Helper function to check if a library is loaded properly or not.
- *
- * @return bool
- *   Boolean indicating if the library is properly loaded or not.
- */
-function bat_library_loaded($name, $variant = NULL) {
-  return ($library = libraries_load($name, $variant)) && !empty($library['loaded']);
-}
-
-/**
- * Generic access control for bookable entities.
+ * Generic access control for entities that BAT defines.
  *
  * @param string $op
  *   The operation being performed. One of 'view', 'update', 'create' or
@@ -282,8 +57,8 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
     $cid = $entity->type;
   }
 
-  // If we've already checked access for this node, user and op, return from
-  // cache.
+  // If we've already checked access for this node, user and op, return the
+  // cached result.
   if (isset($rights[$account->uid][$cid][$op])) {
     return $rights[$account->uid][$cid][$op];
   }
@@ -322,7 +97,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
       return $access;
     }
   }
-  else {
+  else { // Non-view operations.
     // First grant access to the entity for the specified operation if no other
     // module denies it and at least one other module says to grant access.
     $access_results = module_invoke_all('bat_entity_access', $op, $entity, $account, $entity_type);
@@ -366,7 +141,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
       // For the delete and delete operations, first perform the entity type and
       // bundle-level access check for any entity.
       if (user_access($op . ' any ' . $entity_type . ' entity', $account) ||
-        user_access($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name, $account)) {
+          user_access($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name, $account)) {
         $rights[$account->uid][$cid][$op] = TRUE;
         return TRUE;
       }
@@ -374,7 +149,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
       // Then check an authenticated user's access to delete his own entities.
       if ($account->uid && !empty($entity_info['access arguments']['user key']) && isset($entity->{$entity_info['access arguments']['user key']}) && $entity->{$entity_info['access arguments']['user key']} == $account->uid) {
         if (user_access($op . ' own ' . $entity_type . ' entities', $account) ||
-          user_access($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name, $account)) {
+            user_access($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name, $account)) {
           $rights[$account->uid][$cid][$op] = TRUE;
           return TRUE;
         }
@@ -473,19 +248,22 @@ function bat_entity_access_permissions($entity_type) {
 }
 
 /**
- * Generic implementation of hook_query_alter() for bookable entities.
+ * Implements hook_query_alter().
+ *
+ * Enforces access control for bookable entities during database queries.
  */
 function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL, $account = NULL, $op = 'view') {
   global $user;
 
-  // Read the account from the query if available or current user by default.
+  // Get the Drupal user account from the query if available, or
+  // default to the logged in user if not.
   if (!isset($account) && !$account = $query->getMetaData('account')) {
     $account = $user;
   }
 
   // Do not apply any conditions for users with administrative view permissions.
-  if (user_access('bypass ' . $entity_type . ' access', $account)
-    || user_access($op . ' any ' . $entity_type . ' entity', $account)) {
+  if (user_access('bypass ' . $entity_type . ' access', $account) ||
+      user_access($op . ' any ' . $entity_type . ' entity', $account)) {
     return;
   }
 
@@ -589,45 +367,11 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
 }
 
 /**
- * Returns the available price options for booking_unit options field.
- */
-function bat_price_options_options() {
-  return array(
-    BAT_ADD => t('Add to price'),
-    BAT_ADD_DAILY => t('Add to price per night'),
-    BAT_SUB => t('Subtract from price'),
-    BAT_SUB_DAILY => t('Subtract from price per night'),
-    BAT_REPLACE => t('Replace price'),
-    BAT_INCREASE => t('Increase price by % amount'),
-    BAT_DECREASE => t('Decrease price by % amount'),
-  );
-}
-
-/**
- * Utility function that returns the last day of each month given a year.
- *
- * @param int $year
- *   The year to get the end of month dates for
- *
- * @return array
- *   An array keyed by months
- */
-function bat_end_of_month_dates($year) {
-  $end_of_month_dates = array();
-
-  for ($i = 1; $i <= 12; $i++) {
-    $end_of_month_dates[$i] = date('t', mktime(0, 0, 0, $i, 1, $year));
-  }
-
-  return $end_of_month_dates;
-}
-
-/**
  * Utility function to create two related datepickers.
  *
  * We have a few forms that need a start and end date field
- * and we need to apply the same javascript to these forms in order to have a
- * specific consistent behaviour and groups the form elements and javascript
+ * and we need to apply the same javascript to these forms in order to enforce
+ * specific consistent behaviours and group the form elements and javascript
  * injection in one place.
  *
  * @param int $year
@@ -639,7 +383,7 @@ function bat_end_of_month_dates($year) {
 function bat_date_range_fields($year = NULL, $month = NULL) {
   $date_range_fields = array();
 
-  // Create unique ids and selectors for each picker.
+  // Create unique ids and selectors for each datepicker.
   $start_date_id = drupal_html_id('datepicker-start-date');
   $start_date_selector = '#' . $start_date_id . ' .form-text';
 
@@ -649,10 +393,10 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
   // Specify the default datepicker parameters (see date_popup_element_info())
   $datepicker_options = array(
     'dateFormat' => 'dd/mm/yy',
-    // Limit bookings to X days in advance, depending on the
-    // chosen configuration in your BAT installation, defaults
-    // to one day in advance.
-    'minDate' => '+' . variable_get('bat_booking_start_date', 1) . 'd',
+    // Limit bookings to X days in advance according to the
+    // chosen configuration in your BAT installation.
+    // Defaults to one day in advance.
+    'minDate' => '+' . variable_get('bat_event_start_date', 1) . 'd',
   );
 
   if ($year && $month) {
@@ -671,7 +415,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
   }
   else {
     $datepicker_options += array(
-      'minDate' => '+' . variable_get('bat_booking_start_date', 1) . 'd',
+      'minDate' => '+' . variable_get('bat_event_start_date', 1) . 'd',
     );
   }
 
@@ -714,7 +458,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
             'bat' => array(
               'batStartYear' => $year,
               'batStartMonth' => $month,
-              'batBookingStartDay' => variable_get('bat_booking_start_date', 1),
+              'batBookingStartDay' => variable_get('bat_event_start_date', 1),
               'batDateFormat' => 'dd/mm/yy',
 
               // Here we create a listing of all datepickers registered on the
@@ -737,13 +481,13 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
 }
 
 /**
- * Given a form_state locate the start/end dates in the input array and
- * instantiate and return DateTime objects.
+ * Given a form state array, locate the start/end dates in the input array
+ * and instantiate and return DateTime objects.
  */
 function bat_form_input_get_start_end_dates($form_state) {
-  // If form_state['values']['bat_X_date'] is not set it is an empty array
-  // hence the need to check and set values so that _constructor below will not
-  // fail.
+  // If form_state['values']['bat_X_date'] is not set, it is an empty array.
+  // In this case, we need to check and set values so that
+  // _constructor below will not fail.
   if (is_array($form_state['values']['bat_start_date'])) {
     if ($form_state['values']['bat_start_date']['date'] == '') {
       $start = new DateTime();
@@ -772,19 +516,21 @@ function bat_form_input_get_start_end_dates($form_state) {
 }
 
 /**
- * Given a form_state locate the start/end dates in the values array and
- * instantiate and return DateTime objects.
+ * Given a form state array, locate the start/end dates in the
+ * values array and instantiate and return DateTime objects.
  */
 function bat_form_values_get_start_end_dates($form_state) {
-  // As values dates has a format of year-month-day that is one of the default
-  // expected formats there is no need to explicit define format.
-  // http://www.php.net/manual/en/datetime.formats.date.php
+  // Date values have a format of year-month-day.
+  // This is one of the default expected formats, so there
+  // is no need to explicitly define the format.
+  // (see http://www.php.net/manual/en/datetime.formats.date.php)
   $start_date = $form_state['values']['bat_start_date'];
   $end_date = $form_state['values']['bat_end_date'];
 
-  // If the input format is numeric we assume that is a unixtime seconds format.
+  // If the input format is numeric we assume that is a Unix timestamp.
   if (is_numeric($start_date) && is_numeric($end_date)) {
-    // The @ indicate DateTime that the format is unixtime.
+    // The @ lets the DateTime class know that the date is
+    // formatted as a Unix timestamp.
     $start_date = '@' . $start_date;
     $end_date = '@' . $end_date;
   }
@@ -796,13 +542,16 @@ function bat_form_values_get_start_end_dates($form_state) {
 }
 
 /**
- * Validation callback that could be reused in all the forms that need to
- * validate dates. End date must be greater than start date.
+ * Validation callback that can be reused in all forms that need to
+ * validate dates.
+ *
+ * The end date must be greater than start date.
  */
 function bat_form_start_end_dates_validate($form, &$form_state) {
   list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
   $single_day = FALSE;
-  // Skip if no dates are provided.
+
+  // Fail validation if no dates are provided.
   if (empty($start_date) || empty($end_date)) {
     form_set_error('date_range', t('Please choose dates.'));
     return;
@@ -815,20 +564,23 @@ function bat_form_start_end_dates_validate($form, &$form_state) {
   // Check date validity.
   $errors = bat_check_dates_validity($start_date, $end_date, $single_day);
 
-  // For some forms as bat_availability_pricing_update_form and
-  // bat_availability_update_status_form we need to validate that the selected
-  // date match with current values.
+  // For some forms, such as bat_availability_pricing_update_form and
+  // bat_availability_update_status_form, we need to ensure that the selected
+  // date matches with current values.
   if (isset($form_state['values']['curr_month']) && isset($form_state['values']['curr_year'])) {
     $curr_month = $form_state['values']['curr_month'];
     $curr_year = $form_state['values']['curr_year'];
-    if ($start_date->format('n') != $curr_month || $end_date->format('n') != $curr_month
-      || $start_date->format('Y') != $curr_year || $end_date->format('Y') != $curr_year) {
-      $errors[] = t('Start and end date must be within the current month.');
+    if ($start_date->format('n') != $curr_month ||
+        $end_date->format('n') != $curr_month   ||
+        $start_date->format('Y') != $curr_year  ||
+        $end_date->format('Y') != $curr_year) {
+      $errors[] = t('Both the start and end date must be within the current month.');
     }
   }
 
-  // When there are multiples errors for the same form element Drupal only
-  // display the first. Here we concatenate to display all at once.
+  // When there are multiple errors for the same form element, Drupal only
+  // displays the first. Here we concatenate all errors so that they will all
+  // be displayed.
   if ($errors) {
     $error_msg = implode(' ', $errors);
     form_set_error('date_range', $error_msg);
@@ -850,7 +602,7 @@ function bat_form_start_end_dates_validate($form, &$form_state) {
  */
 function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $single_day = FALSE) {
   $errors = array();
-  // End date must be greater than start date unless single day bookings are
+  // The end date must be greater than start date, unless same day bookings are
   // enabled, in which case it must not be before the start date.
   if (($end_date < $start_date) || (($end_date == $start_date) && !$single_day)) {
     if ($single_day) {
@@ -861,12 +613,12 @@ function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $sin
     }
   }
 
-  // End date must not be more that the allowed number of days in advance for booking
+  // The end date must not be more that the allowed number of days in advance for booking.
   $current_date = new DateTime();
   $booking_interval = $current_date->diff($end_date);
 
-  // The following necessary to get a properly instantiated date interval when starting with
-  // just seconds
+  // The following exercise is necessary in order to get a properly
+  // instantiated date interval when starting with only seconds.
   $d1 = new DateTime();
   $d2 = new DateTime();
   $d2->add(new DateInterval('PT' . variable_get('bat_advance_bookings_period', 15552000).'S'));
@@ -877,284 +629,4 @@ function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $sin
   }
 
   return $errors;
-}
-
-/**
- * Alternative numeric range generator considering users that use PHP < v5.3.6
- * and experience the bug: https://bugs.php.net/bug.php?id=51894
- *
- * @param int $start
- *   First value of the sequence.
- * @param int $end
- *   The sequence is ended upon reaching the end value.
- *
- * @return array
- *   The expected range.
- */
-function bat_range($start, $end) {
-  if (version_compare(phpversion(), '5.3.6', '<')) {
-    $range = array();
-    for ($index = $start; $index <= $end; $index++) {
-      $range[] = $index;
-    }
-    return $range;
-  }
-  else {
-    return range($start, $end, 1);
-  }
-}
-
-/**
- * Returns a range array keyed by value.
- *
- * @param int $start
- *   First value of the sequence.
- * @param int $end
- *   The sequence is ended upon reaching the end value.
- *
- * @return array
- *   An array of elements from start to end, inclusive keyed by values.
- */
-function bat_assoc_range($start, $end) {
-  return drupal_map_assoc(bat_range($start, $end));
-}
-
-/**
- * Helper validate function to ensure that at least one unit is selected.
- */
-function bat_validate_unit($form_state) {
-  $select_bat = FALSE;
-  if ($form_state['values']['select-all'] == BAT_ALL_PAGES || $form_state['values']['select-all'] == BAT_THIS_PAGE) {
-    $select_bat = TRUE;
-  }
-  else {
-    foreach ($form_state['values'] as $key => $value) {
-      if (strpos($key, 'bat-') === 0 && $value == '1') {
-        $select_bat = TRUE;
-      }
-    }
-  }
-
-  if (!$select_bat) {
-    form_set_error('select-all', t('You have to select at least one unit to update.'));
-  }
-}
-
-function bat_filter_month_form($form, &$form_state, $month, $year, $unit_types = NULL) {
-
-  $form['#attributes']['class'][] = 'bat-management-form bat-filter-month-form';
-
-  $month_options = array(
-    1 => t('January'),
-    2 => t('February'),
-    3 => t('March'),
-    4 => t('April'),
-    5 => t('May'),
-    6 => t('June'),
-    7 => t('July'),
-    8 => t('August'),
-    9 => t('September'),
-    10 => t('October'),
-    11 => t('November'),
-    12 => t('December'),
-  );
-
-  $form['bat_availability_filter_month']['month'] = array(
-    '#title' => t('Month'),
-    '#type' => 'select',
-    '#options' => $month_options,
-    '#default_value' => $month,
-  );
-
-  $year_options = range(date('Y', time()) - 2, date('Y', time()) + 5);
-
-  $form['bat_availability_filter_month']['year'] = array(
-    '#title' => t('Year'),
-    '#type' => 'select',
-    '#options' => $year_options,
-    '#default_value' => $year - date('Y', time()) + 2,
-  );
-
-  $type_options['all'] = t('All types');
-  $unit_types = isset($unit_types) ? $unit_types : bat_unit_get_types();
-  foreach ($unit_types as $unit_type_name => $unit_type) {
-    $type_options[$unit_type_name] = $unit_type->label;
-  }
-
-  $form['bat_availability_filter_month']['type'] = array(
-    '#title' => t('Type'),
-    '#type' => 'select',
-    '#options' => $type_options,
-    '#default_value' => (arg(6) == '') ? 'all' : arg(6),
-  );
-
-  $form['bat_availability_filter_month']['actions'] = array(
-    '#type' => 'container',
-    '#attributes' => array('class' => array('form-actions')),
-    '#weight' => 400,
-  );
-
-  $form['bat_availability_filter_month']['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Filter'),
-  );
-
-  hide($form['bat_availability_filter_month']['actions']['submit']);
-
-  return $form;
-}
-
-/**
- * Submit callback for bat_filter_month_form form.
- *
- * @see bat_filter_month_form()
- */
-function bat_filter_month_form_submit(&$form, &$form_state) {
-  $year = $form_state['values']['year'] + date('Y', time()) - 2;
-  $month = $form_state['values']['month'];
-  $type = $form_state['values']['type'];
-
-  $address = 'admin/bat/units/' . arg(3) . '/' . $year . '/' . $month;
-  if ($type != 'all') {
-    $address .= '/' . $type;
-  }
-
-  if (arg(7) != '') {
-    $address .= ($type == 'all') ? '/all/' . arg(7) : $type . arg(7);
-  }
-
-  $form_state['redirect'] = $address;
-}
-
-/**
- * Default implementation of hook_preprocess_bat_one_month_calendar().
- */
-function bat_preprocess_bat_one_month_calendar(&$vars) {
-
-  // Load FullCalendar Scheduler.
-  bat_fullcalendar_scheduler_loaded();
-
-  // Add css styles for one-month-calendar.
-  drupal_add_css(drupal_get_path('module', 'bat_availability') . '/css/bat_one_month_calendar.css');
-  drupal_add_css(drupal_get_path('module', 'bat_availability') . '/css/fullcalendar.theme.css');
-
-  // If dates are not provided then use the current date.
-  $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
-  $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
-
-  $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', 'non-commercial');
-  if ($schedulerlicense == 'gpl') {
-    $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
-  }
-  elseif ($schedulerlicense == 'non-commercial') {
-    $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
-  }
-  elseif ($schedulerlicense == 'commercial') {
-    $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
-  }
-
-  // Inject settings in javascript that will be used to setup the one months
-  // display.
-  drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
-  drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
-  drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
-  drupal_add_js(array('batCalendar' => array('schedulerLicenseKey' => $schedulerlicensekey)), 'setting');
-}
-
-/**
- * Default implementation of hook_preprocess_bat_three_month_calendar().
- *
- * Here we setup the three-month calendar based on a specified year,
- * month, and url.
- */
-function bat_preprocess_bat_three_month_calendar(&$vars) {
-
-  // Load FullCalendar.
-  bat_fullcalendar_loaded();
-
-  // Add css styles for three-month-calendar.
-  drupal_add_css(drupal_get_path('module', 'bat_availability') . '/css/bat_three_month_calendar.css');
-  drupal_add_css(drupal_get_path('module', 'bat_availability') . '/css/fullcalendar.theme.css');
-
-  // If dates are not provided then use the current date.
-  $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
-  $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
-
-  // Inject settings in javascript that will be used to setup the three months
-  // display.
-  drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
-  drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
-  drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
-
-  // Calculate forward and back dates for the 3-month view calendar.
-  $date1 = new DateTime("$year-$month-1");
-  $date2 = new DateTime("$year-$month-1");
-  $date_current = new DateTime("now");
-
-  $forward = $date1->add(new DateInterval('P3M'));
-  $backward = $date2->sub(new DateInterval('P3M'));
-
-  // Create the links based off the url variable passed in.
-  if (!isset($vars['url'])) {
-    $vars['url'] = '';
-  }
-
-  $forward_path = $vars['url'] . '/' . $forward->format('Y') . '/' . $forward->format('n');
-  $backward_path = $vars['url'] . '/' . $backward->format('Y') . '/' . $backward->format('n');
-  $current_path = $vars['url'] . '/' . $date_current->format('Y') . '/' . $date_current->format('n');
-
-  if (!is_array($vars['link_options']) || empty($vars['link_options'])) {
-    $vars['link_options'] = array();
-  }
-  $vars['forward_link'] = l(t('Forward'), $forward_path, $vars['link_options']);
-  $vars['backward_link'] = l(t('Back'), $backward_path, $vars['link_options']);
-  $vars['current_link'] = l(t('Current'), $current_path, $vars['link_options']);
-}
-
-/**
- * Form element validation handler for integer elements greater than or equal 
- * to 0.
- */
-function bat_element_validate_integer_zero_positive($element, &$form_state) {
-  $value = $element['#value'];
-  if ($value !== '' && (!is_numeric($value) || intval($value) != $value || $value < 0)) {
-    form_error($element, t('%name must be a positive integer.', array('%name' => $element['#title'])));
-  }
-}
-
-/**
- * Form element validation handler for integer elements positive less than 100.
- */
-function bat_element_validate_integer_positive_less_than_100($element, &$form_state) {
-  $value = $element['#value'];
-  if ($value !== '' && (!is_numeric($value) || intval($value) != $value || $value < 0 || $value > 100)) {
-    if ($value < 0) {
-      form_error($element, t('%name must be greater than 0.', array('%name' => $element['#title'])));
-    }
-    elseif ($value > 100) {
-      form_error($element, t('%name must be less than 100.', array('%name' => $element['#title'])));
-    }
-  }
-}
-
-/**
- * A string transformation function specific to BAT to allow modules to use
- * contextual information about bookings to change what is shown to the user.
- *
- * @param $string - The string to be altered.
- * @param $context - Contextual information about the string.
- *
- * @return mixed
- */
-function bat_string($string, $context) {
-
-  // The string_suggestions array will hold information about all the
-  // suggestions coming from modules. The default behaviour now is to simply
-  // return the suggestion made by the module with the highest weight.
-  $string_suggestions = array();
-  $string_suggestions[] = $string;
-  drupal_alter('bat_string', $string_suggestions, $context);
-
-  // Return the highest option string.
-  return max($string_suggestions);
 }

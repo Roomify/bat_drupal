@@ -1,5 +1,5 @@
 name = BAT UI
-description = Interface support to the BAT family of modules.
+description = Interface support for the BAT family of modules.
 core = 7.x
 
 package = BAT

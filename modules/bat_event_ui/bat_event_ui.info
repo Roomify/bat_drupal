@@ -1,0 +1,7 @@
+name = BAT Event UI
+description = Interface support to the BAT Event module.
+core = 7.x
+
+package = BAT
+
+dependencies[] = bat_event

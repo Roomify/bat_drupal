@@ -1,0 +1,11 @@
+/* Event edit form */
+.bat-event-form .form-actions {
+  float: none;
+  clear: both;
+}
+
+.bat-event-form .bat-event-date-range-wrapper {
+  float: none;
+  padding: 0;
+  margin: 0 0 1em;
+}

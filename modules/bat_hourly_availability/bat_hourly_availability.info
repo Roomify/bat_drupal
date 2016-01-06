@@ -1,9 +1,0 @@
-name = BAT Hourly Availability
-description = Manages hourly availability for BAT units.
-core = 7.x
-
-package = BAT
-
-dependencies[] = bat_availability
-dependencies[] = bat_booking
-dependencies[] = timefield

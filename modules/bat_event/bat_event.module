@@ -1,0 +1,1889 @@
+<?php
+
+/**
+ * @file
+ * Manage Events - Events are tied to a customer profile and possible a
+ * Unit ID and Order ID.
+ */
+
+use Roomify\Bat\Event\Event;
+use Roomify\Bat\Calendar\Calendar;
+use Roomify\Bat\Store\DrupalDBStore;
+use Roomify\Bat\Unit\Unit;
+
+/**
+ * Implements hook_menu().
+ */
+function bat_event_menu() {
+  $items = array();
+
+  $items['admin/bat/config/events/event/%/edit'] = array(
+    'title' => 'Event States',
+    'description' => 'Edit event state.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bat_event_states_edit_event_form', 5),
+    'access arguments' => array('configure bat settings'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['admin/bat/config/events/event/%/delete'] = array(
+    'title' => 'Event States',
+    'description' => 'Delete event state.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bat_event_states_delete_event_form', 5),
+    'access arguments' => array('configure bat settings'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['bat_event/state_event/autocomplete/%/%/%'] = array(
+    'page callback' => 'bat_event_reference_autocomplete',
+    'page arguments' => array(3, 4, 5),
+    'access arguments' => array('configure bat settings'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/bat/events/event-types/manage/%bat_event_type/states'] = array(
+    'title' => 'Manage states',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bat_event_states_form', 5),
+    'access arguments' => array('configure bat settings'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 0,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function bat_event_entity_info() {
+  $return['bat_event'] = array(
+    'label' => t('Events'),
+    // The entity class and controller class extend the classes provided by the
+    // Entity API.
+    'entity class' => 'BatEvent',
+    'controller class' => 'BatEventController',
+    'base table' => 'bat_events',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'event_id',
+      'bundle' => 'type',
+    ),
+    // Bundles are defined by the event types below.
+    'bundles' => array(),
+    // Bundle keys tell the FieldAPI how to extract information from the bundle.
+    'bundle keys' => array(
+      'bundle' => 'type',
+    ),
+    'label callback' => 'entity_class_label',
+    'uri callback' => 'entity_class_uri',
+    'creation callback' => 'bat_event_create',
+    'access callback' => 'bat_event_access',
+    'access arguments' => array(
+      'user key' => 'uid',
+      'access tag' => 'bat_event_access',
+    ),
+    'permission labels' => array(
+      'singular' => t('event'),
+      'plural' => t('events'),
+    ),
+    'module' => 'bat_event',
+    'admin ui' => array(
+      'path' => 'admin/bat/events',
+      'file' => 'bat_event.admin.inc',
+      'controller class' => 'BatEventUIController',
+      'menu wildcard' => '%bat_event',
+    ),
+  );
+  // The entity that holds information about the entity types.
+  $return['bat_event_type'] = array(
+    'label' => t('Event Type'),
+    'entity class' => 'BatEventType',
+    'controller class' => 'BatEventTypeController',
+    'base table' => 'bat_event_type',
+    'fieldable' => FALSE,
+    'bundle of' => 'bat_event',
+    'exportable' => TRUE,
+    'entity keys' => array(
+      'id' => 'id',
+      'name' => 'type',
+      'label' => 'label',
+    ),
+    'access callback' => 'bat_event_type_access',
+    'module' => 'bat_event',
+    // Enable the entity API's admin UI.
+    'admin ui' => array(
+      'path' => 'admin/bat/events/event-types',
+      'file' => 'bat_event_type.admin.inc',
+      'controller class' => 'BatEventTypeUIController',
+    ),
+  );
+
+  return $return;
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ *
+ * We are adding the info about the event types via a hook to avoid a
+ * recursion issue as loading the event types requires the entity info as well.
+ */
+function bat_event_entity_info_alter(&$entity_info) {
+  foreach (bat_event_get_types() as $type => $info) {
+    $entity_info['bat_event']['bundles'][$type] = array(
+      'label' => $info->label,
+      'admin' => array(
+        'path' => 'admin/bat/events/event-types/manage/%bat_event_type',
+        'real path' => 'admin/bat/events/event-types/manage/' . $type,
+        'bundle argument' => 5,
+        'access arguments' => array('administer bat_event_type entities'),
+      ),
+    );
+  }
+}
+
+/**
+ * Create a field of type 'Bat Event State Reference' to reference an Event State.
+ */
+function bat_event_type_add_event_state_reference($entity) {
+  field_info_cache_clear();
+
+  // "event_unit_reference" field.
+  if (field_read_field('event_state_reference') === FALSE) {
+    $field = array(
+      'field_name' => 'event_state_reference',
+      'type' => 'bat_event_state_reference',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => array(),
+    );
+    field_create_field($field);
+  }
+
+  field_cache_clear();
+
+  // "event_unit_reference" field instance.
+  if (field_read_instance('bat_event', 'event_state_reference', $entity->type) === FALSE) {
+    $instance = array(
+      'field_name' => 'event_state_reference',
+      'entity_type' => 'bat_event',
+      'label' => 'State',
+      'bundle' => $entity->type,
+      'required' => FALSE,
+      'widget' => array(
+        'type' => 'bat_event_reference_autocomplete',
+      ),
+      'settings' => array(
+        'event_type' => $entity->type,
+      ),
+    );
+    field_create_instance($instance);
+  }
+}
+
+/**
+ * Create a field of type 'Entity Reference' to reference a Bat Unit.
+ */
+function bat_event_type_add_unit_reference($entity) {
+  field_info_cache_clear();
+
+  // "event_unit_reference" field.
+  if (field_read_field('event_unit_reference') === FALSE) {
+    $field = array(
+      'field_name' => 'event_unit_reference',
+      'type' => 'entityreference',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => array(
+        'target_type' => 'bat_unit',
+      ),
+    );
+    field_create_field($field);
+  }
+
+  field_cache_clear();
+
+  // "event_unit_reference" field instance.
+  if (field_read_instance('bat_event', 'event_unit_reference', $entity->type) === FALSE) {
+    $instance = array(
+      'field_name' => 'event_unit_reference',
+      'entity_type' => 'bat_event',
+      'label' => 'Unit',
+      'bundle' => $entity->type,
+      'required' => FALSE,
+      'widget' => array(
+        'type' => 'entityreference_autocomplete',
+      ),
+    );
+    field_create_instance($instance);
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function bat_event_permission() {
+  $permissions = array(
+    'administer bat_event_type entities' => array(
+      'title' => t('Administer event types'),
+      'description' => t('Allows users to add event types and configure their fields.'),
+      'restrict access' => TRUE,
+    ),
+  );
+  return $permissions + bat_entity_access_permissions('bat_event');
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = views_exposed_form
+ */
+function bat_event_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
+  // Events admin view exposed filters.
+  if ($form['#id'] == 'views-exposed-form-events-page-1') {
+    $form['start_date']['#type'] = 'date_popup';
+    $form['start_date']['#date_format'] = 'd/m/Y';
+    $form['start_date']['#date_label_position'] = 'before';
+
+    $form['end_date']['#type'] = 'date_popup';
+    $form['end_date']['#date_format'] = 'd/m/Y';
+    $form['end_date']['#date_label_position'] = 'before';
+
+    $form['#attached']['css'][] = array(
+      'data' => '.views-exposed-form .views-exposed-widget { height: 70px; }',
+      'type' => 'inline',
+    );
+  }
+}
+
+/**
+ * @return array
+ */
+function bat_event_get_states($event_type = NULL) {
+  $event_states = array();
+
+  $query = db_select('bat_event_state', 'n')
+            ->fields('n', array());
+  if ($event_type !== NULL) {
+    $query->condition('event_type', $event_type);
+  }
+  $states = $query->execute()->fetchAll();
+
+  foreach ($states as $event_state) {
+    $event_states[$event_state->id] = array(
+      'id' => $event_state->id,
+      'event_type' => $event_state->event_type,
+      'label' => $event_state->label,
+      'color' => $event_state->color,
+      'calendar_label' => $event_state->calendar_label,
+      'locked' => $event_state->locked,
+      'blocking' => $event_state->blocking,
+      'default_state' => $event_state->default_state,
+    );
+  }
+
+  return $event_states;
+}
+
+/**
+ * @param $state_id
+ *
+ * @return array
+ */
+function bat_event_load_state($state_id) {
+  $event_states = bat_event_get_states();
+
+  if (isset($event_states[$state_id])) {
+    return $event_states[$state_id];
+  }
+
+  return FALSE;
+}
+
+/**
+ * @param $event_type
+ *
+ * @return array
+ */
+function bat_event_states_get_default($event_type) {
+  $state_id = db_select('bat_event_state', 'n')
+                ->fields('n', array('id'))
+                ->condition('event_type', $event_type)
+                ->condition('default_state', 1)
+                ->execute()
+                ->fetchField();
+
+  return bat_event_load_state($state_id);
+}
+
+/**
+ *
+ */
+function bat_event_states_form($form, &$form_state, $event_type) {
+  if ($event_type->fixed_event_states) {
+    $event_states = bat_event_get_states($event_type->type);
+
+    $header = array(t('ID'), t('Label'), t('Blocking'), t('Operations'));
+
+    $default_state = 0;
+
+    $rows = array();
+    foreach ($event_states as $event_state) {
+      $operations = array();
+
+      $operations[] = array(
+        'title' => t('Edit'),
+        'href' => 'admin/bat/config/events/event/' . $event_state['id'] . '/edit',
+      );
+
+      if (!$event_state['locked']) {
+        $operations[] = array(
+          'title' => t('Delete'),
+          'href' => 'admin/bat/config/events/event/' . $event_state['id'] . '/delete',
+        );
+      }
+
+      $rows[] = array(
+        $event_state['id'],
+        $event_state['label'],
+        $event_state['blocking'],
+        theme('links', array('links' => $operations, 'attributes' => array('class' => array('links', 'inline')))),
+      );
+
+      if ($event_state['default_state']) {
+        $default_state = count($rows) - 1;
+      }
+    }
+
+    if (!empty($rows)) {
+      $form['states'] = array(
+        '#type' => 'tableselect',
+        '#header' => $header,
+        '#options' => $rows,
+        '#multiple' => FALSE,
+        '#default_value' => $default_state,
+        '#prefix' => '<div id="event-state-wrapper">',
+        '#suffix' => '</div>',
+      );
+
+      $form['set_default'] = array(
+        '#type' => 'submit',
+        '#value' => t('Set default state'),
+        '#limit_validation_errors' => array(array('states')),
+        '#submit' => 'bat_event_states_form_set_default',
+        '#ajax' => array(
+          'callback' => 'bat_event_states_form_set_default',
+          'wrapper' => 'event-state-wrapper',
+        ),
+      );
+    }
+
+    $form['new_state'] = array(
+      '#type' => 'fieldset',
+      '#title' => 'Create new state',
+    );
+
+    $form['event_type'] = array(
+      '#type' => 'hidden',
+      '#value' => $event_type->type,
+    );
+
+    $form['new_state']['label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#required' => TRUE,
+    );
+
+    $form['new_state']['color'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Color'),
+      '#size' => 12,
+      '#maxlength' => 7,
+      '#element_validate' => array('bat_event_validate_hex_color'),
+      '#dependency' => array('edit-row-options-colors-legend' => array('type')),
+      '#prefix' => '<div class="bat-colorpicker-wrapper form-wrapper">',
+      '#suffix' => '<div class="bat-colorpicker"></div></div>',
+      '#attributes' => array('class' => array('bat-edit-colorpicker')),
+      '#attached' => array(
+        // Add Farbtastic color picker.
+        'library' => array(
+          array('system', 'farbtastic'),
+        ),
+        // Add javascript to trigger the colorpicker.
+        'js' => array(drupal_get_path('module', 'bat_event') . '/js/bat_color.js'),
+      ),
+      '#required' => TRUE,
+    );
+
+    $form['new_state']['calendar_label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Calendar label'),
+      '#size' => 10,
+      '#maxlength' => 50,
+      '#required' => TRUE,
+    );
+
+    $form['new_state']['blocking'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Blocking'),
+    );
+
+    $form['new_state']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Add state'),
+    );
+  }
+  else {
+    $form['empty'] = array(
+      '#markup' => t('This event type cannot define fixed states!'),
+    );
+  }
+
+  return $form;
+}
+
+/**
+ *
+ */
+function bat_event_states_form_set_default($form, &$form_state) {
+  $state = $form_state['values']['states'];
+
+  db_update('bat_event_state')
+    ->fields(array('default_state' => 0))
+    ->condition('event_type', $form['event_type']['#value'])
+    ->execute();
+
+  db_update('bat_event_state')
+    ->fields(array('default_state' => 1))
+    ->condition('id', $form['states']['#options'][$state][0])
+    ->execute();
+
+  drupal_set_message('Default state setted!');
+
+  return $form['states'];
+}
+
+/**
+ *
+ */
+function bat_event_states_form_submit($form, &$form_state) {
+  $max_id = db_query("SELECT MAX(id) as max_id FROM {bat_event_state}")->fetchCol();
+
+  $event_state = array(
+    'id' => reset($max_id) + 1,
+    'event_type' => $form_state['values']['event_type'],
+    'label' => $form_state['values']['label'],
+    'color' => $form_state['values']['color'],
+    'calendar_label' => $form_state['values']['calendar_label'],
+    'blocking' => $form_state['values']['blocking'],
+  );
+
+  drupal_write_record('bat_event_state', $event_state);
+}
+
+/**
+ *
+ */
+function bat_event_states_edit_event_form($form, &$form_state, $event_id) {
+  $state = db_select('bat_event_state', 'n')
+                    ->fields('n', array())
+                    ->condition('id', $event_id)
+                    ->execute()
+                    ->fetchAssoc();
+
+  $form['state_id'] = array(
+    '#type' => 'hidden',
+    '#value' => $event_id,
+  );
+
+  $form['event_type'] = array(
+    '#type' => 'hidden',
+    '#value' => $state['event_type'],
+  );
+
+  $form['label'] = array(
+    '#type' => 'textfield',
+    '#title' => t('State Label'),
+    '#default_value' => $state['label'],
+    '#required' => TRUE,
+  );
+
+  $form['color'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Color'),
+    '#size' => 12,
+    '#maxlength' => 7,
+    '#default_value' => $state['color'],
+    '#element_validate' => array('bat_event_validate_hex_color'),
+    '#dependency' => array('edit-row-options-colors-legend' => array('type')),
+    '#prefix' => '<div class="bat-colorpicker-wrapper form-wrapper">',
+    '#suffix' => '<div class="bat-colorpicker"></div></div>',
+    '#attributes' => array('class' => array('bat-edit-colorpicker')),
+    '#attached' => array(
+      // Add Farbtastic color picker.
+      'library' => array(
+        array('system', 'farbtastic'),
+      ),
+      // Add javascript to trigger the colorpicker.
+      'js' => array(drupal_get_path('module', 'bat_event') . '/js/bat_color.js'),
+    ),
+    '#required' => TRUE,
+  );
+
+  $form['new_state']['calendar_label'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Calendar label'),
+    '#size' => 10,
+    '#maxlength' => 50,
+    '#default_value' => $state['calendar_label'],
+    '#required' => TRUE,
+  );
+
+  $form['new_state']['blocking'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Blocking'),
+    '#default_value' => $state['blocking'],
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Update State'),
+  );
+
+  return $form;
+}
+
+/**
+ *
+ */
+function bat_event_states_edit_event_form_submit($form, &$form_state) {
+  db_update('bat_event_state')
+    ->fields(array(
+      'label' => $form_state['values']['label'],
+      'color' => $form_state['values']['color'],
+      'calendar_label' => $form_state['values']['calendar_label'],
+    ))
+    ->condition('id', $form_state['values']['state_id'])
+    ->execute();
+
+  $form_state['redirect'] = 'admin/bat/events/event-types/manage/' . $form_state['values']['event_type'] . '/states';
+}
+
+/**
+ *
+ */
+function bat_event_states_delete_event_form($form, &$form_state, $event_id) {
+  $state_event = bat_event_load_state($event_id);
+
+  if ($state_event === FALSE || $state_event['locked']) {
+    return $form;
+  }
+
+  $form_state['state_event'] = $event_id;
+  $form_state['event_type'] = $state_event['event_type'];
+
+  $form['#submit'][] = 'bat_event_states_delete_event_form_submit';
+
+  $form = confirm_form($form,
+    t('Are you sure you want to delete Event State %state_name ?', array('%state_name' => $state_event['label'])),
+    'admin/bat/config/events',
+    '<p>' . t('This action cannot be undone.') . '</p>',
+    t('Delete'),
+    t('Cancel'),
+    'confirm'
+  );
+
+  return $form;
+}
+
+/**
+ *
+ */
+function bat_event_states_delete_event_form_submit($form, &$form_state) {
+  db_delete('bat_event_state')
+    ->condition('id', $form_state['state_event'])
+    ->execute();
+
+  $form_state['redirect'] = 'admin/bat/events/event-types/manage/' . $form_state['event_type'] . '/states';
+}
+
+/**
+ * Checks event access for various operations.
+ *
+ * @param string $op
+ *   The operation being performed. One of 'view', 'update', 'create' or
+ *   'delete'.
+ * @param object $event
+ *   Optionally an event to check access for.
+ * @param object $account
+ *   The user to check for. Leave it to NULL to check for the current user.
+ *
+ * @return bool
+ *   Boolean indicating if the defined user has access to the event or not.
+ */
+function bat_event_access($op, $event = NULL, $account = NULL) {
+  return bat_entity_access($op, $event, $account, 'bat_event');
+}
+
+/**
+ * Access callback: Checks whether the user has permission to add an event.
+ *
+ * @return bool
+ *   TRUE if the user has add permission, otherwise FALSE.
+ *
+ * @see node_menu()
+ */
+function _bat_event_add_access() {
+  if (user_access('administer bat_event_type entities')) {
+    // There are no event types defined that the user has permission to create
+    // but the user does have the permission to administer the content types, so
+    // grant them access to the page anyway.
+    return TRUE;
+  }
+
+  $types = bat_event_get_types();
+  foreach ($types as $type) {
+    if (bat_event_access('create', bat_event_create(array('type' => $type->type, 'uid' => 0)))) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Access callback for the entity API.
+ */
+function bat_event_type_access($op, $type = NULL, $account = NULL) {
+  return user_access('administer bat_event_type entities', $account);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function bat_event_query_bat_event_access_alter(QueryAlterableInterface $query) {
+  // Look for an event base table to pass to the query altering function or
+  // else assume we don't have the tables we need to establish order related
+  // altering right now.
+  foreach ($query->getTables() as $table) {
+    if ($table['table'] === 'bat_events') {
+      bat_entity_access_query_alter($query, 'bat_event', $table['alias']);
+      break;
+    }
+  }
+}
+
+/**
+ * Gets an array of all event types, keyed by the type name.
+ *
+ * @param string $type_name
+ *   If set, the type with the given name is returned.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return BatEventType[]
+ *   Depending whether $type isset, an array of event types or a single one.
+ */
+function bat_event_get_types($type_name = NULL, $reset = FALSE) {
+  // entity_load will get the Entity controller for our event entity and call
+  // the load function of that object.
+  $types = entity_load_multiple_by_name('bat_event_type', isset($type_name) ? array($type_name) : FALSE);
+  return isset($type_name) ? reset($types) : $types;
+}
+
+/**
+ * Menu argument loader; Load a event type by string.
+ *
+ * @param string $type
+ *   The machine-readable name of a event type to load.
+ * @param bool $reset
+ *   Boolean indicating if the event types cache should be clear or not.
+ *
+ * @return array|false
+ *   An event type array or FALSE if $type does not exist.
+ */
+function bat_event_type_load($type, $reset = FALSE) {
+  return bat_event_get_types($type, $reset);
+}
+
+/**
+ * Fetches an event object.
+ *
+ * @param int $event_id
+ *   Integer specifying the event id.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return object
+ *   A fully-loaded $event object or FALSE if it cannot be loaded.
+ *
+ * @see bat_event_load_multiple()
+ */
+function bat_event_load($event_id, $reset = FALSE) {
+  $events = bat_event_load_multiple(array($event_id), array(), $reset);
+  return reset($events);
+}
+
+/**
+ * Load multiple events based on certain conditions.
+ *
+ * @param array $event_ids
+ *   An array of event IDs.
+ * @param array $conditions
+ *   An array of conditions to match against the {bat_events} table.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return array
+ *   An array of event objects, indexed by event_id.
+ *
+ * @see entity_load()
+ * @see bat_event_load()
+ */
+function bat_event_load_multiple($event_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('bat_event', $event_ids, $conditions, $reset);
+}
+
+/**
+ * Deletes a event.
+ *
+ * @param BatEvent $event
+ *   The BatEvent object that represents the event to delete
+ */
+function bat_event_delete(BatEvent $event) {
+  bat_event_delete_multiple(array($event->event_id));
+}
+
+/**
+ * Delete multiple events.
+ *
+ * @param array $event_ids
+ *   An array of event IDs.
+ */
+function bat_event_delete_multiple(array $event_ids) {
+  entity_get_controller('bat_event')->delete($event_ids);
+}
+
+/**
+ * Create a event object.
+ */
+function bat_event_create($values = array()) {
+  return entity_get_controller('bat_event')->create($values);
+}
+
+/**
+ * Saves a event to the database.
+ *
+ * @param BatEvent $event
+ *   The Event object.
+ */
+function bat_event_save(BatEvent $event) {
+  return $event->save();
+}
+
+/**
+ * Create a event object.
+ */
+function bat_event_type_create($values = array()) {
+  return entity_get_controller('bat_event_type')->create($values);
+}
+
+/**
+ * Saves a event type to the db.
+ */
+function bat_event_type_save(BatEventType $type) {
+  $type->save();
+}
+
+/**
+ * Deletes a event type from the db.
+ */
+function bat_event_type_delete(BatEventType $type) {
+  $type->delete();
+}
+
+/**
+ * URI callback for events.
+ */
+function bat_event_uri(BatEvent $event) {
+  return array(
+    'path' => 'event/' . $event->event_id,
+  );
+}
+
+/**
+ * Menu title callback for showing individual entities.
+ */
+function bat_event_page_title(BatEvent $event) {
+  return '';
+}
+
+/**
+ * Get a list of Event keyed by id and name in value.
+ */
+function bat_event_ids($conditions = array()) {
+  $events = array();
+
+  $query = new EntityFieldQuery();
+
+  $result = $query->entityCondition('entity_type', 'bat_event')
+                    ->execute();
+
+  if (count($result) > 0) {
+    $entities = bat_event_load_multiple(array_keys($result['bat_event']), $conditions);
+    foreach ($entities as $event) {
+      $wrapper = entity_metadata_wrapper('bat_event', $event);
+      $events[$wrapper->event_id->value()] = $wrapper->name->value();
+    }
+  }
+
+  return $events;
+}
+
+/**
+ * Sets up content to show an individual event.
+ */
+function bat_event_page_view($event, $view_mode = 'full') {
+  $controller = entity_get_controller('bat_event');
+  $content = $controller->view(array($event->event_id => $event));
+  return $content;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function bat_event_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'bat_event') . '/views',
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bat_event_theme() {
+  return array(
+    'bat_event_add_list' => array(
+      'variables' => array('content' => array()),
+      'file' => 'bat_event.admin.inc',
+    ),
+    'bat_event' => array(
+      'render element' => 'elements',
+      'template' => 'bat_event',
+    ),
+    'bat_event_extra_data' => array(
+      'variables' => array('event_extra_data', 'event' => NULL),
+      'template' => 'bat_event-extra-data',
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function bat_event_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+  // Add action link 'admin/bat/units/add' on 'admin/bat/units'.
+  if ($root_path == 'admin/bat/events') {
+    $item = menu_get_item('admin/bat/events/add');
+    if ($item['access']) {
+      $data['actions']['output'][] = array(
+        '#theme' => 'menu_local_action',
+        '#link' => $item,
+      );
+    }
+  }
+}
+
+/**
+ * JSON output for autocomplete bat_event_types.
+ *
+ * @param string $bat_event_type_name
+ *   The bat_event type seed to look for.
+ */
+function bat_event_get_unit_types($bat_event_type_name = '') {
+  $matches = array();
+  if ($bat_event_type_name) {
+    $result = db_select('bat_event_type')
+      ->fields('bat_event_type', array('type'))
+      ->condition('type', db_like($bat_event_type_name) . '%', 'LIKE')
+      ->range(0, 10)
+      ->execute();
+    foreach ($result as $unit_type) {
+      $matches[$unit_type->type] = check_plain($unit_type->type);
+    }
+  }
+
+  drupal_json_output($matches);
+}
+
+/**
+ * The class used for Event entities.
+ */
+class BatEvent extends Entity {
+
+  /**
+   * DateTime object calculated from start date.
+   *
+   * @var DateTime
+   */
+  public $start_date_object;
+  /**
+   * DateTime object calculated from end date.
+   *
+   * @var DateTime
+   */
+  public $end_date_object;
+
+  public function __construct($values = array()) {
+    parent::__construct($values, 'bat_event');
+    if (isset($this->start_date)) {
+      $this->start_date_object = new DateTime($this->start_date);
+    }
+    if (isset($this->end_date)) {
+      $this->end_date_object = new DateTime($this->end_date);
+    }
+  }
+
+  public function delete_event() {
+    entity_get_controller($this->entityType)->delete_event($this);
+  }
+
+  protected function defaultLabel() {
+    return '';
+  }
+
+  protected function defaultUri() {
+    return array('path' => 'event/' . $this->event_id);
+  }
+
+}
+
+/**
+ * The class used for unit type entities.
+ */
+class BatEventType extends Entity {
+
+  public $type;
+  public $label;
+
+  public function __construct($values = array()) {
+    parent::__construct($values, 'bat_event_type');
+  }
+
+}
+
+/**
+ * The Controller for BatEvent entities.
+ */
+class BatEventController extends EntityAPIController {
+
+  /**
+   * Create a event - we first set up the values that are specific
+   * to our event but then also go through the EntityAPIController
+   * function.
+   *
+   * @param array $values
+   *   The event to create properties.
+   *
+   * @return object
+   *   A event object with all default fields initialized.
+   */
+  public function create(array $values = array()) {
+    $event_type = bat_event_type_load($values['type'], TRUE);
+
+    // Add values that are specific to our unit.
+    $values += array(
+      'event_id' => '',
+      'is_new' => TRUE,
+      'title' => '',
+      'created' => '',
+      'changed' => '',
+      'order_id' => '',
+      'data' => array(),
+    );
+
+    $event = parent::create($values);
+    return $event;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save($entity) {
+    $entity->original = entity_load_unchanged($this->entityType, $entity->{$this->idKey});
+
+    $event_type = bat_event_type_load($entity->type);
+
+    // We are going to be updating the event - so the first step is to remove
+    // the old event.
+    if ((!isset($entity->is_new)) && ($entity->original->start_date != '') && ($entity->original->end_date != '') &&
+        field_get_items('bat_event', $entity->original, 'event_unit_reference') !== FALSE) {
+
+      $event_unit_reference = field_get_items('bat_event', $entity->original, 'event_unit_reference');
+      $unit_id = $event_unit_reference[0]['target_id'];
+      $bat_unit = bat_unit_load($unit_id);
+      $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event_type->type));
+
+      $this->batStoreSave($unit,
+        new \DateTime($entity->original->start_date),
+        new \DateTime($entity->original->end_date),
+        $event_type->type,
+        $event_type->event_granularity,
+        $unit->getDefaultValue(),
+        $entity->event_id,
+        TRUE
+      );
+    }
+
+    parent::save($entity);
+
+    // We have a unit defined so lets block availability there unless its a
+    // event that is to be deleted.
+    if (field_get_items('bat_event', $entity, 'event_unit_reference') !== FALSE) {
+      $event_state_reference = field_get_items('bat_event', $entity, 'event_state_reference');
+      $event_state = $event_state_reference[0]['state_id'];
+
+      $event_unit_reference = field_get_items('bat_event', $entity, 'event_unit_reference');
+      $unit_id = $event_unit_reference[0]['target_id'];
+      $bat_unit = bat_unit_load($unit_id);
+      $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event_type->type));
+
+      $this->batStoreSave($unit,
+        new \DateTime($entity->start_date),
+        new \DateTime($entity->end_date),
+        $event_type->type,
+        $event_type->event_granularity,
+        $event_state,
+        $entity->event_id
+      );
+    }
+  }
+
+  /**
+   * Handles saving to the BatStore
+   *
+   * @param \Drupal\bat\Unit $unit - The unit to save
+   * @param \DateTime $start_date
+   * @param \DateTime $end_date
+   * @param $event_type
+   * @param $granularity
+   * @param $event_state
+   * @param $event_id
+   * @param bool|FALSE $remove - set to TRUE if the event is to be removed (event_id set to zero)
+   */
+  public function batStoreSave(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE ) {
+    $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE);
+    $event_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_EVENT);
+
+    $units = array($unit);
+    $state_calendar = new Calendar($units, $state_store);
+    $event_calendar = new Calendar($units, $event_store);
+
+    $state_event = new Event($start_date, $end_date, $unit->getUnitId(), $event_state);
+    if (!$remove) {
+      $event_id_event = new Event($start_date, $end_date, $unit->getUnitId(), $event_id);
+    }
+    else {
+      $event_id_event = new Event($start_date, $end_date, $unit->getUnitId(), 0);
+    }
+
+    $state_calendar->addEvents(array($state_event), $granularity);
+    $event_calendar->addEvents(array($event_id_event), $granularity);
+  }
+
+  public function delete($ids) {
+    foreach ($ids as $id) {
+      $event = bat_event_load($id);
+      $this->deleteEvent($event);
+    }
+
+    parent::delete($ids);
+  }
+
+  public function deleteEvent($event) {
+    // Check if the event had a unit associated with it and if so update the
+    // availability calendar.
+    if (field_get_items('bat_event', $event, 'event_unit_reference') !== FALSE &&
+        isset($event->start_date) && isset($event->end_date)) {
+
+      $event_unit_reference = field_get_items('bat_event', $event, 'event_unit_reference');
+      $unit_id = $event_unit_reference[0]['target_id'];
+
+      $bat_unit = bat_unit_load($unit_id);
+      $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event->type));
+      $event_type = bat_event_type_load($event->type);
+
+      $this->batStoreSave($unit,
+        clone($event->start_date_object),
+        clone($event->end_date_object),
+        $event->type,
+        $event_type->event_granularity,
+        $unit->getDefaultValue(),
+        $event->event_id,
+        TRUE
+      );
+
+    }
+  }
+
+  /**
+   * Overriding the buildContent function to add entity specific fields.
+   */
+  public function buildContent($entity, $view_mode = 'full', $langcode = NULL, $content = array()) {
+    $content = parent::buildContent($entity, $view_mode, $langcode, $content);
+
+    return $content;
+  }
+
+}
+
+/**
+ * The Controller for Event Type entities
+ */
+class BatEventTypeController extends EntityAPIControllerExportable {
+
+  /**
+   * Create a event type - we first set up the values that are specific
+   * to our event type schema but then also go through the EntityAPIController
+   * function.
+   *
+   * @param array $values
+   *   Array containing properties to include in the event type.
+   *
+   * @return object
+   *   A event type object with all default fields initialized.
+   */
+  public function create(array $values = array()) {
+    // Add values that are specific to our Event Type.
+    $values += array(
+      'id' => '',
+      'is_new' => TRUE,
+      'data' => '',
+    );
+    $event_type = parent::create($values);
+
+    return $event_type;
+  }
+
+  /**
+   * @param $entity
+   */
+  public function save($entity) {
+    if (empty($entity->{$this->idKey})) {
+      // Create all tables necessary for this Event Type.
+      bat_event_create_event_type_schema($entity->type);
+
+      // Create a field of type 'Entity Reference' to reference a Bat Unit.
+      bat_event_type_add_unit_reference($entity);
+
+      if ($entity->fixed_event_states) {
+        // Create a field of type 'Bat Event State Reference' to reference an Event State.
+        bat_event_type_add_event_state_reference($entity);
+      }
+    }
+
+    return parent::save($entity);
+  }
+
+  /**
+   * @param $ids
+   */
+  public function delete($ids) {
+    parent::delete($ids);
+
+    foreach ($ids as $id) {
+      // Delete all tables necessary for this Event Type.
+      bat_event_delete_event_type_schema($id);
+    }
+  }
+
+}
+
+/**
+ * Implements hook_field_info().
+ */
+function bat_event_field_info() {
+  return array(
+    'bat_event_state_reference' => array(
+      'label' => t('BAT Event State Reference'),
+      'description' => t('A reference to an Event State.'),
+      'settings' => array('event_type' => ''),
+      'default_widget' => 'bat_event_state_reference_autocomplete',
+      'default_formatter' => 'bat_event_state_reference_default',
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_is_empty().
+ */
+function bat_event_field_is_empty($item, $field) {
+  return empty($item['state_id']);
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function bat_event_field_formatter_info() {
+  $ret = array(
+    'bat_event_state_reference_default' => array(
+      'label' => t('BAT Event State'),
+      'description' => t('BAT Event State default formatter.'),
+      'field types' => array('bat_event_state_reference', 'entityreference'),
+    ),
+  );
+  return $ret;
+}
+
+/**
+ * Implements hook_field_formatter_prepare_view().
+ */
+function bat_event_field_formatter_prepare_view($entity_type, $entities, $field, $instances, $langcode, &$items, $displays) {
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function bat_event_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  foreach ($items as $delta => $item) {
+    $state = bat_event_load_state($item['state_id']);
+
+    $element[] = array('#markup' => $state['label']);
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_instance_settings_form().
+ */
+function bat_event_field_instance_settings_form($field, $instance) {
+  $settings = $instance['settings'];
+
+  $form = array();
+
+  $event_types_options = array();
+  $event_types = bat_event_get_types();
+  foreach ($event_types as $event_type) {
+    if ($event_type->fixed_event_states) {
+      $event_types_options[$event_type->type] = $event_type->label;
+    }
+  }
+
+  $form['event_type'] = array(
+    '#type' => 'select',
+    '#title' => t('Event type'),
+    '#options' => $event_types_options,
+    '#default_value' => (isset($settings['event_type'])) ? $settings['event_type'] : '',
+    '#required' => TRUE,
+    '#empty_option' => t('- Select -'),
+  );
+
+  return $form;
+}
+
+/**
+ * Implements hook_field_validate().
+ */
+function bat_event_field_validate($entity_type, $entity, $field, $instance, $langcode, $items, &$errors) {
+  // Extract unit ids to check.
+  $ids = array();
+
+  // Check for non-numeric values.
+  // First check non-numeric "nid's to avoid losing time with them.
+  foreach ($items as $delta => $item) {
+    if (is_array($item) && !empty($item['state_id'])) {
+      if (is_numeric($item['state_id'])) {
+        $ids[] = $item['state_id'];
+      }
+      else {
+        $errors[$field['field_name']][$langcode][$delta][] = array(
+          'error' => 'invalid_state_id',
+          'message' => t('%name: invalid input.',
+            array('%name' => $instance['label'])),
+        );
+      }
+    }
+  }
+}
+
+function bat_event_potential_references($field, $options = array()) {
+  // Fill in default options.
+  $options += array(
+    'string' => '',
+    'match' => 'contains',
+    'ids' => array(),
+    'limit' => 0,
+  );
+
+  $results = &drupal_static(__FUNCTION__, array());
+
+  // Create unique id for static cache.
+  $cid = $field['field_name'] . ':' . $options['match'] . ':'
+    . ($options['string'] !== '' ? $options['string'] : implode('-', $options['ids']))
+    . ':' . $options['limit'];
+  if (!isset($results[$cid])) {
+    $references = FALSE;
+
+    if ($references === FALSE) {
+      $references = _bat_event_potential_references($field, $options);
+    }
+
+    // Store the results.
+    $results[$cid] = !empty($references) ? $references : array();
+  }
+
+  return $results[$cid];
+}
+
+/**
+ *
+ */
+function _bat_event_potential_references($field, $options) {
+  $query = db_select('bat_event_state', 'u');
+  $event_id_alias = $query->addField('u', 'id');
+  $event_label_alias = $query->addField('u', 'label');
+
+  $query->condition('event_type', $options['event_type']);
+
+  if ($options['string'] !== '') {
+    switch ($options['match']) {
+      case 'contains':
+        $query->condition('u.label', '%' . $options['string'] . '%', 'LIKE');
+        break;
+
+      case 'starts_with':
+        $query->condition('u.label', $options['string'] . '%', 'LIKE');
+        break;
+
+      case 'equals':
+      default:
+        // No match type or incorrect match type: use "=".
+        $query->condition('u.label', $options['string']);
+        break;
+    }
+  }
+
+  $result = $query->execute()->fetchAll();
+  $references = array();
+  foreach ($result as $event) {
+    $references[$event->id] = array(
+      'title'    => $event->label,
+      'rendered' => check_plain($event->label),
+    );
+  }
+  return $references;
+}
+
+/**
+ * Menu callback for the autocomplete results.
+ */
+function bat_event_reference_autocomplete($entity_type, $bundle, $field_name, $string = '') {
+  $field = field_info_field($field_name);
+  $instance = field_info_instance($entity_type, $field_name, $bundle);
+
+  $options = array(
+    'string' => $string,
+    'match' => $instance['widget']['settings']['autocomplete_match'],
+    'limit' => 10,
+    'event_type' => $instance['settings']['event_type'],
+  );
+  $references = bat_event_potential_references($field, $options);
+
+  $matches = array();
+  foreach ($references as $id => $row) {
+    // Markup is fine in autocompletion results (might happen when rendered
+    // through Views) but we want to remove hyperlinks.
+    $suggestion = preg_replace('/<a href="([^<]*)">([^<]*)<\/a>/', '$2', $row['rendered']);
+    // Add a class wrapper for a few required CSS overrides.
+    $matches[$row['title'] . " [state_id:$id]"] = '<div class="reference-autocomplete">' . $suggestion . '</div>';
+  }
+
+  drupal_json_output($matches);
+}
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function bat_event_field_widget_info() {
+  return array(
+    'bat_event_reference_autocomplete' => array(
+      'label'       => t('Autocomplete text field'),
+      'description' => t('Display the list of referenceable units as a textfield with autocomplete behaviour.'),
+      'field types' => array('bat_event_state_reference'),
+      'settings'    => array(
+        'autocomplete_match' => 'contains',
+        'size' => 60,
+        'autocomplete_path' => 'bat_event/state_event/autocomplete',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_form().
+ */
+function bat_event_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  switch ($instance['widget']['type']) {
+    case 'bat_event_reference_autocomplete':
+      $element += array(
+        '#type' => 'textfield',
+        '#default_value' => isset($items[$delta]['state_id']) ? $items[$delta]['state_id'] : NULL,
+        '#autocomplete_path' => $instance['widget']['settings']['autocomplete_path'] . '/' . $instance['entity_type'] . '/' . $instance['bundle'] . '/' . $field['field_name'],
+        '#size' => $instance['widget']['settings']['size'],
+        '#maxlength' => 255,
+        '#element_validate' => array('bat_event_autocomplete_validate'),
+        '#value_callback' => 'bat_event_autocomplete_value',
+      );
+      break;
+  }
+  return array('state_id' => $element);
+}
+
+/**
+ * Value callback for a bat_event_reference autocomplete element.
+ */
+function bat_event_autocomplete_value($element, $input = FALSE, $form_state) {
+  if ($input === FALSE) {
+    $state_id = $element['#default_value'];
+    if (!empty($state_id)) {
+      $state = bat_event_load_state($state_id);
+      $value = $state['label'];
+      $value .= ' [state_id:' . $state_id . ']';
+      return $value;
+    }
+  }
+}
+
+/**
+ * Validation callback for a event state autocomplete element.
+ */
+function bat_event_autocomplete_validate($element, &$form_state, $form) {
+  $field = field_widget_field($element, $form_state);
+  $instance = field_widget_instance($element, $form_state);
+
+  $value = $element['#value'];
+  $state_id = NULL;
+
+  if (!empty($value)) {
+    // Check whether we have an explicit "[state_id:n]" input.
+    preg_match('/^(?:\s*|(.*) )?\[\s*state_id\s*:\s*(\d+)\s*\]$/', $value, $matches);
+    if (!empty($matches)) {
+      // Explicit nid. Check that the 'title' part matches the actual title for
+      // the nid.
+      list(, $title, $state_id) = $matches;
+      if (!empty($title)) {
+        $state = bat_event_load_state($state_id);
+        $real_title = $state['label'];
+        if (trim($title) != trim($real_title)) {
+          form_error($element, t('%name: title mismatch. Please check your selection.', array('%name' => $instance['label'])));
+        }
+      }
+    }
+    else {
+      // No explicit state_id (the submitted value was not populated by
+      // autocomplete selection). Get the state_id of a referenceable node from
+      // the entered title.
+      $options = array(
+        'string' => $value,
+        'match' => 'equals',
+        'limit' => 1,
+      );
+      $references = bat_event_potential_references($field, $options);
+      if ($references) {
+        // @todo The best thing would be to present the user with an
+        // additional form, allowing the user to choose between valid
+        // candidates with the same title. ATM, we pick the first
+        // matching candidate...
+        $state_id = key($references);
+      }
+      else {
+        form_error($element, t('%name: unable to find an event state with that title.', array('%name' => $instance['label'])));
+      }
+    }
+  }
+
+  // Set the element's value as the state id that was extracted from the entered
+  // input.
+  form_set_value($element, $state_id, $form_state);
+}
+
+/**
+ * Implements hook_field_widget_error().
+ */
+function bat_event_field_widget_error($element, $error, $form, &$form_state) {
+  form_error($element['state_id'], $error['message']);
+}
+
+/**
+ *
+ */
+function bat_event_delete_event_type_schema($machine_name) {
+  foreach (bat_event_get_event_type_tables($machine_name) as $name) {
+    db_drop_table($name);
+  }
+}
+
+/**
+ *
+ */
+function bat_event_get_event_type_tables($machine_name) {
+  return array('bat_event_' . $machine_name . '_day_state',
+               'bat_event_' . $machine_name . '_day_event',
+               'bat_event_' . $machine_name . '_hour_state',
+               'bat_event_' . $machine_name . '_hour_event',
+               'bat_event_' . $machine_name . '_minute_state',
+               'bat_event_' . $machine_name . '_minute_event');
+}
+
+/**
+ *
+ */
+function bat_event_create_event_type_schema($machine_name) {
+  $schema = array();
+
+  $schema['bat_event_' . $machine_name . '_day_state'] = array(
+    'description' => 'Holds the state of each unit for a given day',
+    'fields' => bat_event_generate_day_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'month_key' => array('unit_id', 'year', 'month'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
+  $schema['bat_event_' . $machine_name . '_day_event'] = array(
+    'description' => 'Holds the event that determined the state of a unit',
+    'fields' => bat_event_generate_day_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'month_key' => array('unit_id', 'year', 'month'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
+  $schema['bat_event_' . $machine_name . '_hour_state'] = array(
+    'description' => 'Holds the state of the unit',
+    'fields' => bat_event_generate_hour_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'day_key' => array('unit_id', 'year', 'month', 'day'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
+  $schema['bat_event_' . $machine_name . '_hour_event'] = array(
+    'description' => 'Holds the event that determined the state of a unit',
+    'fields' => bat_event_generate_hour_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'day_key' => array('unit_id', 'year', 'month', 'day'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
+  $schema['bat_event_' . $machine_name . '_minute_state'] = array(
+    'description' => 'Holds the state of the unit',
+    'fields' => bat_event_generate_minute_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'day_key' => array('unit_id', 'year', 'month', 'day', 'hour'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
+  $schema['bat_event_' . $machine_name . '_minute_event'] = array(
+    'description' => 'Holds the event that determined the state of a unit',
+    'fields' => bat_event_generate_minute_schema_fields(),
+    'indexes' => array(
+      'unit_id' => array('unit_id'),
+      'year' => array('year'),
+      'month' => array('month'),
+    ),
+    'unique keys' => array(
+      'day_key' => array('unit_id', 'year', 'month', 'day', 'hour'),
+    ),
+    'foreign keys' => array(
+      'unit_id' => array(
+        'table' => 'bat_units',
+        'columns' => array('unit_id' => 'unit_id'),
+      ),
+    ),
+  );
+
+  foreach ($schema as $name => $table) {
+    db_create_table($name, $table);
+  }
+}
+
+/**
+ * Creates the necessary day schema fields.
+ *
+ * @return array
+ */
+function bat_event_generate_day_schema_fields() {
+  $fields = array(
+      'unit_id' => array(
+      'description' => 'Identifier for a unit.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+      'year' => array(
+      'description' => 'The calendar year for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+      'month' => array(
+      'description' => 'The month for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+  );
+
+  for ($i = 1; $i <= 31; $i++) {
+    $fields['d' . $i] = array(
+      'description' => 'D' . $i,
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    );
+  }
+
+  return $fields;
+}
+
+/**
+ * Creates the necessary hour schema fields.
+ *
+ * @return array
+ */
+function bat_event_generate_hour_schema_fields() {
+  $fields = array(
+    'unit_id' => array(
+      'description' => 'Identifier for a unit.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+    'year' => array(
+      'description' => 'The calendar year for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+    'month' => array(
+      'description' => 'The month for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+    'day' => array(
+      'description' => 'The day for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+  );
+
+  for ($i = 0; $i <= 23; $i++) {
+    $fields['h' . $i] = array(
+      'description' => 'H' . $i,
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    );
+  }
+
+  return $fields;
+}
+
+/**
+ * Creates the necessary minute schema fields.
+ *
+ * @return array
+ */
+function bat_event_generate_minute_schema_fields() {
+  $fields = array(
+    'unit_id' => array(
+      'description' => 'Identifier for a unit.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+    'year' => array(
+      'description' => 'The calendar year for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+    'month' => array(
+      'description' => 'The month for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+    'day' => array(
+      'description' => 'The day for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+    'hour' => array(
+      'description' => 'The hour for which this availability row is relevant',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    ),
+  );
+
+  for ($i = 0; $i <= 59; $i++) {
+    // PHP has no clean way to get the minutes without leading zeros so setting table
+    // fields names to contain the leading zeros to save strangeness in code elsewhere
+    if ($i <= 9) { $m='0' . $i; } else { $m = $i; }
+
+    $fields['m' . $m] = array(
+      'description' => 'M' . $m,
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => '0',
+    );
+  }
+
+  return $fields;
+}
+
+/**
+ * Utility function to validate hex color numbers.
+ */
+function bat_event_validate_hex_color($element, &$form_state) {
+  if (!preg_match('/^#[a-f0-9]{6}$/i', $element['#value'])) {
+    form_error($element, t('This is not a valid hexadecimal color!'));
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bat_event_form_bat_unit_type_form_alter(&$form, &$form_state) {
+  $unit_type = $form_state['bat_unit_type'];
+
+  if (!isset($unit_type->is_new)) {
+    $fields_options = array();
+
+    $fields = field_info_instances('bat_unit', $unit_type->type);
+
+    foreach ($fields as $field) {
+      $field_info = field_info_field($field['field_name']);
+      $fields_options[$field['field_name']] = $field['field_name'];
+    }
+
+    $form['events'] = array(
+      '#type' => 'fieldset',
+      '#group' => 'additional_settings',
+      '#title' => t('Events'),
+      '#tree' => TRUE,
+      '#weight' => 80,
+    );
+
+    $event_types = bat_event_get_types();
+    foreach ($event_types as $event_type) {
+      $form['events'][$event_type->type] = array(
+        '#type' => 'select',
+        '#title' => t('Select your default @event field', array('@event' => $event_type->label)),
+        '#options' => $fields_options,
+        '#default_value' => isset($unit_type->data[$event_type->type]) ? $unit_type->data[$event_type->type] : NULL,
+        '#empty_option' => t('- Select a field -'),
+      );
+    }
+
+    $form['actions']['submit']['#submit'][] = 'bat_event_form_bat_unit_type_form_submit';
+  }
+}
+
+/**
+ * Submit callback for bat_event_form_bat_unit_type_form form.
+ */
+function bat_event_form_bat_unit_type_form_submit($form, &$form_state) {
+  foreach ($form_state['values']['events'] as $event => $field) {
+    $form_state['bat_unit_type']->data[$event] = $field;
+  }
+
+  $form_state['bat_unit_type']->save();
+}
+
+/**
+ * Implements hook_ctools_plugin_type().
+ */
+function bat_event_ctools_plugin_type() {
+  return array(
+    'bat_eventstyle' => array(
+      'use hooks' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_bat_event_bat_eventstyle().
+ */
+function bat_event_bat_event_bat_eventstyle() {
+  return array(
+    'bat_eventstyle_default' => array(
+      'label' => t('Default BAT Event Style'),
+      'handler' => array(
+        'class' => 'DefaultEventStyle',
+      ),
+    ),
+  );
+}

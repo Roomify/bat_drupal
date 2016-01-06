@@ -4,14 +4,17 @@
  * @file
  */
 
-use Drupal\bat_booking\AvailabilityAgent;
+use Roomify\Bat\Calendar\Calendar;
+use Roomify\Bat\Event\Event;
+use Roomify\Bat\Store\DrupalDBStore;
+use Roomify\Bat\Unit\Unit;
 
 /**
  * Implements hook_ctools_plugin_api().
  */
-function bat_facets_ctools_plugin_api($module = NULL, $api = NULL) {
-  if ($module == "facetapi" && $api == "facetapi_defaults") {
-    return array("version" => "1");
+function bat_facets_ctools_plugin_api($module, $api) {
+  if ($module == 'facetapi' && $api == 'facetapi_defaults') {
+    return array('version' => '1');
   }
 }
 
@@ -51,12 +54,12 @@ function bat_facets_availability($form, &$form_state, $elements) {
   );
 
   if (isset($params['bat_start_date']) && !empty($params['bat_start_date'])) {
-    $arrivalDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_start_date']);
-    $arrival = $arrivalDateTime->format('Y-m-d');
+    $start_date = new DateTime($params['bat_start_date']);
+    $arrival = $start_date->format('Y-m-d');
   }
   if (isset($params['bat_end_date']) && !empty($params['bat_end_date'])) {
-    $departureDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_end_date']);
-    $departure = $departureDateTime->format('Y-m-d');
+    $end_date = new DateTime($params['bat_end_date']);
+    $departure = $end_date->format('Y-m-d');
   }
 
   // Create unique ids and selectors for each picker.
@@ -69,15 +72,15 @@ function bat_facets_availability($form, &$form_state, $elements) {
   // Specify the default datepicker parameters (see date_popup_element_info())
   $datepicker_options = array(
     // Limit bookings to X days in advance, depending on the
-    // chosen configuration in your Rooms installation, defaults
+    // chosen configuration in your BAT installation, defaults
     // to one day in advance.
-    'minDate' => '+' . variable_get('rooms_booking_start_date', 1) . 'd',
+    'minDate' => '+' . variable_get('bat_event_start_date', 1) . 'd',
   );
 
   $form['container']['arrival'] = array(
     '#type' => 'date_popup',
     '#description' => '',
-    '#date_format' => variable_get('rooms_date_format', 'd-m-Y'),
+    '#date_format' => variable_get('bat_date_format', 'd-m-Y'),
     '#title' => t('Arrival date'),
     '#default_value' => isset($arrival) ? $arrival : '',
     '#datepicker_options' => array_merge($datepicker_options, array('endDateSelector' => $end_date_selector)),
@@ -87,23 +90,23 @@ function bat_facets_availability($form, &$form_state, $elements) {
   $form['container']['departure'] = array(
     '#type' => 'date_popup',
     '#description' => '',
-    '#date_format' => variable_get('rooms_date_format', 'd-m-Y'),
+    '#date_format' => variable_get('bat_date_format', 'd-m-Y'),
     '#title' => t('Departure date'),
     '#default_value' => isset($departure) ? $departure : '',
     '#datepicker_options' => array_merge($datepicker_options, array('startDateSelector' => $start_date_selector)),
     '#required' => TRUE,
     '#attached' => array(
       'js' => array(
-        drupal_get_path('module', 'rooms') . '/js/rooms_date_popup.js',
+        drupal_get_path('module', 'bat') . '/js/bat_date_popup.js',
         array(
           'data' => array(
-            'rooms' => array(
-              'roomsBookingStartDay' => variable_get('rooms_booking_start_date', 1),
-              'roomsDateFormat' => 'dd/mm/yy',
+            'bat' => array(
+              'batBookingStartDay' => variable_get('bat_event_start_date', 1),
+              'batDateFormat' => 'dd/mm/yy',
 
               // Here we create a listing of all datepickers registered on the
               // current page. This is available for use in your own custom
-              // jQuery scripts as Drupal.settings.rooms.datepickers.
+              // jQuery scripts as Drupal.settings.bat.datepickers.
               'datepickers' => array(
                 $start_date_selector => array(
                   'endDateSelector' => $end_date_selector,
@@ -142,7 +145,7 @@ function bat_facets_search_api_query_alter($query) {
   if ($query->getIndex()->getEntityType()) {
     $info = entity_get_info($query->getIndex()->getEntityType());
 
-    // Only modify the query if this query is against rooms units.
+    // Only modify the query if this query is against bat units.
     if ($info['base table'] = 'bat_unit') {
       // Get this widget's settings.
       $index = $query->getIndex();
@@ -159,36 +162,56 @@ function bat_facets_search_api_query_alter($query) {
           !empty($params['bat_start_date']) &&
           isset($params['bat_end_date']) &&
           !empty($params['bat_end_date'])) {
-        $arrivalDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_start_date']);
-        $departureDateTime = DateTime::createFromFormat('Y-m-d', $params['bat_end_date']);
+        $start_date = new DateTime($params['bat_start_date']);
+        $end_date = new DateTime($params['bat_end_date']);
 
-        $options = array();
-        $agent = new AvailabilityAgent($arrivalDateTime, $departureDateTime, $options);
+        $event_type = $settings->settings['event_type'];
 
-        // Search for units in the states configured on the facet widget settings.
-        $agent->setValidStates($settings->settings['states']);
-        $units = $agent->checkAvailability();
+        $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE);
+
+        $valid_states = array(0) + $settings->settings['states'];
+
+        $unit_ids = bat_unit_ids();
+
+        $units = array();
+        foreach ($unit_ids as $id => $name) {
+          $bat_unit = bat_unit_load($id);
+          $unit = new Unit($id, $bat_unit->getDefaultValue($event_type), $bat_unit->getConstraints());
+          $units[] = $unit;
+        }
+
+        $calendar = new Calendar($units, $state_store);
+
+        $constraints = module_invoke_all('bat_global_constraints', $units);
+
+        /**
+         * @TODO 1. We should add a hook that allows modules to insert constraints that are then passed to the getMatchingUnits fuction
+         * @TODO 3. The response from valid unit ids needs to be a CalendarResponse, we then extract the valid unit ids and pass it
+         * @TODO on to drupal alter as we are currently doing.
+         */
+
+        $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints);
+        $valid_unit_ids = array_keys($response->getIncluded());
+
+        $context = array(
+          'units_before_search' => $unit_ids,
+          'start_date' => $start_date,
+          'end_date' => $end_date,
+          'event_type' => $event_type,
+          'valid_states' => $valid_states,
+        );
+
+        drupal_alter('bat_facets_search_results', $valid_unit_ids, $context);
 
         // If no units are available, zero out results.
-        if (!is_array($units)) {
+        if (empty($valid_unit_ids)) {
           $query->condition($info['entity keys']['id'], 1, '<');
-          return;
         }
-
-        // Make array of unit IDs with availability.
-        $ids = array();
-        foreach ($units as $units_per_type) {
-          foreach ($units_per_type as $units) {
-            foreach ($units as $id => $unit) {
-              $ids[] = $id;
-            }
-          }
+        else {
+          // Limit the search API query to entity ids with availability.
+          $query->condition($info['entity keys']['id'], $valid_unit_ids, 'IN');
         }
-
-        // Limit the search API query to entity ids with availability.
-        $query->condition($info['entity keys']['id'], $ids, 'IN');
       }
     }
   }
 }
-

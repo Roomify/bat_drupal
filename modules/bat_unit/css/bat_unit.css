@@ -1,6 +1,5 @@
 /* Bookable unit edit form */
 .bat-unit-edit-form .form-wrapper {
-  max-width: 400px;
   margin: 0 20px 0.4em 0;
 }
 
@@ -29,12 +28,6 @@
 
 .bat-unit-edit-form .form-type-select {
   float: none;
-}
-
-.bat-unit-edit-form .field-widget-bat-availability-constraints-range {
-  max-width: inherit;
-  margin-right: 0;
-  clear: both;
 }
 
 .bat-unit-edit-form .form-item-name {

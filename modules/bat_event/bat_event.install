@@ -1,0 +1,313 @@
+<?php
+
+/**
+ * @file
+ * Sets up the base table for our entity and a table to store information about
+ * the entity types.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function bat_event_install() {
+  // Create an availability event type.
+  bat_event_create_availability_event_type();
+
+  // Create a pricing event type.
+  bat_event_create_pricing_event_type();
+
+  // Create default event states.
+  bat_event_create_standard_event_states();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function bat_event_uninstall() {
+  $event_types = db_select('bat_event_type', 'b')
+                  ->fields('b', array('type'))
+                  ->execute()
+                  ->fetchAll();
+
+  foreach ($event_types as $event_type) {
+    bat_event_delete_event_type_schema($event_type->type);
+  }
+}
+
+/**
+ * Implements hook_field_schema().
+ */
+function bat_event_field_schema($field) {
+  $columns = array(
+    'state_id' => array(
+      'type'     => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+    ),
+  );
+  return array(
+    'columns' => $columns,
+    'indexes' => array('state_id' => array('state_id')),
+    'foreign keys' => array(
+      'state_id' => array(
+        'table' => 'bat_event_state',
+        'columns' => array('state_id' => 'state_id'),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_schema().
+ */
+function bat_event_schema() {
+  $schema = array();
+
+  $schema['bat_events'] = array(
+    'description' => 'The base table for Events.',
+    'fields' => array(
+      'event_id' => array(
+        'description' => 'Primary Key: Identifier for an Event.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'The type of this Event.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'language' => array(
+        'description' => 'The language of the Event.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp when the Event was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the Event was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'uid' => array(
+        'description' => 'The {users}.uid that owns this event.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'start_date' => array(
+        'type' => 'datetime',
+        'mysql_type' => 'datetime',
+        'not null' => FALSE,
+        'description' => 'The start date for the event.',
+      ),
+      'end_date' => array(
+        'type' => 'datetime',
+        'mysql_type' => 'datetime',
+        'not null' => FALSE,
+        'description' => 'The end date for the event.',
+      ),
+      'data' => array(
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array of additional data.',
+      ),
+    ),
+    'primary key' => array('event_id'),
+    'indexes' => array(
+      'event_id' => array('event_id'),
+      'type' => array('type'),
+      'uid' => array('uid'),
+    ),
+  );
+
+  $schema['bat_event_type'] = array(
+    'description' => 'Stores information about defined event types.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique event type identifier.',
+      ),
+      'type' => array(
+        'description' => 'The machine-readable name of this event type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'label' => array(
+        'description' => 'The human-readable name of this event type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'event_granularity' => array(
+        'description' => 'Event Granularity (daily/hourly).',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'daily',
+      ),
+      'fixed_event_states' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Fixed event states (0/1).',
+      ),
+      'weight' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'The weight of this event type in relation to others.',
+      ),
+      'data' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array of additional data related to this event type.',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0x01,
+        'size' => 'tiny',
+        'description' => 'The exportable status of the entity.',
+      ),
+      'module' => array(
+        'description' => 'The name of the providing module if the entity has been defined in code.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'unique keys' => array(
+      'type' => array('type'),
+    ),
+  );
+
+  $schema['bat_event_state'] = array(
+    'description' => 'Stores information about defined event states.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique event state identifier.',
+      ),
+      'event_type' => array(
+        'description' => 'Event type machine name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'label' => array(
+        'description' => 'The human-readable name of this event state.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'color' => array(
+        'description' => 'The color hex.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'calendar_label' => array(
+        'description' => 'The calendar label.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'locked' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Lock.',
+      ),
+      'blocking' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Blocking.',
+      ),
+      'default_state' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Default state.',
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Creates the default Availability event type.
+ */
+function bat_event_create_availability_event_type() {
+  $event = new BatEventType(array(
+    'label' => 'Availability Event',
+    'type' => 'availability_event',
+    'fixed_event_states' => 1,
+  ));
+  bat_event_type_save($event);
+}
+
+/**
+ * Creates the default Pricing event type.
+ */
+function bat_event_create_pricing_event_type() {
+  $event = new BatEventType(array(
+    'label' => 'Pricing Event',
+    'type' => 'pricing_event',
+  ));
+  bat_event_type_save($event);
+}
+
+/**
+ * Creates the default event states.
+ */
+function bat_event_create_standard_event_states() {
+  $not_available_state = array(
+    'id' => BAT_NOT_AVAILABLE,
+    'event_type' => 'availability_event',
+    'label' => 'Not Available',
+    'color' => '#CC2727',
+    'calendar_label' => 'N/A',
+    'locked' => 1,
+  );
+  drupal_write_record('bat_event_state', $not_available_state);
+
+  $available_state = array(
+    'id' => BAT_AVAILABLE,
+    'event_type' => 'availability_event',
+    'label' => 'Available',
+    'color' => '#8BA175',
+    'calendar_label' => 'AV',
+    'locked' => 1,
+    'default' => 1,
+  );
+  drupal_write_record('bat_event_state', $available_state);
+}

@@ -40,6 +40,7 @@ function bat_facets_facetapi_facet_info(array $searcher_info) {
 
   return $facets;
 }
+
 /**
  * Implements hook_facetapi_widgets().
  */
@@ -54,17 +55,3 @@ function bat_facets_facetapi_widgets() {
     ),
   );
 }
-
-/**
- * Implements hook_facetapi_query_types().
-function bat_facets_facetapi_query_types() {
-  return array(
-    'search_api_bat_state' => array(
-      'handler' => array(
-        'class' => 'BatStateSearchAPIQuery',
-        'adapter' => 'search_api',
-      ),
-    ),
-  );
-}
- */

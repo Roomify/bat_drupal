@@ -34,9 +34,9 @@ class BatUnitTypeUIController extends EntityDefaultUIController {
 function bat_unit_type_form($form, &$form_state, $unit_type, $op = 'edit') {
 
   $form['#attributes']['class'][] = 'bat-management-form bat-unit-type-edit-form';
-
   $form['#attached']['css'] = array(
     drupal_get_path('module', 'bat_unit') . '/css/bat_unit_type.css',
+    drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css',
   );
 
   if ($op == 'clone') {
@@ -67,13 +67,9 @@ function bat_unit_type_form($form, &$form_state, $unit_type, $op = 'edit') {
     '#weight' => -99,
   );
 
-  $form['booking_mode'] = array(
-    '#type' => 'select',
-    '#title' => t('Booking Mode'),
-    '#options' => (module_exists('bat_hourly_availability')) ? array('daily' => t('Daily'), 'hourly' => t('Hourly')) : array('daily' => t('Daily')),
-    '#default_value' => isset($unit_type->booking_mode) ? $unit_type->booking_mode : 'daily',
-    '#weight' => -98,
-  );
+  if ($op == 'edit') {
+    $form['type']['#disabled'] = TRUE;
+  }
 
   // Add the field related form elements.
   $form_state['bat_unit_type'] = $unit_type;
