@@ -78,29 +78,31 @@ function bat_unit_entity_info() {
     ),
   );
 
+  /*
   // The entity that holds information about the entity type types.
   $return['bat_unit_type_type'] = array(
-    'label' => t('Unit Type'),
-    'entity class' => 'BatUnitType',
-    'controller class' => 'BatUnitTypeController',
-    'base table' => 'bat_unit_type',
+    'label' => t('Type of Bat Unit Type'),
+    'entity class' => 'BatUnitTypeType',
+    'controller class' => 'BatUnitTypeTypeController',
+    'base table' => 'bat_unit_type_type',
     'fieldable' => TRUE,
-    'bundle of' => 'bat_unit',
+    'bundle of' => 'bat_unit_type',
     'exportable' => TRUE,
     'entity keys' => array(
       'id' => 'id',
       'name' => 'type',
       'label' => 'label',
     ),
-    'access callback' => 'bat_unit_type_access',
+    'access callback' => 'bat_unit_type_type_access',
     'module' => 'bat_unit',
     // Enable the entity API's admin UI.
     'admin ui' => array(
-      'path' => 'admin/bat/unit-types',
-      'file' => 'bat_unit_type.admin.inc',
-      'controller class' => 'BatUnitTypeUIController',
+      'path' => 'admin/bat/config/unit-type-types',
+      'file' => 'bat_unit_type_types.admin.inc',
+      'controller class' => 'BatUnitTypeTypeUIController',
     ),
   );
+   */
 
   return $return;
 }
