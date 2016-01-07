@@ -71,12 +71,12 @@ function bat_unit_views_data_alter(&$data) {
     ),
     'relationship' => array(
       'title' => t('Owner'),
-      'help' => t("Relate this bookable unit to its owner's user account"),
+      'help' => t("Relate this unit to its owner's user account"),
       'handler' => 'views_handler_relationship',
       'base' => 'users',
       'base field' => 'uid',
       'field' => 'uid',
-      'label' => t('Bookable unit owner'),
+      'label' => t('Unit owner'),
     ),
   );
 

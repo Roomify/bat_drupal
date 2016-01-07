@@ -11,7 +11,7 @@
  */
 function bat_unit_entity_info() {
   $return['bat_unit'] = array(
-    'label' => t('Bookable Units'),
+    'label' => t('Units'),
     // The entity class and controller class extend the classes provided by the
     // Entity API.
     'entity class' => 'BatUnit',
@@ -38,8 +38,8 @@ function bat_unit_entity_info() {
       'access tag' => 'bat_unit_access',
     ),
     'permission labels' => array(
-      'singular' => t('bookable unit'),
-      'plural' => t('bookable units'),
+      'singular' => t('unit'),
+      'plural' => t('units'),
     ),
     'module' => 'bat_unit',
     // The information below is used by the BatUnitUIController (which extends
@@ -62,7 +62,7 @@ function bat_unit_entity_info() {
   );
   // The entity that holds information about the entity types.
   $return['bat_unit_type'] = array(
-    'label' => t('Bookable Unit Type'),
+    'label' => t('Unit Type'),
     'entity class' => 'BatUnitType',
     'controller class' => 'BatUnitTypeController',
     'base table' => 'bat_unit_type',
@@ -118,18 +118,18 @@ function bat_unit_entity_info_alter(&$entity_info) {
 function bat_unit_permission() {
   $permissions = array(
     'administer bat_unit_type entities' => array(
-      'title' => t('Administer bookable unit types'),
-      'description' => t('Allows users to add bookable unit types and configure their fields.'),
+      'title' => t('Administer unit types'),
+      'description' => t('Allows users to add unit types and configure their fields.'),
       'restrict access' => TRUE,
     ),
     'view any bat_unit unpublished entity' => array(
-      'title' => t('View any unpublished bookable unit'),
-      'description' => t('Allows users to view any unpublished bookable unit.'),
+      'title' => t('View any unpublished unit'),
+      'description' => t('Allows users to view any unpublished unit.'),
       'restrict access' => TRUE,
     ),
     'view own bat_unit unpublished entities' => array(
-      'title' => t('View own unpublished bookable units'),
-      'description' => t('Allows users to view own unpublished bookable units.'),
+      'title' => t('View own unpublished units'),
+      'description' => t('Allows users to view own unpublished units.'),
     ),
   );
 
@@ -139,10 +139,10 @@ function bat_unit_permission() {
   $entity_info = entity_get_info('bat_unit');
   foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
     $permissions['view own bat_unit entities of bundle ' . $bundle_name] = array(
-      'title' => t('View own published %bundle @entity_type', array('@entity_type' => 'bookable units', '%bundle' => $bundle_info['label'])),
+      'title' => t('View own published %bundle @entity_type', array('@entity_type' => 'units', '%bundle' => $bundle_info['label'])),
     );
     $permissions['view any bat_unit entity of bundle ' . $bundle_name] = array(
-      'title' => t('View any published %bundle @entity_type', array('@entity_type' => 'bookable unit', '%bundle' => $bundle_info['label'])),
+      'title' => t('View any published %bundle @entity_type', array('@entity_type' => 'unit', '%bundle' => $bundle_info['label'])),
     );
   }
 
@@ -150,7 +150,7 @@ function bat_unit_permission() {
 }
 
 /**
- * Determines whether the given user has access to a bookable unit.
+ * Determines whether the given user has access to a unit.
  *
  * @param string $op
  *   The operation being performed. One of 'view', 'update', 'create', 'delete'
@@ -251,7 +251,7 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
  */
 function _bat_unit_add_access() {
   if (user_access('administer bat_unit_type entities')) {
-    // There are no bookable unit types defined that the user has permission to
+    // There are no unit types defined that the user has permission to
     // create, but the user does have the permission to administer the content
     // types, so grant them access to the page anyway.
     return TRUE;
@@ -317,7 +317,7 @@ function bat_unit_type_load($type, $reset = FALSE) {
 }
 
 /**
- * Fetches a bookable unit object.
+ * Fetches a unit object.
  *
  * @param int $unit_id
  *   Integer specifying the unit id.
@@ -354,7 +354,7 @@ function bat_unit_load_multiple($unit_ids = array(), $conditions = array(), $res
 }
 
 /**
- * Deletes a bookable unit.
+ * Deletes a unit.
  *
  * @param BatUnit $unit
  *   The BatUnit object that represents the unit to delete.
@@ -738,14 +738,14 @@ class BatUnit extends Entity {
 class BatUnitType extends Entity {
 
   /**
-   * The Bookable unit type.
+   * The Unit type.
    *
    * @var string
    */
   public $type;
 
   /**
-   * The bookable unit type label.
+   * The unit type label.
    *
    * @var string
    */
@@ -767,7 +767,7 @@ class BatUnitController extends EntityAPIController {
   }
 
   /**
-   * Creates a bookable unit.
+   * Creates a unit.
    *
    * @param array $values
    *   The properties for the new unit type.

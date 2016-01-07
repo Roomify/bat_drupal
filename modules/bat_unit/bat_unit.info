@@ -1,5 +1,5 @@
 name = BAT Unit
-description = Create and manage bookable units (e.g. rooms).
+description = Create and manage units (e.g. rooms).
 core = 7.x
 
 package = BAT

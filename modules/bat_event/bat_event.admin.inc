@@ -449,7 +449,7 @@ function bat_event_edit_form_get_units($unit_type, $current_event, $start_date, 
   $unit_types = array($unit_type);
   $current_event_state = '';
 
-  $bookable_units = array();
+  $units = array();
 
   // The current unit for this event should also return as available.
   if (isset($current_event->event_status) && isset($current_event->event_id)) {
@@ -478,14 +478,14 @@ function bat_event_edit_form_get_units($unit_type, $current_event, $start_date, 
       foreach ($units_per_price as $price => $units) {
         foreach ($units as $unit_id => $unit) {
           if (bat_unit_access('update availability', $unit['unit'])) {
-            $bookable_units[$type][$price][$unit_id] = $unit;
+            $units[$type][$price][$unit_id] = $unit;
           }
         }
       }
     }
   }
 
-  return empty($bookable_units) ? BAT_NO_MATCH : $bookable_units;
+  return empty($units) ? BAT_NO_MATCH : $units;
 }
 
 /**

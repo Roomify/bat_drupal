@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Manages availability for Bookable Units and displaying dates on the jquery
+ * Manages availability for Units and displaying dates on the jquery
  * FullCalendar plugin.
  */
 
@@ -132,7 +132,7 @@ function bat_availability_permission() {
   $permissions = array(
     'administer bat_unit availability' => array(
       'title' => t('Administer unit availability'),
-      'description' => t('Allows users to access bulk availability operations for bookable units.'),
+      'description' => t('Allows users to access bulk availability operations for units.'),
       'restrict access' => TRUE,
     ),
     'view anonymous availability information' => array(
@@ -148,10 +148,10 @@ function bat_availability_permission() {
       'description' => t('Allow users to view availability info in the past (especially via availability reference field).'),
     ),
     'update availability own bat_unit entities' => array(
-      'title' => t('Edit availability own bookable units of any type'),
+      'title' => t('Edit availability own units of any type'),
     ),
     'update availability any bat_unit entity' => array(
-      'title' => t('Edit availability any bookable unit of any type'),
+      'title' => t('Edit availability any unit of any type'),
     ),
   );
 
@@ -160,10 +160,10 @@ function bat_availability_permission() {
     $type_name = check_plain($type->type);
     $permissions += array(
       'update availability own bat_unit entities of bundle ' . $type_name => array(
-        'title' => t('Edit availability own %type_name bookable units', array('%type_name' => $type->label)),
+        'title' => t('Edit availability own %type_name units', array('%type_name' => $type->label)),
       ),
       'update availability any bat_unit entity of bundle ' . $type_name => array(
-        'title' => t('Edit availability any %type_name bookable unit', array('%type_name' => $type->label)),
+        'title' => t('Edit availability any %type_name unit', array('%type_name' => $type->label)),
       ),
     );
   }

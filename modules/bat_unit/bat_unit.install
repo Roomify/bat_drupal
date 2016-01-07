@@ -28,13 +28,13 @@ function bat_unit_schema() {
     'description' => 'The base table for Units.',
     'fields' => array(
       'unit_id' => array(
-        'description' => 'Primary Key: Identifier for a Bookable Unit.',
+        'description' => 'Primary Key: Identifier for a Unit.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
       'type' => array(
-        'description' => 'The {unit_type}.type of this Bookable Unit.',
+        'description' => 'The {unit_type}.type of this Unit.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,

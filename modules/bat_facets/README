@@ -2,7 +2,7 @@ This module provides a availability state facet for facetapi.
 
 To use
 
-* configure an index of bookable units
+* configure an index of units
 * add a facet on the unit id
 * configure the facet to use the "Bat State" widget
 * select the states to return when searching
