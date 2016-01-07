@@ -44,12 +44,6 @@ function bat_unit_entity_info() {
     'module' => 'bat_unit',
     // The information below is used by the BatUnitUIController (which extends
     // the EntityDefaultUIController).
-    'admin ui' => array(
-      'path' => 'admin/bat/units',
-      'file' => 'bat_unit.admin.inc',
-      'controller class' => 'BatUnitUIController',
-      'menu wildcard' => '%bat_unit',
-    ),
     'translation' => array(
       'entity_translation' => array(
         'base path' => 'admin/bat/units/unit/%bat_unit',
@@ -78,7 +72,31 @@ function bat_unit_entity_info() {
     'module' => 'bat_unit',
     // Enable the entity API's admin UI.
     'admin ui' => array(
-      'path' => 'admin/bat/units/unit-types',
+      'path' => 'admin/bat/unit-types',
+      'file' => 'bat_unit_type.admin.inc',
+      'controller class' => 'BatUnitTypeUIController',
+    ),
+  );
+
+  // The entity that holds information about the entity type types.
+  $return['bat_unit_type_type'] = array(
+    'label' => t('Unit Type'),
+    'entity class' => 'BatUnitType',
+    'controller class' => 'BatUnitTypeController',
+    'base table' => 'bat_unit_type',
+    'fieldable' => TRUE,
+    'bundle of' => 'bat_unit',
+    'exportable' => TRUE,
+    'entity keys' => array(
+      'id' => 'id',
+      'name' => 'type',
+      'label' => 'label',
+    ),
+    'access callback' => 'bat_unit_type_access',
+    'module' => 'bat_unit',
+    // Enable the entity API's admin UI.
+    'admin ui' => array(
+      'path' => 'admin/bat/unit-types',
       'file' => 'bat_unit_type.admin.inc',
       'controller class' => 'BatUnitTypeUIController',
     ),
@@ -98,8 +116,8 @@ function bat_unit_entity_info_alter(&$entity_info) {
     $entity_info['bat_unit']['bundles'][$type] = array(
       'label' => $info->label,
       'admin' => array(
-        'path' => 'admin/bat/units/unit-types/manage/%bat_unit_type',
-        'real path' => 'admin/bat/units/unit-types/manage/' . $type,
+        'path' => 'admin/bat/unit-types/manage/%bat_unit_type',
+        'real path' => 'admin/bat/unit-types/manage/' . $type,
         'bundle argument' => 5,
         'access arguments' => array('bypass bat_unit entities access'),
       ),
@@ -489,10 +507,6 @@ function bat_unit_views_api() {
  */
 function bat_unit_theme() {
   return array(
-    'bat_unit_add_list' => array(
-      'variables' => array('content' => array()),
-      'file' => 'bat_unit.admin.inc',
-    ),
     'bat_unit' => array(
       'render element' => 'elements',
       'template' => 'bat_unit',

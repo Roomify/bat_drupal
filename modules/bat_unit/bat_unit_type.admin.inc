@@ -115,7 +115,7 @@ function bat_unit_type_form_submit($form, &$form_state) {
 
   $form_state['unit_type'] = $unit_type;
 
-  $form_state['redirect'] = 'admin/bat/units/unit-types';
+  $form_state['redirect'] = 'admin/bat/unit-types';
 }
 
 /**
