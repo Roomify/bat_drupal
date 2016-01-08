@@ -34,7 +34,7 @@ function bat_unit_schema() {
         'not null' => TRUE,
       ),
       'type' => array(
-        'description' => 'The {unit_type}.type of this Unit.',
+        'description' => 'The {unit_bundle}.type of this Unit.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
@@ -99,22 +99,22 @@ function bat_unit_schema() {
     ),
   );
 
-  $schema['bat_unit_type'] = array(
-    'description' => 'Stores information about defined unit types.',
+  $schema['bat_unit_bundle'] = array(
+    'description' => 'Stores information about defined unit bundles.',
     'fields' => array(
       'id' => array(
         'type' => 'serial',
         'not null' => TRUE,
-        'description' => 'Primary Key: Unique unit type identifier.',
+        'description' => 'Primary Key: Unique unit bundle identifier.',
       ),
       'type' => array(
-        'description' => 'The machine-readable name of this unit type.',
+        'description' => 'The machine-readable name of this unit bundle.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
       ),
       'label' => array(
-        'description' => 'The human-readable name of this unit type.',
+        'description' => 'The human-readable name of this unit bundle.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
@@ -125,14 +125,14 @@ function bat_unit_schema() {
         'not null' => TRUE,
         'default' => 0,
         'size' => 'tiny',
-        'description' => 'The weight of this unit type in relation to others.',
+        'description' => 'The weight of this unit bundle in relation to others.',
       ),
       'data' => array(
         'type' => 'text',
         'not null' => FALSE,
         'size' => 'big',
         'serialize' => TRUE,
-        'description' => 'A serialized array of additional data related to this unit type.',
+        'description' => 'A serialized array of additional data related to this unit bundle.',
       ),
       'status' => array(
         'type' => 'int',

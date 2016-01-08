@@ -406,9 +406,9 @@ function bat_event_edit_form($form, &$form_state, $event) {
 }
 
 /**
- * Returns a list of unit types user can edit.
+ * Returns a list of unit bundles user can edit.
  */
-function bat_event_edit_form_get_unit_types() {
+function bat_event_edit_form_get_unit_bundles() {
   $efq = new EntityFieldQuery();
   $efq->entityCondition('entity_type', 'bat_unit');
   $efq->addTag('bat_availability_access');
@@ -426,13 +426,13 @@ function bat_event_edit_form_get_unit_types() {
 }
 
 /**
- * Returns a set of available units given a unit type, start and end dates.
+ * Returns a set of available units given a unit bundle, start and end dates.
  *
  * It makes special provisions for the currently selected unit - to consider
  * that as "available" as well.
  *
- * @param string $unit_type
- *   The unit type.
+ * @param string $unit_bundle
+ *   The unit bundle.
  * @param BatEvent $current_event
  *   The current event.
  * @param DateTime $start_date
@@ -443,10 +443,10 @@ function bat_event_edit_form_get_unit_types() {
  * @return array|int
  *   Array containing available units or integer to indicate error code.
  */
-function bat_event_edit_form_get_units($unit_type, $current_event, $start_date, $end_date) {
+function bat_event_edit_form_get_units($unit_bundle, $current_event, $start_date, $end_date) {
 
-  // Set the unit types,
-  $unit_types = array($unit_type);
+  // Set the unit bundles,
+  $unit_bundles = array($unit_bundle);
   $current_event_state = '';
 
   $units = array();
@@ -466,10 +466,10 @@ function bat_event_edit_form_get_units($unit_type, $current_event, $start_date, 
   }
 
   /*if (!empty($current_event->event_id)) {
-    $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array(bat_availability_assign_id($current_event->event_id, '0'), bat_availability_assign_id($current_event->event_id))), $unit_types);
+    $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array(bat_availability_assign_id($current_event->event_id, '0'), bat_availability_assign_id($current_event->event_id))), $unit_bundles);
   }
   else {
-    $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array($current_event_state)), $unit_types);
+    $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array($current_event_state)), $unit_bundles);
   }
   $available_units = $ac->checkAvailability(TRUE);*/
 
@@ -609,7 +609,7 @@ function bat_event_add_page() {
 }
 
 /**
- * Displays the list of available unit types for unit creation.
+ * Displays the list of available unit bundles for unit creation.
  *
  * @ingroup themeable
  */

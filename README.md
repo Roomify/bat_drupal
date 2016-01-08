@@ -51,9 +51,9 @@ To display calendars and dates we use the following libraries:
 ### Creating Booking Units
 The first thing you will want to do is create a bookable unit which you can then manage the availability of.
 
-Visit *admin/bat/unit-types* to create a unit. Bookable units are basic entities that you can manage the permissions off and add any fields you require.
+Visit *admin/config/bat/unit-bundles* to create a unit. Bookable units are basic entities that you can manage the permissions off and add any fields you require.
 
 ### Pricing
 To add price information to your bookable units you will need to:
-- Add a Commerce Price field to your Bookable Unit Entity Type.
-- Under *bat/unit-types/<yourunittype>* make sure that you have the correct price field selected under the pricing tab.
+- Add a Commerce Price field to your Bookable Unit Entity Bundle.
+- Under *bat/config/unit-bundles/<yourunitbundle>* make sure that you have the correct price field selected under the pricing tab.

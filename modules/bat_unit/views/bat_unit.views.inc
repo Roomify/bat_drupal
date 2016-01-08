@@ -14,9 +14,9 @@
 function bat_unit_views_data_alter(&$data) {
 
   $data['bat_units']['type']['field'] = array(
-    'title' => t('Booking Unit Type'),
-    'help' => t('Booking Unit Type Label.'),
-    'handler' => 'bat_unit_handler_unit_type_field',
+    'title' => t('Booking Unit Bundle'),
+    'help' => t('Booking Unit Bundle Label.'),
+    'handler' => 'bat_unit_handler_unit_bundle_field',
   );
 
   $data['bat_units']['link_unit'] = array(

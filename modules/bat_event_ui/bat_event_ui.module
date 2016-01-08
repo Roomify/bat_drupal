@@ -155,7 +155,7 @@ function bat_availability_permission() {
     ),
   );
 
-  // Generate permissions per unit type.
+  // Generate permissions per unit bundle.
   foreach (bat_unit_get_types() as $type) {
     $type_name = check_plain($type->type);
     $permissions += array(
