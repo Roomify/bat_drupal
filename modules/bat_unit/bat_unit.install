@@ -33,6 +33,12 @@ function bat_unit_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
+      'unit_type_id' => array(
+        'description' => 'Identifier for this unit\'s type.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
       'type' => array(
         'description' => 'The {unit_bundle}.type of this Unit.',
         'type' => 'varchar',
