@@ -9,7 +9,9 @@
  * Allow manipulation of unit type entities.
  */
 function bat_unit_type_list() {
-  $content = array('content' => drupal_get_form('unit_type_add_select'));
+  $unit_add_form = drupal_get_form('unit_type_add_select');
+  $content = drupal_render($unit_add_form);
+  $content .= unit_type_list_render();
   return $content;
 }
 
@@ -99,3 +101,25 @@ function unit_type_add_select_submit($form, &$form_state) {
   }
 }
 
+
+/**
+ * Generate list of unit types.
+ */
+function unit_type_list_render() {
+  // Table setup.
+  $header = array('Unit Type', 'Units');
+
+  // Populate table rows.
+  $rows = array();
+  foreach (bat_unit_type_ids() as $unit_type_id => $unit_type) {
+    $unit_type = bat_unit_type_load($unit_type_id);
+    $rows[] = array($unit_type->name);
+  }
+
+  // The output.
+  $content = '<div class="unit-types">';
+  $content .= theme('table', array('header' => $header, 'rows' => $rows ));
+  $content .= '</div>';
+
+  return $content;
+}
