@@ -6,6 +6,7 @@ package = BAT
 
 dependencies[] = bat
 dependencies[] = bat_ui
+dependencies[] = ctools_automodal
 dependencies[] = entity
 dependencies[] = views
 dependencies[] = image
