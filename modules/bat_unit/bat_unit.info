@@ -12,6 +12,8 @@ dependencies[] = image
 
 
 files[] = bat_unit_bundle.admin.inc
+files[] = bat_unit_type.admin.inc
+files[] = bat_unit_types.admin.inc
 files[] = bat_unit_type_bundle.admin.inc
 files[] = views/bat_unit.views.inc
 files[] = views/bat_unit.views_default.inc

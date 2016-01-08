@@ -14,6 +14,27 @@
  */
 
 /**
+ * Implements hook_menu().
+ */
+function bat_unit_menu() {
+  $items = array();
+
+  $items['admin/bat/unit-types'] = array(
+    'title' => 'Unit Types',
+    'description' => 'Add and administer BAT Unit Types.',
+    'page callback' => 'bat_unit_type_list',
+    // TODO: specific permission?
+    'access arguments' => array('administer bat_unit_type_bundle entities'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 10,
+    'file path' => drupal_get_path('module', 'bat_unit'),
+    'file' => 'bat_unit_types.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
  * Implements hook_entity_info().
  */
 function bat_unit_entity_info() {
@@ -86,7 +107,7 @@ function bat_unit_entity_info() {
   );
 
   $return['bat_unit_type'] = array(
-    'label' => t('Unit Types'),
+    'label' => t('Unit Type'),
     // The entity class and controller class extend the classes provided by the
     // Entity API.
     'entity class' => 'BatUnitType',
@@ -117,11 +138,17 @@ function bat_unit_entity_info() {
       'plural' => t('unit types'),
     ),
     'module' => 'bat_unit',
+    // Enable the entity API's admin UI.
+    'admin ui' => array(
+      'path' => 'admin/bat/config/unit-types',
+      'file' => 'bat_unit_type.admin.inc',
+      'controller class' => 'BatUnitTypeUIController',
+    ),
     // The information below is used by the BatUnitUIController (which extends
     // the EntityDefaultUIController).
     'translation' => array(
       'entity_translation' => array(
-        'base path' => 'admin/bat/unit_types/unit_type/%bat_unit_type',
+        'base path' => 'admin/bat/config/unit-types/unit-type/%bat_unit_type',
         'default settings' => array(
           'default_language' => LANGUAGE_NONE,
           'hide_language_selector' => FALSE,
@@ -1216,6 +1243,28 @@ function bat_unit_type_ids($bundle = '') {
 }
 
 /**
+ * Gets a list of unit type bundles keyed by id and name in value.
+ */
+function bat_unit_type_bundle_ids() {
+  $unit_type_bundles = array();
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'bat_unit_type_bundle');
+
+  $result = $query->execute();
+
+  if (count($result) > 0) {
+    $entities = entity_load('bat_unit_type_bundle', array_keys($result['bat_unit_type_bundle']));
+    foreach ($entities as $unit_type_bundle) {
+      $wrapper = entity_metadata_wrapper('bat_unit_type_bundle', $unit_type_bundle);
+      $unit_type_bundles[$wrapper->id->value()] = $wrapper->label->value();
+    }
+  }
+
+  return $unit_type_bundles;
+}
+
+/**
  * Sets up content to show an individual unit type.
  */
 function bat_unit_type_page_view($unit_type, $view_mode = 'full') {
@@ -1459,7 +1508,7 @@ class BatUnitTypeController extends EntityAPIController {
     $unit_type_bundle = bat_unit_type_bundle_load($values['type'], TRUE);
     // Add values that are specific to our unit type.
     $values += array(
-      'unit type_id' => '',
+      'unit_type_id' => '',
       'is_new' => TRUE,
       'title' => '',
       'created' => '',

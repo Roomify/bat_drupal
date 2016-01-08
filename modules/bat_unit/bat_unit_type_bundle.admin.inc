@@ -2,7 +2,7 @@
 
 /**
  * @file
- * BatUnitTypeType bundle editing UI.
+ * BatUnitTypeBundle editing UI.
  */
 
 /**
@@ -20,7 +20,7 @@ class BatUnitTypeBundleUIController extends EntityDefaultUIController {
       unset($item['access callback']);
       $item['access arguments'] = array('administer bat_unit_type_bundle entities');
     }
-    $items[$this->path]['description'] = 'Manage unit bundles, including adding and removing fields and the display of fields.';
+    $items[$this->path]['description'] = 'Manage unit type bundles, including adding and removing fields and the display of fields.';
     $items[$this->path]['weight'] = '3';
 
     return $items;
