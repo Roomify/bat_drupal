@@ -53,6 +53,7 @@ class BatUnitTypeUIController extends EntityDefaultUIController {
         'access arguments' => array('create', bat_unit_type_create(array('type' => $bundle->type, 'uid' => 0))),
         'file' => 'bat_unit_type.admin.inc',
         'file path' => drupal_get_path('module', $this->entityInfo['module']),
+        'modal' => TRUE,
       );
     }
 
@@ -227,7 +228,6 @@ function bat_unit_type_edit_form($form, &$form_state, $unit_type) {
     ),
     '#attached' => array(
       'js' => array(
-        drupal_get_path('module', 'bat_unit_type') . '/js/bat_unit_type.js',
         array(
           'type' => 'setting',
           'data' => array('anonymous' => variable_get('anonymous', t('Anonymous'))),
@@ -263,9 +263,6 @@ function bat_unit_type_edit_form($form, &$form_state, $unit_type) {
     '#group' => 'additional_settings',
     '#attributes' => array(
       'class' => array('unit_type-form-published'),
-    ),
-    '#attached' => array(
-      'js' => array(drupal_get_path('module', 'bat_unit_type') . '/js/bat_unit_type.js'),
     ),
     '#weight' => 95,
   );
