@@ -1510,7 +1510,7 @@ class BatUnitTypeController extends EntityAPIController {
     $values += array(
       'unit_type_id' => '',
       'is_new' => TRUE,
-      'title' => '',
+      'name' => '',
       'created' => '',
       'changed' => '',
     );

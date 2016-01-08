@@ -195,6 +195,7 @@ function bat_unit_type_edit_form($form, &$form_state, $unit_type) {
     '#type' => 'value',
     '#value' => $unit_type->type,
   );
+
   // Add the default field elements.
   $form['name'] = array(
     '#type' => 'textfield',
@@ -204,6 +205,7 @@ function bat_unit_type_edit_form($form, &$form_state, $unit_type) {
     '#required' => TRUE,
     '#weight' => -99,
   );
+
   // Add the field related form elements.
   $form_state['bat_unit_type'] = $unit_type;
   field_attach_form('bat_unit_type', $unit_type, $form, $form_state, isset($unit_type->language)? $unit_type->language : NULL);
@@ -211,6 +213,7 @@ function bat_unit_type_edit_form($form, &$form_state, $unit_type) {
     '#type' => 'vertical_tabs',
     '#weight' => 99,
   );
+
   // Unit Type author information for administrators.
   $form['author'] = array(
     '#type' => 'fieldset',
@@ -249,6 +252,7 @@ function bat_unit_type_edit_form($form, &$form_state, $unit_type) {
     '#description' => t('Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC. Leave blank to use the time of form submission.', array('%time' => !empty($unit_type->date) ? date_format(date_create($unit_type->date), 'Y-m-d H:i:s O') : format_date($unit_type->created, 'custom', 'Y-m-d H:i:s O'), '%timezone' => !empty($unit_type->date) ? date_format(date_create($unit_type->date), 'O') : format_date($unit_type->created, 'custom', 'O'))),
     '#default_value' => !empty($unit_type->date) ? $unit_type->date : '',
   );
+
   // Unit Type publishing options for administrators.
   $form['options'] = array(
     '#type' => 'fieldset',
@@ -270,6 +274,7 @@ function bat_unit_type_edit_form($form, &$form_state, $unit_type) {
     '#title' => t('Published'),
     '#default_value' => $unit_type->status,
   );
+
   $form['actions'] = array(
     '#type' => 'actions',
     '#tree' => FALSE,
@@ -312,11 +317,10 @@ function bat_unit_type_edit_form_validate(&$form, &$form_state) {
  * Form API submit callback for the unit_type form.
  */
 function bat_unit_type_edit_form_submit(&$form, &$form_state) {
-  $unit_type = $form_state['bat_unit_type'];
+  $unit_type = entity_ui_controller('bat_unit_type')->entityFormSubmitBuildEntity($form, $form_state);
   $unit_type->created = !empty($unit->date) ? strtotime($unit->date) : REQUEST_TIME;
 
   if ($unit_type->unit_type_id !== '') {
-    $unit_type .= entity_ui_controller('bat_unit_type')->entityFormSubmitBuildEntity($form, $form_state);
     $unit_type->changed = time();
   }
 
