@@ -29,6 +29,7 @@ class BatUnitTypeUIController extends EntityDefaultUIController {
       'file' => 'system.admin.inc',
       'weight' => 10,
     );
+
     // Change the add page menu to multiple types of entities.
     $items[$this->path . '/add'] = array(
       'title' => 'Add a Unit Type',
@@ -40,6 +41,7 @@ class BatUnitTypeUIController extends EntityDefaultUIController {
       'file' => 'bat_unit_type.admin.inc',
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
     );
+
     // Add menu items to add each different bundle of unit types.
     foreach (bat_unit_get_type_bundles() as $bundle) {
       $items[$this->path . '/add/' . $bundle->type] = array(
@@ -53,6 +55,7 @@ class BatUnitTypeUIController extends EntityDefaultUIController {
         'file path' => drupal_get_path('module', $this->entityInfo['module']),
       );
     }
+
     // Loading and editing unit_type entities.
     $items[$this->path . '/unit_type/' . $wildcard] = array(
       'title callback' => 'bat_unit_type_page_title',
@@ -63,12 +66,14 @@ class BatUnitTypeUIController extends EntityDefaultUIController {
       'access arguments' => array('view', $id_count + 1),
       'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     );
+
     $items[$this->path . '/unit_type/' . $wildcard . '/view'] = array(
       'title' => 'View',
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => -10,
       'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     );
+
     $items[$this->path . '/unit_type/' . $wildcard . '/edit'] = array(
       'title' => 'Edit',
       'page callback' => 'bat_unit_type_form_wrapper',
@@ -81,6 +86,7 @@ class BatUnitTypeUIController extends EntityDefaultUIController {
       'file' => 'bat_unit_type.admin.inc',
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
     );
+
     $items[$this->path . '/unit_type/' . $wildcard . '/delete'] = array(
       'title' => 'Delete',
       'page callback' => 'bat_unit_type_delete_form_wrapper',
@@ -93,6 +99,7 @@ class BatUnitTypeUIController extends EntityDefaultUIController {
       'file' => 'bat_unit_type.admin.inc',
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
     );
+
     // Menu item for viewing unit_types.
     $items['unit_type/' . $wildcard] = array(
       'title callback' => 'bat_unit_type_page_title',
@@ -123,6 +130,7 @@ class BatUnitTypeUIController extends EntityDefaultUIController {
     );
   }
 }
+
 /**
  * Form callback wrapper: edit a  unit_type.
  *
@@ -274,7 +282,7 @@ function bat_unit_type_edit_form($form, &$form_state, $unit_type) {
   }
   $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save unit_type'),
+    '#value' => t('Save Unit Type'),
     '#submit' => $submit + array('bat_unit_type_edit_form_submit'),
   );
   if (!empty($unit_type->name) && bat_unit_type_access('delete', $unit_type)) {
@@ -304,12 +312,17 @@ function bat_unit_type_edit_form_validate(&$form, &$form_state) {
  * Form API submit callback for the unit_type form.
  */
 function bat_unit_type_edit_form_submit(&$form, &$form_state) {
-  $unit_types = array();
-  if ($form_state['bat_unit_type']->unit_type_id !== '') {
-    $unit_types[0] = $form_state['bat_unit_type'];
-    $unit_types[0] = entity_ui_controller('bat_unit_type')->entityFormSubmitBuildEntity($form, $form_state);
-    $unit_types[0]->changed = time();
+  $unit_type = $form_state['bat_unit_type'];
+  $unit_type->created = !empty($unit->date) ? strtotime($unit->date) : REQUEST_TIME;
+
+  if ($unit_type->unit_type_id !== '') {
+    $unit_type .= entity_ui_controller('bat_unit_type')->entityFormSubmitBuildEntity($form, $form_state);
+    $unit_type->changed = time();
   }
+
+  $unit_type->save();
+  drupal_set_message(t('Unit Type @name saved', array('@name' => $unit_type->name)));
+
   $form_state['redirect'] = 'admin/bat/config/unit-types';
 }
 
