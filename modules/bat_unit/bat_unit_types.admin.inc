@@ -12,18 +12,18 @@ function bat_unit_type_list() {
   ctools_include('modal');
   ctools_modal_add_js();
 
-  // $unit_add_form = drupal_get_form('unit_type_add_select');
+  // $unit_add_form = drupal_get_form('bat_unit_type_add_select');
   // $content = drupal_render($unit_add_form);
   $content = l(t('Add Unit Type'), 'admin/bat/config/unit-types/add/room');
 
-  $content .= unit_type_list_render();
+  $content .= bat_unit_type_list_render();
   return $content;
 }
 
 /**
  * Unit add form.
  */
-function unit_type_add_select($form, &$form_state) {
+function bat_unit_type_add_select($form, &$form_state) {
   // Get unit types.
   $unit_type_bundles = bat_unit_type_bundle_ids();
 
@@ -66,7 +66,7 @@ function unit_type_add_select($form, &$form_state) {
 /**
  * Validation handler for unit add form.
  */
-function unit_type_add_select_validate($form, &$form_state) {
+function bat_unit_type_add_select_validate($form, &$form_state) {
   if (empty($form_state['values']['units'])) {
     form_set_error('units', t('Please enter the number of units to add.'));
   } elseif (!is_numeric($form_state['values']['units'])) {
@@ -77,7 +77,7 @@ function unit_type_add_select_validate($form, &$form_state) {
 /**
  * Submit handler for unit add form.
  */
-function unit_type_add_select_submit($form, &$form_state) {
+function bat_unit_type_add_select_submit($form, &$form_state) {
   global $user;
 
   // Sanity check.
@@ -103,7 +103,7 @@ function unit_type_add_select_submit($form, &$form_state) {
 /**
  * Generate list of unit types.
  */
-function unit_type_list_render() {
+function bat_unit_type_list_render() {
   // Table setup.
   $header = array('Unit Type', 'Units');
 
@@ -200,8 +200,8 @@ function bat_unit_type_edit($form, &$form_state) {
   $form['edit_name']['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Save edits',
-    '#validate' => array('edit_unit_type_name_validate'),
-    '#submit' => array('edit_unit_type_name_submit'),
+    '#validate' => array('bat_unit_edit_type_name_validate'),
+    '#submit' => array('bat_unit_edit_type_name_submit'),
   );
 
   // Add Units fieldset.
@@ -254,7 +254,7 @@ function bat_unit_type_edit($form, &$form_state) {
 /**
  * Validation function for unit type name editing.
  */
-function edit_unit_type_name_validate($form, &$form_state) {
+function bat_unit_edit_type_name_validate($form, &$form_state) {
   if (!strlen($form_state['values']['name'])) {
     form_set_error('name', t('Please enter a name for this Unit Type.'));
   }
@@ -263,7 +263,7 @@ function edit_unit_type_name_validate($form, &$form_state) {
 /**
  * Submit function to edit type name and update any units.
  */
-function edit_unit_type_name_submit($form, &$form_state) {
+function bat_unit_edit_type_name_submit($form, &$form_state) {
   if (isset($form['unit_type']['#value'])) {
     $unit_type = $form['unit_type']['#value'];
     if ($unit_type_object = bat_unit_type_load($unit_type)) {
