@@ -2,8 +2,8 @@
 
 /**
  * @file
- * Manage units - Units are things that can be booked on a nightly basis
- * (e.g. rooms - but also villas bungalows, cars, drills, you-get-the-idea etc).
+ * Manage units - Units are things that can be booked for some period of time.
+ * (e.g. rooms - but also villas bungalows, cars, drills, you-get-the-idea etc.)
  */
 
 
@@ -27,6 +27,18 @@ function bat_unit_menu() {
     'access arguments' => array('administer bat_unit_type_bundle entities'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => 10,
+    'file path' => drupal_get_path('module', 'bat_unit'),
+    'file' => 'bat_unit_types.admin.inc',
+  );
+
+  $items['admin/bat/unit-type-edit'] = array(
+    'title' => 'Edit Unit Type',
+    'description' => 'Edit Bat Unit Types and Units.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('unit_type_edit'),
+    'access arguments' => array('administer bat_unit_type entities'),
+    'modal' => TRUE,
+    'type' => MENU_CALLBACK,
     'file path' => drupal_get_path('module', 'bat_unit'),
     'file' => 'bat_unit_types.admin.inc',
   );

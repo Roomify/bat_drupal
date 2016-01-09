@@ -100,7 +100,6 @@ function unit_type_add_select_submit($form, &$form_state) {
   }
 }
 
-
 /**
  * Generate list of unit types.
  */
@@ -112,7 +111,14 @@ function unit_type_list_render() {
   $rows = array();
   foreach (bat_unit_type_ids() as $unit_type_id => $unit_type) {
     $unit_type = bat_unit_type_load($unit_type_id);
-    $rows[] = array($unit_type->name);
+    $units = bat_unit_load_multiple(array(), array('unit_type_id' => $unit_type_id));
+    $options = array('query' => array('unit_type' => $unit_type_id));
+    $rows[] = array(
+      // Unit Type Name.
+      $unit_type->name,
+      // Number of Units associated with this Unit Type.
+      count($units) . ' ' . l(t('edit'), 'admin/bat/unit-type-edit', $options),
+    );
   }
 
   // The output.
@@ -121,4 +127,158 @@ function unit_type_list_render() {
   $content .= '</div>';
 
   return $content;
+}
+
+/**
+ * Form to add/delete units for a given type.
+ */
+function unit_type_edit($form, &$form_state) {
+  if (isset($_GET['unit_type'])) {
+    $unit_type = $_GET['unit_type'];
+  }
+  else {
+    die("I can't do that, Dave.");
+  }
+  $form = array();
+
+  $form['#attached']['js'] = array(
+    drupal_get_path('module', 'bat_unit') . '/js/bat_unit_type_edit.js',
+  );
+
+  $unit_type_object = bat_unit_type_load($unit_type);
+  $total_units = count(bat_unit_load_multiple(array(), array('unit_type_id' => $unit_type_id)));
+  // $units_booked = bat_get_unit_number_booked_by_type_capacity($unit_type, $max_sleeps);
+
+  // Set up options.
+  $options = array(
+    '' => '',
+    'edit_name' => 'Edit name',
+  );
+
+  // Add delete/adjust prices options if units are present.
+  if ($total_units > 0) {
+    $options['adjust_prices'] = t('Adjust stateroom prices');
+  }
+
+  // Add delete units option if units are available.
+  if ($total_units > 0 && ($total_units > $units_booked)) {
+    $options['delete_units'] = t('Delete Staterooms');
+  }
+
+  // Add delete type option if no units are booked.
+  /*
+   * TODO
+  $units_booked_by_type = bat_get_unit_number_booked_by_type_capacity($unit_type);
+  if ($units_booked_by_type == 0) {
+    $options['delete_type'] = t('Delete Stateroom Type and all Staterooms of this type');
+  }
+  */
+
+  $form['unit_type'] = array(
+    '#type' => 'hidden',
+    '#value' => $unit_type,
+  );
+
+  $form['operation'] = array(
+    '#type' => 'select',
+    '#title' => t('Operations'),
+    '#description' => t('Please select an operation to perform on these Units'),
+    '#options' => $options,
+    '#required' => FALSE,
+  );
+
+  // Edit name fieldset.
+  $form['edit_name'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Edit Unit Type name',
+  );
+  $form['edit_name']['name'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $unit_type_object->name,
+  );
+  $form['edit_name']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Save edits',
+    '#validate' => array('edit_unit_type_name_validate'),
+    '#submit' => array('edit_unit_type_name_submit'),
+  );
+
+  // Delete type fieldset.
+  $form['delete_type'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Delete Stateroom Type',
+  );
+  $form['delete_type']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Delete ' . $unit_type_object->label . ' stateroom type',
+    '#submit' => array('bat_unit_delete_type_submit'),
+  );
+
+  // Delete units fieldset.
+  $form['delete_units'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Delete ' . $unit_type_object->label . ' Staterooms',
+  );
+  $form['delete_units']['number'] = array(
+    '#type' => 'textfield',
+    '#size' => 2,
+    '#description' => 'Number of Units to delete - maximum ' . ($total_units - $units_booked),
+  );
+  $form['delete_units']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Delete staterooms',
+    '#validate' => array('bat_unit_delete_units_validate'),
+    '#submit' => array('bat_unit_delete_units_submit'),
+  );
+
+  return $form;
+}
+
+/**
+ * Validation function for unit type name editing.
+ */
+function edit_unit_type_name_validate($form, &$form_state) {
+  if (!strlen($form_state['values']['name'])) {
+    form_set_error('name', t('Please enter a name for this Unit Type.'));
+  }
+}
+
+/**
+ * Submit function to edit type name and update any units.
+ */
+function edit_unit_type_name_submit($form, &$form_state) {
+  if (isset($form['unit_type']['#value'])) {
+    $unit_type = $form['unit_type']['#value'];
+    if ($unit_type_object = bat_unit_type_load($unit_type)) {
+
+      // Update unit names.
+      $units = bat_unit_load_multiple(array(), array('unit_type_id' => $unit_type_id));
+
+      foreach ($units as $unit_id) {
+        $unit = rooms_unit_load($unit_id);
+        $unit->name = str_replace($unit_type_object->label, $form_state['values']['name'], $unit->name);
+        rooms_unit_save($unit);
+      }
+
+      // Update unit type name.
+      $unit_type_object->name = $form_state['values']['name'];
+      bat_unit_type_save($unit_type_object);
+    }
+  }
+
+  bat_unit_dismiss_modal($form_state, 'admin/bat/unit-types');
+}
+
+/**
+ * Helper function - Dismiss modal after form is complete.
+ */
+function bat_unit_dismiss_modal($form_state, $path) {
+  if ($form_state['submitted']) {
+    $commands[] = ctools_modal_command_dismiss();
+    $commands[] = ctools_ajax_command_redirect($path);
+    module_load_include('inc', 'ctools', 'includes/modal');
+    module_load_include('inc', 'ctools', 'includes/ajax');
+    print ajax_render($commands);
+    exit;
+  }
 }
