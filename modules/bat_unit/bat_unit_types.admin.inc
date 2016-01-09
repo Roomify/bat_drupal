@@ -111,7 +111,7 @@ function unit_type_list_render() {
   $rows = array();
   foreach (bat_unit_type_ids() as $unit_type_id => $unit_type) {
     $unit_type = bat_unit_type_load($unit_type_id);
-    $units = bat_unit_load_multiple(array(), array('unit_type_id' => $unit_type_id));
+    $units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $unit_type_id));
     $options = array('query' => array('unit_type' => $unit_type_id));
     $rows[] = array(
       // Unit Type Name.
@@ -130,9 +130,9 @@ function unit_type_list_render() {
 }
 
 /**
- * Form to add/delete units for a given type.
+ * Form to add/delete Units for a given Unit Type.
  */
-function unit_type_edit($form, &$form_state) {
+function bat_unit_type_edit($form, &$form_state) {
   if (isset($_GET['unit_type'])) {
     $unit_type = $_GET['unit_type'];
   }
@@ -146,23 +146,24 @@ function unit_type_edit($form, &$form_state) {
   );
 
   $unit_type_object = bat_unit_type_load($unit_type);
-  $total_units = count(bat_unit_load_multiple(array(), array('unit_type_id' => $unit_type_id)));
+  $total_units = count(bat_unit_load_multiple(FALSE, array('unit_type_id' => $unit_type_id)));
   // $units_booked = bat_get_unit_number_booked_by_type_capacity($unit_type, $max_sleeps);
 
   // Set up options.
   $options = array(
     '' => '',
     'edit_name' => 'Edit name',
+    'add_units' => 'Add Units',
   );
 
   // Add delete/adjust prices options if units are present.
   if ($total_units > 0) {
-    $options['adjust_prices'] = t('Adjust stateroom prices');
+    $options['adjust_prices'] = t('Adjust Unit prices');
   }
 
   // Add delete units option if units are available.
   if ($total_units > 0 && ($total_units > $units_booked)) {
-    $options['delete_units'] = t('Delete Staterooms');
+    $options['delete_units'] = t('Delete Units');
   }
 
   // Add delete type option if no units are booked.
@@ -170,7 +171,7 @@ function unit_type_edit($form, &$form_state) {
    * TODO
   $units_booked_by_type = bat_get_unit_number_booked_by_type_capacity($unit_type);
   if ($units_booked_by_type == 0) {
-    $options['delete_type'] = t('Delete Stateroom Type and all Staterooms of this type');
+    $options['delete_type'] = t('Delete Unit Type and all Units of this type');
   }
   */
 
@@ -203,10 +204,26 @@ function unit_type_edit($form, &$form_state) {
     '#submit' => array('edit_unit_type_name_submit'),
   );
 
+  // Add Units fieldset.
+  $form['add_units'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Add Units',
+  );
+  $form['add_units']['quantity'] = array(
+    '#type' => 'textfield',
+    '#default_value' => 1,
+  );
+  $form['add_units']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Add Units',
+    '#validate' => array('bat_unit_add_units_validate'),
+    '#submit' => array('bat_unit_add_units_submit'),
+  );
+
   // Delete type fieldset.
   $form['delete_type'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Delete Stateroom Type',
+    '#title' => 'Delete Unit Type',
   );
   $form['delete_type']['submit'] = array(
     '#type' => 'submit',
@@ -217,7 +234,7 @@ function unit_type_edit($form, &$form_state) {
   // Delete units fieldset.
   $form['delete_units'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Delete ' . $unit_type_object->label . ' Staterooms',
+    '#title' => 'Delete ' . $unit_type_object->label . ' Units',
   );
   $form['delete_units']['number'] = array(
     '#type' => 'textfield',
@@ -252,17 +269,54 @@ function edit_unit_type_name_submit($form, &$form_state) {
     if ($unit_type_object = bat_unit_type_load($unit_type)) {
 
       // Update unit names.
-      $units = bat_unit_load_multiple(array(), array('unit_type_id' => $unit_type_id));
+      $units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $unit_type_id));
 
       foreach ($units as $unit_id) {
-        $unit = rooms_unit_load($unit_id);
+        $unit = bat_unit_load($unit_id);
         $unit->name = str_replace($unit_type_object->label, $form_state['values']['name'], $unit->name);
-        rooms_unit_save($unit);
+        bat_unit_save($unit);
       }
 
       // Update unit type name.
       $unit_type_object->name = $form_state['values']['name'];
       bat_unit_type_save($unit_type_object);
+    }
+  }
+
+  bat_unit_dismiss_modal($form_state, 'admin/bat/unit-types');
+}
+
+/**
+ * Validation function for adding new units.
+ */
+function bat_unit_add_units_validate($form, &$form_state) {
+  if (!strlen($form_state['values']['quantity'])) {
+    form_set_error('quantity', t('Please enter a quantity.'));
+  }
+  elseif (!is_numeric($form_state['values']['quantity'])) {
+    form_set_error('name', t('Please enter a numeric quantity.'));
+  }
+}
+
+/**
+ * Submit function to add new units.
+ */
+function bat_unit_add_units_submit($form, &$form_state) {
+  global $user;
+  if (isset($form['unit_type']['#value'])) {
+    $unit_type = $form['unit_type']['#value'];
+    if ($unit_type_object = bat_unit_type_load($unit_type)) {
+      for ($i = 1; $i <= $form_state['values']['quantity']; $i++) {
+        $unit = bat_unit_create(array(
+          'unit_type_id' => $unit_type,
+          'name' => $unit_type_object->name . ' ' . $i,
+          'uid' => $user->uid,
+          'created' => REQUEST_TIME,
+          'type' => 'default',
+        ));
+
+        bat_unit_save($unit);
+      }
     }
   }
 

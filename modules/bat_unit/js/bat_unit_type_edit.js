@@ -11,7 +11,7 @@
   };
 
   function updateElements() {
-    $('form[id^=unit-type-edit] fieldset').each(function() {
+    $('form[id^=bat-unit-type-edit] fieldset').each(function() {
       $(this).hide();
     });
 

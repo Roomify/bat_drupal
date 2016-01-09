@@ -35,7 +35,7 @@ function bat_unit_menu() {
     'title' => 'Edit Unit Type',
     'description' => 'Edit Bat Unit Types and Units.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('unit_type_edit'),
+    'page arguments' => array('bat_unit_type_edit'),
     'access arguments' => array('administer bat_unit_type entities'),
     'modal' => TRUE,
     'type' => MENU_CALLBACK,
