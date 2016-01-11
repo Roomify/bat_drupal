@@ -318,7 +318,7 @@ function bat_event_states_get_default($event_type) {
 }
 
 /**
- *
+ * Implements form that handles the definition of states for fixed state events
  */
 function bat_event_states_form($form, &$form_state, $event_type) {
   if ($event_type->fixed_event_states) {
@@ -444,7 +444,8 @@ function bat_event_states_form($form, &$form_state, $event_type) {
 }
 
 /**
- *
+ * Sets the default value for the event
+ * @TODO - this may no longer be required
  */
 function bat_event_states_form_set_default($form, &$form_state) {
   $state = $form_state['values']['states'];
@@ -465,7 +466,7 @@ function bat_event_states_form_set_default($form, &$form_state) {
 }
 
 /**
- *
+ * Form submit for event states management
  */
 function bat_event_states_form_submit($form, &$form_state) {
   $max_id = db_query("SELECT MAX(id) as max_id FROM {bat_event_state}")->fetchCol();
@@ -483,7 +484,7 @@ function bat_event_states_form_submit($form, &$form_state) {
 }
 
 /**
- *
+ * Form to allow user to edit a single event
  */
 function bat_event_states_edit_event_form($form, &$form_state, $event_id) {
   $state = db_select('bat_event_state', 'n')
@@ -555,7 +556,7 @@ function bat_event_states_edit_event_form($form, &$form_state, $event_id) {
 }
 
 /**
- *
+ * Form submit for editing of a single event state
  */
 function bat_event_states_edit_event_form_submit($form, &$form_state) {
   db_update('bat_event_state')
@@ -571,7 +572,7 @@ function bat_event_states_edit_event_form_submit($form, &$form_state) {
 }
 
 /**
- *
+ * Handle the deletion of a single event state
  */
 function bat_event_states_delete_event_form($form, &$form_state, $event_id) {
   $state_event = bat_event_load_state($event_id);
@@ -1521,7 +1522,7 @@ function bat_event_field_widget_error($element, $error, $form, &$form_state) {
 }
 
 /**
- *
+ * Given an event machine name drop all the tables that store event data for that event
  */
 function bat_event_delete_event_type_schema($machine_name) {
   foreach (bat_event_get_event_type_tables($machine_name) as $name) {
@@ -1530,7 +1531,7 @@ function bat_event_delete_event_type_schema($machine_name) {
 }
 
 /**
- *
+ * Utility function to return the table names required to start an event using BAT conventions
  */
 function bat_event_get_event_type_tables($machine_name) {
   return array('bat_event_' . $machine_name . '_day_state',
