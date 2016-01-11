@@ -1081,12 +1081,12 @@ class BatEventController extends EntityAPIController {
     $state_calendar = new Calendar($units, $state_store);
     $event_calendar = new Calendar($units, $event_store);
 
-    $state_event = new Event($start_date, $end_date, $unit->getUnitId(), $event_state);
+    $state_event = new Event($start_date, $end_date, $unit, $event_state);
     if (!$remove) {
-      $event_id_event = new Event($start_date, $end_date, $unit->getUnitId(), $event_id);
+      $event_id_event = new Event($start_date, $end_date, $unit, $event_id);
     }
     else {
-      $event_id_event = new Event($start_date, $end_date, $unit->getUnitId(), 0);
+      $event_id_event = new Event($start_date, $end_date, $unit, 0);
     }
 
     $state_calendar->addEvents(array($state_event), $granularity);
