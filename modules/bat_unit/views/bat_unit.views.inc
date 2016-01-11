@@ -96,6 +96,15 @@ function bat_unit_views_data_alter(&$data) {
       'handler' => 'bat_type_handler_edit_link_field',
     ),
   );
+
+  $data['bat_types']['calendars'] = array(
+    'field' => array(
+      'title' => t('Calendar links'),
+      'help' => t('Display links to manage all calendars for this Type.'),
+      'handler' => 'bat_type_handler_type_calendars_field',
+    ),
+  );
+
 }
 
 /**
@@ -145,6 +154,11 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['fields']['status']['field'] = 'status';
   $handler->display->display_options['fields']['status']['label'] = 'Published';
   $handler->display->display_options['fields']['status']['separator'] = '';
+  /* Field: Type: Calendar links */
+  $handler->display->display_options['fields']['calendars']['id'] = 'calendars';
+  $handler->display->display_options['fields']['calendars']['table'] = 'bat_types';
+  $handler->display->display_options['fields']['calendars']['field'] = 'calendars';
+  $handler->display->display_options['fields']['calendars']['label'] = 'Calendars';
   /* Field: Type: Edit Link */
   $handler->display->display_options['fields']['edit_type']['id'] = 'edit_type';
   $handler->display->display_options['fields']['edit_type']['table'] = 'bat_types';
