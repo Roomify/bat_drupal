@@ -10,12 +10,14 @@
  * Implements hook_install().
  */
 function bat_unit_install() {
+  bat_unit_install_create_default_unit_bundle();
 }
 
 /**
  * Implements hook_uninstall().
  */
 function bat_unit_uninstall() {
+  bat_unit_install_delete_default_unit_bundle();
 }
 
 /**
@@ -291,4 +293,24 @@ function bat_unit_schema() {
   );
 
   return $schema;
+}
+
+/**
+ * Create default unit bundle.
+ */
+function bat_unit_install_create_default_unit_bundle() {
+  $default_unit_bundle = bat_unit_bundle_create(array(
+    'type'  => 'default',
+    'label' => 'Default',
+  ));
+  $default_unit_bundle->save();
+}
+
+/**
+ * Create default unit bundle.
+ */
+function bat_unit_install_delete_default_unit_bundle() {
+  if ($default_unit_bundle = bat_unit_bundle_load('default')) {
+    $default_unit_bundle->delete();
+  }
 }
