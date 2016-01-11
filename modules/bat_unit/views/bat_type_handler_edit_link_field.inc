@@ -17,7 +17,7 @@ class bat_type_handler_edit_link_field extends bat_type_handler_link_field {
     $type = $values->{$this->aliases['type']};
 
     // Creating a dummy type to check access against.
-    $dummy_type = (object) array('type' => $type);
+    $dummy_type = (object) array('type' => $type, 'type_id' => NULL);
     if (!bat_type_access('update', $dummy_type)) {
       return;
     }
