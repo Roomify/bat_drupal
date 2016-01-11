@@ -19,28 +19,28 @@
 function bat_unit_menu() {
   $items = array();
 
-  $items['admin/bat/unit-types'] = array(
-    'title' => 'Unit Types',
-    'description' => 'Add and administer BAT Unit Types.',
-    'page callback' => 'bat_unit_type_list',
+  $items['admin/bat/types'] = array(
+    'title' => 'Types',
+    'description' => 'Add and administer BAT Types.',
+    'page callback' => 'bat_type_list',
     // TODO: specific permission?
-    'access arguments' => array('administer bat_unit_type_bundle entities'),
+    'access arguments' => array('administer bat_type_bundle entities'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => 10,
     'file path' => drupal_get_path('module', 'bat_unit'),
-    'file' => 'bat_unit_types.admin.inc',
+    'file' => 'bat_types.admin.inc',
   );
 
-  $items['admin/bat/unit-type-edit'] = array(
-    'title' => 'Edit Unit Type',
-    'description' => 'Edit Bat Unit Types and Units.',
+  $items['admin/bat/type-edit'] = array(
+    'title' => 'Edit Type',
+    'description' => 'Edit Bat Types and Units.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('bat_unit_type_edit'),
-    'access arguments' => array('administer bat_unit_type entities'),
+    'page arguments' => array('bat_type_edit'),
+    'access arguments' => array('administer bat_type entities'),
     'modal' => TRUE,
     'type' => MENU_CALLBACK,
     'file path' => drupal_get_path('module', 'bat_unit'),
-    'file' => 'bat_unit_types.admin.inc',
+    'file' => 'bat_types.admin.inc',
   );
 
   return $items;
@@ -118,16 +118,16 @@ function bat_unit_entity_info() {
     ),
   );
 
-  $return['bat_unit_type'] = array(
-    'label' => t('Unit Type'),
+  $return['bat_type'] = array(
+    'label' => t('Type'),
     // The entity class and controller class extend the classes provided by the
     // Entity API.
-    'entity class' => 'BatUnitType',
-    'controller class' => 'BatUnitTypeController',
-    'base table' => 'bat_unit_types',
+    'entity class' => 'BatType',
+    'controller class' => 'BatTypeController',
+    'base table' => 'bat_types',
     'fieldable' => TRUE,
     'entity keys' => array(
-      'id' => 'unit_type_id',
+      'id' => 'type_id',
       'bundle' => 'type',
     ),
     // Bundles are defined by the unit bundles below.
@@ -139,28 +139,28 @@ function bat_unit_entity_info() {
     ),
     'label callback' => 'entity_class_label',
     'uri callback' => 'entity_class_uri',
-    'creation callback' => 'bat_unit_type_create',
-    'access callback' => 'bat_unit_type_access',
+    'creation callback' => 'bat_type_create',
+    'access callback' => 'bat_type_access',
     'access arguments' => array(
       'user key' => 'uid',
-      'access tag' => 'bat_unit_type_access',
+      'access tag' => 'bat_type_access',
     ),
     'permission labels' => array(
-      'singular' => t('unit type'),
-      'plural' => t('unit types'),
+      'singular' => t('type'),
+      'plural' => t('types'),
     ),
     'module' => 'bat_unit',
     // Enable the entity API's admin UI.
     'admin ui' => array(
-      'path' => 'admin/bat/config/unit-types',
-      'file' => 'bat_unit_type.admin.inc',
-      'controller class' => 'BatUnitTypeUIController',
+      'path' => 'admin/bat/config/types',
+      'file' => 'bat_type.admin.inc',
+      'controller class' => 'BatTypeUIController',
     ),
     // The information below is used by the BatUnitUIController (which extends
     // the EntityDefaultUIController).
     'translation' => array(
       'entity_translation' => array(
-        'base path' => 'admin/bat/config/unit-types/unit-type/%bat_unit_type',
+        'base path' => 'admin/bat/config/types/type/%bat_type',
         'default settings' => array(
           'default_language' => LANGUAGE_NONE,
           'hide_language_selector' => FALSE,
@@ -169,26 +169,26 @@ function bat_unit_entity_info() {
     ),
   );
   // The entity that holds information about the entity types.
-  $return['bat_unit_type_bundle'] = array(
-    'label' => t('Unit Type Bundle'),
-    'entity class' => 'BatUnitTypeBundle',
-    'controller class' => 'BatUnitTypeBundleController',
-    'base table' => 'bat_unit_type_bundle',
+  $return['bat_type_bundle'] = array(
+    'label' => t('Type Bundle'),
+    'entity class' => 'BatTypeBundle',
+    'controller class' => 'BatTypeBundleController',
+    'base table' => 'bat_type_bundle',
     'fieldable' => TRUE,
-    'bundle of' => 'bat_unit_type',
+    'bundle of' => 'bat_type',
     'exportable' => TRUE,
     'entity keys' => array(
       'id' => 'id',
       'name' => 'type',
       'label' => 'label',
     ),
-    'access callback' => 'bat_unit_type_bundle_access',
+    'access callback' => 'bat_type_bundle_access',
     'module' => 'bat_unit',
     // Enable the entity API's admin UI.
     'admin ui' => array(
-      'path' => 'admin/bat/config/unit-type-bundles',
-      'file' => 'bat_unit_type_bundle.admin.inc',
-      'controller class' => 'BatUnitTypeBundleUIController',
+      'path' => 'admin/bat/config/type-bundles',
+      'file' => 'bat_type_bundle.admin.inc',
+      'controller class' => 'BatTypeBundleUIController',
     ),
   );
 
@@ -220,15 +220,15 @@ function bat_unit_entity_info_alter(&$entity_info) {
     'custom settings' => FALSE,
   );
 
-  // Work on Bat Unit Types.
+  // Work on Bat Types.
   foreach (bat_unit_get_type_bundles() as $bundle => $info) {
-    $entity_info['bat_unit_type']['bundles'][$bundle] = array(
+    $entity_info['bat_type']['bundles'][$bundle] = array(
       'label' => $info->label,
       'admin' => array(
-        'path' => 'admin/bat/config/unit-type-bundles/manage/%bat_unit_type_bundle',
-        'real path' => 'admin/bat/config/unit-type-bundles/manage/' . $bundle,
+        'path' => 'admin/bat/config/type-bundles/manage/%bat_type_bundle',
+        'real path' => 'admin/bat/config/type-bundles/manage/' . $bundle,
         'bundle argument' => 5,
-        'access arguments' => array('bypass bat_unit_type entities access'),
+        'access arguments' => array('bypass bat_type entities access'),
       ),
     );
   }
@@ -274,34 +274,34 @@ function bat_unit_permission() {
     );
   }
 
-  // Permission for Bat Unit Types.
+  // Permission for Bat Types.
   $permissions += array(
-    'administer bat_unit_type_bundle entities' => array(
-      'title' => t('Administer unit type bundles'),
-      'description' => t('Allows users to add unit type bundles and configure their fields.'),
+    'administer bat_type_bundle entities' => array(
+      'title' => t('Administer type bundles'),
+      'description' => t('Allows users to add type bundles and configure their fields.'),
       'restrict access' => TRUE,
     ),
-    'view any bat_unit_type unpublished entity' => array(
-      'title' => t('View any unpublished unit type'),
-      'description' => t('Allows users to view any unpublished unit type.'),
+    'view any bat_type unpublished entity' => array(
+      'title' => t('View any unpublished type'),
+      'description' => t('Allows users to view any unpublished type.'),
       'restrict access' => TRUE,
     ),
-    'view own bat_unit_type unpublished entities' => array(
-      'title' => t('View own unpublished unit types'),
-      'description' => t('Allows users to view own unpublished unit types.'),
+    'view own bat_type unpublished entities' => array(
+      'title' => t('View own unpublished types'),
+      'description' => t('Allows users to view own unpublished types.'),
     ),
   );
 
-  $permissions += bat_entity_access_permissions('bat_unit_type');
+  $permissions += bat_entity_access_permissions('bat_type');
 
   // Override view permissions.
-  $entity_info = entity_get_info('bat_unit_type');
+  $entity_info = entity_get_info('bat_type');
   foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
-    $permissions['view own bat_unit_type entities of bundle ' . $bundle_name] = array(
-      'title' => t('View own published %bundle @entity_bundle', array('@entity_bundle' => 'unit types', '%bundle' => $bundle_info['label'])),
+    $permissions['view own bat_type entities of bundle ' . $bundle_name] = array(
+      'title' => t('View own published %bundle @entity_bundle', array('@entity_bundle' => 'types', '%bundle' => $bundle_info['label'])),
     );
-    $permissions['view any bat_unit_type entity of bundle ' . $bundle_name] = array(
-      'title' => t('View any published %bundle @entity_bundle', array('@entity_bundle' => 'unit type', '%bundle' => $bundle_info['label'])),
+    $permissions['view any bat_type entity of bundle ' . $bundle_name] = array(
+      'title' => t('View any published %bundle @entity_bundle', array('@entity_bundle' => 'type', '%bundle' => $bundle_info['label'])),
     );
   }
 
@@ -322,12 +322,12 @@ function bat_unit_query_bat_unit_access_alter(QueryAlterableInterface $query) {
     }
   }
 
-  // Look for an unit type base table to pass to the query altering function or else
+  // Look for an type base table to pass to the query altering function or else
   // assume we don't have the tables we need to establish order related altering
   // right now.
   foreach ($query->getTables() as $table) {
-    if ($table['table'] === 'bat_unit_types') {
-      bat_entity_access_query_alter($query, 'bat_unit_type', $table['alias']);
+    if ($table['table'] === 'bat_types') {
+      bat_entity_access_query_alter($query, 'bat_type', $table['alias']);
       break;
     }
   }
@@ -346,13 +346,13 @@ function bat_unit_theme() {
       'variables' => array('unit_extra_data', 'unit' => NULL),
       'template' => 'bat_unit-extra-data',
     ),
-    'bat_unit_type' => array(
+    'bat_type' => array(
       'render element' => 'elements',
-      'template' => 'bat_unit_type',
+      'template' => 'bat_type',
     ),
-    'bat_unit_type_extra_data' => array(
-      'variables' => array('unit_type_extra_data', 'unit_type' => NULL),
-      'template' => 'bat_unit_type-extra-data',
+    'bat_type_extra_data' => array(
+      'variables' => array('type_extra_data', 'type' => NULL),
+      'template' => 'bat_type-extra-data',
     ),
   );
 }
@@ -382,9 +382,9 @@ function bat_unit_menu_local_tasks_alter(&$data, $router_item, $root_path) {
     }
   }
 
-  // Create an action link on the unit types admin page for adding new unit types.
-  elseif ($root_path == 'admin/bat/unit-types') {
-    $item = menu_get_item('admin/bat/unit-types/add');
+  // Create an action link on the types admin page for adding new types.
+  elseif ($root_path == 'admin/bat/types') {
+    $item = menu_get_item('admin/bat/types/add');
     if ($item['access']) {
       $data['actions']['output'][] = array(
         '#theme' => 'menu_local_action',
@@ -947,74 +947,74 @@ class BatUnitBundleController extends EntityAPIControllerExportable {
 
 
 /**
- * @section Bat Unit Type
+ * @section Bat Type
  *
- * The following code deals with Bat Unit Types and their bundles. (entity types)
+ * The following code deals with Bat Types and their bundles. (entity types)
  *
- * Bat Unit Types are entities that deal with groups of Units. In a hotel use
- * case, a Unit Type bundle might be called 'Room', and individual entities of
- * type Unit Type might be called 'Single', 'Double', 'Triple', and so on.
+ * Bat Types are entities that deal with groups of Units. In a hotel use
+ * case, a Type bundle might be called 'Room', and individual entities of
+ * type Type might be called 'Single', 'Double', 'Triple', and so on.
  */
 
 /**
- * Determines whether the given user has access to a unit type.
+ * Determines whether the given user has access to a type.
  *
  * @param string $op
  *   The operation being performed. One of 'view', 'update', 'create', 'delete'
  *   or just 'edit' (being the same as 'create' or 'update').
- * @param BatUnitType $unit_type
- *   Optionally a unit type or a unit type bundle to check access for. If nothing is
- *   given, access for all unit types is determined.
+ * @param BatType $type
+ *   Optionally a type or a type bundle to check access for. If nothing is
+ *   given, access for all types is determined.
  * @param object $account
  *   The user to check for. Leave it to NULL to check for the global user.
  *
  * @return boolean
  *   Whether access is allowed or not.
  */
-function bat_unit_type_access($op, $unit_type = NULL, $account = NULL) {
-  return bat_entity_access($op, $unit_type, $account, 'bat_unit_type');
+function bat_type_access($op, $type = NULL, $account = NULL) {
+  return bat_entity_access($op, $type, $account, 'bat_type');
 }
 
 /**
- * Filters unit types based on permissions for multiple values.
+ * Filters types based on permissions for multiple values.
  */
-function bat_unit_type_access_filter($op, $unit_types = array(), $account = NULL) {
-  $filtered_unit_types = array();
+function bat_type_access_filter($op, $types = array(), $account = NULL) {
+  $filtered_types = array();
 
   // If no user object is supplied, the access check is for the current user.
   if (empty($account)) {
     $account = $GLOBALS['user'];
   }
 
-  foreach ($unit_types as $key => $unit_type) {
-    if (bat_unit_type_access($op, $unit_type, $account)) {
-      $filtered_unit_types[$key] = $unit_type;
+  foreach ($types as $key => $type) {
+    if (bat_type_access($op, $type, $account)) {
+      $filtered_types[$key] = $type;
     }
   }
-  return $filtered_unit_types;
+  return $filtered_types;
 }
 
 /**
  * Access callback for the entity API.
  */
-function bat_unit_type_bundle_access($op, $bundle = NULL, $account = NULL) {
-  return user_access('administer bat_unit_type_bundle entities', $account);
+function bat_type_bundle_access($op, $bundle = NULL, $account = NULL) {
+  return user_access('administer bat_type_bundle entities', $account);
 }
 
 /**
  * Implements hook_bat_entity_access_OP_condition_ENTITY_TYPE_alter().
  */
-function bat_unit_type_bat_entity_access_view_condition_bat_unit_type_alter(&$conditions, $context) {
+function bat_type_bat_entity_access_view_condition_bat_type_alter(&$conditions, $context) {
   $account = $context['account'];
 
-  if (user_access('view any bat_unit_type unpublished entity', $account)) {
+  if (user_access('view any bat_type unpublished entity', $account)) {
     return;
   }
 
   $old_conditions = $conditions;
   $conditions = db_and();
 
-  if ($account->uid && user_access('view own bat_unit_type unpublished entities', $account)) {
+  if ($account->uid && user_access('view own bat_type unpublished entities', $account)) {
     $or = db_and()
       ->condition($context['base_table'] . '.status', 0)
       ->condition($context['base_table'] . '.uid', $account->uid);
@@ -1034,16 +1034,16 @@ function bat_unit_type_bat_entity_access_view_condition_bat_unit_type_alter(&$co
 }
 
 /**
- * Access callback: Checks whether the user has permission to add a unit type.
+ * Access callback: Checks whether the user has permission to add a type.
  *
  * @return bool
  *   TRUE if the user has add permission, otherwise FALSE.
  *
  * @see node_menu()
  */
-function _bat_unit_type_add_access() {
-  if (user_access('administer bat_unit_type_bundle entities')) {
-    // There are no unit type bundles defined that the user has permission to
+function _bat_type_add_access() {
+  if (user_access('administer bat_type_bundle entities')) {
+    // There are no type bundles defined that the user has permission to
     // create, but the user does have the permission to administer the content
     // types, so grant them access to the page anyway.
     return TRUE;
@@ -1051,7 +1051,7 @@ function _bat_unit_type_add_access() {
 
   $bundles = bat_unit_get_type_bundles();
   foreach ($bundles as $bundle) {
-    if (bat_unit_type_access('create', bat_unit_type_create(array('type' => $bundle->type, 'uid' => 0)))) {
+    if (bat_type_access('create', bat_type_create(array('type' => $bundle->type, 'uid' => 0)))) {
       return TRUE;
     }
   }
@@ -1060,182 +1060,182 @@ function _bat_unit_type_add_access() {
 }
 
 /**
- * Gets an array of all unit type bundles, keyed by the bundle name.
+ * Gets an array of all type bundles, keyed by the bundle name.
  *
  * @param string $bundle_name
  *   If set, the bundle with the given name is returned.
  * @param bool $reset
  *   A boolean indicating that the internal cache should be reset.
  *
- * @return BatUnitTypeBundle[]
- *   Depending whether $bundle isset, an array of unit type bundles or a single one.
+ * @return BatTypeBundle[]
+ *   Depending whether $bundle isset, an array of type bundles or a single one.
  */
 function bat_unit_get_type_bundles($bundle_name = NULL, $reset = FALSE) {
-  // entity_load() will get the Entity controller for our unit type entity and call
+  // entity_load() will get the Entity controller for our type entity and call
   // the load function of that object.
-  $bundles = entity_load_multiple_by_name('bat_unit_type_bundle', isset($bundle_name) ? array($bundle_name) : FALSE);
+  $bundles = entity_load_multiple_by_name('bat_type_bundle', isset($bundle_name) ? array($bundle_name) : FALSE);
   return isset($bundle_name) ? reset($bundles) : $bundles;
 }
 
 /**
- * Helper function to easily get unit type bundles in an array for use in forms, etc.
+ * Helper function to easily get Bat Type bundles in an array for use in forms, etc.
  *
  * @return array
- *  An array of unit type bundles keyed by bundle name and labels
+ *  An array of type bundles keyed by bundle name and labels
 */
-function bat_unit_type_bundles_ids() {
-  $unit_type_bundles = array();
+function bat_type_bundles_ids() {
+  $type_bundles = array();
   $bundles = bat_unit_get_type_bundles();
   foreach ($bundles as $bundle) {
-    $unit_type_bundles[$bundle->type] = $bundle->label;
+    $type_bundles[$bundle->type] = $bundle->label;
   }
 
-  return $unit_type_bundles;
+  return $type_bundles;
 }
 
 /**
- * Menu argument loader; Load a unit type bundle by string.
+ * Menu argument loader; Load a Bat Type bundle by string.
  *
  * @param $bundle
- *   The machine-readable name of a unit type bundle to load.
+ *   The machine-readable name of a type bundle to load.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
  *
  * @return array|false
- *   A unit type bundle array or FALSE if $bundle does not exist.
+ *   A type bundle array or FALSE if $bundle does not exist.
  */
-function bat_unit_type_bundle_load($bundle, $reset = FALSE) {
+function bat_type_bundle_load($bundle, $reset = FALSE) {
   return bat_unit_get_type_bundles($bundle, $reset);
 }
 
 /**
- * Fetches a unit type object.
+ * Fetches a Bat Type object.
  *
- * @param int $unit_type_id
- *   Integer specifying the unit type id.
+ * @param int $type_id
+ *   Integer specifying the type id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
- * @return BatUnitType|false
- *   A fully-loaded $unit_type object or FALSE if it cannot be loaded.
+ * @return BatType|false
+ *   A fully-loaded $type object or FALSE if it cannot be loaded.
  *
- * @see bat_unit_type_load_multiple()
+ * @see bat_type_load_multiple()
  */
-function bat_unit_type_load($unit_type_id, $reset = FALSE) {
-  $unit_types = bat_unit_type_load_multiple(array($unit_type_id), array(), $reset);
-  return reset($unit_types);
+function bat_type_load($type_id, $reset = FALSE) {
+  $types = bat_type_load_multiple(array($type_id), array(), $reset);
+  return reset($types);
 }
 
 /**
- * Loads multiple unit types based on certain conditions.
+ * Loads multiple Bat Types based on certain conditions.
  *
- * @param array $unit_type_ids
- *   An array of unit type IDs.
+ * @param array $type_ids
+ *   An array of type IDs.
  * @param array $conditions
- *   An array of conditions to match against the {bat_unit_types} table.
+ *   An array of conditions to match against the {bat_types} table.
  * @param bool $reset
  *   A boolean indicating that the internal cache should be reset.
  *
  * @return array
- *   An array of unit type objects, indexed by unit type_id.
+ *   An array of type objects, indexed by type_id.
  *
  * @see entity_load()
- * @see bat_unit_type_load()
+ * @see bat_type_load()
  */
-function bat_unit_type_load_multiple($unit_type_ids = array(), $conditions = array(), $reset = FALSE) {
-  return entity_load('bat_unit_type', $unit_type_ids, $conditions, $reset);
+function bat_type_load_multiple($type_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('bat_type', $type_ids, $conditions, $reset);
 }
 
 /**
- * Deletes a unit type.
+ * Deletes a Bat Type.
  *
- * @param BatUnitType $unit_type
- *   The BatUnitType object that represents the unit type to delete.
+ * @param BatType $type
+ *   The BatType object that represents the type to delete.
  */
-function bat_unit_type_delete(BatUnitType $unit_type) {
-  $unit_type->delete();
+function bat_type_delete(BatType $type) {
+  $type->delete();
 }
 
 /**
- * Deletes multiple unit types.
+ * Deletes multiple Bat Types.
  *
- * @param array $unit_type_ids
- *   An array of unit type IDs.
+ * @param array $type_ids
+ *   An array of type IDs.
  */
-function bat_unit_type_delete_multiple(array $unit_type_ids) {
-  entity_get_controller('bat_unit_type')->delete($unit_type_ids);
+function bat_type_delete_multiple(array $type_ids) {
+  entity_get_controller('bat_type')->delete($type_ids);
 }
 
 /**
- * Creates a unit type object.
- *
- * @param array $values
- *   The properties for the new unit type bundle.
- */
-function bat_unit_type_create($values = array()) {
-  return entity_get_controller('bat_unit_type')->create($values);
-}
-
-/**
- * Saves a unit type to the database.
- *
- * @param BatUnitType $unit_type
- *   The unit type object.
- */
-function bat_unit_type_save(BatUnitType $unit_type) {
-  return $unit_type->save();
-}
-
-/**
- * Creates a unit type object.
+ * Creates a Bat Type object.
  *
  * @param array $values
- *   The properties for the new unit type bundle.
+ *   The properties for the new type bundle.
  */
-function bat_unit_type_bundle_create($values = array()) {
-  return entity_get_controller('bat_unit_type_bundle')->create($values);
+function bat_type_create($values = array()) {
+  return entity_get_controller('bat_type')->create($values);
 }
 
 /**
- * Saves a unit type bundle to the db.
+ * Saves a Bat Type to the database.
  *
- * @param BatUnitTypeBundle $bundle
- *   The unit type bundle to save.
+ * @param BatType $type
+ *   The type object.
  */
-function bat_unit_type_bundle_save(BatUnitTypeBundle $bundle) {
+function bat_type_save(BatType $type) {
+  return $type->save();
+}
+
+/**
+ * Creates a Bat Type bundle object.
+ *
+ * @param array $values
+ *   The properties for the new type bundle.
+ */
+function bat_type_bundle_create($values = array()) {
+  return entity_get_controller('bat_type_bundle')->create($values);
+}
+
+/**
+ * Saves a Bat Type bundle to the db.
+ *
+ * @param BatTypeBundle $bundle
+ *   The type bundle to save.
+ */
+function bat_type_bundle_save(BatTypeBundle $bundle) {
   $bundle->save();
 }
 
 /**
- * Deletes a unit type bundle from the db.
+ * Deletes a Bat Type bundle from the db.
  */
-function bat_unit_type_bundle_delete(BatUnitTypeBundle $bundle) {
+function bat_type_bundle_delete(BatTypeBundle $bundle) {
   $bundle->delete();
 }
 
 /**
- * URI callback for unit types.
+ * URI callback for Bat Types.
  */
-function bat_unit_type_uri(BatUnitType $unit_type) {
+function bat_type_uri(BatType $type) {
   return array(
-    'path' => 'unit-type/' . $unit_type->unit_type_id,
+    'path' => 'type/' . $type->type_id,
   );
 }
 
 /**
  * Menu title callback for showing individual entities.
  */
-function bat_unit_type_page_title(BatUnitType $unit_type) {
-  return $unit_type->name;
+function bat_type_page_title(BatType $type) {
+  return $type->name;
 }
 
 /**
- * Gets a list of unit types keyed by id and name in value.
+ * Gets a list of Bat Types keyed by id and name in value.
  */
-function bat_unit_type_ids($bundle = '') {
-  $unit_types = array();
+function bat_type_ids($bundle = '') {
+  $types = array();
 
   $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'bat_unit_type');
+  $query->entityCondition('entity_type', 'bat_type');
 
   if ($bundle != '') {
     $query->entityCondition('bundle', $bundle);
@@ -1244,46 +1244,46 @@ function bat_unit_type_ids($bundle = '') {
   $result = $query->execute();
 
   if (count($result) > 0) {
-    $entities = entity_load('bat_unit_type', array_keys($result['bat_unit_type']));
-    foreach ($entities as $unit_type) {
-      $wrapper = entity_metadata_wrapper('bat_unit_type', $unit_type);
-      $unit_types[$wrapper->unit_type_id->value()] = $wrapper->name->value();
+    $entities = entity_load('bat_type', array_keys($result['bat_type']));
+    foreach ($entities as $type) {
+      $wrapper = entity_metadata_wrapper('bat_type', $type);
+      $types[$wrapper->type_id->value()] = $wrapper->name->value();
     }
   }
 
-  return $unit_types;
+  return $types;
 }
 
 /**
- * Gets a list of unit type bundles keyed by id and name in value.
+ * Gets a list of Bat Type bundles keyed by id and name in value.
  */
-function bat_unit_type_bundle_ids() {
-  $unit_type_bundles = array();
+function bat_type_bundle_ids() {
+  $type_bundles = array();
 
   $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'bat_unit_type_bundle');
+  $query->entityCondition('entity_type', 'bat_type_bundle');
 
   $result = $query->execute();
 
   if (count($result) > 0) {
-    $entities = entity_load('bat_unit_type_bundle', array_keys($result['bat_unit_type_bundle']));
-    foreach ($entities as $unit_type_bundle) {
-      $wrapper = entity_metadata_wrapper('bat_unit_type_bundle', $unit_type_bundle);
-      $unit_type_bundles[$wrapper->id->value()] = $wrapper->label->value();
+    $entities = entity_load('bat_type_bundle', array_keys($result['bat_type_bundle']));
+    foreach ($entities as $type_bundle) {
+      $wrapper = entity_metadata_wrapper('bat_type_bundle', $type_bundle);
+      $type_bundles[$wrapper->id->value()] = $wrapper->label->value();
     }
   }
 
-  return $unit_type_bundles;
+  return $type_bundles;
 }
 
 /**
- * Sets up content to show an individual unit type.
+ * Sets up content to show an individual Bat Type.
  */
-function bat_unit_type_page_view($unit_type, $view_mode = 'full') {
-  $controller = entity_get_controller('bat_unit_type');
-  $content = $controller->view(array($unit_type->unit_type_id => $unit_type), $view_mode);
+function bat_type_page_view($type, $view_mode = 'full') {
+  $controller = entity_get_controller('bat_type');
+  $content = $controller->view(array($type->type_id => $type), $view_mode);
 
-  drupal_set_title($unit_type->name);
+  drupal_set_title($type->name);
 
   return $content;
 }
@@ -1291,24 +1291,24 @@ function bat_unit_type_page_view($unit_type, $view_mode = 'full') {
 /**
  * Implements hook_form_FORM_ID_alter().
  *
- * FORM_ID = bat_unit_type_bundle_operation_form
- * Prevent a unit type bundle with associated unit types from being deleted.
+ * FORM_ID = bat_type_bundle_operation_form
+ * Prevent a Bat type bundle with associated unit bundles from being deleted.
  */
-function bat_unit_form_bat_unit_type_bundle_operation_form_alter(&$form, &$form_state, $form_id) {
-  // Check if unit types of a unit type bundle exist before allowing deletion.
+function bat_unit_form_bat_type_bundle_operation_form_alter(&$form, &$form_state, $form_id) {
+  // Check if types of a type bundle exist before allowing deletion.
   if ($form_state['op'] == 'delete') {
-    $unit_type_bundle = $form_state['bat_unit_type_bundle'];
+    $type_bundle = $form_state['bat_type_bundle'];
 
-    // Load the unit types associated with this bundle.
+    // Load the Bat Types associated with this bundle.
     $query = new EntityFieldQuery();
 
-    $query->entityCondition('entity_type', 'bat_unit_type')
-          ->propertyCondition('type', $unit_type_bundle->type);
-    $unit_types = $query->execute();
-    if (isset($unit_types['bat_unit_type']) && count($unit_types['bat_unit_type'])) {
+    $query->entityCondition('entity_type', 'bat_type')
+          ->propertyCondition('type', $type_bundle->type);
+    $types = $query->execute();
+    if (isset($types['bat_type']) && count($types['bat_type'])) {
 
-      // This bundle has associated unit types, don't allow deletion.
-      form_set_error('confirm', t('This unit type bundle has associated unit types. Please delete all unit types before attempting to delete this unit type bundle.'));
+      // This type bundle has associated types, don't allow deletion.
+      form_set_error('confirm', t('This Bat Type bundle has associated Types. Please delete all Types before attempting to delete this Bat Type bundle.'));
 
       unset($form['description']);
       unset($form['actions']);
@@ -1319,9 +1319,9 @@ function bat_unit_form_bat_unit_type_bundle_operation_form_alter(&$form, &$form_
 
 /**
  * Returns an initialized bat bundle array. This is here to help other modules easily and
- * consistently add BAT unit type bundles.
+ * consistently add BAT Type bundles.
  */
-function bat_unit_type_bundle_new() {
+function bat_type_bundle_new() {
   return array(
     'type' => '',
     'label' => '',
@@ -1334,7 +1334,7 @@ function bat_unit_type_bundle_new() {
 }
 
 /**
- * Support for adding price fields to BAT unit types - something modules such as Rooms make use of.
+ * Support for adding price fields to BAT Types - something modules such as Rooms make use of.
  *
  * @param $field_name
  * @param $entity_type
@@ -1348,7 +1348,7 @@ function bat_unit_type_bundle_new() {
  * @throws \Exception
  * @throws \FieldException
  */
-function bat_unit_type_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = FALSE, $calculation = FALSE, $display = array()) {
+function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = FALSE, $calculation = FALSE, $display = array()) {
 
   $field = field_info_field($field_name);
   $instance = field_info_instance($entity_type, $field_name, $bundle);
@@ -1414,12 +1414,12 @@ function bat_unit_type_add_price_field($field_name, $entity_type, $bundle, $labe
 
 
 /**
- * The class used for unit type entities
+ * The class used for Bat Type entities
  */
-class BatUnitType extends Entity {
+class BatType extends Entity {
 
   public function __construct($values = array()) {
-    parent::__construct($values, 'bat_unit_type');
+    parent::__construct($values, 'bat_type');
   }
 
   /**
@@ -1433,7 +1433,7 @@ class BatUnitType extends Entity {
    * {@inheritdoc}
    */
   protected function defaultUri() {
-    return array('path' => 'unit-type/' . $this->unit_type_id);
+    return array('path' => 'type/' . $this->type_id);
   }
 
   /**
@@ -1441,18 +1441,18 @@ class BatUnitType extends Entity {
    * @return
    */
   public function getDefaultValue($event_type) {
-    $unit_type_bundle = bat_unit_type_bundle_load($this->type);
+    $type_bundle = bat_type_bundle_load($this->type);
 
     $field = '';
-    if (isset($unit_type_bundle->data[$event_type])) {
-      $field = $unit_type_bundle->data[$event_type];
+    if (isset($type_bundle->data[$event_type])) {
+      $field = $type_bundle->data[$event_type];
     }
     if ($field == '') {
       return FALSE;
     }
     else {
       $field_info = field_info_field($field);
-      $values = field_get_items('bat_unit_type', $this, $field);
+      $values = field_get_items('bat_type', $this, $field);
 
       if (!empty($values)) {
         if ($field_info['type'] == 'bat_event_state_reference') {
@@ -1474,62 +1474,62 @@ class BatUnitType extends Entity {
 }
 
 /**
- * The class used for unit type bundle entities
+ * The class used for Bat Type bundle entities
  */
-class BatUnitTypeBundle extends Entity {
+class BatTypeBundle extends Entity {
 
   /**
-   * The unit type bundle.
+   * The Bat Type bundle.
    *
    * @var string
    */
   public $type;
 
   /**
-   * The unit type bundle label.
+   * The Bat Type bundle label.
    *
    * @var string
    */
   public $label;
 
   public function __construct($values = array()) {
-    parent::__construct($values, 'bat_unit_type_bundle');
+    parent::__construct($values, 'bat_type_bundle');
   }
 
 }
 
 /**
- * The Controller for BatUnitType entities
+ * The Controller for BatType entities
  */
-class BatUnitTypeController extends EntityAPIController {
+class BatTypeController extends EntityAPIController {
 
   public function __construct($entityType) {
     parent::__construct($entityType);
   }
 
   /**
-   * Creates a unit type.
+   * Creates a Bat Type.
    *
    * @param array $values
-   *   The properties for the new unit type bundle.
+   *   The properties for the new Bat Type bundle.
    *
-   * @return BatUnitType
-   *   A unit type object with all default fields initialized.
+   * @return BatType
+   *   A Bat Type object with all default fields initialized.
    */
   public function create(array $values = array()) {
-    $unit_type_bundle = bat_unit_type_bundle_load($values['type'], TRUE);
-    // Add values that are specific to our unit type.
+    $type_bundle = bat_type_bundle_load($values['type'], TRUE);
+    // Add values that are specific to our Bat Type.
     $values += array(
-      'unit_type_id' => '',
+      'type_id' => '',
       'is_new' => TRUE,
       'name' => '',
       'created' => '',
       'changed' => '',
     );
 
-    $unit_type = parent::create($values);
+    $type = parent::create($values);
 
-    return $unit_type;
+    return $type;
   }
 
   /**
@@ -1544,33 +1544,33 @@ class BatUnitTypeController extends EntityAPIController {
 }
 
 /**
- * The Controller for unit type bundle entities.
+ * The Controller for Bat Type bundle entities.
  */
-class BatUnitTypeBundleController extends EntityAPIControllerExportable {
+class BatTypeBundleController extends EntityAPIControllerExportable {
 
   public function __construct($entityType) {
     parent::__construct($entityType);
   }
 
   /**
-   * Creates a unit type bundle.
+   * Creates a Bat Type bundle.
    *
    * @param array $values
-   *   The properties for the new unit type bundle.
+   *   The properties for the new Bat Type bundle.
    *
-   * @return BatUnitTypeBundle
-   *   A unit type bundle object with all default fields initialized.
+   * @return BatTypeBundle
+   *   A Bat Type bundle object with all default fields initialized.
    */
   public function create(array $values = array()) {
-    // Add values that are specific to our unit type.
+    // Add values that are specific to our Bat Type.
     $values += array(
       'id' => '',
       'is_new' => TRUE,
       'data' => '',
     );
-    $unit_type_bundle = parent::create($values);
+    $type_bundle = parent::create($values);
 
-    return $unit_type_bundle;
+    return $type_bundle;
   }
 
 }

@@ -48,7 +48,7 @@ To display calendars and dates we use the following libraries:
  - The BAT API module is in a separate project - http://drupal.org/project/bat_api - and you need branch 7.x-2.x
  - Make sure to set the jQuery for the admin theme to at least 1.10 by visiting *admin/config/development/jquery_update*
 
-### Creating Booking Units
+### Creating Bat Units
 The first thing you will want to do is create a bookable unit which you can then manage the availability of.
 
 Visit *admin/config/bat/unit-bundles* to create a unit. Bookable units are basic entities that you can manage the permissions off and add any fields you require.

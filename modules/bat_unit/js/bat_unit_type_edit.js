@@ -1,6 +1,6 @@
 (function ($) {
 
-  Drupal.behaviors.BatUnitTypeEdit = {
+  Drupal.behaviors.BatTypeEdit = {
     attach: function (context, settings) {
       updateElements();
 
@@ -11,7 +11,7 @@
   };
 
   function updateElements() {
-    $('form[id^=bat-unit-type-edit] fieldset').each(function() {
+    $('form[id^=bat-type-edit] fieldset').each(function() {
       $(this).hide();
     });
 

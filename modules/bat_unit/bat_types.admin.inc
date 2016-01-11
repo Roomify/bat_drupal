@@ -2,30 +2,30 @@
 
 /**
  * @file
- * UI for creating unit type entities and controlling Units.
+ * UI for creating Bat Type entities and controlling Units.
  */
 
 /**
- * Allow manipulation of unit type entities.
+ * Allow manipulation of Bat Type entities.
  */
-function bat_unit_type_list() {
+function bat_type_list() {
   ctools_include('modal');
   ctools_modal_add_js();
 
-  // $unit_add_form = drupal_get_form('bat_unit_type_add_select');
+  // $unit_add_form = drupal_get_form('bat_type_add_select');
   // $content = drupal_render($unit_add_form);
-  $content = l(t('Add Unit Type'), 'admin/bat/config/unit-types/add/room');
+  $content = l(t('Add Type'), 'admin/bat/config/types/add/room');
 
-  $content .= bat_unit_type_list_render();
+  $content .= bat_type_list_render();
   return $content;
 }
 
 /**
  * Unit add form.
  */
-function bat_unit_type_add_select($form, &$form_state) {
-  // Get unit types.
-  $unit_type_bundles = bat_unit_type_bundle_ids();
+function bat_type_add_select($form, &$form_state) {
+  // Get Bat Types.
+  $type_bundles = bat_type_bundle_ids();
 
   $form = array();
 
@@ -36,11 +36,11 @@ function bat_unit_type_add_select($form, &$form_state) {
     ),
   );
 
-  $form['container']['unit_type'] = array(
-    '#prefix' => l('', 'admin/bat/unit-type-add'),
+  $form['container']['type'] = array(
+    '#prefix' => l('', 'admin/bat/type-add'),
     '#type' => 'select',
-    '#options' => $unit_type_bundles,
-    '#title' => 'Add Unit Type',
+    '#options' => $type_bundles,
+    '#title' => 'Add Type',
   );
 
   $form['container']['name'] = array(
@@ -66,7 +66,7 @@ function bat_unit_type_add_select($form, &$form_state) {
 /**
  * Validation handler for unit add form.
  */
-function bat_unit_type_add_select_validate($form, &$form_state) {
+function bat_type_add_select_validate($form, &$form_state) {
   if (empty($form_state['values']['units'])) {
     form_set_error('units', t('Please enter the number of units to add.'));
   } elseif (!is_numeric($form_state['values']['units'])) {
@@ -77,23 +77,23 @@ function bat_unit_type_add_select_validate($form, &$form_state) {
 /**
  * Submit handler for unit add form.
  */
-function bat_unit_type_add_select_submit($form, &$form_state) {
+function bat_type_add_select_submit($form, &$form_state) {
   global $user;
 
   // Sanity check.
-  if (!$unit_type = bat_unit_type_load($form_state['values']['unit_type'])) {
-    drupal_set_message(t('Could not load unit type!'), 'warning');
+  if (!$type = bat_type_load($form_state['values']['type'])) {
+    drupal_set_message(t('Could not load Bat Type!'), 'warning');
     return;
   }
 
   // Create units.
   for ($i = 1; $i <= $form_state['values']['units']; $i++) {
-    $unit = bat_unit_create(array('type' => $unit_type->type));
-    $unit->name = $unit_type->label;
+    $unit = bat_unit_create(array('type' => $type->type));
+    $unit->name = $type->label;
     $unit->created = !empty($unit->date) ? strtotime($unit->date) : REQUEST_TIME;
 
     // Bookable by default.
-    $unit->unit_type_id = 1;
+    $unit->type_id = 1;
     $unit->default_state = 1;
     $unit->uid = $user->uid;
     $unit->save();
@@ -101,28 +101,28 @@ function bat_unit_type_add_select_submit($form, &$form_state) {
 }
 
 /**
- * Generate list of unit types.
+ * Generate list of Bat Types.
  */
-function bat_unit_type_list_render() {
+function bat_type_list_render() {
   // Table setup.
-  $header = array('Unit Type', 'Units');
+  $header = array('Type', 'Units');
 
   // Populate table rows.
   $rows = array();
-  foreach (bat_unit_type_ids() as $unit_type_id => $unit_type) {
-    $unit_type = bat_unit_type_load($unit_type_id);
-    $units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $unit_type_id));
-    $options = array('query' => array('unit_type' => $unit_type_id));
+  foreach (bat_type_ids() as $type_id => $type) {
+    $type = bat_type_load($type_id);
+    $units = bat_unit_load_multiple(FALSE, array('type_id' => $type_id));
+    $options = array('query' => array('type' => $type_id));
     $rows[] = array(
-      // Unit Type Name.
-      $unit_type->name,
-      // Number of Units associated with this Unit Type.
-      count($units) . ' ' . l(t('edit'), 'admin/bat/unit-type-edit', $options),
+      // Type Name.
+      $type->name,
+      // Number of Units associated with this Type.
+      count($units) . ' ' . l(t('edit'), 'admin/bat/type-edit', $options),
     );
   }
 
   // The output.
-  $content = '<div class="unit-types">';
+  $content = '<div class="types">';
   $content .= theme('table', array('header' => $header, 'rows' => $rows ));
   $content .= '</div>';
 
@@ -130,11 +130,11 @@ function bat_unit_type_list_render() {
 }
 
 /**
- * Form to add/delete Units for a given Unit Type.
+ * Form to add/delete Units for a given Type.
  */
-function bat_unit_type_edit($form, &$form_state) {
-  if (isset($_GET['unit_type'])) {
-    $unit_type = $_GET['unit_type'];
+function bat_type_edit($form, &$form_state) {
+  if (isset($_GET['type'])) {
+    $type = $_GET['type'];
   }
   else {
     die("I can't do that, Dave.");
@@ -142,12 +142,12 @@ function bat_unit_type_edit($form, &$form_state) {
   $form = array();
 
   $form['#attached']['js'] = array(
-    drupal_get_path('module', 'bat_unit') . '/js/bat_unit_type_edit.js',
+    drupal_get_path('module', 'bat_unit') . '/js/bat_type_edit.js',
   );
 
-  $unit_type_object = bat_unit_type_load($unit_type);
-  $total_units = count(bat_unit_load_multiple(FALSE, array('unit_type_id' => $unit_type_id)));
-  // $units_booked = bat_get_unit_number_booked_by_type_capacity($unit_type, $max_sleeps);
+  $type_object = bat_type_load($type);
+  $total_units = count(bat_unit_load_multiple(FALSE, array('type_id' => $type_id)));
+  // $units_booked = bat_get_unit_number_booked_by_type_capacity($type, $max_sleeps);
 
   // Set up options.
   $options = array(
@@ -169,15 +169,15 @@ function bat_unit_type_edit($form, &$form_state) {
   // Add delete type option if no units are booked.
   /*
    * TODO
-  $units_booked_by_type = bat_get_unit_number_booked_by_type_capacity($unit_type);
+  $units_booked_by_type = bat_get_unit_number_booked_by_type_capacity($type);
   if ($units_booked_by_type == 0) {
-    $options['delete_type'] = t('Delete Unit Type and all Units of this type');
+    $options['delete_type'] = t('Delete Type and all Units of this type');
   }
   */
 
-  $form['unit_type'] = array(
+  $form['type'] = array(
     '#type' => 'hidden',
-    '#value' => $unit_type,
+    '#value' => $type,
   );
 
   $form['operation'] = array(
@@ -191,11 +191,11 @@ function bat_unit_type_edit($form, &$form_state) {
   // Edit name fieldset.
   $form['edit_name'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Edit Unit Type name',
+    '#title' => 'Edit Type name',
   );
   $form['edit_name']['name'] = array(
     '#type' => 'textfield',
-    '#default_value' => $unit_type_object->name,
+    '#default_value' => $type_object->name,
   );
   $form['edit_name']['submit'] = array(
     '#type' => 'submit',
@@ -223,18 +223,18 @@ function bat_unit_type_edit($form, &$form_state) {
   // Delete type fieldset.
   $form['delete_type'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Delete Unit Type',
+    '#title' => 'Delete Type',
   );
   $form['delete_type']['submit'] = array(
     '#type' => 'submit',
-    '#value' => 'Delete ' . $unit_type_object->label . ' stateroom type',
+    '#value' => 'Delete ' . $type_object->label . ' stateroom type',
     '#submit' => array('bat_unit_delete_type_submit'),
   );
 
   // Delete units fieldset.
   $form['delete_units'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Delete ' . $unit_type_object->label . ' Units',
+    '#title' => 'Delete ' . $type_object->label . ' Units',
   );
   $form['delete_units']['number'] = array(
     '#type' => 'textfield',
@@ -252,11 +252,11 @@ function bat_unit_type_edit($form, &$form_state) {
 }
 
 /**
- * Validation function for unit type name editing.
+ * Validation function for Bat Type name editing.
  */
 function bat_unit_edit_type_name_validate($form, &$form_state) {
   if (!strlen($form_state['values']['name'])) {
-    form_set_error('name', t('Please enter a name for this Unit Type.'));
+    form_set_error('name', t('Please enter a name for this Type.'));
   }
 }
 
@@ -264,26 +264,26 @@ function bat_unit_edit_type_name_validate($form, &$form_state) {
  * Submit function to edit type name and update any units.
  */
 function bat_unit_edit_type_name_submit($form, &$form_state) {
-  if (isset($form['unit_type']['#value'])) {
-    $unit_type = $form['unit_type']['#value'];
-    if ($unit_type_object = bat_unit_type_load($unit_type)) {
+  if (isset($form['type']['#value'])) {
+    $type = $form['type']['#value'];
+    if ($type_object = bat_type_load($type)) {
 
       // Update unit names.
-      $units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $unit_type_id));
+      $units = bat_unit_load_multiple(FALSE, array('type_id' => $type_id));
 
       foreach ($units as $unit_id) {
         $unit = bat_unit_load($unit_id);
-        $unit->name = str_replace($unit_type_object->label, $form_state['values']['name'], $unit->name);
+        $unit->name = str_replace($type_object->label, $form_state['values']['name'], $unit->name);
         bat_unit_save($unit);
       }
 
-      // Update unit type name.
-      $unit_type_object->name = $form_state['values']['name'];
-      bat_unit_type_save($unit_type_object);
+      // Update Bat Type name.
+      $type_object->name = $form_state['values']['name'];
+      bat_type_save($type_object);
     }
   }
 
-  bat_unit_dismiss_modal($form_state, 'admin/bat/unit-types');
+  bat_unit_dismiss_modal($form_state, 'admin/bat/types');
 }
 
 /**
@@ -303,13 +303,13 @@ function bat_unit_add_units_validate($form, &$form_state) {
  */
 function bat_unit_add_units_submit($form, &$form_state) {
   global $user;
-  if (isset($form['unit_type']['#value'])) {
-    $unit_type = $form['unit_type']['#value'];
-    if ($unit_type_object = bat_unit_type_load($unit_type)) {
+  if (isset($form['type']['#value'])) {
+    $type = $form['type']['#value'];
+    if ($type_object = bat_type_load($type)) {
       for ($i = 1; $i <= $form_state['values']['quantity']; $i++) {
         $unit = bat_unit_create(array(
-          'unit_type_id' => $unit_type,
-          'name' => $unit_type_object->name . ' ' . $i,
+          'type_id' => $type,
+          'name' => $type_object->name . ' ' . $i,
           'uid' => $user->uid,
           'created' => REQUEST_TIME,
           'type' => 'default',
@@ -320,7 +320,7 @@ function bat_unit_add_units_submit($form, &$form_state) {
     }
   }
 
-  bat_unit_dismiss_modal($form_state, 'admin/bat/unit-types');
+  bat_unit_dismiss_modal($form_state, 'admin/bat/types');
 }
 
 /**

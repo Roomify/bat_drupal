@@ -33,7 +33,7 @@ function bat_unit_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
-      'unit_type_id' => array(
+      'type_id' => array(
         'description' => 'Identifier for this unit\'s type.',
         'type' => 'int',
         'unsigned' => TRUE,
@@ -80,7 +80,7 @@ function bat_unit_schema() {
         'description' => 'Whether the unit is available for booking or not.',
       ),
       'status' => array(
-        'description' => 'Boolean indicating whether the booking unit is published (visible to non-administrators).',
+        'description' => 'Boolean indicating whether the unit is published (visible to non-administrators).',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 1,
@@ -160,44 +160,44 @@ function bat_unit_schema() {
     ),
   );
 
-  $schema['bat_unit_types'] = array(
-    'description' => 'The base table for Unit Types.',
+  $schema['bat_types'] = array(
+    'description' => 'The base table for Types.',
     'fields' => array(
-      'unit_type_id' => array(
-        'description' => 'Primary Key: Identifier for a Unit Type.',
+      'type_id' => array(
+        'description' => 'Primary Key: Identifier for a Type.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
       'type' => array(
-        'description' => 'The {unit_type_bundle}.type of this Unit Type.',
+        'description' => 'The {type_bundle}.type of this Type.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
       ),
       'language' => array(
-        'description' => 'The language of the Unit Type.',
+        'description' => 'The language of the Type.',
         'type' => 'varchar',
         'length' => 32,
         'not null' => TRUE,
         'default' => '',
       ),
       'name' => array(
-        'description' => 'The name of the Unit Type - a human-readable identifier.',
+        'description' => 'The name of the Type - a human-readable identifier.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
       ),
       'created' => array(
-        'description' => 'The Unix timestamp when the Unit Type was created.',
+        'description' => 'The Unix timestamp when the Type was created.',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
       ),
       'changed' => array(
-        'description' => 'The Unix timestamp when the Unit Type was most recently saved.',
+        'description' => 'The Unix timestamp when the Type was most recently saved.',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
@@ -207,16 +207,16 @@ function bat_unit_schema() {
         'not null' => TRUE,
         'default' => 1,
         'size' => 'tiny',
-        'description' => 'Whether the unit type is available for booking or not.',
+        'description' => 'Whether the type is available for booking or not.',
       ),
       'status' => array(
-        'description' => 'Boolean indicating whether the unit type is published (visible to non-administrators).',
+        'description' => 'Boolean indicating whether the type is published (visible to non-administrators).',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 1,
       ),
       'uid' => array(
-        'description' => 'The {users}.uid that created this unit type.',
+        'description' => 'The {users}.uid that created this type.',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
@@ -229,28 +229,28 @@ function bat_unit_schema() {
         'description' => 'A serialized array of additional data.',
       ),
     ),
-    'primary key' => array('unit_type_id'),
+    'primary key' => array('type_id'),
     'indexes' => array(
       'type' => array('type'),
     ),
   );
 
-  $schema['bat_unit_type_bundle'] = array(
-    'description' => 'Stores information about defined unit type bundles.',
+  $schema['bat_type_bundle'] = array(
+    'description' => 'Stores information about defined type bundles.',
     'fields' => array(
       'id' => array(
         'type' => 'serial',
         'not null' => TRUE,
-        'description' => 'Primary Key: Unique unit type bundle identifier.',
+        'description' => 'Primary Key: Unique type bundle identifier.',
       ),
       'type' => array(
-        'description' => 'The machine-readable name of this unit type bundle.',
+        'description' => 'The machine-readable name of this type bundle.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
       ),
       'label' => array(
-        'description' => 'The human-readable name of this unit type bundle.',
+        'description' => 'The human-readable name of this type bundle.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
@@ -261,14 +261,14 @@ function bat_unit_schema() {
         'not null' => TRUE,
         'default' => 0,
         'size' => 'tiny',
-        'description' => 'The weight of this unit type bundle in relation to others.',
+        'description' => 'The weight of this type bundle in relation to others.',
       ),
       'data' => array(
         'type' => 'text',
         'not null' => FALSE,
         'size' => 'big',
         'serialize' => TRUE,
-        'description' => 'A serialized array of additional data related to this unit type bundle.',
+        'description' => 'A serialized array of additional data related to this type bundle.',
       ),
       'status' => array(
         'type' => 'int',
