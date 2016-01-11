@@ -95,7 +95,7 @@ function bat_event_ui_libraries_info() {
   $libraries['fullcalendar-scheduler'] = array(
     'name' => 'Fullcalendar Scheduler',
     'vendor url' => 'http://fullcalendar.io',
-    'download url' => 'https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.0.2/fullcalendar-scheduler-1.2.0.zip',
+    'download url' => 'https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.2.0/fullcalendar-scheduler-1.2.0.zip',
     'version arguments' => array(
       'file' => 'scheduler.min.js',
       // 1.2.0
@@ -198,14 +198,12 @@ function bat_availability_permission() {
 function bat_event_ui_menu() {
   $items = array();
 
-  $items['admin/bat/units/unit/%bat_unit/events'] = array(
-    'title' => 'Calendar events',
-    'page callback' => 'bat_event_calendar_page',
-    'page arguments' => array(4, 6, 7, 8),
+  $items['admin/bat/calendar'] = array(
+    'title' => 'Calendar',
+    'page callback' => 'bat_event_ui_calendar_page',
     'access callback' => 'bat_unit_access',
     'access arguments' => array('update availability', 4),
-    'type' => MENU_LOCAL_TASK,
-    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+    'type' => MENU_CALLBACK,
     'weight' => '20',
   );
 
@@ -225,33 +223,26 @@ function bat_event_ui_menu() {
 /**
  * Callback for admin/bat/events/
  */
-function bat_event_ui_calendar_page(BatUnit $bat_unit, $year = '', $month = '', $event_type = '') {
+function bat_event_ui_calendar_page() {
   // Set the page title.
-  drupal_set_title(t('Edit @unit_name Availability', array('@unit_name' => $bat_unit->name)));
+  drupal_set_title(t('View Event Data'));
 
   // Add styles.
   bat_event_ui_modal_style();
 
   drupal_add_library('system', 'drupal.vertical-tabs');
 
-  // Get the current page's URL, striped of the year and month args.
-  // This allows us to place this page anywhere, including at
-  // unit/%/availability  or  admin/bat/units/unit/%/availability
-  list($url) = explode('/' . $year . '/' . $month, current_path());
-
   $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_event_ui.js';
   $css_file = drupal_get_path('module', 'bat_event_ui') . '/css/bat_event_ui.css';
+  
   // Show full day events on calendar.
   if (variable_get('bat_calendar_events_view', '0') == '1') {
     $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_availability_full_day.js';
+  
   }
   return array(
     '#theme' => 'bat_one_month_calendar',
-    '#url' => $url,
     '#form' => drupal_get_form('bat_event_ui_event_type_form'),
-    '#year' => $year,
-    '#month' => $month,
-    '#event_type' => $event_type,
     '#attached' => array(
       'css' => array(
         $css_file,
@@ -259,7 +250,6 @@ function bat_event_ui_calendar_page(BatUnit $bat_unit, $year = '', $month = '', 
       'js' => array(
         $js_file,
         array(
-          'data' => array('batAvailability' => array('unitID' => $bat_unit->unit_id)),
           'type' => 'setting',
         ),
       ),
@@ -537,7 +527,8 @@ function bat_event_ui_theme() {
 function bat_event_ui_preprocess_bat_one_month_calendar(&$vars) {
 
   // Load FullCalendar.
-  bat_event_ui_library_loaded('fullcalendar');
+  bat_event_ui_library_loaded('fullcalendar-scheduler', 'source');
+
 
   // Add css styles for one-month-calendar.
   drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_one_month_calendar.css');

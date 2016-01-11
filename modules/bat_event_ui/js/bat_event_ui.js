@@ -6,17 +6,6 @@ Drupal.BatAvailability.Modal = Drupal.BatAvailability.Modal || {};
 Drupal.behaviors.bat_availability = {
   attach: function(context) {
 
-    unit_id = Drupal.settings.batAvailability.unitID;
-
-    // Current month is whatever comes through -1 since js counts months starting from 0
-    currentMonth = Drupal.settings.batCalendar.currentMonth - 1;
-    currentYear = Drupal.settings.batCalendar.currentYear;
-    firstDay = Drupal.settings.batCalendar.firstDay;
-
-    // The first month on the calendar
-    month1 = currentMonth;
-    year1 = currentYear;
-
     openingTime = '';
 
     if (openingTime.length === 0) {
@@ -35,7 +24,7 @@ Drupal.behaviors.bat_availability = {
     }
 
     var calendars = [];
-    calendars[0] = new Array('#calendar', month1, year1);
+    calendars[0] = new Array('#calendar');
 
     // refresh the events once the modal is closed
     $(document).one("CToolsDetachBehaviors", function() {
@@ -45,69 +34,40 @@ Drupal.behaviors.bat_availability = {
     });
 
     $.each(calendars, function(key, value) {
-      // phpmonth is what we send via the url and need to add one since php handles
-      // months starting from 1 not zero
-      phpmonth = value[1]+1;
 
       $(value[0]).once().fullCalendar({
-        editable: false,
+        editable: true,
         selectable: true,
-        height: 400,
         dayNamesShort:[Drupal.t("Sun"), Drupal.t("Mon"), Drupal.t("Tue"), Drupal.t("Wed"), Drupal.t("Thu"), Drupal.t("Fri"), Drupal.t("Sat")],
         monthNames:[Drupal.t("January"), Drupal.t("February"), Drupal.t("March"), Drupal.t("April"), Drupal.t("May"), Drupal.t("June"), Drupal.t("July"), Drupal.t("August"), Drupal.t("September"), Drupal.t("October"), Drupal.t("November"), Drupal.t("December")],
-        firstDay: firstDay,
-        defaultDate: moment([value[2],phpmonth-1]),
+        //defaultDate: moment([value[2],phpmonth-1]),
         header:{
-          left: 'title',
-          center: 'month, agendaWeek, agendaDay',
-          right: 'today, prev, next',
+          left: 'today, prev, next',
+          center: 'title',
+          right: 'timelineDay, timelineTenDay, timelineMonth, timelineYear',
         },
         businessHours: businessHours,
+        defaultView: 'timelineDay',
+        views: {
+          timelineDay: {
+            buttonText: ':15 slots',
+            slotDuration: '00:15'
+          },
+          timelineTenDay: {
+            type: 'timeline',
+            duration: { days: 10 }
+          }
+        },
+        resourceAreaWidth: '25%',
+        resourceLabelText: 'Rooms',
+        resources: [{id: 'a', title: 'Room 101'}],
         selectOverlap: function(event) {
           // allowing selections over background events but not allowing selections over any other types of events
           return event.rendering === 'background';
         },
-        viewRender: function(view, element) {
-          view.calendar.removeEvents();
-
-          if (view.name == 'month') {
-            var url = Drupal.settings.basePath + '?q=bat/v2/events&units=' + unit_id + '&start_date=' + moment(view.intervalStart).format('YYYY') + '-' + moment(view.intervalStart).format('M') + '-01&duration=1M&type=' + Drupal.settings.batCalendar.eventType;
-            $.ajax({
-              url: url,
-              success: function(data) {
-                events = data['events'];
-
-                for (i in events[unit_id]) {
-                  events[unit_id][i].end = moment(events[unit_id][i].end).subtract(1, 'days').format();
-                }
-
-                view.calendar.addEventSource(events[unit_id]);
-              }
-            });
-          }
-          else if (view.name == 'agendaDay') {
-            var url_day = Drupal.settings.basePath + '?q=bat/units/unit/' + unit_id + '/day-availability/json/' + moment(view.start).format();
-
-            $.ajax({
-              url: url_day,
-              dataType: 'json',
-              success: function(data) {
-                view.calendar.addEventSource(data);
-              }
-            });
-          }
-          else if (view.name == 'agendaWeek') {
-            var url_week = Drupal.settings.basePath + '?q=bat/units/unit/' + unit_id + '/day-availability/json/' + moment(view.start).format() + '/7D';
-
-            $.ajax({
-              url: url_week,
-              dataType: 'json',
-              success: function(data) {
-                view.calendar.addEventSource(data);
-              }
-            });
-          }
-        },
+        events: [
+          { id: '1', resourceId: 'a', start: '2016-01-07T02:00:00', end: '2016-01-07T07:00:00', title: 'event 1' },
+        ],
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
