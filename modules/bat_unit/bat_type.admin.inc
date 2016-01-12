@@ -111,6 +111,16 @@ class BatTypeUIController extends EntityDefaultUIController {
       'access arguments' => array('view', 1),
       'type' => MENU_CALLBACK,
     );
+
+    $items[$this->path . '/type/' . $wildcard . '/units/add'] = array(
+      'title' => t('Add Units'),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('bat_type_add_units', 5),
+      'access arguments' => array('create bat_unit entities'),
+      'file' => 'bat_type.admin.inc',
+      'file path' => drupal_get_path('module', $this->entityInfo['module']),
+      'type' => MENU_CALLBACK,
+    );
     return $items;
   }
 
@@ -414,4 +424,83 @@ function bat_type_type_set_breadcrumb() {
     l(t('bat'), 'admin/bat/config/type-types'),
   );
   drupal_set_breadcrumb($breadcrumb);
+}
+
+/**
+ * Unit add form.
+ */
+function bat_type_add_units($form, &$form_state, $type) {
+  $form['container'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'class' => array('container-inline'),
+    ),
+  );
+
+  $form['container']['units'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Units',
+    '#size' => 1,
+    '#description' => t('Number of Units to create.'),
+  );
+
+  $form['container']['bookable'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Bookable',
+    '#default_value' => 1,
+  );
+
+  $form['type_id'] = array(
+    '#type' => 'hidden',
+    '#value' => $type->type_id,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Add',
+  );
+
+  return $form;
+}
+
+/**
+ * Validation handler for unit add form.
+ */
+function bat_type_add_units_validate($form, &$form_state) {
+  if (empty($form_state['values']['units'])) {
+    form_set_error('units', t('Please enter the number of units to add.'));
+  } elseif (!is_numeric($form_state['values']['units'])) {
+    form_set_error('units', t('Please enter a valid number of units to add.'));
+  }
+}
+
+/**
+ * Submit handler for unit add form.
+ */
+function bat_type_add_units_submit($form, &$form_state) {
+  global $user;
+  $type_id = $form_state['values']['type_id'];
+
+  // Sanity check.
+  if (!$type = bat_type_load($type_id)) {
+    drupal_set_message(t('Could not load Bat Type!'), 'warning');
+    return;
+  }
+
+  $total_units = count(bat_unit_load_multiple(FALSE, array('type_id' => $type_id)));
+
+  // Create units.
+  for ($i = ($total_units + 1); $i <= ($form_state['values']['units'] + $total_units); $i++) {
+    $unit = bat_unit_create(array('type' => $type->type));
+    $unit->name = $type->name . ' ' . $i;
+    $unit->created = !empty($unit->date) ? strtotime($unit->date) : REQUEST_TIME;
+
+    $unit->type_id = $type_id;
+    $unit->default_state = 1;
+    $unit->bookable = $form_state['values']['bookable'];
+    $unit->uid = $user->uid;
+    $unit->save();
+  }
+
+  $form_state['redirect'] = 'admin/bat/config/types/type/' . $type_id . '/units';
 }
