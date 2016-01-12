@@ -60,14 +60,12 @@ Drupal.behaviors.bat_availability = {
         },
         resourceAreaWidth: '25%',
         resourceLabelText: 'Rooms',
-        resources: [{id: 'a', title: 'Room 101'}],
+        resources: '/bat/v2/units2',
         selectOverlap: function(event) {
           // allowing selections over background events but not allowing selections over any other types of events
           return event.rendering === 'background';
         },
-        events: [
-          { id: '1', resourceId: 'a', start: '2016-01-07T02:00:00', end: '2016-01-07T07:00:00', title: 'event 1' },
-        ],
+        events: '/bat/v2/events2?unit_types=1&event_types=availability',
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },

@@ -71,6 +71,8 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
       }
     }
 
+    $formatted_event['type'] = $this->event_type;
+
     return $formatted_event;
   }
 
