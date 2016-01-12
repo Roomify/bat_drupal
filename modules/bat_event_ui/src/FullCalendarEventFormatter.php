@@ -14,16 +14,28 @@ use Roomify\Bat\EventFormatter\AbstractEventFormatter;
 class FullCalendarEventFormatter extends AbstractEventFormatter {
 
   /**
+   * @var string
+   */
+  private $event_type;
+
+  /**
+   * @param $event_type
+   */
+  public function __construct($event_type) {
+    $this->event_type = $event_type;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function format(EventInterface $event) {
-    $ev_type = bat_event_type_load($event_type);
+    $ev_type = bat_event_type_load($this->event_type);
 
     $bat_unit = bat_unit_load($event->getUnitId());
-    $default_value = $bat_unit->getDefaultValue($event_type);
+    $default_value = $bat_unit->getDefaultValue($this->event_type);
 
     if ($ev_type->fixed_event_states) {
-      $state_event = bat_event_load_state($event->value);
+      $state_event = bat_event_load_state($event->getValue());
 
       if ($state_event === FALSE) {
         $default_state = bat_event_load_state($default_value);
@@ -51,10 +63,10 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
         'title' => $event->getValue(),
       );
 
-      if ($event->value < 100) {
+      if ($event->getValue() < 100) {
         $event['color']  = 'orange';
       }
-      elseif ($event->value >= 100) {
+      elseif ($event->getValue() >= 100) {
         $event['color'] = 'green';
       }
     }
