@@ -22,8 +22,8 @@ class bat_type_handler_type_calendars_field extends views_handler_field {
     $links = array();
     $type = bat_type_load($values->type_id);
     $type_bundle = bat_type_bundle_load($type->type);
-    if (is_array($type_bundle->data)) {
-      foreach ($type_bundle->data as $event => $field) {
+    if (is_array($type_bundle->default_event_value_field_ids)) {
+      foreach ($type_bundle->default_event_value_field_ids as $event => $field) {
         if (!empty($field)) {
           $links[$field] = array(
             'title' => 'Manage ' . $event,
