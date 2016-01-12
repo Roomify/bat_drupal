@@ -41,8 +41,8 @@ function bat_unit_views_data_alter(&$data) {
       'handler' => 'bat_unit_handler_delete_link_field',
     ),
   );
-  // This content of this field are decided based on the menu structure that
-  // follows bat/unit/%unit_id/op
+  // The content of this field is decided based on the menu structure
+  // under bat/unit/%unit_id/op
   $data['bat_units']['operations'] = array(
     'field' => array(
       'title' => t('Operations links'),
@@ -105,6 +105,16 @@ function bat_unit_views_data_alter(&$data) {
     ),
   );
 
+  // The content of this field is decided based on the menu structure
+  // under bat/config/type/%type_id/op
+  $data['bat_types']['operations'] = array(
+    'field' => array(
+      'title' => t('Operations links'),
+      'help' => t('Display all operations available for this type.'),
+      'handler' => 'bat_type_handler_type_operations_field',
+    ),
+  );
+
 }
 
 /**
@@ -159,11 +169,11 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['fields']['calendars']['table'] = 'bat_types';
   $handler->display->display_options['fields']['calendars']['field'] = 'calendars';
   $handler->display->display_options['fields']['calendars']['label'] = 'Calendars';
-  /* Field: Type: Edit Link */
-  $handler->display->display_options['fields']['edit_type']['id'] = 'edit_type';
-  $handler->display->display_options['fields']['edit_type']['table'] = 'bat_types';
-  $handler->display->display_options['fields']['edit_type']['field'] = 'edit_type';
-  $handler->display->display_options['fields']['edit_type']['label'] = 'Operations';
+  /* Field: Type: Operations links */
+  $handler->display->display_options['fields']['operations']['id'] = 'operations';
+  $handler->display->display_options['fields']['operations']['table'] = 'bat_types';
+  $handler->display->display_options['fields']['operations']['field'] = 'operations';
+  $handler->display->display_options['fields']['operations']['label'] = 'Operations';
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
