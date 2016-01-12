@@ -40,7 +40,7 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
       if ($state_event === FALSE) {
         $default_state = bat_event_load_state($default_value);
 
-        $event = array(
+        $formatted_event = array(
           'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
           'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
           'title' => $default_state['calendar_label'],
@@ -48,7 +48,7 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
         );
       }
       else {
-        $event = array(
+        $formatted_event = array(
           'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
           'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
           'title' => $state_event['calendar_label'],
@@ -57,21 +57,21 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
       }
     }
     else {
-      $event = array(
+      $formatted_event = array(
         'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
         'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
         'title' => $event->getValue(),
       );
 
       if ($event->getValue() < 100) {
-        $event['color']  = 'orange';
+        $formatted_event['color']  = 'orange';
       }
       elseif ($event->getValue() >= 100) {
-        $event['color'] = 'green';
+        $formatted_event['color'] = 'green';
       }
     }
 
-    return $event;
+    return $formatted_event;
   }
 
 }
