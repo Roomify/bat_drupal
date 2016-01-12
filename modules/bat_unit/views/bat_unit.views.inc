@@ -249,10 +249,16 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['fields']['name']['id'] = 'name';
   $handler->display->display_options['fields']['name']['table'] = 'bat_units';
   $handler->display->display_options['fields']['name']['field'] = 'name';
+  /* Field: Units: Bookable */
+  $handler->display->display_options['fields']['bookable']['id'] = 'bookable';
+  $handler->display->display_options['fields']['bookable']['table'] = 'bat_units';
+  $handler->display->display_options['fields']['bookable']['field'] = 'bookable';
+  $handler->display->display_options['fields']['bookable']['separator'] = '';
   /* Field: Units: Megarow links */
   $handler->display->display_options['fields']['megarow_links']['id'] = 'megarow_links';
   $handler->display->display_options['fields']['megarow_links']['table'] = 'views_entity_bat_unit';
   $handler->display->display_options['fields']['megarow_links']['field'] = 'megarow_links';
+  $handler->display->display_options['fields']['megarow_links']['label'] = 'Operations';
   $handler->display->display_options['fields']['megarow_links']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['megarow_links']['megarow'] = array(
     'links' => 'Edit Unit|admin/bat/config/units/unit/[unit_id]/edit',
