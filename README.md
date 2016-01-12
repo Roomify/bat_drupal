@@ -39,6 +39,7 @@ Before enabling BAT you are going to need to download the following modules
 - Variable
 - XAutoload
 - Composer Manager
+- Views Megarow
 
 ### External Libraries
 
