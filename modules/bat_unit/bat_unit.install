@@ -272,6 +272,13 @@ function bat_unit_schema() {
         'serialize' => TRUE,
         'description' => 'A serialized array of additional data related to this type bundle.',
       ),
+      'default_event_value_field_ids' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array that stores this type bundle\'s default event field configuration.',
+      ),
       'status' => array(
         'type' => 'int',
         'not null' => TRUE,

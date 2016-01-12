@@ -1450,8 +1450,8 @@ class BatType extends Entity {
     $type_bundle = bat_type_bundle_load($this->type);
 
     $field = '';
-    if (isset($type_bundle->data[$event_type])) {
-      $field = $type_bundle->data[$event_type];
+    if (isset($type_bundle->default_event_value_field_ids[$event_type])) {
+      $field = $type_bundle->default_event_value_field_ids[$event_type];
     }
     if ($field == '') {
       return FALSE;
