@@ -27,8 +27,7 @@ class bat_type_handler_type_calendars_field extends views_handler_field {
         if (!empty($field)) {
           $links[$field] = array(
             'title' => 'Manage ' . $event,
-            // TODO: link to filtered calendar.
-            'href' => 'admin/bat/calendar',
+            'href' => 'admin/bat/calendar/' . $type->type . '/' . $event,
           );
         }
       }
