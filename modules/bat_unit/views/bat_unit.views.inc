@@ -239,6 +239,14 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['style_options']['autoclose'] = TRUE;
   $handler->display->display_options['style_options']['scroll_padding'] = '120';
   $handler->display->display_options['row_plugin'] = 'fields';
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['area']['id'] = 'area';
+  $handler->display->display_options['empty']['area']['table'] = 'views';
+  $handler->display->display_options['empty']['area']['field'] = 'area';
+  $handler->display->display_options['empty']['area']['label'] = 'Empty Text';
+  $handler->display->display_options['empty']['area']['empty'] = TRUE;
+  $handler->display->display_options['empty']['area']['content'] = 'There are no Units of this Type yet!';
+  $handler->display->display_options['empty']['area']['format'] = 'filtered_text';
   /* Field: Units: Units ID */
   $handler->display->display_options['fields']['unit_id']['id'] = 'unit_id';
   $handler->display->display_options['fields']['unit_id']['table'] = 'bat_units';
