@@ -5,13 +5,16 @@ core = 7.x
 package = BAT
 
 dependencies[] = bat
+dependencies[] = ctools
 dependencies[] = ctools_automodal
 dependencies[] = entity
-dependencies[] = views
 dependencies[] = image
+dependencies[] = views
+dependencies[] = views_megarow
 
 
 files[] = bat_unit_bundle.admin.inc
+files[] = bat_unit.admin.inc
 files[] = bat_type.admin.inc
 files[] = bat_types.admin.inc
 files[] = bat_type_bundle.admin.inc

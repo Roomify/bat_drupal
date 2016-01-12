@@ -84,6 +84,12 @@ function bat_unit_entity_info() {
     'module' => 'bat_unit',
     // The information below is used by the BatUnitUIController (which extends
     // the EntityDefaultUIController).
+    'admin ui' => array(
+      'path' => 'admin/bat/config/units',
+      'file' => 'bat_unit.admin.inc',
+      'controller class' => 'BatUnitUIController',
+      'menu wildcard' => '%bat_unit',
+    ),
     'translation' => array(
       'entity_translation' => array(
         'base path' => 'admin/bat/units/unit/%bat_unit',

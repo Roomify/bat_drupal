@@ -177,5 +177,97 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['menu']['context_only_inline'] = 0;
 
   $views['unit_management'] = $view;
+
+  $view = new view();
+  $view->name = 'units';
+  $view->description = 'View Bat Units associated with a Bat Type';
+  $view->tag = 'default';
+  $view->base_table = 'bat_units';
+  $view->human_name = 'Units';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'Units';
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'none';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['pager']['type'] = 'full';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '25';
+  $handler->display->display_options['style_plugin'] = 'table_megarows';
+  $handler->display->display_options['style_options']['columns'] = array(
+    'unit_id' => 'unit_id',
+    'name' => 'name',
+    'megarow_links' => 'megarow_links',
+  );
+  $handler->display->display_options['style_options']['default'] = '-1';
+  $handler->display->display_options['style_options']['info'] = array(
+    'unit_id' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'name' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'megarow_links' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+  );
+  $handler->display->display_options['style_options']['autoclose'] = TRUE;
+  $handler->display->display_options['style_options']['scroll_padding'] = '120';
+  $handler->display->display_options['row_plugin'] = 'fields';
+  /* Field: Units: Units ID */
+  $handler->display->display_options['fields']['unit_id']['id'] = 'unit_id';
+  $handler->display->display_options['fields']['unit_id']['table'] = 'bat_units';
+  $handler->display->display_options['fields']['unit_id']['field'] = 'unit_id';
+  $handler->display->display_options['fields']['unit_id']['label'] = 'Unit ID';
+  $handler->display->display_options['fields']['unit_id']['separator'] = '';
+  /* Field: Units: Name */
+  $handler->display->display_options['fields']['name']['id'] = 'name';
+  $handler->display->display_options['fields']['name']['table'] = 'bat_units';
+  $handler->display->display_options['fields']['name']['field'] = 'name';
+  /* Field: Units: Megarow links */
+  $handler->display->display_options['fields']['megarow_links']['id'] = 'megarow_links';
+  $handler->display->display_options['fields']['megarow_links']['table'] = 'views_entity_bat_unit';
+  $handler->display->display_options['fields']['megarow_links']['field'] = 'megarow_links';
+  $handler->display->display_options['fields']['megarow_links']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['megarow_links']['megarow'] = array(
+    'links' => 'Edit Unit|admin/bat/config/units/unit/[unit_id]/edit',
+  );
+  /* Contextual filter: Units: Type_id */
+  $handler->display->display_options['arguments']['type_id']['id'] = 'type_id';
+  $handler->display->display_options['arguments']['type_id']['table'] = 'bat_units';
+  $handler->display->display_options['arguments']['type_id']['field'] = 'type_id';
+  $handler->display->display_options['arguments']['type_id']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['type_id']['default_argument_type'] = 'raw';
+  $handler->display->display_options['arguments']['type_id']['default_argument_options']['index'] = '5';
+  $handler->display->display_options['arguments']['type_id']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['type_id']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['type_id']['summary_options']['items_per_page'] = '25';
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page');
+  $handler->display->display_options['path'] = 'admin/bat/config/types/type/%/units';
+  $handler->display->display_options['menu']['type'] = 'tab';
+  $handler->display->display_options['menu']['title'] = 'Units';
+  $handler->display->display_options['menu']['weight'] = '0';
+  $handler->display->display_options['menu']['name'] = 'management';
+  $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
+  $views['units'] = $view;
+
   return $views;
 }
