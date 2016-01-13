@@ -200,10 +200,11 @@ function bat_event_ui_menu() {
   $items['admin/bat/calendar'] = array(
     'title' => 'Calendar',
     'page callback' => 'bat_event_ui_calendar_page',
+    'page arguments' => array(4, 5),
     'access callback' => 'bat_unit_access',
     'access arguments' => array('update availability', 4),
     'type' => MENU_CALLBACK,
-    'weight' => '20',
+    'weight' => 20,
   );
 
   $items['admin/bat/units/unit/%bat_unit/event'] = array(
@@ -216,13 +217,23 @@ function bat_event_ui_menu() {
     'weight' => 30,
   );
 
+  $items['admin/bat/config/fullcalendar'] = array(
+    'title' => 'Fullcalendar',
+    'description' => 'Configure settings for Fullcalendar.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bat_event_ui_fullcalendar_settings'),
+    'access arguments' => array('configure bat settings'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 30,
+  );
+
   return $items;
 }
 
 /**
  * Callback for admin/bat/events/
  */
-function bat_event_ui_calendar_page() {
+function bat_event_ui_calendar_page($unit_type, $event_type) {
   // Set the page title.
   drupal_set_title(t('View Event Data'));
 
@@ -248,6 +259,7 @@ function bat_event_ui_calendar_page() {
       'js' => array(
         $js_file,
         array(
+          'data' => array('batEvent' => array('unitType' => $unit_type, 'eventType' => $event_type)),
           'type' => 'setting',
         ),
       ),
@@ -546,14 +558,29 @@ function bat_event_ui_preprocess_bat_one_month_calendar(&$vars) {
     $event_type = $vars['event_type'];
   }
 
+  $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', 'non-commercial');
+  if ($schedulerlicense == 'gpl') {
+    $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
+  }
+  elseif ($schedulerlicense == 'non-commercial') {
+    $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
+  }
+  elseif ($schedulerlicense == 'commercial') {
+    $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
+  }
+
   // Inject settings in javascript that will be used to setup the one months
   // display.
   drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
   drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
   drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
   drupal_add_js(array('batCalendar' => array('eventType' => $event_type)), 'setting');
+  drupal_add_js(array('batCalendar' => array('schedulerLicenseKey' => $schedulerlicensekey)), 'setting');
 }
 
+/**
+ *
+ */
 function bat_event_ui_event_type_form($form, &$form_state) {
   $form = array();
 
@@ -580,6 +607,53 @@ function bat_event_ui_event_type_form($form, &$form_state) {
   return $form;
 }
 
+/**
+ *
+ */
 function bat_event_ui_event_type_form_submit($form, &$form_state) {
   $form_state['redirect'] = arg(0) . '/' . arg(1) . '/' . arg(2) . '/' . arg(3) . '/' . arg(4) . '/' . arg(5) . '/' . arg(6) . '/' . arg(7) . '/' . $form_state['values']['event_types'];
+}
+
+/**
+ *
+ */
+function bat_event_ui_fullcalendar_settings($form, &$form_state) {
+  $form['bat_fullcalendar_scheduler'] = array(
+    '#type' => 'container',
+    '#prefix' => '<div id="label-settings">',
+    '#suffix' => '</div>',
+  );
+
+  $form['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_key'] = array(
+    '#type' => 'radios',
+    '#title' => t('FullCalendar Scheduler License'),
+    '#default_value' => variable_get('bat_fullcalendar_scheduler_key', 'non-commercial'),
+    '#options' => array (
+      'commercial' => t('Commercial License'),
+      'non-commercial' => t('Non-Commercial Creative Commons'),
+      'gpl' => t('GPL License'),
+    ),
+    '#ajax' => array(
+      'callback' => 'bat_event_ui_fullcalendar_settings_ajax_callback',
+      'wrapper' => 'label-settings',
+    ),
+  );
+
+  if ((!isset($form_state['values']['bat_fullcalendar_scheduler_key']) && $form['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_key']['#default_value'] == 'commercial') || (isset($form_state['values']['bat_fullcalendar_scheduler_key']) && $form_state['values']['bat_fullcalendar_scheduler_key'] == 'commercial')) {
+    $form['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_commercial_key'] = array(
+      '#type' => 'textfield',
+      '#title' => t('FullCalendar Scheduler Commercial License Key'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('bat_fullcalendar_scheduler_commercial_key', ''),
+    );
+  }
+
+  return system_settings_form($form);
+}
+
+/**
+ * Ajax callback for bat_event_ui_fullcalendar_settings form.
+ */
+function bat_event_ui_fullcalendar_settings_ajax_callback($form, $form_state) {
+  return $form['bat_fullcalendar_scheduler'];
 }

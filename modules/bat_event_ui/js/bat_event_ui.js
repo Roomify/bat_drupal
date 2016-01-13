@@ -36,6 +36,7 @@ Drupal.behaviors.bat_availability = {
     $.each(calendars, function(key, value) {
 
       $(value[0]).once().fullCalendar({
+        schedulerLicenseKey: Drupal.settings.batCalendar.schedulerLicenseKey,
         editable: true,
         selectable: true,
         dayNamesShort:[Drupal.t("Sun"), Drupal.t("Mon"), Drupal.t("Tue"), Drupal.t("Wed"), Drupal.t("Thu"), Drupal.t("Fri"), Drupal.t("Sat")],
@@ -60,12 +61,12 @@ Drupal.behaviors.bat_availability = {
         },
         resourceAreaWidth: '25%',
         resourceLabelText: 'Rooms',
-        resources: '/bat/v2/units2',
+        resources: '/bat/v2/units2?types=' + Drupal.settings.batEvent.unitType,
         selectOverlap: function(event) {
           // allowing selections over background events but not allowing selections over any other types of events
           return event.rendering === 'background';
         },
-        events: '/bat/v2/events2?unit_types=1&event_types=availability',
+        events: '/bat/v2/events2?unit_types=' + Drupal.settings.batEvent.unitType + '&event_types=' + Drupal.settings.batEvent.eventType,
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
@@ -92,12 +93,6 @@ Drupal.behaviors.bat_availability = {
         eventRender: function(event, el, view) {
           // Remove Time from events.
           el.find('.fc-time').remove();
-        },
-        eventAfterRender: function(event, element, view) {
-          // Hide events that are outside this month.
-          if (event.start.month() != view.intervalStart.month()) {
-            element.css('visibility', 'hidden');
-          }
         }
       });
     });
