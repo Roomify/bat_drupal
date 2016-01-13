@@ -1864,28 +1864,3 @@ function bat_event_form_bat_type_bundle_form_submit($form, &$form_state) {
 
   $form_state['bat_type_bundle']->save();
 }
-
-/**
- * Implements hook_ctools_plugin_type().
- */
-function bat_event_ctools_plugin_type() {
-  return array(
-    'bat_eventstyle' => array(
-      'use hooks' => TRUE,
-    ),
-  );
-}
-
-/**
- * Implements hook_bat_event_bat_eventstyle().
- */
-function bat_event_bat_event_bat_eventstyle() {
-  return array(
-    'bat_eventstyle_default' => array(
-      'label' => t('Default BAT Event Style'),
-      'handler' => array(
-        'class' => 'DefaultEventStyle',
-      ),
-    ),
-  );
-}
