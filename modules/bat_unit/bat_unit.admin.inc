@@ -276,6 +276,11 @@ function bat_unit_edit_form($form, &$form_state, $unit) {
       '#weight' => 45,
     );
   }
+
+  if (isset($form['actions']['delete']) && isset($form_state['input']['js']) && $form_state['input']['js']) {
+    unset($form['actions']['delete']);
+  }
+
   // We append the validate handler to #validate in case a form callback_wrapper
   // is used to add validate handlers earlier.
   $form['#validate'][] = 'bat_unit_edit_form_validate';
