@@ -191,26 +191,7 @@ function bat_unit_edit_form($form, &$form_state, $unit) {
     '#type' => 'vertical_tabs',
     '#weight' => 99,
   );
-  // Unit availability information for administrators.
-  $form['availability'] = array(
-    '#type' => 'fieldset',
-    '#group' => 'additional_settings',
-    '#title' => t('Status'),
-    '#tree' => FALSE,
-    '#weight' => 80,
-    '#attributes' => array(
-      'class' => array('unit-form-availability '),
-    ),
-    '#attached' => array(
-      'js' => array(drupal_get_path('module', 'bat_unit') . '/js/bat_unit.js'),
-    ),
-  );
-  $form['availability']['bookable'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Bookable'),
-    '#description' => t('Uncheck this to temporarily prevent the unit from being booked or appearing in any searches without affecting the scheduled availability on the calendar.'),
-    '#default_value' => isset($unit->bookable) ? $unit->bookable : 1,
-  );
+
   // Unit author information for administrators.
   $form['author'] = array(
     '#type' => 'fieldset',
