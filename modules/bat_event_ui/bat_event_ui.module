@@ -144,7 +144,6 @@ function bat_event_ui_library_loaded($name, $variant = NULL) {
   return ($library = libraries_load($name, $variant)) && !empty($library['loaded']);
 }
 
-
 /**
  * Implements hook_permission().
  * @TODO: These permissions don't make sense anymore
