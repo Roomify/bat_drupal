@@ -46,6 +46,11 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
           'title' => $default_state['calendar_label'],
           'color' => $default_state['color'],
         );
+
+        // Non blocking event render as background.
+        if ($default_state['blocking'] == 0) {
+          $formatted_event['rendering'] = 'background';
+        }
       }
       else {
         $formatted_event = array(
@@ -54,6 +59,11 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
           'title' => $state_event['calendar_label'],
           'color' => $state_event['color'],
         );
+
+        // Non blocking event render as background.
+        if ($state_event['blocking'] == 0) {
+          $formatted_event['rendering'] = 'background';
+        }
       }
     }
     else {
