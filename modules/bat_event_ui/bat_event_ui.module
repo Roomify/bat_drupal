@@ -200,7 +200,7 @@ function bat_event_ui_menu() {
   $items['admin/bat/calendar'] = array(
     'title' => 'Calendar',
     'page callback' => 'bat_event_ui_calendar_page',
-    'page arguments' => array(4, 5),
+    'page arguments' => array(3, 4),
     'access callback' => 'bat_unit_access',
     'access arguments' => array('update availability', 4),
     'type' => MENU_CALLBACK,
