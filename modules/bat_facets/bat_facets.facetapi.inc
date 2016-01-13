@@ -12,7 +12,7 @@ function bat_facets_facetapi_facet_info(array $searcher_info) {
   $facets = array();
 
   // Facets are usually associated with the type of content stored in the index.
-  if (isset($searcher_info['types']['bat_unit'])) {
+  if (isset($searcher_info['types']['bat_type'])) {
 
     $facets['bat_state'] = array(
       'name' => 'bat_state',

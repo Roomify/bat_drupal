@@ -25,7 +25,7 @@ function bat_facets_facetapi_facet_info_alter(array &$facet_info, array $searche
   switch ($searcher_info['adapter']) {
     case 'search_api':
       foreach ($facet_info as $name => $info) {
-        if ($name == 'unit_id') {
+        if ($name == 'type_id') {
           $facet_info[$name]['query types'][] = 'bat_state';
         }
       }
@@ -146,70 +146,91 @@ function bat_facets_search_api_query_alter($query) {
     $info = entity_get_info($query->getIndex()->getEntityType());
 
     // Only modify the query if this query is against bat units.
-    if ($info['base table'] = 'bat_unit') {
+    if ($info['base table'] = 'bat_types') {
       // Get this widget's settings.
       $index = $query->getIndex();
       $facets = facetapi_get_enabled_facets('search_api@' . $index->machine_name);
       $adapter = facetapi_adapter_load('search_api@' . $index->machine_name);
       $realm = facetapi_realm_load('block');
-      $settings = $adapter->getFacetSettings($facets['unit_id'], $realm);
+      if (isset($facets['type_id'])) {
+        $settings = $adapter->getFacetSettings($facets['type_id'], $realm);
 
-      // Get URL parameters.
-      $params = drupal_get_query_parameters();
+        // Get URL parameters.
+        $params = drupal_get_query_parameters();
 
-      // See if we have dates to search.
-      if (isset($params['bat_start_date']) &&
-          !empty($params['bat_start_date']) &&
-          isset($params['bat_end_date']) &&
-          !empty($params['bat_end_date'])) {
-        $start_date = new DateTime($params['bat_start_date']);
-        $end_date = new DateTime($params['bat_end_date']);
+        // See if we have dates to search.
+        if (isset($params['bat_start_date']) &&
+            !empty($params['bat_start_date']) &&
+            isset($params['bat_end_date']) &&
+            !empty($params['bat_end_date'])) {
+          $start_date = new DateTime($params['bat_start_date']);
+          $end_date = new DateTime($params['bat_end_date']);
 
-        $event_type = $settings->settings['event_type'];
+          $event_type = $settings->settings['event_type'];
 
-        $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE);
+          $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE);
 
-        $valid_states = array(0) + $settings->settings['states'];
+          $valid_states = array(0) + $settings->settings['states'];
 
-        $unit_ids = bat_unit_ids();
+          $valid_type_ids = array();
 
-        $units = array();
-        foreach ($unit_ids as $id => $name) {
-          $bat_unit = bat_unit_load($id);
-          $unit = new Unit($id, $bat_unit->getDefaultValue($event_type), $bat_unit->getConstraints());
-          $units[] = $unit;
-        }
+          // We need to narrow the query to all Types with Units that have the
+          // requested state over the requested dates.
+          // First, we retrieve all types.
+          // TODO: narrow this to only the types already being searched for.
+          $type_ids = bat_type_ids();
 
-        $calendar = new Calendar($units, $state_store);
+          $units = array();
+          foreach ($type_ids as $type_id => $name) {
+            // Get the units of this type.
+            $drupal_units = bat_unit_load_multiple(FALSE, array('type_id' => $type_id));
+            $bat_units = array();
+            foreach ($drupal_units as $unit_id => $unit) {
+              $bat_units[] = new Unit($unit_id, $unit->getEventDefaultValue($event_type));
+            }
 
-        $constraints = module_invoke_all('bat_global_constraints', $units);
+            // If this type has associated units, see if any of its units are
+            // in the states being searched for over the search period.
+            if (count($bat_units)) {
+              $calendar = new Calendar($bat_units, $state_store);
 
-        /**
-         * @TODO 1. We should add a hook that allows modules to insert constraints that are then passed to the getMatchingUnits fuction
-         * @TODO 3. The response from valid unit ids needs to be a CalendarResponse, we then extract the valid unit ids and pass it
-         * @TODO on to drupal alter as we are currently doing.
-         */
+              $constraints = module_invoke_all('bat_global_constraints', $units);
 
-        $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints);
-        $valid_unit_ids = array_keys($response->getIncluded());
+              /**
+               * @TODO 1. We should add a hook that allows modules to insert constraints that are then passed to the getMatchingUnits fuction
+               * @TODO 3. The response from valid unit ids needs to be a CalendarResponse, we then extract the valid unit ids and pass it
+               * @TODO on to drupal alter as we are currently doing.
+               */
 
-        $context = array(
-          'units_before_search' => $unit_ids,
-          'start_date' => $start_date,
-          'end_date' => $end_date,
-          'event_type' => $event_type,
-          'valid_states' => $valid_states,
-        );
+              $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints);
+              $valid_unit_ids = array_keys($response->getIncluded());
 
-        drupal_alter('bat_facets_search_results', $valid_unit_ids, $context);
+              // If there are available units, mark this type as valid.
+              if (count($valid_unit_ids)) {
+                $valid_type_ids[] = $type_id;
+              }
 
-        // If no units are available, zero out results.
-        if (empty($valid_unit_ids)) {
-          $query->condition($info['entity keys']['id'], 1, '<');
-        }
-        else {
-          // Limit the search API query to entity ids with availability.
-          $query->condition($info['entity keys']['id'], $valid_unit_ids, 'IN');
+            }
+          }
+
+          $context = array(
+            'types_before_search' => $type_ids,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'event_type' => $event_type,
+            'valid_states' => $valid_states,
+          );
+
+          drupal_alter('bat_facets_search_results', $valid_type_ids, $context);
+
+          // If no types are available, zero out results.
+          if (empty($valid_type_ids)) {
+            $query->condition($info['entity keys']['id'], 1, '<');
+          }
+          else {
+            // Limit the search API query to entity ids with availability.
+            $query->condition($info['entity keys']['id'], $valid_type_ids, 'IN');
+          }
         }
       }
     }
