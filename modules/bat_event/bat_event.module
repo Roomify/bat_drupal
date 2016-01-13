@@ -1032,7 +1032,7 @@ class BatEventController extends EntityAPIController {
         new \DateTime($entity->original->end_date),
         $event_type->type,
         $event_type->event_granularity,
-        $unit->getDefaultValue(),
+        $unit->getEventDefaultValue($event_type->type),
         $entity->event_id,
         TRUE
       );
@@ -1132,7 +1132,7 @@ class BatEventController extends EntityAPIController {
       $unit_id = $event_unit_reference[0]['target_id'];
 
       $bat_unit = bat_unit_load($unit_id);
-      $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event->type));
+      $unit = new Unit($unit_id, $bat_unit->getEventDefaultValue($event->type));
       $event_type = bat_event_type_load($event->type);
 
       $this->batStoreSave($unit,
@@ -1140,7 +1140,7 @@ class BatEventController extends EntityAPIController {
         clone($event->end_date_object),
         $event->type,
         $event_type->event_granularity,
-        $unit->getDefaultValue(),
+        $unit->getEventDefaultValue($event->type),
         $event->event_id,
         TRUE
       );

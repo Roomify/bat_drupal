@@ -86,8 +86,8 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
   $form['event_granularity'] = array(
     '#type' => 'select',
     '#title' => t('Event Granularity'),
-    '#options' => array('daily' => t('Daily'), 'hourly' => t('Hourly')),
-    '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granularity : 'daily',
+    '#options' => array('bat_daily' => t('Daily'), 'bat_hourly' => t('Hourly')),
+    '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granularity : 'bat_daily',
   );
 
 
