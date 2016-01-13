@@ -234,11 +234,10 @@ function bat_event_ui_calendar_page() {
 
   $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_event_ui.js';
   $css_file = drupal_get_path('module', 'bat_event_ui') . '/css/bat_event_ui.css';
-  
+
   // Show full day events on calendar.
   if (variable_get('bat_calendar_events_view', '0') == '1') {
     $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_availability_full_day.js';
-  
   }
   return array(
     '#theme' => 'bat_one_month_calendar',
@@ -322,6 +321,7 @@ function bat_event_ui_event_manager_page($unit, $event_id = NULL, $start_date = 
         ),
       ),
     );
+
     // Wrap the form via ctools modal.
     $output = ctools_modal_form_wrapper('bat_event_edit_form', $form_state);
     if ($form_state['executed']) {
