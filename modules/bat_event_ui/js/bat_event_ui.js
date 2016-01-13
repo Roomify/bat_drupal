@@ -1,9 +1,9 @@
 (function ($) {
 // define object
-Drupal.BatAvailability = Drupal.BatAvailability || {};
-Drupal.BatAvailability.Modal = Drupal.BatAvailability.Modal || {};
+Drupal.BatEvent = Drupal.BatEvent || {};
+Drupal.BatEvent.Modal = Drupal.BatEvent.Modal || {};
 
-Drupal.behaviors.bat_availability = {
+Drupal.behaviors.bat_event = {
   attach: function(context) {
 
     openingTime = '';
@@ -71,24 +71,23 @@ Drupal.behaviors.bat_availability = {
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
-        eventClick: function(calEvent, jsEvent, view) {
-          // Getting the Unix timestamp - JS will only give us milliseconds
-          if (calEvent.end === null) {
-            //We are probably dealing with a single day event
-            calEvent.end = calEvent.start;
-          }
+        eventClick: function(event, jsEvent, view) {
+          var unit_id = event.resourceId.substring(1);
+          var sd = event.start.unix();
+          var ed = event.end.unix();
 
-          var sd = calEvent.start.unix();
-          var ed = calEvent.end.unix();
           // Open the modal for edit
-          Drupal.BatAvailability.Modal(view, calEvent.id, sd, ed);
+          Drupal.BatEvent.Modal(view, event.id, sd, ed, unit_id);
         },
-        select: function(start, end, jsEvent, view) {
+        select: function(start, end, jsEvent, view, resource) {
+          var unit_id = resource.id.substring(1);
+
           var ed = end.subtract(1, 'days');
           var sd = start.unix();
           ed = end.unix();
+
           // Open the modal for edit
-          Drupal.BatAvailability.Modal(this, -2, sd, ed);
+          Drupal.BatEvent.Modal(this, 0, sd, ed, unit_id);
           $(value[0]).fullCalendar('unselect');
         },
         eventRender: function(event, el, view) {
@@ -103,14 +102,13 @@ Drupal.behaviors.bat_availability = {
 /**
 * Initialize the modal box.
 */
-Drupal.BatAvailability.Modal = function(element, eid, sd, ed) {
-  // prepare the modal show with the bat-availability settings.
+Drupal.BatEvent.Modal = function(element, eid, sd, ed, $unit_id) {
   Drupal.CTools.Modal.show('bat-modal-style');
   // base url the part that never change is used to identify our ajax instance
   var base = Drupal.settings.basePath + '?q=admin/bat/units/unit/';
-  // Create a drupal ajax object that points to the unit availability form.
+  // Create a drupal ajax object that points to the event form.
   var element_settings = {
-    url : base + Drupal.settings.batAvailability.unitID + '/event/' + eid + '/' + sd + '/' + ed,
+    url : base + $unit_id + '/event/' + Drupal.settings.batEvent.eventType + '/' + eid + '/' + sd + '/' + ed,
     event : 'getResponse',
     progress : { type: 'throbber' }
   };

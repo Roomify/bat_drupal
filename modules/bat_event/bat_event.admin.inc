@@ -379,10 +379,8 @@ function bat_event_edit_form($form, &$form_state, $event) {
   // Depending on whether the form is in a popup or a normal page we need to change
   // the behavior of the cancel button
   if (isset($form_state['ajax']) && $form_state['ajax'] == TRUE) {
-    $form['actions']['cancel'] = array(
-      '#markup' => l(t('Cancel'), 'admin/bat/events', array('attributes' => array('class' => array('ctools-close-modal')))),
-      '#weight' => 50,
-    );
+    unset($form['actions']['cancel']);
+    unset($form['actions']['delete']);
   }
   else {
     $form['actions']['cancel'] = array(

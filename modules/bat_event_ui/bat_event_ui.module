@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Manages availability for Units and displaying dates on the jquery
+ * Manages events for Units and displaying dates on the jquery
  * FullCalendar plugin.
  */
 
@@ -146,32 +146,23 @@ function bat_event_ui_library_loaded($name, $variant = NULL) {
 
 /**
  * Implements hook_permission().
- * @TODO: These permissions don't make sense anymore
  */
-function bat_availability_permission() {
+function bat_event_ui_permission() {
   $permissions = array(
-    'administer bat_unit availability' => array(
-      'title' => t('Administer unit availability'),
-      'description' => t('Allows users to access bulk availability operations for units.'),
+    'administer calendar events' => array(
+      'title' => t('Administer calendar events'),
+      'description' => t('Allows users to manipulate events on calendar.'),
       'restrict access' => TRUE,
     ),
-    'view anonymous availability information' => array(
-      'title' => t('View anonymous availability information'),
-      'description' => t('Allow users to view anonymous availability info (especially via availability reference field).'),
+    'view past event information' => array(
+      'title' => t('View past event information'),
+      'description' => t('Allow users to view event info in the past (especially via event reference field).'),
     ),
-    'view named availability information' => array(
-      'title' => t('View named availability information'),
-      'description' => t('Allow users to view named availability info (especially via availability reference field).'),
+    'update calendar events of own bat_unit entities' => array(
+      'title' => t('Edit calendar events of own units of any type'),
     ),
-    'view past availability information' => array(
-      'title' => t('View past availability information'),
-      'description' => t('Allow users to view availability info in the past (especially via availability reference field).'),
-    ),
-    'update availability own bat_unit entities' => array(
-      'title' => t('Edit availability own units of any type'),
-    ),
-    'update availability any bat_unit entity' => array(
-      'title' => t('Edit availability any unit of any type'),
+    'update calendar events of any bat_unit entity' => array(
+      'title' => t('Edit calendar events of any unit of any type'),
     ),
   );
 
@@ -209,7 +200,7 @@ function bat_event_ui_menu() {
 
   $items['admin/bat/units/unit/%bat_unit/event'] = array(
     'title' => 'Event Management',
-    'page callback' => 'bat_availability_event_manager_page',
+    'page callback' => 'bat_event_ui_event_manager_page',
     'page arguments' => array(4),
     'access callback' => 'bat_unit_access',
     'access arguments' => array('update availability', 4),
@@ -231,6 +222,179 @@ function bat_event_ui_menu() {
 }
 
 /**
+ * The EventManager page shows when clicking on an event in the
+ * calendar - will allow a user to manipulate that event.
+ */
+function bat_event_ui_event_manager_page($unit, $event_type, $event_id = NULL, $start_date = 0, $end_date = 0) {
+  // Include modal library.
+  ctools_include('modal');
+
+  // If any info missing we cannot load the event.
+  if ($event_id == NULL || $start_date == 0 || $end_date == 0) {
+    $output[] = ctools_modal_command_dismiss();
+    drupal_set_message(t('Unable to load event.'), 'error');
+  }
+
+  // Basic check to avoid damage from dirty input.
+  $event_id = check_plain($event_id);
+  $start_date = check_plain($start_date);
+  $end_date = check_plain($end_date);
+
+  // Process start and end date.
+  $sd = new DateTime();
+  $sd->setTimezone(new DateTimeZone('UTC'))->setTimestamp($start_date);
+
+  $ed = new DateTime();
+  $ed->setTimezone(new DateTimeZone('UTC'))->setTimestamp($end_date);
+
+  if ($event_id > 0) {
+    $event = bat_event_load($event_id);
+    // For existing bookings allow to edit in the modal.
+    module_load_include('inc', 'bat_event', 'bat_event.admin');
+    $form_state = array(
+      'title' => t('Edit event'),
+      'ajax' => TRUE,
+      'build_info' => array(
+        'args' => array($event),
+        'files' => array(
+          'bat_event' => array(
+            'module' => 'bat_event',
+            'name' => 'bat_event.admin',
+            'type' => 'inc',
+          ),
+        ),
+      ),
+    );
+    // Wrap the form via ctools modal.
+    $output = ctools_modal_form_wrapper('bat_event_edit_form', $form_state);
+    if ($form_state['executed']) {
+      $output = array(ctools_modal_command_dismiss());
+    }
+
+    print ajax_render($output);
+    exit();
+  }
+
+  ctools_modal_render(t('Event Management'), drupal_get_form('bat_event_ui_event_manager_form', $unit, $event_type, $event_id, $sd, $ed));
+}
+
+/**
+ * The Event Manager Form.
+ */
+function bat_event_ui_event_manager_form($form, $form_state, $unit, $event_type, $event_id, $start_date, $end_date) {
+  $form = array();
+  $new_event_id = $event_id;
+
+  if (isset($form_state['values']['change_event_status'])) {
+    $new_event_id = $form_state['values']['change_event_status'];
+  }
+
+  $state_options = bat_unit_state_options($event_type);
+
+  $form['#attributes']['class'][] = 'bat-management-form bat-event-form';
+
+  // This entire form element will be replaced whenever 'changethis' is updated.
+  $form['#prefix'] = '<div id="replace_textfield_div">';
+  $form['#suffix'] = '</div>';
+
+  $form['unit_id'] = array(
+    '#type' => 'hidden',
+    '#value' => $unit->unit_id,
+  );
+
+  $form['event_type'] = array(
+    '#type' => 'hidden',
+    '#value' => $event_type,
+  );
+
+  $form['event_id'] = array(
+    '#type' => 'hidden',
+    '#value' => $event_id,
+  );
+
+  $form['bat_start_date'] = array(
+    '#type' => 'hidden',
+    '#value' => $start_date,
+  );
+
+  $form['bat_end_date'] = array(
+    '#type' => 'hidden',
+    '#value' => $end_date,
+  );
+
+  if ($event_id == -2) {
+    $form['event_title'] = array(
+      '#prefix' => '<h2>',
+      '#markup' => check_plain($unit->name),
+      '#suffix' => '</h2>',
+    );
+  }
+  else {
+    $form['event_title'] = array(
+      '#prefix' => '<h2>',
+      '#markup' => t('@unit_name', array('@unit_name' => $unit->name)),
+      '#suffix' => '</h2>',
+    );
+  }
+
+  $date_format = variable_get('bat_date_format', 'd-m-Y');
+  $form['event_details'] = array(
+    '#prefix' => '<div class="event-details">',
+    '#markup' => t('Date range selected: @startdate to @enddate', array('@startdate' => $start_date->format($date_format), '@enddate' => $end_date->format($date_format))),
+    '#suffix' => '</div>',
+  );
+
+  unset($state_options[$new_event_id]);
+
+  $form['change_event_status'] = array(
+    '#title' => t('Change the state for this event to:') . ' ',
+    '#type' => 'select',
+    '#options' => $state_options,
+    '#ajax' => array(
+      'callback' => 'bat_event_ui_ajax_event_status_change',
+      'wrapper' => 'replace_textfield_div',
+    ),
+    '#empty_option' => t('- Select -'),
+  );
+
+  return $form;
+}
+
+/**
+ * The callback for the change_event_status widget of the event manager form.
+ */
+function bat_event_ui_ajax_event_status_change($form, $form_state) {
+  global $user;
+
+  $start_date = $form_state['values']['bat_start_date'];
+  $end_date = $form_state['values']['bat_end_date'];
+  $unit_id = $form_state['values']['unit_id'];
+  $event_id = $form_state['values']['event_id'];
+  $event_type = $form_state['values']['event_type'];
+  $state_id = $form_state['values']['change_event_status'];
+
+  // If we have a new event id go ahead and update event.
+  if (($event_id != $new_event_id) && $new_event_id != -1) {
+    $event = bat_event_create(array('type' => $event_type));
+    $event->created = REQUEST_TIME;
+    $event->uid = $user->uid;
+
+    $event->start_date = $start_date->format('Y-m-d');
+    $event->end_date = $end_date->format('Y-m-d');
+
+    $event->event_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit_id;
+    $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $state_id;
+
+    $event->save();
+
+    $state_options = bat_unit_state_options($event_type);
+    $form['form_wrapper_bottom']['#markup'] = t('New Event state is <strong>@state</strong>.', array('@state' => $state_options[$state_id]));
+  }
+
+  return $form;
+}
+
+/**
  * Callback for admin/bat/events/
  */
 function bat_event_ui_calendar_page($unit_type, $event_type) {
@@ -247,7 +411,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
 
   // Show full day events on calendar.
   if (variable_get('bat_calendar_events_view', '0') == '1') {
-    $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_availability_full_day.js';
+    $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_event_full_day.js';
   }
   return array(
     '#theme' => 'bat_one_month_calendar',
@@ -283,79 +447,6 @@ function bat_event_ui_get_style($event_style, $unit) {
 }
 
 /**
- * The EventManager page shows when clicking on an event in the availability
- * calendar - will allow a user to manipulate that event.
- */
-function bat_event_ui_event_manager_page($unit, $event_id = NULL, $start_date = 0, $end_date = 0) {
-  // Include modal library.
-  ctools_include('modal');
-
-  // If any info missing we cannot load the event.
-  if ($event_id == NULL || $start_date == 0 || $end_date == 0) {
-    $output[] = ctools_modal_command_dismiss();
-    drupal_set_message(t('Unable to load event.'), 'error');
-  }
-
-  // Basic check to avoid damage from dirty input.
-  $event_id = check_plain($event_id);
-  $start_date = check_plain($start_date);
-  $end_date = check_plain($end_date);
-
-  // Process start and end date.
-  $sd = new DateTime();
-  $sd->setTimezone(new DateTimeZone('UTC'))->setTimestamp($start_date);
-
-  $ed = new DateTime();
-  $ed->setTimezone(new DateTimeZone('UTC'))->setTimestamp($end_date);
-
-  $booked = FALSE;
-  if ($event_id > 10 || $event_id < -10) {
-    $booked = TRUE;
-  }
-
-  if ($booked) {
-    $booking_id = bat_availability_return_id($event_id);
-    $booking = bat_event_load($booking_id);
-    // For existing bookings allow to edit in the modal.
-    module_load_include('inc', 'bat_event', 'bat_event.admin');
-    $form_state = array(
-      'title' => t('Edit booking'),
-      'ajax' => TRUE,
-      'build_info' => array(
-        'args' => array($booking),
-        'files' => array(
-          'bat_event_admin' => array(
-            'module' => 'bat_event',
-            'name' => 'bat_event.admin',
-            'type' => 'inc',
-          ),
-        ),
-      ),
-    );
-
-    // Wrap the form via ctools modal.
-    $output = ctools_modal_form_wrapper('bat_event_edit_form', $form_state);
-    if ($form_state['executed']) {
-      if (!empty($form_state['booking_deleted'])) {
-        // If there are messages for the form, render them.
-        $messages = theme('status_messages');
-
-        $output = array();
-        // If the form has not yet been rendered, render it.
-        $output[] = ctools_modal_command_display(t('Booking deleted'), $messages);
-      }
-      else {
-        $output = array(ctools_modal_command_dismiss());
-      }
-    }
-    print ajax_render($output);
-    exit();
-  }
-
-  ctools_modal_render(t('Event Management'), drupal_get_form('bat_availability_event_manager_form', $unit, $event_id, $sd, $ed));
-}
-
-/**
  * Define modal JS style and dependencies.
  */
 function bat_event_ui_modal_style() {
@@ -369,8 +460,8 @@ function bat_event_ui_modal_style() {
     'bat-modal-style' => array(
       'modalSize' => array(
         'type' => 'fixed',
-        'width' => 400,
-        'height' => 400,
+        'width' => 450,
+        'height' => 500,
         'addWidth' => 0,
         'addHeight' => 0,
       ),
@@ -387,130 +478,6 @@ function bat_event_ui_modal_style() {
 
   // Add the ctools modal stylesheet.
   drupal_add_css(drupal_get_path('module', 'bat') . '/css/bat_modal.css');
-}
-
-/**
- * The Event Manager Form.
- */
-function bat_event_ui_event_manager_form($form, $form_state, $unit, $event_id, $start_date, $end_date) {
-  $form = array();
-  $new_event_id = $event_id;
-
-  if (isset($form_state['values']['change_event_status'])) {
-    $new_event_id = $form_state['values']['change_event_status'];
-  }
-
-  $state_options = bat_unit_state_options();
-
-  $form['#attacched']['css'][] = drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css';
-  $form['#attributes']['class'][] = 'bat-management-form bat-event-form';
-
-  // This entire form element will be replaced whenever 'changethis' is updated.
-  $form['#prefix'] = '<div id="replace_textfield_div">';
-  $form['#suffix'] = '</div>';
-
-  $form['unit_id'] = array(
-    '#type' => 'hidden',
-    '#value' => $unit->unit_id,
-  );
-
-  $form['event_id'] = array(
-    '#type' => 'hidden',
-    '#value' => $event_id,
-  );
-
-  $form['bat_start_date'] = array(
-    '#type' => 'hidden',
-    '#value' => $start_date,
-  );
-
-  $form['bat_end_date'] = array(
-    '#type' => 'hidden',
-    '#value' => $end_date,
-  );
-
-  if ($event_id == -2) {
-    $form['event_title'] = array(
-      '#prefix' => '<h2>',
-      '#markup' => check_plain($unit->name),
-      '#suffix' => '</h2>',
-    );
-  }
-  else {
-    $form['event_title'] = array(
-      '#prefix' => '<h2>',
-      '#markup' => t('@unit_name is @status', array('@unit_name' => $unit->name, '@status' => $state_options[$new_event_id])),
-      '#suffix' => '</h2>',
-    );
-  }
-
-  $date_format = variable_get('bat_date_format', 'd-m-Y');
-  $form['event_details'] = array(
-    '#prefix' => '<div class="event-details">',
-    '#markup' => t('Duration: @startdate to @enddate', array('@startdate' => $start_date->format($date_format), '@enddate' => $end_date->format($date_format))),
-    '#suffix' => '</div>',
-  );
-
-  unset($state_options[$new_event_id]);
-
-  $form['change_event_status'] = array(
-    '#title' => t('Change the state for this event to:') . ' ',
-    '#type' => 'select',
-    '#options' => $state_options,
-    '#ajax' => array(
-      'callback' => 'bat_availability_ajax_event_status_change',
-      'wrapper' => 'replace_textfield_div',
-    ),
-    '#empty_option' => t('- Select -'),
-  );
-
-  if (module_exists('bat_event') && $new_event_id != 89) {
-    $booking_types = bat_event_get_types();
-
-    foreach ($booking_types as $type) {
-      $book_end_date = clone($end_date);
-
-      // If we select one day from the calendar, postpone the departure date.
-      if ($start_date == $end_date) {
-        $book_end_date = $book_end_date->add(new DateInterval('P1D'));
-      }
-
-      $form['order']['order_link'][$type->type] = array(
-        '#type' => 'markup',
-        '#markup' => '<div>' . l(t('Create @booking_type', array('@booking_type' => $type->label)), 'admin/bat/bookings/add/' . $type->type, array('query' => array('startdate' => $start_date->getTimestamp(), 'enddate' => $book_end_date->getTimestamp(), 'unitid' => $unit->unit_id))) . '</div>',
-      );
-    }
-  }
-
-  return $form;
-}
-
-/**
- * The callback for the change_event_status widget of the event manager form.
- */
-function bat_event_ui_ajax_event_status_change($form, $form_state) {
-  $start_date = $form_state['values']['bat_start_date'];
-  $end_date = $form_state['values']['bat_end_date'];
-  $unit_id = $form_state['values']['unit_id'];
-  $event_id = $form_state['values']['event_id'];
-  $new_event_id = $form_state['values']['change_event_status'];
-
-  // If we have a new event id go ahead and update event.
-  if (($event_id != $new_event_id) && $new_event_id != -1) {
-    $event = new BookingEvent($unit_id, $new_event_id, $start_date, $end_date);
-    $uc = new UnitCalendar($unit_id);
-    $responses = $uc->updateCalendar(array($event));
-
-    $state_options = bat_unit_state_options();
-    if ($event_id >= -1) {
-      $form['form_wrapper_bottom']['#markup'] = t('Updated event from <strong>@old_status</strong> to <strong>@new_status</strong>.', array('@old_status' => $state_options[$event_id], '@new_status' => $state_options[$new_event_id]));
-    }
-    else {
-      $form['form_wrapper_bottom']['#markup'] = t('New Event state is <strong>@state</strong>.', array('@state' => $state_options[$new_event_id]));
-    }
-  }
-
-  return $form;
 }
 
 /**
