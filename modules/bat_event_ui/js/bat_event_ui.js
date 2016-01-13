@@ -61,12 +61,12 @@ Drupal.behaviors.bat_availability = {
         },
         resourceAreaWidth: '25%',
         resourceLabelText: 'Rooms',
-        resources: '/bat/v2/units2?types=' + Drupal.settings.batEvent.unitType,
+        resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batEvent.unitType,
         selectOverlap: function(event) {
           // allowing selections over background events but not allowing selections over any other types of events
           return event.rendering === 'background';
         },
-        events: '/bat/v2/events2?unit_types=' + Drupal.settings.batEvent.unitType + '&event_types=' + Drupal.settings.batEvent.eventType,
+        events: '/bat/v2/events-calendar?unit_types=' + Drupal.settings.batEvent.unitType + '&event_types=' + Drupal.settings.batEvent.eventType,
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
