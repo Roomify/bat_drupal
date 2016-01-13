@@ -1081,6 +1081,24 @@ function bat_unit_get_type_bundles($bundle_name = NULL, $reset = FALSE) {
 }
 
 /**
+ * Gets an array of all type bundles, keyed by the bundle name.
+ *
+ * @param string $bundle_name
+ *   If set, the bundle with the given name is returned.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return BatType[]
+ *   Depending whether $bundle isset, an array of types or a single one.
+ */
+function bat_unit_get_types($bundle_name = NULL, $reset = FALSE) {
+  // entity_load() will get the Entity controller for our type entity and call
+  // the load function of that object.
+  $bundles = entity_load_multiple_by_name('bat_type', isset($bundle_name) ? array($bundle_name) : FALSE);
+  return isset($bundle_name) ? reset($bundles) : $bundles;
+}
+
+/**
  * Helper function to easily get Bat Type bundles in an array for use in forms, etc.
  *
  * @return array

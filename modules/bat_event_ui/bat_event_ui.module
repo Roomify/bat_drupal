@@ -592,12 +592,31 @@ function bat_event_ui_event_type_form($form, &$form_state) {
   $ev_types = array_keys($event_types_options);
   $ev_type = reset($ev_types);
 
+  
+  $event_types_options = array('all' => t('All')) + $event_types_options;
+
   $form['event_types'] = array(
     '#type' => 'select',
     '#title' => 'Event type',
     '#options' => $event_types_options,
-    '#default_value' => (arg(8)) ? arg(8) : $ev_type,
+    '#default_value' => (arg(4)) ? arg(4) : $ev_type,
   );
+
+  $types = bat_unit_get_types();
+  if (!empty($types)) {
+    $types_options = array(
+      'all' => t('All'),
+    );
+    foreach ($types as $type) {
+      $types_options[$type->type_id] = $type->name;
+    }
+    $form['unit_type'] = array(
+      '#type' => 'select',
+      '#title' => 'Unit type',
+      '#options' => $types_options,
+      '#default_value' => (arg(3)) ? arg(3) : 'all',
+    );
+  }
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -611,7 +630,13 @@ function bat_event_ui_event_type_form($form, &$form_state) {
  *
  */
 function bat_event_ui_event_type_form_submit($form, &$form_state) {
-  $form_state['redirect'] = arg(0) . '/' . arg(1) . '/' . arg(2) . '/' . arg(3) . '/' . arg(4) . '/' . arg(5) . '/' . arg(6) . '/' . arg(7) . '/' . $form_state['values']['event_types'];
+  // Check the type.
+  isset($form_state['values']['unit_type']) ? $type = $form_state['values']['unit_type'] : $type = arg(3);
+
+  // Check the event type.
+  isset($form_state['values']['event_types']) ? $event_type = $form_state['values']['event_types'] : $event_type = arg(4);
+
+  $form_state['redirect'] = arg(0) . '/' . arg(1) . '/' . arg(2) . '/' . $type . '/' . $event_type;
 }
 
 /**
