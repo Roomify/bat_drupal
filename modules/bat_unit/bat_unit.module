@@ -836,6 +836,20 @@ class BatUnit extends Entity {
   }
 
   /**
+   * @param $event_type
+   * @param $value
+   *
+   * @return mixed
+   */
+  public function formatEventValue($event_type, $value) {
+    $bat_type = bat_type_load($this->type_id);
+
+    $formatter = $bat_type->getEventValueFormatter();
+
+    return $value;
+  }
+
+  /**
    * @return
    */
   public function getConstraints() {
@@ -1463,16 +1477,7 @@ class BatType extends Entity {
    * @return mixed
    */
   public function getEventDefaultValue($event_type) {
-    $type_bundle = bat_type_bundle_load($this->type);
-
-    $field = '';
-    if (isset($type_bundle->default_event_value_field_ids[$event_type])) {
-      $field = $type_bundle->default_event_value_field_ids[$event_type];
-    }
-    if ($field == '') {
-      return FALSE;
-    }
-    else {
+    if ($field = $this->getEventValueDefaultField($event_type)) {
       $field_info = field_info_field($field);
       $values = field_get_items('bat_type', $this, $field);
 
@@ -1491,6 +1496,28 @@ class BatType extends Entity {
         return FALSE;
       }
     }
+  }
+
+  /**
+   * @param $event_type
+   */
+  public function getEventValueFormatter($event_type) {
+
+  }
+
+  /**
+   * @param $event_type
+   *
+   * @return string|FALSE
+   */
+  public function getEventValueDefaultField($event_type) {
+    $type_bundle = bat_type_bundle_load($this->type);
+
+    if (isset($type_bundle->default_event_value_field_ids[$event_type])) {
+      return $type_bundle->default_event_value_field_ids[$event_type];
+    }
+
+    return FALSE;
   }
 
 }

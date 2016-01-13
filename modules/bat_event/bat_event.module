@@ -1025,7 +1025,7 @@ class BatEventController extends EntityAPIController {
       $event_unit_reference = field_get_items('bat_event', $entity->original, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
       $bat_unit = bat_unit_load($unit_id);
-      $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event_type->type));
+      $unit = new Unit($unit_id, $bat_unit->getEventDefaultValue($event_type->type));
 
       $this->batStoreSave($unit,
         new \DateTime($entity->original->start_date),
@@ -1049,7 +1049,7 @@ class BatEventController extends EntityAPIController {
       $event_unit_reference = field_get_items('bat_event', $entity, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
       $bat_unit = bat_unit_load($unit_id);
-      $unit = new Unit($unit_id, $bat_unit->getDefaultValue($event_type->type));
+      $unit = new Unit($unit_id, $bat_unit->getEventDefaultValue($event_type->type));
 
       $this->batStoreSave($unit,
         new \DateTime($entity->start_date),
