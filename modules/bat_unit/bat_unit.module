@@ -829,10 +829,10 @@ class BatUnit extends Entity {
    *
    * @return mixed
    */
-  public function getDefaultValue($event_type) {
+  public function getEventDefaultValue($event_type) {
     $bat_type = bat_type_load($this->type_id);
 
-    return $bat_type->getDefaultValue($event_type);
+    return $bat_type->getEventDefaultValue($event_type);
   }
 
   /**
@@ -1462,7 +1462,7 @@ class BatType extends Entity {
    *
    * @return mixed
    */
-  public function getDefaultValue($event_type) {
+  public function getEventDefaultValue($event_type) {
     $type_bundle = bat_type_bundle_load($this->type);
 
     $field = '';

@@ -32,7 +32,7 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
     $ev_type = bat_event_type_load($this->event_type);
 
     $bat_unit = bat_unit_load($event->getUnitId());
-    $default_value = $bat_unit->getDefaultValue($this->event_type);
+    $default_value = $bat_unit->getEventDefaultValue($this->event_type);
 
     if ($ev_type->fixed_event_states) {
       $state_event = bat_event_load_state($event->getValue());

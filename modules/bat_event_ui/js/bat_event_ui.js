@@ -37,6 +37,7 @@ Drupal.behaviors.bat_availability = {
 
       $(value[0]).once().fullCalendar({
         schedulerLicenseKey: Drupal.settings.batCalendar.schedulerLicenseKey,
+        height: 500,
         editable: true,
         selectable: true,
         dayNamesShort:[Drupal.t("Sun"), Drupal.t("Mon"), Drupal.t("Tue"), Drupal.t("Wed"), Drupal.t("Thu"), Drupal.t("Fri"), Drupal.t("Sat")],
