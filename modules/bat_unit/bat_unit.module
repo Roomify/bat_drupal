@@ -382,29 +382,6 @@ function bat_unit_menu_local_tasks_alter(&$data, $router_item, $root_path) {
   }
 }
 
-/**
- * Implements hook_action_info().
- */
-function bat_unit_action_info() {
-  return array(
-    'bat_unit_make_unit_bookable' => array(
-      'type' => 'bat_unit',
-      'label' => t('Make Unit Bookable'),
-      'behavior' => array('changes_property'),
-      'configurable' => FALSE,
-      'vbo_configurable' => FALSE,
-      'triggers' => array('any'),
-    ),
-    'bat_unit_make_unit_unbookable' => array(
-      'type' => 'bat_unit',
-      'label' => t('Make Unit Unbookable'),
-      'behavior' => array('changes_property'),
-      'configurable' => FALSE,
-      'vbo_configurable' => FALSE,
-      'triggers' => array('any'),
-    ),
-  );
-}
 
 
 /**
@@ -783,22 +760,6 @@ function bat_unit_unit_bundle_new() {
     ),
     'bat_opening_time' => '',
  );
-}
-
-/**
- * Callback: make Bat Unit bookable.
- */
-function bat_unit_make_unit_bookable(&$unit, $context) {
-  $unit->bookable = 1;
-  $unit->save();
-}
-
-/**
- * Callback: make Bat Unit unbookable.
- */
-function bat_unit_make_unit_unbookable(&$unit, $context) {
-  $unit->bookable = 0;
-  $unit->save();
 }
 
 /**
