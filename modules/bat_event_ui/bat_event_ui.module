@@ -241,11 +241,9 @@ function bat_event_ui_event_manager_page($unit, $event_type, $event_id = NULL, $
   $end_date = check_plain($end_date);
 
   // Process start and end date.
-  $sd = new DateTime();
-  $sd->setTimezone(new DateTimeZone('UTC'))->setTimestamp($start_date);
+  $sd = new DateTime($start_date);
 
-  $ed = new DateTime();
-  $ed->setTimezone(new DateTimeZone('UTC'))->setTimestamp($end_date);
+  $ed = new DateTime($end_date);
 
   if ($event_id > 0) {
     $event = bat_event_load($event_id);
@@ -337,7 +335,7 @@ function bat_event_ui_event_manager_form($form, $form_state, $unit, $event_type,
     );
   }
 
-  $date_format = variable_get('bat_date_format', 'd-m-Y');
+  $date_format = variable_get('bat_date_format', 'Y-m-d H:i');
   $form['event_details'] = array(
     '#prefix' => '<div class="event-details">',
     '#markup' => t('Date range selected: @startdate to @enddate', array('@startdate' => $start_date->format($date_format), '@enddate' => $end_date->format($date_format))),
@@ -379,8 +377,8 @@ function bat_event_ui_ajax_event_status_change($form, $form_state) {
     $event->created = REQUEST_TIME;
     $event->uid = $user->uid;
 
-    $event->start_date = $start_date->format('Y-m-d');
-    $event->end_date = $end_date->format('Y-m-d');
+    $event->start_date = $start_date->format('Y-m-d H:i');
+    $event->end_date = $end_date->format('Y-m-d H:i');
 
     $event->event_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit_id;
     $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $state_id;

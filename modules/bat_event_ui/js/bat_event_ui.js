@@ -73,8 +73,8 @@ Drupal.behaviors.bat_event = {
         },
         eventClick: function(event, jsEvent, view) {
           var unit_id = event.resourceId.substring(1);
-          var sd = event.start.unix();
-          var ed = event.end.unix();
+          var sd = event.start.format('YYYY-MM-DD HH:mm');
+          var ed = event.end.format('YYYY-MM-DD HH:mm');
 
           // Open the modal for edit
           Drupal.BatEvent.Modal(view, event.id, sd, ed, unit_id);
@@ -82,9 +82,9 @@ Drupal.behaviors.bat_event = {
         select: function(start, end, jsEvent, view, resource) {
           var unit_id = resource.id.substring(1);
 
-          var ed = end.subtract(1, 'days');
-          var sd = start.unix();
-          ed = end.unix();
+          var ed = end.format('YYYY-MM-DD HH:mm');
+          var sd = start.format('YYYY-MM-DD HH:mm');
+
 
           // Open the modal for edit
           Drupal.BatEvent.Modal(this, 0, sd, ed, unit_id);
