@@ -60,7 +60,7 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
       $formatted_event = array(
         'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
         'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
-        'title' => $event->getValue(),
+        'title' => $bat_unit->formatEventValue($this->event_type, $event->getValue()),
       );
 
       if ($event->getValue() < 100) {

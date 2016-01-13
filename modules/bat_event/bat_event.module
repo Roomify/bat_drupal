@@ -1043,8 +1043,27 @@ class BatEventController extends EntityAPIController {
     // We have a unit defined so lets block availability there unless its a
     // event that is to be deleted.
     if (field_get_items('bat_event', $entity, 'event_unit_reference') !== FALSE) {
-      $event_state_reference = field_get_items('bat_event', $entity, 'event_state_reference');
-      $event_state = $event_state_reference[0]['state_id'];
+      if (isset($event_type->data[$entity->type])) {
+        $field = $event_type->data[$entity->type];
+        $field_info = field_info_field($field);
+        $values = field_get_items('bat_event', $entity, $field);
+
+        if (!empty($values)) {
+          if ($field_info['type'] == 'bat_event_state_reference') {
+            $event_value = $values[0]['state_id'];
+          }
+          elseif ($field_info['type'] == 'commerce_price') {
+            $event_value = $values[0]['amount'];
+          }
+          elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer') {
+            $event_value = $values[0]['value'];
+          }
+        }
+      }
+      else {
+        $event_state_reference = field_get_items('bat_event', $entity, 'event_state_reference');
+        $event_value = $event_state_reference[0]['state_id'];
+      }
 
       $event_unit_reference = field_get_items('bat_event', $entity, 'event_unit_reference');
       $unit_id = $event_unit_reference[0]['target_id'];
@@ -1056,7 +1075,7 @@ class BatEventController extends EntityAPIController {
         new \DateTime($entity->end_date),
         $event_type->type,
         $event_type->event_granularity,
-        $event_state,
+        $event_value,
         $entity->event_id
       );
     }

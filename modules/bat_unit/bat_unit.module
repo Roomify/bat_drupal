@@ -844,9 +844,32 @@ class BatUnit extends Entity {
   public function formatEventValue($event_type, $value) {
     $bat_type = bat_type_load($this->type_id);
 
-    $formatter = $bat_type->getEventValueFormatter();
+    $field = $bat_type->getEventValueDefaultField($event_type);
+    $field_info = field_info_field($field);
+    $field_info_instance = field_info_instance('bat_type', $field, $bat_type->type);
 
-    return $value;
+    $formatter = $bat_type->getEventValueFormatter($event_type);
+
+    if ($field_info['type'] == 'commerce_price') {
+      if (empty($field_info_instance['widget']['settings']['currency_code']) ||
+          $field_info_instance['widget']['settings']['currency_code'] == 'default') {
+        $currency_code = NULL;
+      }
+      else {
+        $currency_code = $field_info_instance['widget']['settings']['currency_code'];
+      }
+
+      $price = array(
+        'amount' => $value,
+        'currency_code' => $currency_code,
+      );
+      $field_view_value = field_view_value('bat_type', $bat_type, $field, $price);
+    }
+    else {
+      $field_view_value = field_view_value('bat_type', $bat_type, $field, $value);
+    }
+
+    return $field_view_value['#markup'];
   }
 
   /**
@@ -1500,9 +1523,19 @@ class BatType extends Entity {
 
   /**
    * @param $event_type
+   *
+   * @return string|FALSE
    */
   public function getEventValueFormatter($event_type) {
+    if ($field = $this->getEventValueDefaultField($event_type)) {
+      $field_info_instance = field_info_instance('bat_type', $field, $this->type);
 
+      if (isset($field_info_instance['display']['default']['type'])) {
+        return $field_info_instance['display']['default']['type'];
+      }
+    }
+
+    return FALSE;
   }
 
   /**
