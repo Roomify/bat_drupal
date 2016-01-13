@@ -14,39 +14,6 @@
  */
 
 /**
- * Implements hook_menu().
- */
-function bat_unit_menu() {
-  $items = array();
-
-  $items['admin/bat/types'] = array(
-    'title' => 'Types',
-    'description' => 'Add and administer BAT Types.',
-    'page callback' => 'bat_type_list',
-    // TODO: specific permission?
-    'access arguments' => array('administer bat_type_bundle entities'),
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 10,
-    'file path' => drupal_get_path('module', 'bat_unit'),
-    'file' => 'bat_types.admin.inc',
-  );
-
-  $items['admin/bat/type-edit'] = array(
-    'title' => 'Edit Type',
-    'description' => 'Edit Bat Types and Units.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('bat_type_edit'),
-    'access arguments' => array('administer bat_type entities'),
-    'modal' => TRUE,
-    'type' => MENU_CALLBACK,
-    'file path' => drupal_get_path('module', 'bat_unit'),
-    'file' => 'bat_types.admin.inc',
-  );
-
-  return $items;
-}
-
-/**
  * Implements hook_entity_info().
  */
 function bat_unit_entity_info() {
