@@ -403,10 +403,10 @@ function theme_bat_unit_add_list($variables) {
   }
   else {
     if (user_access('administer unit types')) {
-      $output = '<p>' . t('Bookable Units cannot be added because you have not created any unit types yet. Go to the <a href="@create-unit-type">unit type creation page</a> to add a new unit type.', array('@create-unit-type' => url('admin/bat/config/units/unit-types/add'))) . '</p>';
+      $output = '<p>' . t('Units cannot be added because you have not created any unit types yet. Go to the <a href="@create-unit-type">unit type creation page</a> to add a new unit type.', array('@create-unit-type' => url('admin/bat/config/units/unit-types/add'))) . '</p>';
     }
     else {
-      $output = '<p>' . t('No bookable unit types have been created yet for you to use.') . '</p>';
+      $output = '<p>' . t('No unit types have been created yet for you to use.') . '</p>';
     }
   }
   return $output;

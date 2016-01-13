@@ -113,13 +113,25 @@ class BatTypeUIController extends EntityDefaultUIController {
 
     $items[$this->path . '/type/' . $wildcard . '/units/add'] = array(
       'title' => t('Add Units'),
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('bat_type_add_units', 5),
+      'page callback' => 'bat_type_add_units_page',
+      'page arguments' => array(5),
       'access arguments' => array('create bat_unit entities'),
       'file' => 'bat_type.admin.inc',
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
       'type' => MENU_CALLBACK,
     );
+    foreach (bat_unit_get_bundles() as $bundle) {
+      $items[$this->path . '/type/' . $wildcard . '/units/add/' . $bundle->type] = array(
+        'title' => 'Add @unit_bundle_label unit',
+        'title arguments' => array('@unit_bundle_label' => $bundle->label),
+        'page callback' => 'bat_type_add_units_form_wrapper',
+        'page arguments' => array(5, 8),
+        'access callback' => 'bat_unit_access',
+        'access arguments' => array('create', bat_unit_create(array('type' => $bundle->type, 'uid' => 0))),
+        'file' => 'bat_type.admin.inc',
+        'file path' => drupal_get_path('module', $this->entityInfo['module']),
+      );
+    }
     return $items;
   }
 
@@ -140,6 +152,29 @@ class BatTypeUIController extends EntityDefaultUIController {
       '#content' => $content,
     );
   }
+
+
+  /**
+   * Creates the markup for the add Bat Units pages when units are added through
+   * the Type configuration page
+   */
+  public function addUnitsPage() {
+    $item = menu_get_item();
+    $bundles = bat_unit_get_bundles();
+
+    // If there is only one unit bundle go straight to that page
+    if (count($bundles) == 1) {
+      drupal_goto($item['href'] . '/' . array_shift($bundles)->type);
+    }
+
+    $content['bundles'] = $bundles;
+    $content['item'] = $item;
+    return array(
+      '#theme' => 'bat_type_unit_add_list',
+      '#content' => $content,
+    );
+  }
+
 }
 
 /**
@@ -159,6 +194,7 @@ function bat_type_form_wrapper($type) {
   $type->author_name = isset($account->name) ? $account->name : '';
   return drupal_get_form('bat_type_edit_form', $type);
 }
+
 /**
  * Form callback wrapper: create a type.
  *
@@ -176,6 +212,26 @@ function bat_type_create_form_wrapper($type) {
   $type->status = 1;
   return drupal_get_form('bat_type_edit_form', $type);
 }
+
+/**
+ * Form callback wrapper: create units associated with a type.
+ *
+ * @param $type
+ *   The type of units to create
+ */
+function bat_type_add_units_form_wrapper($type, $unit_type) {
+  global $user;
+
+  // Add the breadcrumb for the form's location.
+  bat_type_type_set_breadcrumb();
+  $unit_model = bat_unit_create(array('type' => $unit_type, 'uid' => $user->uid));
+  $unit_model->type_id = $type->type_id;
+  $unit_model->created = REQUEST_TIME;
+  $unit_model->author_name = $user->name;
+  $unit_model->status = 1;
+  return drupal_get_form('bat_type_add_units_form', $unit_model);
+}
+
 /**
  * Form callback wrapper: delete a type.
  *
@@ -386,6 +442,14 @@ function bat_type_add_page() {
 }
 
 /**
+ * Page to add Units to a Types
+ */
+function bat_type_add_units_page() {
+  $controller = entity_ui_controller('bat_type');
+  return $controller->addUnitsPage();
+}
+
+/**
  * Displays the list of available Type bundles for Type creation.
  *
  * @ingroup themeable
@@ -396,6 +460,30 @@ function theme_bat_type_add_list($variables) {
     $output = '<dl class="type-type-list">';
     foreach ($content as $item) {
       $output .= '<dt>' . l($item['title'], $item['href']) . '</dt>';
+      $output .= '<dd>' . filter_xss_admin($item['description']) . '</dd>';
+    }
+    $output .= '</dl>';
+  }
+  else {
+    if (user_access('administer type bundles')) {
+      $output = '<p>' . t('Type cannot be added because you have not created any Type bundles yet. Go to the <a href="@create-type_bundle">type bundle creation page</a> to add a new type type.', array('@create-type_bundle' => url('admin/bat/config/type-bundles/add'))) . '</p>';
+    }
+    else {
+      $output = '<p>' . t('No Types have been created yet.') . '</p>';
+    }
+  }
+  return $output;
+}
+
+
+function theme_bat_type_unit_add_list($variables) {
+  $bundles = $variables['content']['bundles'];
+  $item = $variables['content']['item'];
+
+  if ($bundles) {
+    $output = '<dl class="unit-type-list">';
+    foreach ($bundles as $unit_bundle) {
+      $output .= '<dt>' . l('Add ' . $unit_bundle->label, $item['href'] . '/' . $unit_bundle->type) . '</dt>';
       $output .= '<dd>' . filter_xss_admin($item['description']) . '</dd>';
     }
     $output .= '</dl>';
@@ -428,7 +516,7 @@ function bat_type_type_set_breadcrumb() {
 /**
  * Unit add form.
  */
-function bat_type_add_units($form, &$form_state, $type) {
+function bat_type_add_units_form($form, &$form_state, $unit_model) {
   $form['container'] = array(
     '#type' => 'container',
     '#attributes' => array(
@@ -443,15 +531,14 @@ function bat_type_add_units($form, &$form_state, $type) {
     '#description' => t('Number of Units to create.'),
   );
 
-  $form['container']['bookable'] = array(
-    '#type' => 'checkbox',
-    '#title' => 'Bookable',
-    '#default_value' => 1,
-  );
-
   $form['type_id'] = array(
     '#type' => 'hidden',
-    '#value' => $type->type_id,
+    '#value' => $unit_model->type_id,
+  );
+
+  $form['unit_type'] = array(
+    '#type' => 'hidden',
+    '#value' => $unit_model->type,
   );
 
   $form['submit'] = array(
@@ -465,7 +552,7 @@ function bat_type_add_units($form, &$form_state, $type) {
 /**
  * Validation handler for unit add form.
  */
-function bat_type_add_units_validate($form, &$form_state) {
+function bat_type_add_units_form_validate($form, &$form_state) {
   if (empty($form_state['values']['units'])) {
     form_set_error('units', t('Please enter the number of units to add.'));
   } elseif (!is_numeric($form_state['values']['units'])) {
@@ -476,13 +563,18 @@ function bat_type_add_units_validate($form, &$form_state) {
 /**
  * Submit handler for unit add form.
  */
-function bat_type_add_units_submit($form, &$form_state) {
+function bat_type_add_units_form_submit($form, &$form_state) {
   global $user;
+
+  // The Type this unit is associated too
   $type_id = $form_state['values']['type_id'];
+
+  // The unit bundle this unit belongs to
+  $unit_type = $form_state['values']['unit_type'];
 
   // Sanity check.
   if (!$type = bat_type_load($type_id)) {
-    drupal_set_message(t('Could not load Bat Type!'), 'warning');
+    drupal_set_message(t('Could not load Bat Unit!'), 'warning');
     return;
   }
 
@@ -490,13 +582,12 @@ function bat_type_add_units_submit($form, &$form_state) {
 
   // Create units.
   for ($i = ($total_units + 1); $i <= ($form_state['values']['units'] + $total_units); $i++) {
-    $unit = bat_unit_create(array('type' => $type->type));
+    $unit = bat_unit_create(array('type' => $unit_type));
     $unit->name = $type->name . ' ' . $i;
     $unit->created = !empty($unit->date) ? strtotime($unit->date) : REQUEST_TIME;
 
     $unit->type_id = $type_id;
     $unit->default_state = 1;
-    $unit->bookable = $form_state['values']['bookable'];
     $unit->uid = $user->uid;
     $unit->save();
   }
