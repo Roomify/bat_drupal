@@ -1140,7 +1140,7 @@ class BatEventController extends EntityAPIController {
         clone($event->end_date_object),
         $event->type,
         $event_type->event_granularity,
-        $unit->getEventDefaultValue($event->type),
+        $unit->getDefaultValue($event->type),
         $event->event_id,
         TRUE
       );
