@@ -264,20 +264,6 @@ function bat_unit_views_default_views() {
       'override_label' => 0,
       'label' => '',
     ),
-    'action::bat_unit_make_unit_bookable' => array(
-      'selected' => 1,
-      'postpone_processing' => 0,
-      'skip_confirmation' => 0,
-      'override_label' => 0,
-      'label' => '',
-    ),
-    'action::bat_unit_make_unit_unbookable' => array(
-      'selected' => 1,
-      'postpone_processing' => 0,
-      'skip_confirmation' => 0,
-      'override_label' => 0,
-      'label' => '',
-    ),
   );
   /* Field: Units: Units ID */
   $handler->display->display_options['fields']['unit_id']['id'] = 'unit_id';
@@ -289,11 +275,6 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['fields']['name']['id'] = 'name';
   $handler->display->display_options['fields']['name']['table'] = 'bat_units';
   $handler->display->display_options['fields']['name']['field'] = 'name';
-  /* Field: Units: Bookable */
-  $handler->display->display_options['fields']['bookable']['id'] = 'bookable';
-  $handler->display->display_options['fields']['bookable']['table'] = 'bat_units';
-  $handler->display->display_options['fields']['bookable']['field'] = 'bookable';
-  $handler->display->display_options['fields']['bookable']['separator'] = '';
   /* Field: Units: Megarow links */
   $handler->display->display_options['fields']['megarow_links']['id'] = 'megarow_links';
   $handler->display->display_options['fields']['megarow_links']['table'] = 'views_entity_bat_unit';
