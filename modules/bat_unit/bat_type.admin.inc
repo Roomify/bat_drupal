@@ -134,6 +134,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       $item = array_shift($content);
       drupal_goto($item['href']);
     }
+
     return array(
       '#theme' => 'bat_type_add_list',
       '#content' => $content,
@@ -391,7 +392,6 @@ function bat_type_add_page() {
  */
 function theme_bat_type_add_list($variables) {
   $content = $variables['content'];
-  $output = '';
   if ($content) {
     $output = '<dl class="type-type-list">';
     foreach ($content as $item) {

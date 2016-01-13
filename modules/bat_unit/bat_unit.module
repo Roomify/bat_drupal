@@ -315,17 +315,17 @@ function bat_unit_theme() {
       'render element' => 'elements',
       'template' => 'bat_unit',
     ),
-    'bat_unit_extra_data' => array(
-      'variables' => array('unit_extra_data', 'unit' => NULL),
-      'template' => 'bat_unit-extra-data',
-    ),
     'bat_type' => array(
       'render element' => 'elements',
       'template' => 'bat_type',
     ),
-    'bat_type_extra_data' => array(
-      'variables' => array('type_extra_data', 'type' => NULL),
-      'template' => 'bat_type-extra-data',
+    'bat_type_add_list' => array(
+      'variables' => array('content' => array()),
+      'file' => 'bat_type.admin.inc',
+    ),
+    'bat_unit_add_list' => array(
+      'variables' => array('content' => array()),
+      'file' => 'bat_unit.admin.inc',
     ),
   );
 }
