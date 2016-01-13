@@ -63,12 +63,6 @@ class BatUnitUIController extends EntityDefaultUIController {
       'access arguments' => array('view', $id_count + 1),
       'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     );
-    $items[$this->path . '/unit/' . $wildcard . '/view'] = array(
-      'title' => 'View',
-      'type' => MENU_DEFAULT_LOCAL_TASK,
-      'weight' => -10,
-      'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
-    );
     $items[$this->path . '/unit/' . $wildcard . '/edit'] = array(
       'title' => 'Edit',
       'page callback' => 'bat_unit_form_wrapper',
@@ -93,16 +87,7 @@ class BatUnitUIController extends EntityDefaultUIController {
       'file' => 'bat_unit.admin.inc',
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
     );
-    // Menu item for viewing units.
-    $items['unit/' . $wildcard] = array(
-      'title callback' => 'bat_unit_page_title',
-      'title arguments' => array(1),
-      'page callback' => 'bat_unit_page_view',
-      'page arguments' => array(1),
-      'access callback' => 'bat_unit_access',
-      'access arguments' => array('view', 1),
-      'type' => MENU_CALLBACK,
-    );
+
     return $items;
   }
 
@@ -285,28 +270,7 @@ function bat_unit_edit_form($form, &$form_state, $unit) {
     '#title' => t('Published'),
     '#default_value' => $unit->status,
   );
-  // If we are creating a new booking unit, bulk creation info.
-  if ($unit->unit_id == '') {
-    $form['multi'] = array(
-      '#type' => 'fieldset',
-      '#group' => 'additional_settings',
-      '#title' => t('Create multiple units'),
-      '#description' => t('Save time by creating multiple units at once all containing the settings above. You can still personalise each one later on.'),
-      '#weight' => 85,
-      '#attributes' => array(
-        'class' => array('unit-form-multiple'),
-      ),
-      '#attached' => array(
-        'js' => array(drupal_get_path('module', 'bat_unit') . '/js/bat_unit.js'),
-      ),
-    );
-    $form['multi']['multiple'] = array(
-      '#type' => 'textfield',
-      '#size' => 5,
-      '#default_value' => 1,
-      '#title' => t('How many units should we create'),
-    );
-  }
+
   $form['actions'] = array(
     '#type' => 'actions',
     '#tree' => FALSE,
