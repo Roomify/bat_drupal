@@ -25,8 +25,9 @@ class bat_type_handler_type_calendars_field extends views_handler_field {
     if (is_array($type_bundle->default_event_value_field_ids)) {
       foreach ($type_bundle->default_event_value_field_ids as $event => $field) {
         if (!empty($field)) {
+          $event_label = bat_event_get_types($event)->label;
           $links[$field] = array(
-            'title' => 'Manage ' . $event,
+            'title' => 'Manage ' . $event_label,
             'href' => 'admin/bat/calendar/' . $type->type_id . '/' . $event,
           );
         }
