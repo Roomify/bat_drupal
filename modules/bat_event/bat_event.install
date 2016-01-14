@@ -159,6 +159,13 @@ function bat_event_schema() {
         'size' => 'tiny',
         'description' => 'The weight of this event type in relation to others.',
       ),
+      'default_event_value_field_ids' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array that stores this type bundle\'s default event field configuration.',
+      ),
       'data' => array(
         'type' => 'text',
         'not null' => FALSE,
