@@ -197,13 +197,6 @@ function bat_unit_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'bookable' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 1,
-        'size' => 'tiny',
-        'description' => 'Whether the type is available for booking or not.',
-      ),
       'status' => array(
         'description' => 'Boolean indicating whether the type is published (visible to non-administrators).',
         'type' => 'int',
