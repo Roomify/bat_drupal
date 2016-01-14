@@ -47,7 +47,7 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
           'color' => $default_state['color'],
         );
 
-        // Non blocking event render as background.
+        // Render non blocking events in the background.
         if ($default_state['blocking'] == 0) {
           $formatted_event['rendering'] = 'background';
         }

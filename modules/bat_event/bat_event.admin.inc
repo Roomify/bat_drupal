@@ -517,6 +517,13 @@ function bat_event_edit_form_submit(&$form, &$form_state) {
     $event = entity_ui_controller('bat_event')->entityFormSubmitBuildEntity($form, $form_state);
   }
 
+  // Subtract one minute from the end date if it is on an hour.
+  // We do this to store the data in the format that Bat expects,
+  // without end users seeing things like 23:59.
+  if ($event->end_date_object->format('i') == '00') {
+    $event->end_date_object->sub(new DateInterval('PT1M'));
+  }
+
   // Add in created and changed times.
   $event->created = !empty($event->date) ? strtotime($event->date) : REQUEST_TIME;
   $event->changed = time();
