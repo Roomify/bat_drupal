@@ -60,17 +60,18 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
         'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
         'title' => $state_info['calendar_label'],
         'color' => $state_info['color'],
+        'blocking' => 1,
       );
 
         // Render non blocking events in the background.
       if ($state_info['blocking'] == 0) {
         $formatted_event['rendering'] = 'background';
+        $formatted_Event['blocking'] == 0;
       }
 
     }
     // If this is not a fixed state event deal with it here
     else {
-
       if (!$event->getValue() == 0) {
         $bat_event = bat_event_load($event->getValue());
         // Change the default value to the one that the event actually stores in the entity
@@ -88,6 +89,7 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
       elseif ($event->getValue() >= 100) {
         $formatted_event['color'] = 'green';
       }
+      $formatted_event['rendering'] = 'background';
     }
 
     $formatted_event['type'] = $this->event_type->type;
