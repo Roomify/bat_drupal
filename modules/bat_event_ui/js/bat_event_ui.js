@@ -1,5 +1,6 @@
 (function ($) {
-// define object
+
+// Define our objects.
 Drupal.BatEvent = Drupal.BatEvent || {};
 Drupal.BatEvent.Modal = Drupal.BatEvent.Modal || {};
 
@@ -26,7 +27,7 @@ Drupal.behaviors.bat_event = {
     var calendars = [];
     calendars[0] = new Array('#calendar');
 
-    // refresh the events once the modal is closed
+    // Refresh the event once the modal is closed.
     $(document).one("CToolsDetachBehaviors", function() {
       $.each(calendars, function(key, value) {
         $(value[0]).fullCalendar('refetchEvents');
@@ -104,40 +105,10 @@ Drupal.behaviors.bat_event = {
           return !stillEvent.blocking;
         },
         eventDrop: function(event, delta, revertFunc) {
-          // The event has been moved - attempt to update it.
-          var unit_id = event.resourceId.substring(1);
-
-          // Get session token.
-          $.ajax({
-            url:"/services/session/token",
-            type:"get",
-            dataType:"text",
-            error:function (jqXHR, textStatus, errorThrown) {
-              alert(errorThrown);
-            },
-            success: function (token) {
-              // Update event, using session token.
-              var events_url = '/bat/v2/events';
-              console.log(events_url);
-              $.ajax({
-                type: "PUT",
-                url: events_url + '/' + event.bat_id,
-                data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), unit_id: unit_id}),
-                dataType: 'json',
-                beforeSend: function (request) {
-                  request.setRequestHeader("X-CSRF-Token", token);
-                },
-                contentType: 'application/json',
-                error: function (jqXHR, textStatus, errorThrown) {
-                  alert(errorThrown);
-                  revertFunc();
-                },
-                success: function (data) {
-                  alert('Event Saved!');
-                }
-              });
-            }
-          });
+          saveBatEvent(event, revertFunc);
+        },
+        eventResize: function(event, delta, revertFunc) {
+          saveBatEvent(event, revertFunc);
         }
       });
     });
@@ -173,5 +144,42 @@ Drupal.BatEvent.Modal = function(element, eid, sd, ed, $unit_id) {
   // event is not recognized by Drupal AJAX
   $(calendars_table).trigger('getResponse');
 };
+
+function saveBatEvent(event, revertFunc) {
+  // The event has been moved - attempt to update it.
+  var unit_id = event.resourceId.substring(1);
+
+  // Get session token.
+  $.ajax({
+    url:"/services/session/token",
+    type:"get",
+    dataType:"text",
+    error:function (jqXHR, textStatus, errorThrown) {
+      alert(errorThrown);
+    },
+    success: function (token) {
+      // Update event, using session token.
+      var events_url = '/bat/v2/events';
+      console.log(events_url);
+      $.ajax({
+        type: "PUT",
+        url: events_url + '/' + event.bat_id,
+        data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), unit_id: unit_id}),
+        dataType: 'json',
+        beforeSend: function (request) {
+          request.setRequestHeader("X-CSRF-Token", token);
+        },
+        contentType: 'application/json',
+        error: function (jqXHR, textStatus, errorThrown) {
+          alert(errorThrown);
+          revertFunc();
+        },
+        success: function (data) {
+          alert('Event Saved!');
+        }
+      });
+    }
+  });
+}
 
 })(jQuery);
