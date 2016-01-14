@@ -110,7 +110,7 @@ Drupal.behaviors.bat_event = {
 Drupal.BatEvent.Modal = function(element, eid, sd, ed, $unit_id) {
   Drupal.CTools.Modal.show('bat-modal-style');
   // base url the part that never change is used to identify our ajax instance
-  var base = Drupal.settings.basePath + '?q=admin/bat/units/unit/';
+  var base = Drupal.settings.basePath + '?q=admin/bat/calendar/';
   // Create a drupal ajax object that points to the event form.
   var element_settings = {
     url : base + $unit_id + '/event/' + Drupal.settings.batEvent.eventType + '/' + eid + '/' + sd + '/' + ed,
