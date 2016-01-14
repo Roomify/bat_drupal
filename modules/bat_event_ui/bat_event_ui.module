@@ -271,8 +271,6 @@ function bat_event_ui_event_manager_form($form, $form_state, $unit, $event_type,
     $new_event_id = $form_state['values']['change_event_status'];
   }
 
-  $state_options = bat_unit_state_options($event_type);
-
   $form['#attributes']['class'][] = 'bat-management-form bat-event-form';
 
   // This entire form element will be replaced whenever 'changethis' is updated.
@@ -326,18 +324,47 @@ function bat_event_ui_event_manager_form($form, $form_state, $unit, $event_type,
     '#suffix' => '</div>',
   );
 
-  unset($state_options[$new_event_id]);
+  $type_bundle = bat_event_type_load($event_type);
 
-  $form['change_event_status'] = array(
-    '#title' => t('Change the state for this event to:') . ' ',
-    '#type' => 'select',
-    '#options' => $state_options,
-    '#ajax' => array(
-      'callback' => 'bat_event_ui_ajax_event_status_change',
-      'wrapper' => 'replace_textfield_div',
-    ),
-    '#empty_option' => t('- Select -'),
-  );
+  if ($type_bundle->fixed_event_states) {
+    $state_options = bat_unit_state_options($event_type);
+    unset($state_options[$new_event_id]);
+
+    $form['change_event_status'] = array(
+      '#title' => t('Change the state for this event to:') . ' ',
+      '#type' => 'select',
+      '#options' => $state_options,
+      '#ajax' => array(
+        'callback' => 'bat_event_ui_ajax_event_status_change',
+        'wrapper' => 'replace_textfield_div',
+      ),
+      '#empty_option' => t('- Select -'),
+    );
+  }
+  else {
+    if (isset($type_bundle->default_event_value_field_ids[$event_type])) {
+      $field_name = $type_bundle->default_event_value_field_ids[$event_type];
+
+      $form['field_name'] = array(
+        '#type' => 'hidden',
+        '#value' => $field_name,
+      );
+
+      $field = field_info_field($field_name);
+      $instance = field_info_instance('bat_event', $field_name, $event_type);
+
+      $widget = field_default_form('bat_event', NULL, $field, $instance, LANGUAGE_NONE, NULL, $form, $form_state);
+
+      $form[$field_name] = $widget[$field_name];
+      $form[$field_name]['#weight'] = 1;
+
+      $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Save'),
+        '#weight' => 2,
+      );
+    }
+  }
 
   return $form;
 }
@@ -378,6 +405,36 @@ function bat_event_ui_ajax_event_status_change($form, $form_state) {
   }
 
   return $form;
+}
+
+/**
+ *
+ */
+function bat_event_ui_event_manager_form_submit($form, &$form_state) {
+  global $user;
+
+  $start_date = $form_state['values']['bat_start_date'];
+  $end_date = $form_state['values']['bat_end_date'];
+  $unit_id = $form_state['values']['unit_id'];
+  $event_id = $form_state['values']['event_id'];
+  $event_type = $form_state['values']['event_type'];
+  $field_name = $form_state['values']['field_name'];
+
+  $event = bat_event_create(array('type' => $event_type));
+  $event->created = REQUEST_TIME;
+  $event->uid = $user->uid;
+
+  $event->start_date = $start_date->format('Y-m-d H:i');
+  // Always subtract one minute from the end time. FullCalendar provides
+  // start and end time with the assumption that the last minute is *excluded*
+  // while BAT deals with times assuming that the last minute is included.
+  $end_date->sub(new DateInterval('PT1M'));
+  $event->end_date = $end_date->format('Y-m-d H:i');
+
+  $event->event_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit_id;
+  $event->{$field_name} = $form_state['values'][$field_name];
+
+  $event->save();
 }
 
 /**

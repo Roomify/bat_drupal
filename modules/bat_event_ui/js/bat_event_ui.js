@@ -105,8 +105,8 @@ Drupal.behaviors.bat_event = {
 };
 
 /**
-* Initialize the modal box.
-*/
+ * Initialize the modal box.
+ */
 Drupal.BatEvent.Modal = function(element, eid, sd, ed, $unit_id) {
   Drupal.CTools.Modal.show('bat-modal-style');
   // base url the part that never change is used to identify our ajax instance
