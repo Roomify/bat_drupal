@@ -155,6 +155,21 @@ function bat_event_views_default_views() {
   $handler->display->display_options['fields']['operations']['table'] = 'bat_events';
   $handler->display->display_options['fields']['operations']['field'] = 'operations';
   $handler->display->display_options['fields']['operations']['hide_alter_empty'] = FALSE;
+  /* Filter criterion: Events: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'bat_events';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['group'] = 1;
+  $handler->display->display_options['filters']['type']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['type']['expose']['operator_id'] = 'type_op';
+  $handler->display->display_options['filters']['type']['expose']['label'] = 'Event Type';
+  $handler->display->display_options['filters']['type']['expose']['operator'] = 'type_op';
+  $handler->display->display_options['filters']['type']['expose']['identifier'] = 'type';
+  $handler->display->display_options['filters']['type']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+  );
   /* Filter criterion: Events: Events ID */
   $handler->display->display_options['filters']['event_id']['id'] = 'event_id';
   $handler->display->display_options['filters']['event_id']['table'] = 'bat_events';
@@ -239,6 +254,7 @@ function bat_event_views_default_views() {
   $handler->display->display_options['filters']['type_id']['table'] = 'bat_units';
   $handler->display->display_options['filters']['type_id']['field'] = 'type_id';
   $handler->display->display_options['filters']['type_id']['relationship'] = 'event_unit_reference_target_id';
+  $handler->display->display_options['filters']['type_id']['group'] = 1;
   $handler->display->display_options['filters']['type_id']['exposed'] = TRUE;
   $handler->display->display_options['filters']['type_id']['expose']['operator_id'] = 'type_id_op';
   $handler->display->display_options['filters']['type_id']['expose']['label'] = 'Unit Type';
