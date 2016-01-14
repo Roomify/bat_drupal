@@ -28,6 +28,7 @@ function bat_unit_entity_info() {
     'entity keys' => array(
       'id' => 'unit_id',
       'bundle' => 'type',
+      'label' => 'name',
     ),
     // Bundles are defined by the unit bundles below.
     'bundles' => array(),
@@ -834,7 +835,9 @@ class BatUnit extends Entity {
   }
 
   /**
-   * @return
+   * Get all constraints relative to this unit.
+   *
+   * @return mixed
    */
   public function getConstraints() {
     $constraints = module_invoke_all('bat_unit_constraints', $this);
