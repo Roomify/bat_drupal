@@ -360,8 +360,12 @@ function bat_event_ui_event_manager_form($form, $form_state, $unit, $event_type,
 
       $form['submit'] = array(
         '#type' => 'submit',
-        '#value' => t('Save'),
+        '#value' => t('Update value'),
         '#weight' => 2,
+        '#ajax' => array(
+          'callback' => 'bat_event_ui_event_manager_form_submit',
+          'wrapper' => 'replace_textfield_div',
+        ),
       );
     }
   }
@@ -401,14 +405,19 @@ function bat_event_ui_ajax_event_status_change($form, $form_state) {
     $event->save();
 
     $state_options = bat_unit_state_options($event_type);
-    $form['form_wrapper_bottom']['#markup'] = t('New Event state is <strong>@state</strong>.', array('@state' => $state_options[$state_id]));
+    $form['form_wrapper_bottom'] = array(
+      '#prefix' => '<div>',
+      '#markup' => t('New Event state is <strong>@state</strong>.', array('@state' => $state_options[$state_id])),
+      '#suffix' => '</div>',
+      '#weight' => 9,
+    );
   }
 
   return $form;
 }
 
 /**
- *
+ * The callback for the change_event_status widget of the event manager form.
  */
 function bat_event_ui_event_manager_form_submit($form, &$form_state) {
   global $user;
@@ -435,6 +444,20 @@ function bat_event_ui_event_manager_form_submit($form, &$form_state) {
   $event->{$field_name} = $form_state['values'][$field_name];
 
   $event->save();
+
+  $unit = bat_unit_load($unit_id);
+  $bat_type = bat_type_load($unit->type_id);
+
+  $value = field_view_value('bat_type', $bat_type, $field_name, $form_state['values'][$field_name][LANGUAGE_NONE][0]);
+
+  $form['form_wrapper_bottom'] = array(
+    '#prefix' => '<div>',
+    '#markup' => t('Value for @name changed to @value', array('@name' => $unit->name, '@value' => $value['#markup'])),
+    '#suffix' => '</div>',
+    '#weight' => 9,
+  );
+
+  return $form;
 }
 
 /**
