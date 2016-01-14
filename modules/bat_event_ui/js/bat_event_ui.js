@@ -98,6 +98,10 @@ Drupal.behaviors.bat_event = {
           if (event.rendering == 'background' && event.fixed == 0) {
             el.append('<span class="fc-title">' + (event.title || '&nbsp;') + '</span>');
           }
+        },
+        eventOverlap: function(stillEvent, movingEvent) {
+          // Prevent events from being drug over blocking events.
+          return !stillEvent.blocking;
         }
       });
     });
