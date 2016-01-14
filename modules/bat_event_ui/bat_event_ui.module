@@ -179,18 +179,16 @@ function bat_event_ui_menu() {
     'title' => 'Calendar',
     'page callback' => 'bat_event_ui_calendar_page',
     'page arguments' => array(3, 4),
-    'access callback' => 'bat_unit_access',
-    'access arguments' => array('update availability', 4),
+    'access arguments' => array('administer calendar events'),
     'type' => MENU_CALLBACK,
     'weight' => 20,
   );
 
-  $items['admin/bat/units/unit/%bat_unit/event'] = array(
+  $items['admin/bat/calendar/%bat_unit/event'] = array(
     'title' => 'Event Management',
     'page callback' => 'bat_event_ui_event_manager_page',
-    'page arguments' => array(4),
-    'access callback' => 'bat_unit_access',
-    'access arguments' => array('update availability', 4),
+    'page arguments' => array(3),
+    'access arguments' => array('administer calendar events'),
     'type' => MENU_CALLBACK,
     'weight' => 30,
   );
@@ -229,7 +227,6 @@ function bat_event_ui_event_manager_page($unit, $event_type, $event_id = NULL, $
 
   // Process start and end date.
   $sd = new DateTime($start_date);
-
   $ed = new DateTime($end_date);
 
   if ($event_id > 0) {
