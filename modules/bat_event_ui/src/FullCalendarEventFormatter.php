@@ -61,12 +61,13 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
         'title' => $state_info['calendar_label'],
         'color' => $state_info['color'],
         'blocking' => 1,
+        'fixed' => 1,
       );
 
         // Render non blocking events in the background.
       if ($state_info['blocking'] == 0) {
         $formatted_event['rendering'] = 'background';
-        $formatted_Event['blocking'] == 0;
+        $formatted_event['blocking'] = 0;
       }
 
     }
@@ -81,6 +82,7 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
         'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
         'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
         'title' => $bat_unit->formatEventValue($this->event_type->type, $default_value),
+        'fixed' => 0,
       );
 
       if ($event->getValue() < 100) {
