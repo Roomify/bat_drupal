@@ -29,48 +29,57 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
    * {@inheritdoc}
    */
   public function format(EventInterface $event) {
-    $ev_type = bat_event_type_load($this->event_type);
-
+    // Load the unit entity from Drupal
     $bat_unit = bat_unit_load($event->getUnitId());
-    $default_value = $bat_unit->getEventDefaultValue($this->event_type);
 
-    if ($ev_type->fixed_event_states) {
-      $state_event = bat_event_load_state($event->getValue());
+    // Get the unit entity default value
+    $default_value = $bat_unit->getEventDefaultValue($this->event_type->type);
 
-      if ($state_event === FALSE) {
-        $default_state = bat_event_load_state($default_value);
+    // This is the value actually stored in the event if the event is represented
+    // in the database
+    $value = 0;
 
-        $formatted_event = array(
-          'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
-          'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
-          'title' => $default_state['calendar_label'],
-          'color' => $default_state['color'],
-        );
+    // If we are dealing with fixed event states then we need to load the
+    // info regarding that state so as to format our event
+    if ($this->event_type->fixed_event_states) {
 
-        // Render non blocking events in the background.
-        if ($default_state['blocking'] == 0) {
-          $formatted_event['rendering'] = 'background';
-        }
+      // Get the default state info which will provide the default value for formatting
+      $state_info = bat_event_load_state($default_value);
+
+      // However if the event is in the database then load the actual event and get it's value
+      if (!$event->getValue() == 0) {
+        // Load the event from the database to get the actual state and load that info
+        $bat_event = bat_event_load($event->getValue());
+        $temp_value = $bat_event->getEventValue();
+        $state_info = bat_event_load_state($bat_event->getEventValue());
       }
-      else {
-        $formatted_event = array(
-          'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
-          'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
-          'title' => $state_event['calendar_label'],
-          'color' => $state_event['color'],
-        );
 
-        // Non blocking event render as background.
-        if ($state_event['blocking'] == 0) {
-          $formatted_event['rendering'] = 'background';
-        }
-      }
-    }
-    else {
+
       $formatted_event = array(
         'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
         'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
-        'title' => $bat_unit->formatEventValue($this->event_type, $event->getValue()),
+        'title' => $state_info['calendar_label'],
+        'color' => $state_info['color'],
+      );
+
+        // Render non blocking events in the background.
+      if ($state_info['blocking'] == 0) {
+        $formatted_event['rendering'] = 'background';
+      }
+
+    }
+    // If this is not a fixed state event deal with it here
+    else {
+
+      if (!$event->getValue() == 0) {
+        $bat_event = bat_event_load($event->getValue());
+        // Change the default value to the one that the event actually stores in the entity
+        $default_value = $bat_event->getEventValue();
+      }
+      $formatted_event = array(
+        'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
+        'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
+        'title' => $bat_unit->formatEventValue($this->event_type->type, $default_value),
       );
 
       if ($event->getValue() < 100) {
@@ -81,7 +90,7 @@ class FullCalendarEventFormatter extends AbstractEventFormatter {
       }
     }
 
-    $formatted_event['type'] = $this->event_type;
+    $formatted_event['type'] = $this->event_type->type;
 
     return $formatted_event;
   }

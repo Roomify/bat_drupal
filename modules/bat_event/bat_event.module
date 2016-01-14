@@ -287,6 +287,7 @@ function bat_event_get_states($event_type = NULL) {
 }
 
 /**
+ * Returns information about the configuration of a given fixed event state
  * @param $state_id
  *
  * @return array
@@ -957,6 +958,68 @@ class BatEvent extends Entity {
 
   protected function defaultUri() {
     return array('path' => 'event/' . $this->event_id);
+  }
+
+  /**
+   * Returns the value stored for this event in a way that BAT can work with it
+   * @return mixed
+   */
+  public function getEventValue() {
+    if ($field = $this->getEventValueField()) {
+      $field_info = field_info_field($field);
+      $values = field_get_items('bat_event', $this, $field);
+
+      if (!empty($values)) {
+        if ($field_info['type'] == 'bat_event_state_reference') {
+          return $values[0]['state_id'];
+        }
+        elseif ($field_info['type'] == 'commerce_price') {
+          return $values[0]['amount'];
+        }
+        elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer') {
+          return $values[0]['value'];
+        }
+      }
+      else {
+        return FALSE;
+      }
+    }
+  }
+
+  /**
+   * Returns the formatter that can format the event value
+   *
+   * @return string|FALSE
+   */
+  public function getEventValueFormatter() {
+    if ($field = $this->getEventValueDefaultField()) {
+      $field_info_instance = field_info_instance('bat_event_type', $field, $this->type);
+
+      if (isset($field_info_instance['display']['default']['type'])) {
+        return $field_info_instance['display']['default']['type'];
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Determines which field holds the event value
+   *
+   * @return string|FALSE
+   */
+  public function getEventValueField() {
+    $type_bundle = bat_event_type_load($this->type);
+
+    if (isset($type_bundle->default_event_value_field_ids[$this->type])) {
+      return $type_bundle->default_event_value_field_ids[$this->type];
+    }
+
+    if ($type_bundle->fixed_event_states == 1) {
+      return 'event_state_reference';
+    }
+
+    return FALSE;
   }
 
 }

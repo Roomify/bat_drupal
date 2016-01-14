@@ -78,7 +78,7 @@ Drupal.behaviors.bat_event = {
           var ed = event.end.format('YYYY-MM-DD HH:mm');
 
           // Open the modal for edit
-          Drupal.BatEvent.Modal(view, event.id, sd, ed, unit_id);
+          Drupal.BatEvent.Modal(view, event.bat_id, sd, ed, unit_id);
         },
         select: function(start, end, jsEvent, view, resource) {
           var unit_id = resource.id.substring(1);
