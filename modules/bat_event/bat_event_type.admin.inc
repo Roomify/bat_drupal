@@ -113,7 +113,7 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
       '#type' => 'select',
       '#title' => t('Select your default @event field', array('@event' => $event_type->label)),
       '#options' => $fields_options,
-      '#default_value' => isset($event_type->default_event_value_field_idsa[$event_type->type]) ? $event_type->default_event_value_field_ids[$event_type->type] : NULL,
+      '#default_value' => isset($event_type->default_event_value_field_ids[$event_type->type]) ? $event_type->default_event_value_field_ids[$event_type->type] : NULL,
       '#empty_option' => t('- Select a field -'),
     );
   }
