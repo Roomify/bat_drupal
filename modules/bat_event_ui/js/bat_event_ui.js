@@ -102,6 +102,42 @@ Drupal.behaviors.bat_event = {
         eventOverlap: function(stillEvent, movingEvent) {
           // Prevent events from being drug over blocking events.
           return !stillEvent.blocking;
+        },
+        eventDrop: function(event, delta, revertFunc) {
+          // The event has been moved - attempt to update it.
+          var unit_id = event.resourceId.substring(1);
+
+          // Get session token.
+          $.ajax({
+            url:"/services/session/token",
+            type:"get",
+            dataType:"text",
+            error:function (jqXHR, textStatus, errorThrown) {
+              alert(errorThrown);
+            },
+            success: function (token) {
+              // Update event, using session token.
+              var events_url = '/bat/v2/events';
+              console.log(events_url);
+              $.ajax({
+                type: "PUT",
+                url: events_url + '/' + event.bat_id,
+                data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), unit_id: unit_id}),
+                dataType: 'json',
+                beforeSend: function (request) {
+                  request.setRequestHeader("X-CSRF-Token", token);
+                },
+                contentType: 'application/json',
+                error: function (jqXHR, textStatus, errorThrown) {
+                  alert(errorThrown);
+                  revertFunc();
+                },
+                success: function (data) {
+                  alert('Event Saved!');
+                }
+              });
+            }
+          });
         }
       });
     });
