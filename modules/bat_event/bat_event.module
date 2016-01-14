@@ -1057,14 +1057,13 @@ class BatEventController extends EntityAPIController {
   public function create(array $values = array()) {
     $event_type = bat_event_type_load($values['type'], TRUE);
 
-    // Add values that are specific to our unit.
+    // Add values that are specific to our event.
     $values += array(
       'event_id' => '',
       'is_new' => TRUE,
       'title' => '',
       'created' => '',
       'changed' => '',
-      'order_id' => '',
       'data' => array(),
     );
 
