@@ -259,18 +259,6 @@ function bat_event_edit_form($form, &$form_state, $event) {
   // The unit reference value should be mandatory.
   $form['event_unit_reference'][$language][0]['target_id']['#required'] = TRUE;
 
-  // Set an #ajax callback for start/end date elements for edited events.
-  if (is_numeric($event->event_id)) {
-    $form['bat_date_range']['bat_start_date']['#ajax'] = array(
-      'callback' => 'bat_event_date_ajax_callback',
-      'event' => 'blur',
-    );
-    $form['bat_date_range']['bat_end_date']['#ajax'] = array(
-      'callback' => 'bat_event_date_ajax_callback',
-      'event' => 'blur',
-    );
-  }
-
   // Management vertical tabs.
   $form['additional_settings'] = array(
     '#type' => 'vertical_tabs',
@@ -506,7 +494,13 @@ function bat_event_edit_form_submit(&$form, &$form_state) {
   // If we are dealing with a new event.
   if ($form_state['bat_event']->event_id == '') {
 
-    $event = bat_event_create(array('type' => $form_state['bat_event']->type));
+    $event = bat_event_create(
+      array(
+      'type' => $form_state['bat_event']->type,
+      'start_date' => $form_state['values']['start_date'],
+      'end_date' => $form_state['values']['end_date']
+      )
+    );
     $form_state['bat_event'] = $event;
 
     $event = entity_ui_controller('bat_event')->entityFormSubmitBuildEntity($form, $form_state);
@@ -517,12 +511,8 @@ function bat_event_edit_form_submit(&$form, &$form_state) {
     $event = entity_ui_controller('bat_event')->entityFormSubmitBuildEntity($form, $form_state);
   }
 
-  // Subtract one minute from the end date if it is on an hour.
-  // We do this to store the data in the format that Bat expects,
-  // without end users seeing things like 23:59.
-  if ($event->end_date_object->format('i') == '00') {
-    $event->end_date_object->sub(new DateInterval('PT1M'));
-  }
+  // Subtract one minute from the end date since BAT considers the last minute of an event included
+  $event->end_date_object->sub(new DateInterval('PT1M'));
 
   // Add in created and changed times.
   $event->created = !empty($event->date) ? strtotime($event->date) : REQUEST_TIME;
