@@ -18,5 +18,3 @@ files[] = views/bat_event_handler_event_operations_field.inc
 files[] = views/bat_event_handler_event_type_field.inc
 files[] = views/bat_event_handler_date_filter.inc
 files[] = views/bat_event_handler_nights_field.inc
-files[] = views/bat_unit_handler_type_id_filter.inc
-files[] = views/bat_unit_handler_type_id_field.inc

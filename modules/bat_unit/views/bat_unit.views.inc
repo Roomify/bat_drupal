@@ -81,6 +81,9 @@ function bat_unit_views_data_alter(&$data) {
     ),
   );
 
+  $data['bat_units']['type_id']['filter']['handler'] = 'bat_unit_handler_type_id_filter';
+  $data['bat_units']['type_id']['field']['handler'] = 'bat_unit_handler_type_id_field';
+
   // Views alterations for Bat Types.
   $data['bat_types']['link_type'] = array(
     'field' => array(

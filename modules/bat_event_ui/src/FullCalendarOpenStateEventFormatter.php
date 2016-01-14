@@ -45,6 +45,7 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
       'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
       'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
       'title' => $bat_unit->formatEventValue($this->event_type->type, $default_value),
+      'blocking' => 0,
       'fixed' => 0,
     );
 
