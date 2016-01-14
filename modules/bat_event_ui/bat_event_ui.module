@@ -166,19 +166,6 @@ function bat_event_ui_permission() {
     ),
   );
 
-  // Generate permissions per unit bundle.
-  foreach (bat_unit_get_types() as $type) {
-    $type_name = check_plain($type->type);
-    $permissions += array(
-      'update availability own bat_unit entities of bundle ' . $type_name => array(
-        'title' => t('Edit availability own %type_name units', array('%type_name' => $type->label)),
-      ),
-      'update availability any bat_unit entity of bundle ' . $type_name => array(
-        'title' => t('Edit availability any %type_name unit', array('%type_name' => $type->label)),
-      ),
-    );
-  }
-
   return $permissions;
 }
 
