@@ -362,14 +362,11 @@ function bat_event_ui_ajax_event_status_change($form, $form_state) {
     $event->uid = $user->uid;
 
     $event->start_date = $start_date->format('Y-m-d H:i');
-    // Subtract one minute from the end date if it is on an hour.
-    // We do this to store the data in the format that Bat expects,
-    // without end users seeing things like 23:59.
-    if ($end_date->format('i') == '00') {
-      $end_date->sub(new DateInterval('PT1M'));
-    }
+    // Always subtract one minute from the end time. FullCalendar provides
+    // start and end time with the assumption that the last minute is *excluded*
+    // while BAT deals with times assuming that the last minute is included.
+    $end_date->sub(new DateInterval('PT1M'));
     $event->end_date = $end_date->format('Y-m-d H:i');
-    dsm($event);
 
     $event->event_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit_id;
     $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $state_id;
