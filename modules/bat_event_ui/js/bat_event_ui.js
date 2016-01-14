@@ -86,7 +86,6 @@ Drupal.behaviors.bat_event = {
           var ed = end.format('YYYY-MM-DD HH:mm');
           var sd = start.format('YYYY-MM-DD HH:mm');
 
-
           // Open the modal for edit
           Drupal.BatEvent.Modal(this, 0, sd, ed, unit_id);
           $(value[0]).fullCalendar('unselect');
@@ -94,6 +93,11 @@ Drupal.behaviors.bat_event = {
         eventRender: function(event, el, view) {
           // Remove Time from events.
           el.find('.fc-time').remove();
+
+          // Append event title when rendering as background.
+          if (event.rendering == 'background') {
+            el.append('<span class="fc-title">' + (event.title || '&nbsp;') + '</span>');
+          }
         }
       });
     });
