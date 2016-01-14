@@ -95,7 +95,7 @@ Drupal.behaviors.bat_event = {
           el.find('.fc-time').remove();
 
           // Append event title when rendering as background.
-          if (event.rendering == 'background') {
+          if (event.rendering == 'background' && event.fixed == 0) {
             el.append('<span class="fc-title">' + (event.title || '&nbsp;') + '</span>');
           }
         }
