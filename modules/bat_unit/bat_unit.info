@@ -7,7 +7,6 @@ package = BAT
 dependencies[] = bat
 dependencies[] = ctools
 dependencies[] = entity
-dependencies[] = image
 dependencies[] = views
 dependencies[] = views_bulk_operations
 dependencies[] = views_megarow
