@@ -73,8 +73,8 @@ function bat_facets_availability($form, &$form_state, $elements) {
   $datepicker_options = array(
     // Limit bookings to X days in advance, depending on the
     // chosen configuration in your BAT installation, defaults
-    // to one day in advance.
-    'minDate' => '+' . variable_get('bat_event_start_date', 1) . 'd',
+    // to the current day.
+    'minDate' => '+' . variable_get('bat_event_start_date', 0) . 'd',
   );
 
   $form['container']['arrival'] = array(
@@ -101,7 +101,7 @@ function bat_facets_availability($form, &$form_state, $elements) {
         array(
           'data' => array(
             'bat' => array(
-              'batBookingStartDay' => variable_get('bat_event_start_date', 1),
+              'batBookingStartDay' => variable_get('bat_event_start_date', 0),
               'batDateFormat' => 'dd/mm/yy',
 
               // Here we create a listing of all datepickers registered on the
