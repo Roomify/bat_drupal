@@ -136,7 +136,6 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
  * Form API submit callback for the event type form.
  */
 function bat_event_type_form_submit(&$form, &$form_state) {
-
   if (isset($form_state['values']['events'][$form_state['values']['type']])) {
     foreach ($form_state['values']['events'] as $event => $field) {
       $form_state['bat_event_type']->default_event_value_field_ids[$event] = $field;
@@ -147,7 +146,6 @@ function bat_event_type_form_submit(&$form, &$form_state) {
   // Save and go back.
   $event_type->save();
   $form_state['redirect'] = 'admin/bat/events/event-types';
-
 }
 
 /**

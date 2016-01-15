@@ -8,13 +8,13 @@
  */
 
 /**
- *
+ * @param $units
  */
 function hook_bat_global_constraints($units) {
 }
 
 /**
- *
+ * @param $unit
  */
 function hook_bat_unit_constraints($unit) {
 }

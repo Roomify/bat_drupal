@@ -189,9 +189,11 @@ function bat_type_form_wrapper($type) {
   // Add the breadcrumb for the form's location.
   bat_type_type_set_breadcrumb();
   drupal_set_title(t('Edit @type_name', array('@type_name' => $type->name)));
+
   $type->date = format_date($type->created, 'custom', 'Y-m-d H:i:s O');
   $account = user_load($type->uid);
   $type->author_name = isset($account->name) ? $account->name : '';
+
   return drupal_get_form('bat_type_edit_form', $type);
 }
 
@@ -206,10 +208,12 @@ function bat_type_create_form_wrapper($type) {
 
   // Add the breadcrumb for the form's location.
   bat_type_type_set_breadcrumb();
+
   $type = bat_type_create(array('type' => $type, 'uid' => $user->uid));
   $type->created = REQUEST_TIME;
   $type->author_name = $user->name;
   $type->status = 1;
+
   return drupal_get_form('bat_type_edit_form', $type);
 }
 
@@ -224,11 +228,13 @@ function bat_type_add_units_form_wrapper($type, $unit_type) {
 
   // Add the breadcrumb for the form's location.
   bat_type_type_set_breadcrumb();
+
   $unit_model = bat_unit_create(array('type' => $unit_type, 'uid' => $user->uid));
   $unit_model->type_id = $type->type_id;
   $unit_model->created = REQUEST_TIME;
   $unit_model->author_name = $user->name;
   $unit_model->status = 1;
+
   return drupal_get_form('bat_type_add_units_form', $unit_model);
 }
 
@@ -245,6 +251,7 @@ function bat_type_delete_form_wrapper($type) {
   bat_type_type_set_breadcrumb();
   return drupal_get_form('bat_type_delete_form', $type);
 }
+
 /**
  * Form callback: create or edit a type.
  *
@@ -365,6 +372,7 @@ function bat_type_edit_form($form, &$form_state, $type) {
   // We append the validate handler to #validate in case a form callback_wrapper
   // is used to add validate handlers earlier.
   $form['#validate'][] = 'bat_type_edit_form_validate';
+
   return $form;
 }
 

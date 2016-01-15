@@ -121,9 +121,11 @@ function bat_unit_form_wrapper($unit) {
   // Add the breadcrumb for the form's location.
   bat_unit_set_breadcrumb();
   drupal_set_title(t('Edit @unit_name', array('@unit_name' => $unit->name)));
+
   $unit->date = format_date($unit->created, 'custom', 'Y-m-d H:i:s O');
   $account = user_load($unit->uid);
   $unit->author_name = isset($account->name) ? $account->name : '';
+
   return drupal_get_form('bat_unit_edit_form', $unit);
 }
 
@@ -137,10 +139,12 @@ function bat_unit_create_form_wrapper($type) {
   global $user;
   // Add the breadcrumb for the form's location.
   bat_unit_set_breadcrumb();
+
   $unit = bat_unit_create(array('type' => $type, 'uid' => $user->uid));
   $unit->created = REQUEST_TIME;
   $unit->author_name = $user->name;
   $unit->status = 1;
+
   return drupal_get_form('bat_unit_edit_form', $unit);
 }
 
@@ -155,6 +159,7 @@ function bat_unit_create_form_wrapper($type) {
 function bat_unit_delete_form_wrapper($unit) {
   // Add the breadcrumb for the form's location.
   bat_unit_set_breadcrumb();
+
   return drupal_get_form('bat_unit_delete_form', $unit);
 }
 
@@ -281,6 +286,7 @@ function bat_unit_edit_form($form, &$form_state, $unit) {
   // We append the validate handler to #validate in case a form callback_wrapper
   // is used to add validate handlers earlier.
   $form['#validate'][] = 'bat_unit_edit_form_validate';
+
   return $form;
 }
 
@@ -290,6 +296,7 @@ function bat_unit_edit_form($form, &$form_state, $unit) {
 function bat_unit_edit_form_validate(&$form, &$form_state) {
   // Notify field widgets to validate their data.
   entity_form_field_validate('bat_unit', $form, $form_state);
+
   if (!empty($form_state['values']['multiple']) && (!is_numeric($form_state['values']['multiple'])|| $form_state['values']['multiple'] < 1)) {
     form_set_error('Multiple units error', t('%name: you must enter at least 1 as the number of multiple units.', array('%name' => t('Multiple units'))));
   }
@@ -300,6 +307,7 @@ function bat_unit_edit_form_validate(&$form, &$form_state) {
  */
 function bat_unit_edit_form_submit(&$form, &$form_state) {
   $units = array();
+
   if ($form_state['bat_unit']->unit_id == '') {
     $name = $form_state['values']['name'];
     $unit = bat_unit_create(array('type' => $form_state['bat_unit']->type));
@@ -336,7 +344,6 @@ function bat_unit_edit_form_submit(&$form, &$form_state) {
   else {
     $form_state['redirect'] = 'admin/bat/config/units';
   }
-
 }
 
 /**
@@ -356,6 +363,7 @@ function bat_unit_form_submit_delete(&$form, &$form_state) {
  */
 function bat_unit_delete_form($form, &$form_state, $unit) {
   $form_state['bat_unit'] = $unit;
+
   $form['#submit'][] = 'bat_unit_delete_form_submit';
   $form = confirm_form($form,
     t('Are you sure you want to delete Unit %name?', array('%name' => $unit->name)),
@@ -365,6 +373,7 @@ function bat_unit_delete_form($form, &$form_state, $unit) {
     t('Cancel'),
     'confirm'
   );
+
   return $form;
 }
 
@@ -374,8 +383,10 @@ function bat_unit_delete_form($form, &$form_state, $unit) {
 function bat_unit_delete_form_submit($form, &$form_state) {
   $unit = $form_state['bat_unit'];
   bat_unit_delete($unit);
+
   drupal_set_message(t('The unit %name has been deleted.', array('%name' => $unit->name)));
   watchdog('bat', 'Deleted unit %name.', array('%name' => $unit->name));
+
   $form_state['redirect'] = 'admin/bat/config/units';
 }
 
@@ -384,6 +395,7 @@ function bat_unit_delete_form_submit($form, &$form_state) {
  */
 function bat_unit_add_page() {
   $controller = entity_ui_controller('bat_unit');
+
   return $controller->addPage();
 }
 
@@ -394,6 +406,7 @@ function bat_unit_add_page() {
  */
 function theme_bat_unit_add_list($variables) {
   $content = $variables['content'];
+
   $output = '';
   if ($content) {
     $output = '<dl class="unit-type-list">';
@@ -411,6 +424,7 @@ function theme_bat_unit_add_list($variables) {
       $output = '<p>' . t('No unit types have been created yet for you to use.') . '</p>';
     }
   }
+
   return $output;
 }
 
@@ -424,5 +438,6 @@ function bat_unit_set_breadcrumb() {
     l(t('bat'), 'admin/bat'),
     l(t('bat'), 'admin/bat/config/units'),
   );
+
   drupal_set_breadcrumb($breadcrumb);
 }

@@ -608,7 +608,6 @@ function bat_form_values_get_start_end_dates($form_state) {
  */
 function bat_form_start_end_dates_validate($form, &$form_state) {
   list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
-  $single_day = FALSE;
 
   // Fail validation if no dates are provided.
   if (empty($start_date) || empty($end_date)) {
@@ -616,12 +615,8 @@ function bat_form_start_end_dates_validate($form, &$form_state) {
     return;
   }
 
-  if ($form_state['values']['form_id'] == 'update_unit_pricing_form') {
-    $single_day = TRUE;
-  }
-
   // Check date validity.
-  $errors = bat_check_dates_validity($start_date, $end_date, $single_day);
+  $errors = bat_check_dates_validity($start_date, $end_date);
 
   // For some forms we need to ensure that the selected date matches with current values.
   if (isset($form_state['values']['curr_month']) && isset($form_state['values']['curr_year'])) {

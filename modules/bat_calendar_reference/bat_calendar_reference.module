@@ -108,8 +108,6 @@ function bat_calendar_reference_field_formatter_prepare_view($entity_type, $enti
 
 /**
  * Implements hook_field_formatter_view().
- *
- * @todo parametrize date range
  */
 function bat_calendar_reference_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
 
@@ -277,22 +275,38 @@ function bat_calendar_reference_field_settings_form($field, $instance, $has_data
  * Implements hook_field_validate().
  */
 function bat_calendar_reference_field_validate($entity_type, $entity, $field, $instance, $langcode, $items, &$errors) {
-  // Extract unit ids to check.
-  $ids = array();
-
   // Check for non-numeric values.
   // First check non-numeric "nid's to avoid losing time with them.
   foreach ($items as $delta => $item) {
-    if (is_array($item) && !empty($item['unit'])) {
-      if (is_numeric($item['unit'])) {
-        $ids[] = $item['unit'];
+    if (is_array($item)) {
+      if (!empty($item['unit_id'])) {
+        if (!is_numeric($item['unit_id'])) {
+          $errors[$field['field_name']][$langcode][$delta][] = array(
+            'error' => 'invalid_unit',
+            'message' => t('%name: invalid input.',
+              array('%name' => $instance['label'])),
+          );
+        }
       }
-      else {
-        $errors[$field['field_name']][$langcode][$delta][] = array(
-          'error' => 'invalid_unit',
-          'message' => t('%name: invalid input.',
-            array('%name' => $instance['label'])),
-        );
+
+      if (!empty($item['unit_type_id'])) {
+        if (!is_numeric($item['unit_type_id'])) {
+          $errors[$field['field_name']][$langcode][$delta][] = array(
+            'error' => 'invalid_unit_type',
+            'message' => t('%name: invalid input.',
+              array('%name' => $instance['label'])),
+          );
+        }
+      }
+
+      if (!empty($item['event_type_id'])) {
+        if (!is_numeric($item['event_type_id'])) {
+          $errors[$field['field_name']][$langcode][$delta][] = array(
+            'error' => 'invalid_event_type',
+            'message' => t('%name: invalid input.',
+              array('%name' => $instance['label'])),
+          );
+        }
       }
     }
   }
@@ -300,14 +314,6 @@ function bat_calendar_reference_field_validate($entity_type, $entity, $field, $i
 
 /**
  * Retrieves an array of candidate referenceable booking units.
- *
- * This info is used in various places (allowed values, autocomplete
- * results, input validation...). Some of them only need the nids,
- * others nid + titles, others yet nid + titles + rendered row (for
- * display in widgets).
- *
- * The array we return contains all the potentially needed information,
- * and lets consumers use the parts they actually need.
  *
  * @param array $field
  *   The field definition.
@@ -425,6 +431,10 @@ function _bat_calendar_reference_units_potential_references($field, $options) {
   return $references;
 }
 
+/**
+ * @param $field
+ * @param $options
+ */
 function bat_calendar_reference_event_types_potential_references($field, $options = array()) {
   // Fill in default options.
   $options += array(
@@ -455,7 +465,8 @@ function bat_calendar_reference_event_types_potential_references($field, $option
 }
 
 /**
- *
+ * @param $field
+ * @param $options
  */
 function _bat_calendar_reference_event_types_potential_references($field, $options) {
   // Avoid useless work.
@@ -513,6 +524,10 @@ function _bat_calendar_reference_event_types_potential_references($field, $optio
   return $references;
 }
 
+/**
+ * @param $field
+ * @param $options
+ */
 function bat_calendar_reference_unit_types_potential_references($field, $options = array()) {
   // Fill in default options.
   $options += array(
@@ -543,7 +558,8 @@ function bat_calendar_reference_unit_types_potential_references($field, $options
 }
 
 /**
- *
+ * @param $field
+ * @param $options
  */
 function _bat_calendar_reference_unit_types_potential_references($field, $options) {
   // Avoid useless work.
@@ -561,7 +577,7 @@ function _bat_calendar_reference_unit_types_potential_references($field, $option
 
   if (is_array($field['settings']['referenceable_event_types'])) {
     if (!empty(array_filter($field['settings']['referenceable_event_types']))) {
-      $query->condition('u.id', array_filter($field['settings']['referenceable_event_types']), 'IN');
+      $query->condition('u.type_id', array_filter($field['settings']['referenceable_event_types']), 'IN');
     }
   }
 
@@ -828,7 +844,7 @@ function bat_calendar_reference_event_type_autocomplete_value($element, $input =
 }
 
 /**
- *
+ * Validate unit.
  */
 function bat_calendar_reference_autocomplete_unit_validate($element, &$form_state, $form) {
   $parents = $element['#array_parents'];
@@ -874,7 +890,7 @@ function bat_calendar_reference_autocomplete_unit_validate($element, &$form_stat
 }
 
 /**
- *
+ * Validate unit type.
  */
 function bat_calendar_reference_autocomplete_unit_type_validate($element, &$form_state, $form) {
   $parents = $element['#array_parents'];
@@ -920,7 +936,7 @@ function bat_calendar_reference_autocomplete_unit_type_validate($element, &$form
 }
 
 /**
- *
+ * Validate event type.
  */
 function bat_calendar_reference_autocomplete_event_type_validate($element, &$form_state, $form) {
   $parents = $element['#array_parents'];
