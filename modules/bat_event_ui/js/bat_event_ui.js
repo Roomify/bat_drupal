@@ -117,7 +117,13 @@ Drupal.behaviors.bat_event = {
           return !stillEvent.blocking && (stillEvent.type == movingEvent.type);
         },
         eventDrop: function(event, delta, revertFunc) {
-          saveBatEvent(event, revertFunc, calendars);
+          // Prevent events from being dropped over unit types row.
+          if (event.resourceId.match(/^S[0-9]+$/)) {
+            saveBatEvent(event, revertFunc, calendars);
+          }
+          else {
+            revertFunc();
+          }
         },
         eventResize: function(event, delta, revertFunc) {
           saveBatEvent(event, revertFunc, calendars);
