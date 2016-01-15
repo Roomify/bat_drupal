@@ -6,7 +6,7 @@ BAT stands for Booking and Availability Management Tools.
 
 BAT for Drupal is a wrapper and UI around BAT. It is build by the [Roomify.us](https://roomify.us) team to provide a foundation through which a wide range of availability management, reservation and booking use cases can be addressed. BAT for Drupal will work with both Drupal 7 and Drupal 8.
 
-BAT builds on our experience with [Rooms](http://drupal.org/project/rooms), which handles the problem of bookings specifically for the accommodation for rental use case(vacation rentals, hotels, B&B, etc). BAT is essentially a tool to allow you to build modules like Rooms and much much more. It handles events with daily or down to the minute granularity. 
+BAT builds on our experience with [Rooms](http://drupal.org/project/rooms), which handles the problem of bookings specifically for the accommodation for rental use case(vacation rentals, hotels, B&B, etc). BAT is essentially a tool to allow you to build modules like Rooms and much more. It handles events with daily or down to the minute granularity. 
 
 As such BAT is a **booking and availability management framework** - much in the same way Drupal is a content management framework and Drupal Commerce is an e-commerce framework. Our aim is to build specific solutions on top of BAT to tackle specific application domains.
 
@@ -33,15 +33,20 @@ The core booking and availability management functionality is provided through a
 
 ### Drupal Modules
 
-Before enabling BAT you are going to need to download the following modules
+Before enabling BAT you are going to need to download at least the following modules
+- CTools
+- Entity
+- Views
+- Entity Reference
 - Date
 - Date Popup
 - JQuery Update
 - Libraries
 - Variable
 - XAutoload
-- Composer Manager
+- Composer Manager (this makes it easier to manage the BAT PHP library)
 - Views Megarow
+- BAT API
 
 ### External Libraries
 
@@ -52,16 +57,29 @@ To display calendars and dates we use the following libraries:
 - MomentJS - http://momentjs.com/ - The [moment.js](http://momentjs.com/downloads/moment.min.js) library should be placed in sites/all/libraries so that you end up with the file located here: sites/all/libraries/moment/moment.min.js
 
 ## Configuration
- - Enable all the BAT modules
- - The BAT API module is in a separate project - http://drupal.org/project/bat_api - and you need branch 7.x-2.x
+ - Enable at least BAT, BAT Unit, BAT Event and BAT Event UI (if you want to view events on a calendar)
+ - For BAT Event UI to work you need the BAT API module which is in a separate project - http://drupal.org/project/bat_api - *and you need branch 7.x-2.x*
  - Make sure to set the jQuery for the admin theme to at least 1.10 by visiting *admin/config/development/jquery_update*
+ 
+## Setup
 
-### Creating Bat Units
-The first thing you will want to do is create a bookable unit which you can then manage the availability of.
+- Create an Event Type - events store information about what state (or value) a unit has over a given period. For example if you want to manage the availability state of units you can create an Event Type called "Availability" - tell BAT that this is a fixed state event type and then (under the States Type of Event Type configuration) add three states "Available", "Unavailable" and "Booked" - by making the Booked state blocking you will ensure that you can edit it from the Calendar and it is not overridden by state changes. 
 
-Visit *admin/config/bat/unit-bundles* to create a unit. Bookable units are basic entities that you can manage the permissions off and add any fields you require.
+- With an Event Type in place we can now create a Unit Type Bundle - this describes the types of unit types that your booking application handles. For example if you are managing a hotel with hotel rooms and conference rooms you would create one unit type bundle for Hotel Rooms and another for Conference Rooms.
 
-### Pricing
-To add price information to your bookable units you will need to:
-- Add a Commerce Price field to your Bookable Unit Entity Bundle.
-- Under *bat/config/unit-bundles/<yourunitbundle>* make sure that you have the correct price field selected under the pricing tab.
+- You can now create Types. These are the types of units for each bundle you created above. So you can create Hotel Rooms of Type Standard and Hotel Rooms of Type Deluxe.
+
+- Finally for each type you can add actual units - you are now telling the application how many things of type Standard or Deluxe you have available. 
+
+- Almost there! Your units will have default values for things like availability or cost. You let BAT know about these default values by doing two things.
+
+- 1. Add a field on your unit type bundle called (e.g.) Default Availability of type BAT Availability Reference. This is a field type BAT creates that allows you to reference the availability states of an Event. In this case we will reference the Event Type we created before.
+
+- 2. Go to "bat/config/type-bundles/" and edit your Unit Type Bundle once more and in the Events tab select the field_default_availability (or whatever you called it). This tells BAT that this field holds the information for default availability.
+
+- Now you can edit your types and define what their default availability is. 
+
+- You can now visit the "admin/bat/unit-management" page and should see a link to the Calendar pages (if you enabled the bat_event_ui module). There you can create and edit the availability state of your units and create bookings!
+
+
+Admittedly it is not simple. However BAT is a tool to build booking tools. We are now using BAT to rebuild our [Rooms](http://drupal.org/project/rooms). BAT makes no assumption and attempts to provide as much flexibility as is possible!
