@@ -149,39 +149,77 @@ function saveBatEvent(event, revertFunc, calendars) {
   // The event has been moved - attempt to update it.
   var unit_id = event.resourceId.substring(1);
 
-  // Get session token.
-  $.ajax({
-    url:"/services/session/token",
-    type:"get",
-    dataType:"text",
-    error:function (jqXHR, textStatus, errorThrown) {
-      alert(errorThrown);
-    },
-    success: function (token) {
-      // Update event, using session token.
-      var events_url = '/bat/v2/events';
-      $.ajax({
-        type: "PUT",
-        url: events_url + '/' + event.bat_id,
-        data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), unit_id: unit_id}),
-        dataType: 'json',
-        beforeSend: function (request) {
-          request.setRequestHeader("X-CSRF-Token", token);
-        },
-        contentType: 'application/json',
-        error: function (jqXHR, textStatus, errorThrown) {
-          alert(errorThrown);
-          revertFunc();
-        },
-        success: function (data) {
-          // Refresh calendar events if the event is saved successfully.
+  // Retrieve all events for the unit and time we're dragging onto.
+  var events_url = '/bat/v2/events?unit_ids=' + unit_id + '&start_date=' + event.start.format('YYYY-MM-DD HH:mm') +
+                   '&end_date=' + event.end.format('YYYY-MM-DD HH:mm') + '&event_types=' + event.type;
+  proceed = true;
+  jQuery.ajax({
+    url: events_url,
+    success: function(data) {
+      // Iterate over each event.
+      $.each(data.events, function(index, existingEvent) {
+        if (proceed && existingEvent.blocking && (existingEvent.bat_id != event.bat_id)) {
+          // This is a blocking event that is not the one we're dragging, bail out!
+          alert('It appears that a conflicting event has been created. Refreshing events.');
+          proceed = false;
+          // Refresh calendar events to show the conflicting event.
           $.each(calendars, function(key, value) {
             $(value[0]).fullCalendar('refetchEvents');
           });
         }
       });
-    }
+    },
+    failure: function() {
+      alert('Could not verify that this change is possible. Please try again.');
+      proceed = false;
+    },
+    async: false
   });
+
+  // Only save the event if we didn't find any conflicts.
+  if (proceed == true) {
+    // Get session token.
+    $.ajax({
+      url:"/services/session/token",
+      type:"get",
+      dataType:"text",
+      error:function (jqXHR, textStatus, errorThrown) {
+        alert(errorThrown);
+      },
+      success: function (token) {
+        // Update event, using session token.
+        var events_url = '/bat/v2/events';
+        $.ajax({
+          type: "PUT",
+          url: events_url + '/' + event.bat_id,
+          data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), unit_id: unit_id}),
+          dataType: 'json',
+          beforeSend: function (request) {
+            request.setRequestHeader("X-CSRF-Token", token);
+          },
+          contentType: 'application/json',
+          error: function (jqXHR, textStatus, errorThrown) {
+            alert(errorThrown);
+            revertFunc();
+          },
+          success: function (request) {
+            // Refresh calendar events.
+            $.each(calendars, function(key, value) {
+              $(value[0]).fullCalendar('refetchEvents');
+            });
+          }
+        });
+      }
+    });
+  }
+  else {
+    // We found a conflict, revert the event to its previous position.
+    revertFunc();
+    // Refresh calendar events.
+    $.each(calendars, function(key, value) {
+      $(value[0]).fullCalendar('refetchEvents');
+    });
+  }
 }
 
 })(jQuery);
