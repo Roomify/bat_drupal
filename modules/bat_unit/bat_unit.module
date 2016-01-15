@@ -519,12 +519,30 @@ function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
 */
 function bat_unit_bundles_ids() {
   $unit_bundles = array();
+
   $bundles = bat_unit_get_bundles();
   foreach ($bundles as $bundle) {
     $unit_bundles[$bundle->type] = $bundle->label;
   }
 
   return $unit_bundles;
+}
+
+/**
+ * Helper function to easily get unit types in an array for use in forms, etc.
+ *
+ * @return array
+ *  An array of unit types keyed by type id and labels
+*/
+function bat_unit_types_ids() {
+  $unit_types = array();
+
+  $types = bat_unit_get_types();
+  foreach ($types as $type) {
+    $unit_types[$type->type_id] = $type->name;
+  }
+
+  return $unit_types;
 }
 
 /**

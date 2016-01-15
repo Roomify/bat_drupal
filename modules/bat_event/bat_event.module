@@ -677,6 +677,23 @@ function bat_event_query_bat_event_access_alter(QueryAlterableInterface $query) 
 }
 
 /**
+ * Helper function to easily get event types in an array for use in forms, etc.
+ *
+ * @return array
+ *  An array of event types keyed by type id and labels
+*/
+function bat_event_types_ids() {
+  $event_types = array();
+
+  $types = bat_event_get_types();
+  foreach ($types as $type) {
+    $event_types[$type->id] = $type->label;
+  }
+
+  return $event_types;
+}
+
+/**
  * Gets an array of all event types, keyed by the type name.
  *
  * @param string $type_name
