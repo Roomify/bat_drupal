@@ -136,6 +136,8 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
 
           if ($type = bat_event_type_load($item['event_type_id'])) {
             $event_type = $type->type;
+
+            $event_granularity = $type->event_granularity;
           }
         }
 
@@ -161,6 +163,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
           $js_settings[$id] = array(
             'unitTypes' => $unit_type_ids,
             'eventType' => $event_type,
+            'eventGranularity' => $event_granularity,
             'firstDay' => intval(variable_get('date_first_day', 0)),
             'schedulerLicenseKey' => $schedulerlicensekey,
           );

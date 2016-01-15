@@ -6,6 +6,7 @@
       var today = moment();
 
       var views = 'timelineDay, timelineTenDay, timelineMonth, timelineYear';
+      var defaultView = 'timelineMonth';
 
       businessHours = {
         start: '00:00',
@@ -13,11 +14,18 @@
         dow: [0, 1, 2, 3, 4, 5, 6],
       };
 
-      defaultView = 'timelineMonth';
-
       $('.cal').once('cal', function() {
         var lastSource;
         var cal_id = $(this).siblings('.availability-title').attr('id');
+
+        if (Drupal.settings.batCalendarReference[cal_id].eventGranularity == 'bat_daily') {
+          views = 'timelineMonth, timelineYear';
+          defaultView = 'timelineMonth';
+        }
+        else if (Drupal.settings.batCalendarReference[cal_id].eventGranularity == 'bat_hourly') {
+          views = 'timelineDay, timelineTenDay, timelineMonth';
+          defaultView = 'timelineDay';
+        }
 
         $(this).fullCalendar({
           schedulerLicenseKey: Drupal.settings.batCalendarReference[cal_id].schedulerLicenseKey,
