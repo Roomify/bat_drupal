@@ -655,9 +655,14 @@ function bat_calendar_reference_field_widget_info() {
  * Implements hook_field_widget_form().
  */
 function bat_calendar_reference_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $widget = array(
+    '#theme_wrappers' => array('container', 'form_element'),
+    '#attributes' => array('class' => array('container-inline')),
+  );
+
   switch ($instance['widget']['type']) {
     case 'bat_calendar_reference_unit_autocomplete':
-      $element['unit'] = array(
+      $widget['unit_id'] = array(
         '#type' => 'textfield',
         '#title' => t('Unit'),
         '#default_value' => isset($items[$delta]['unit_id']) ? $items[$delta]['unit_id'] : NULL,
@@ -666,10 +671,9 @@ function bat_calendar_reference_field_widget_form(&$form, &$form_state, $field, 
         '#maxlength' => 255,
         '#element_validate' => array('bat_calendar_reference_autocomplete_unit_validate'),
         '#value_callback' => 'bat_calendar_reference_unit_autocomplete_value',
-        '#prefix' => '<div class="container-inline">',
       );
 
-      $element['event_type'] = array(
+      $widget['event_type_id'] = array(
         '#type' => 'textfield',
         '#title' => t('Event type'),
         '#default_value' => isset($items[$delta]['event_type_id']) ? $items[$delta]['event_type_id'] : NULL,
@@ -678,15 +682,12 @@ function bat_calendar_reference_field_widget_form(&$form, &$form_state, $field, 
         '#maxlength' => 255,
         '#element_validate' => array('bat_calendar_reference_autocomplete_event_type_validate'),
         '#value_callback' => 'bat_calendar_reference_event_type_autocomplete_value',
-        '#suffix' => '</div>',
       );
 
-      return array('unit_id' => $element['unit'], 'event_type_id' => $element['event_type']);
+      break;
 
     case 'bat_calendar_reference_unit_type_autocomplete':
-      $element['#type'] = 'fieldset';
-
-      $element['unit_type'] = array(
+      $widget['unit_type_id'] = array(
         '#type' => 'textfield',
         '#title' => t('Unit type'),
         '#default_value' => isset($items[$delta]['unit_type_id']) ? $items[$delta]['unit_type_id'] : NULL,
@@ -695,10 +696,9 @@ function bat_calendar_reference_field_widget_form(&$form, &$form_state, $field, 
         '#maxlength' => 255,
         '#element_validate' => array('bat_calendar_reference_autocomplete_unit_type_validate'),
         '#value_callback' => 'bat_calendar_reference_unit_type_autocomplete_value',
-        '#prefix' => '<div class="container-inline">',
       );
 
-      $element['event_type'] = array(
+      $widget['event_type_id'] = array(
         '#type' => 'textfield',
         '#title' => t('Event type'),
         '#default_value' => isset($items[$delta]['event_type_id']) ? $items[$delta]['event_type_id'] : NULL,
@@ -707,11 +707,12 @@ function bat_calendar_reference_field_widget_form(&$form, &$form_state, $field, 
         '#maxlength' => 255,
         '#element_validate' => array('bat_calendar_reference_autocomplete_event_type_validate'),
         '#value_callback' => 'bat_calendar_reference_event_type_autocomplete_value',
-        '#suffix' => '</div>',
       );
 
-      return array('unit_type_id' => $element['unit_type'], 'event_type_id' => $element['event_type']);
+      break;
   }
+
+  return $element + $widget;
 }
 
 /**
@@ -778,8 +779,12 @@ function bat_calendar_reference_event_type_autocomplete_value($element, $input =
  *
  */
 function bat_calendar_reference_autocomplete_unit_validate($element, &$form_state, $form) {
-  $field = field_widget_field($element, $form_state);
-  $instance = field_widget_instance($element, $form_state);
+  $parents = $element['#array_parents'];
+  array_pop($parents);
+  $field_widget = drupal_array_get_nested_value($form, $parents);
+
+  $field = field_widget_field($field_widget, $form_state);
+  $instance = field_widget_instance($field_widget, $form_state);
 
   $value = $element['#value'];
   $unit_id = NULL;
@@ -820,8 +825,12 @@ function bat_calendar_reference_autocomplete_unit_validate($element, &$form_stat
  *
  */
 function bat_calendar_reference_autocomplete_unit_type_validate($element, &$form_state, $form) {
-  $field = field_widget_field($element, $form_state);
-  $instance = field_widget_instance($element, $form_state);
+  $parents = $element['#array_parents'];
+  array_pop($parents);
+  $field_widget = drupal_array_get_nested_value($form, $parents);
+
+  $field = field_widget_field($field_widget, $form_state);
+  $instance = field_widget_instance($field_widget, $form_state);
 
   $value = $element['#value'];
   $type_id = NULL;
@@ -862,8 +871,12 @@ function bat_calendar_reference_autocomplete_unit_type_validate($element, &$form
  *
  */
 function bat_calendar_reference_autocomplete_event_type_validate($element, &$form_state, $form) {
-  $field = field_widget_field($element, $form_state);
-  $instance = field_widget_instance($element, $form_state);
+  $parents = $element['#array_parents'];
+  array_pop($parents);
+  $field_widget = drupal_array_get_nested_value($form, $parents);
+
+  $field = field_widget_field($field_widget, $form_state);
+  $instance = field_widget_instance($field_widget, $form_state);
 
   $value = $element['#value'];
   $type_id = NULL;
