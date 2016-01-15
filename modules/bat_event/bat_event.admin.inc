@@ -194,11 +194,13 @@ function bat_event_delete_form_wrapper($event) {
  *     with only an event type defined.
  */
 function bat_event_edit_form($form, &$form_state, $event) {
+  if ($event->end_date_object) {
+    // We are about to display an event, so we to add a minute to then end date.
+    $event->end_date_object->add(new DateInterval('PT1M'));
 
-  // We are about to display an event so we are going to add a minute to end end time
-  $event->end_date_object->add(new DateInterval('PT1M'));
-  // and set the end date string to reflect the change
-  $event->end_date = $event->end_date_object->format('Y-m-d H:i:s');
+    // Re-set the end date string to reflect the change.
+    $event->end_date = $event->end_date_object->format('Y-m-d H:i:s');
+  }
 
   $form['#attributes']['class'][] = 'bat-management-form bat-event-form';
   $form['#attached'] = array(
