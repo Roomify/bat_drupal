@@ -178,7 +178,7 @@ function saveBatEvent(event, revertFunc, calendars) {
       $.each(data.events, function(index, existingEvent) {
         if (proceed && existingEvent.blocking && (existingEvent.bat_id != event.bat_id)) {
           // This is a blocking event that is not the one we're dragging, bail out!
-          alert('It appears that a conflicting event has been created. Refreshing events.');
+          alert(Drupal.t('It appears that a conflicting event has been created. Refreshing events.'));
           proceed = false;
           // Refresh calendar events to show the conflicting event.
           $.each(calendars, function(key, value) {
@@ -188,7 +188,7 @@ function saveBatEvent(event, revertFunc, calendars) {
       });
     },
     failure: function() {
-      alert('Could not verify that this change is possible. Please try again.');
+      alert(Drupal.t('Could not verify that this change is possible. Please try again.'));
       proceed = false;
     },
     async: false

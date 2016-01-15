@@ -14,7 +14,7 @@ class bat_unit_handler_type_id_filter extends views_handler_filter_many_to_one {
     $types = bat_unit_get_types();
 
     $options = array();
-    foreach($types as $type) {
+    foreach ($types as $type) {
       $options[$type->type_id] = $type->name;
     }
 

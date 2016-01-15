@@ -112,7 +112,7 @@ class BatTypeUIController extends EntityDefaultUIController {
     );
 
     $items[$this->path . '/type/' . $wildcard . '/units/add'] = array(
-      'title' => t('Add Units'),
+      'title' => 'Add Units',
       'page callback' => 'bat_type_add_units_page',
       'page arguments' => array(5),
       'access arguments' => array('create bat_unit entities'),
@@ -555,7 +555,8 @@ function bat_type_add_units_form($form, &$form_state, $unit_model) {
 function bat_type_add_units_form_validate($form, &$form_state) {
   if (empty($form_state['values']['units'])) {
     form_set_error('units', t('Please enter the number of units to add.'));
-  } elseif (!is_numeric($form_state['values']['units'])) {
+  }
+  elseif (!is_numeric($form_state['values']['units'])) {
     form_set_error('units', t('Please enter a valid number of units to add.'));
   }
 }
