@@ -375,7 +375,6 @@ function bat_event_edit_form($form, &$form_state, $event) {
   // the behavior of the cancel button
   if (isset($form_state['ajax']) && $form_state['ajax'] == TRUE) {
     unset($form['actions']['cancel']);
-    unset($form['actions']['delete']);
   }
   else {
     $form['actions']['cancel'] = array(

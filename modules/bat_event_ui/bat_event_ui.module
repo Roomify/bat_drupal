@@ -250,7 +250,17 @@ function bat_event_ui_event_manager_page($unit, $event_type, $event_id = NULL, $
     // Wrap the form via ctools modal.
     $output = ctools_modal_form_wrapper('bat_event_edit_form', $form_state);
     if ($form_state['executed']) {
-      $output = array(ctools_modal_command_dismiss());
+      if (!empty($form_state['event_deleted'])) {
+        // If there are messages for the form, render them.
+        $messages = theme('status_messages');
+
+        $output = array();
+        // If the form has not yet been rendered, render it.
+        $output[] = ctools_modal_command_display(t('Event deleted'), $messages);
+      }
+      else {
+        $output = array(ctools_modal_command_dismiss());
+      }
     }
 
     print ajax_render($output);
