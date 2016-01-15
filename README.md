@@ -52,12 +52,12 @@ Before enabling BAT you are going to need to download at least the following mod
 
 To display calendars and dates we use the following libraries:
 
-- Fullcalendar - http://fullcalendar.io/ - You need to [download the following zip](https://github.com/arshaw/fullcalendar/releases/download/v2.6.0/fullcalendar-2.6.0.zip) an unpack in libraries in a directory called fullcalendar
-- Fullcalendar Scheduler - http://fullcalendar.io/ - You need to [download the following zip](https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.2.0/fullcalendar-scheduler-1.2.0.zip) an unpack in libraries in a directory called fullcalendar-scheduler. Please note that scheduler is a premium add-on to fullcalendar, and you must purchase a license if you intend to use it in a commercial project. See: [Scheduler License Information](http://fullcalendar.io/scheduler/license/) (Scheduler is not developed by Roomify)
-- MomentJS - http://momentjs.com/ - The [moment.js](http://momentjs.com/downloads/moment.min.js) library should be placed in sites/all/libraries so that you end up with the file located here: sites/all/libraries/moment/moment.min.js
+- Fullcalendar - http://fullcalendar.io/ - You need to [download the following zip](https://github.com/arshaw/fullcalendar/releases/download/v2.6.0/fullcalendar-2.6.0.zip) and unpack it in your site's libraries directory, in a directory called fullcalendar
+- Fullcalendar Scheduler - http://fullcalendar.io/ - You need to [download the following zip](https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.2.0/fullcalendar-scheduler-1.2.0.zip) and unpack in your site's libraries directory in a directory called fullcalendar-scheduler. Please note that scheduler is a premium add-on to fullcalendar, and you must purchase a license if you intend to use it in a commercial project. See: [Scheduler License Information](http://fullcalendar.io/scheduler/license/) (Scheduler is not developed by Roomify)
+- MomentJS - http://momentjs.com/ - The [moment.js](http://momentjs.com/downloads/moment.min.js) library should be placed in your site's library directory under the moment directory, so that you end up with the file located here: <library path>/moment/moment.min.js
 
 ## Configuration
- - Enable at least BAT, BAT Unit, BAT Event and BAT Event UI (if you want to view events on a calendar)
+ - Enable at least the BAT, BAT Unit, BAT Event and BAT Event UI modules (if you want to view events on a calendar)
  - For BAT Event UI to work you need the BAT API module which is in a separate project - http://drupal.org/project/bat_api - *you need branch 7.x-2.x*
  - Make sure to set the jQuery for the admin theme to at least 1.10 by visiting *admin/config/development/jquery_update*
 
