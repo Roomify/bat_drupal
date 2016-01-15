@@ -140,7 +140,7 @@ function bat_event_schema() {
         'default' => '',
       ),
       'event_granularity' => array(
-        'description' => 'Event Granularity (daily/hourly).',
+        'description' => 'Event Granularity (bat_daily/bat_hourly).',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,

@@ -470,15 +470,16 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   // Add styles.
   bat_event_ui_modal_style();
 
-  drupal_add_library('system', 'drupal.vertical-tabs');
-
   $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_event_ui.js';
   $css_file = drupal_get_path('module', 'bat_event_ui') . '/css/bat_event_ui.css';
 
-  // Show full day events on calendar.
-  if (variable_get('bat_calendar_events_view', '0') == '1') {
-    $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_event_full_day.js';
+  if ($type = bat_event_type_load($event_type)) {
+    $event_granularity = $type->event_granularity;
   }
+  else {
+    $event_granularity = 'both';
+  }
+
   return array(
     '#theme' => 'bat_one_month_calendar',
     '#form' => drupal_get_form('bat_event_ui_event_type_form'),
@@ -489,7 +490,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
       'js' => array(
         $js_file,
         array(
-          'data' => array('batEvent' => array('unitType' => $unit_type, 'eventType' => $event_type)),
+          'data' => array('batEvent' => array('unitType' => $unit_type, 'eventType' => $event_type, 'eventGranularity' => $event_granularity)),
           'type' => 'setting',
         ),
       ),
@@ -572,7 +573,6 @@ function bat_event_ui_preprocess_bat_one_month_calendar(&$vars) {
 
   // Load FullCalendar.
   bat_event_ui_library_loaded('fullcalendar-scheduler', 'source');
-
 
   // Add css styles for one-month-calendar.
   drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_one_month_calendar.css');

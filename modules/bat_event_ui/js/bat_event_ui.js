@@ -7,6 +7,18 @@ Drupal.BatEvent.Modal = Drupal.BatEvent.Modal || {};
 Drupal.behaviors.bat_event = {
   attach: function(context) {
 
+    var views = 'timelineDay, timelineTenDay, timelineMonth, timelineYear';
+    var defaultView = 'timelineDay';
+
+    if (Drupal.settings.batEvent.eventGranularity == 'bat_daily') {
+      views = 'timelineMonth, timelineYear';
+      defaultView = 'timelineMonth';
+    }
+    else if (Drupal.settings.batEvent.eventGranularity == 'bat_hourly') {
+      views = 'timelineDay, timelineTenDay, timelineMonth';
+      defaultView = 'timelineDay';
+    }
+
     openingTime = '';
 
     if (openingTime.length === 0) {
@@ -47,10 +59,10 @@ Drupal.behaviors.bat_event = {
         header:{
           left: 'today, prev, next',
           center: 'title',
-          right: 'timelineDay, timelineTenDay, timelineMonth, timelineYear',
+          right: views,
         },
         businessHours: businessHours,
-        defaultView: 'timelineDay',
+        defaultView: defaultView,
         views: {
           timelineDay: {
             buttonText: ':15 slots',
