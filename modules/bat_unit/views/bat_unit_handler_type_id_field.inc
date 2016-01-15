@@ -6,15 +6,16 @@
  * for unit bundles.
  */
 
+class bat_unit_handler_type_id_field extends views_handler_field {
 
-class bat_unit_handler_unit_bundle_field extends views_handler_field {
   function construct() {
     parent::construct();
   }
 
   function render($values) {
-    $unit_bundle = bat_unit_bundle_load($values->bat_units_type);
-    return $unit_bundle->label;
+    if ($type = bat_type_load($this->get_value($values))) {
+      return $type->name;
+    }
   }
 
 }

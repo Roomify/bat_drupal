@@ -86,8 +86,8 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
   $form['event_granularity'] = array(
     '#type' => 'select',
     '#title' => t('Event Granularity'),
-    '#options' => array('daily' => t('Daily'), 'hourly' => t('Hourly')),
-    '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granularity : 'daily',
+    '#options' => array('bat_daily' => t('Daily'), 'bat_hourly' => t('Hourly')),
+    '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granularity : 'bat_daily',
   );
 
 
@@ -113,7 +113,7 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
       '#type' => 'select',
       '#title' => t('Select your default @event field', array('@event' => $event_type->label)),
       '#options' => $fields_options,
-      '#default_value' => isset($event_type->data[$event_type->type]) ? $event_type->data[$event_type->type] : NULL,
+      '#default_value' => isset($event_type->default_event_value_field_ids[$event_type->type]) ? $event_type->default_event_value_field_ids[$event_type->type] : NULL,
       '#empty_option' => t('- Select a field -'),
     );
   }
@@ -139,7 +139,7 @@ function bat_event_type_form_submit(&$form, &$form_state) {
 
   if (isset($form_state['values']['events'][$form_state['values']['type']])) {
     foreach ($form_state['values']['events'] as $event => $field) {
-      $form_state['bat_event_type']->data[$event] = $field;
+      $form_state['bat_event_type']->default_event_value_field_ids[$event] = $field;
     }
   }
 

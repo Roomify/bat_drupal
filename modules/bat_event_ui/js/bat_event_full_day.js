@@ -92,8 +92,8 @@ Drupal.behaviors.bat_availability = {
 };
 
 /**
-* Initialize the modal box.
-*/
+ * Initialize the modal box.
+ */
 Drupal.BatAvailability.Modal = function(element, eid, sd, ed) {
   // prepare the modal show with the bat-availability settings.
   Drupal.CTools.Modal.show('bat-modal-style');

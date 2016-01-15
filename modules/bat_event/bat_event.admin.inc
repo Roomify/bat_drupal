@@ -194,10 +194,17 @@ function bat_event_delete_form_wrapper($event) {
  *     with only an event type defined.
  */
 function bat_event_edit_form($form, &$form_state, $event) {
+  if ($event->end_date_object) {
+    // We are about to display an event, so we to add a minute to then end date.
+    $event->end_date_object->add(new DateInterval('PT1M'));
+
+    // Re-set the end date string to reflect the change.
+    $event->end_date = $event->end_date_object->format('Y-m-d H:i:s');
+  }
+
   $form['#attributes']['class'][] = 'bat-management-form bat-event-form';
   $form['#attached'] = array(
     'css' => array(
-      drupal_get_path('module', 'bat_event') . '/css/bat_event.css',
       drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css',
     ),
     'js' => array(drupal_get_path('module', 'bat') . '/js/bat_date_popup.js'),
@@ -258,18 +265,6 @@ function bat_event_edit_form($form, &$form_state, $event) {
 
   // The unit reference value should be mandatory.
   $form['event_unit_reference'][$language][0]['target_id']['#required'] = TRUE;
-
-  // Set an #ajax callback for start/end date elements for edited events.
-  if (is_numeric($event->event_id)) {
-    $form['bat_date_range']['bat_start_date']['#ajax'] = array(
-      'callback' => 'bat_event_date_ajax_callback',
-      'event' => 'blur',
-    );
-    $form['bat_date_range']['bat_end_date']['#ajax'] = array(
-      'callback' => 'bat_event_date_ajax_callback',
-      'event' => 'blur',
-    );
-  }
 
   // Management vertical tabs.
   $form['additional_settings'] = array(
@@ -379,10 +374,8 @@ function bat_event_edit_form($form, &$form_state, $event) {
   // Depending on whether the form is in a popup or a normal page we need to change
   // the behavior of the cancel button
   if (isset($form_state['ajax']) && $form_state['ajax'] == TRUE) {
-    $form['actions']['cancel'] = array(
-      '#markup' => l(t('Cancel'), 'admin/bat/events', array('attributes' => array('class' => array('ctools-close-modal')))),
-      '#weight' => 50,
-    );
+    unset($form['actions']['cancel']);
+    unset($form['actions']['delete']);
   }
   else {
     $form['actions']['cancel'] = array(
@@ -392,7 +385,7 @@ function bat_event_edit_form($form, &$form_state, $event) {
   }
 
   $event_type = bat_event_type_load($event->type);
-  if ($event_type->event_granularity == 'hourly') {
+  if ($event_type->event_granularity == 'bat_hourly') {
     $form['bat_date_range']['bat_start_date']['#date_format'] = 'd/m/Y H:i';
     $form['bat_date_range']['bat_end_date']['#date_format'] = 'd/m/Y H:i';
   }
@@ -406,9 +399,9 @@ function bat_event_edit_form($form, &$form_state, $event) {
 }
 
 /**
- * Returns a list of unit types user can edit.
+ * Returns a list of unit bundles user can edit.
  */
-function bat_event_edit_form_get_unit_types() {
+function bat_event_edit_form_get_unit_bundles() {
   $efq = new EntityFieldQuery();
   $efq->entityCondition('entity_type', 'bat_unit');
   $efq->addTag('bat_availability_access');
@@ -426,13 +419,13 @@ function bat_event_edit_form_get_unit_types() {
 }
 
 /**
- * Returns a set of available units given a unit type, start and end dates.
+ * Returns a set of available units given a unit bundle, start and end dates.
  *
  * It makes special provisions for the currently selected unit - to consider
  * that as "available" as well.
  *
- * @param string $unit_type
- *   The unit type.
+ * @param string $unit_bundle
+ *   The unit bundle.
  * @param BatEvent $current_event
  *   The current event.
  * @param DateTime $start_date
@@ -443,13 +436,13 @@ function bat_event_edit_form_get_unit_types() {
  * @return array|int
  *   Array containing available units or integer to indicate error code.
  */
-function bat_event_edit_form_get_units($unit_type, $current_event, $start_date, $end_date) {
+function bat_event_edit_form_get_units($unit_bundle, $current_event, $start_date, $end_date) {
 
-  // Set the unit types,
-  $unit_types = array($unit_type);
+  // Set the unit bundles,
+  $unit_bundles = array($unit_bundle);
   $current_event_state = '';
 
-  $bookable_units = array();
+  $units = array();
 
   // The current unit for this event should also return as available.
   if (isset($current_event->event_status) && isset($current_event->event_id)) {
@@ -466,10 +459,10 @@ function bat_event_edit_form_get_units($unit_type, $current_event, $start_date, 
   }
 
   /*if (!empty($current_event->event_id)) {
-    $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array(bat_availability_assign_id($current_event->event_id, '0'), bat_availability_assign_id($current_event->event_id))), $unit_types);
+    $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array(bat_availability_assign_id($current_event->event_id, '0'), bat_availability_assign_id($current_event->event_id))), $unit_bundles);
   }
   else {
-    $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array($current_event_state)), $unit_types);
+    $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array($current_event_state)), $unit_bundles);
   }
   $available_units = $ac->checkAvailability(TRUE);*/
 
@@ -478,14 +471,14 @@ function bat_event_edit_form_get_units($unit_type, $current_event, $start_date, 
       foreach ($units_per_price as $price => $units) {
         foreach ($units as $unit_id => $unit) {
           if (bat_unit_access('update availability', $unit['unit'])) {
-            $bookable_units[$type][$price][$unit_id] = $unit;
+            $units[$type][$price][$unit_id] = $unit;
           }
         }
       }
     }
   }
 
-  return empty($bookable_units) ? BAT_NO_MATCH : $bookable_units;
+  return empty($units) ? BAT_NO_MATCH : $units;
 }
 
 /**
@@ -508,7 +501,13 @@ function bat_event_edit_form_submit(&$form, &$form_state) {
   // If we are dealing with a new event.
   if ($form_state['bat_event']->event_id == '') {
 
-    $event = bat_event_create(array('type' => $form_state['bat_event']->type));
+    $event = bat_event_create(
+      array(
+      'type' => $form_state['bat_event']->type,
+      'start_date' => $form_state['values']['start_date'],
+      'end_date' => $form_state['values']['end_date']
+      )
+    );
     $form_state['bat_event'] = $event;
 
     $event = entity_ui_controller('bat_event')->entityFormSubmitBuildEntity($form, $form_state);
@@ -518,6 +517,10 @@ function bat_event_edit_form_submit(&$form, &$form_state) {
   else {
     $event = entity_ui_controller('bat_event')->entityFormSubmitBuildEntity($form, $form_state);
   }
+
+  // Subtract one minute from the end date since BAT considers the last minute of an event included
+  $event->end_date_object->sub(new DateInterval('PT1M'));
+  $event->end_date = $event->end_date_object->format('Y-m-d H:i');
 
   // Add in created and changed times.
   $event->created = !empty($event->date) ? strtotime($event->date) : REQUEST_TIME;
@@ -609,7 +612,7 @@ function bat_event_add_page() {
 }
 
 /**
- * Displays the list of available unit types for unit creation.
+ * Displays the list of available unit bundles for unit creation.
  *
  * @ingroup themeable
  */

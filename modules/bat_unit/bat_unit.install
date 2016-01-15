@@ -10,12 +10,14 @@
  * Implements hook_install().
  */
 function bat_unit_install() {
+  bat_unit_install_create_default_unit_bundle();
 }
 
 /**
  * Implements hook_uninstall().
  */
 function bat_unit_uninstall() {
+  bat_unit_install_delete_default_unit_bundle();
 }
 
 /**
@@ -28,13 +30,19 @@ function bat_unit_schema() {
     'description' => 'The base table for Units.',
     'fields' => array(
       'unit_id' => array(
-        'description' => 'Primary Key: Identifier for a Bookable Unit.',
+        'description' => 'Primary Key: Identifier for a Unit.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
+      'type_id' => array(
+        'description' => 'Identifier for this unit\'s type.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
       'type' => array(
-        'description' => 'The {unit_type}.type of this Bookable Unit.',
+        'description' => 'The {unit_bundle}.type of this Unit.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
@@ -66,21 +74,14 @@ function bat_unit_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'bookable' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 1,
-        'size' => 'tiny',
-        'description' => 'Whether the unit is available for booking or not.',
-      ),
       'status' => array(
-        'description' => 'Boolean indicating whether the booking unit is published (visible to non-administrators).',
+        'description' => 'Boolean indicating whether the unit is published (visible to non-administrators).',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 1,
       ),
       'uid' => array(
-        'description' => 'The {users}.uid that created this booking.',
+        'description' => 'The {users}.uid that created this unit.',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
@@ -99,22 +100,22 @@ function bat_unit_schema() {
     ),
   );
 
-  $schema['bat_unit_type'] = array(
-    'description' => 'Stores information about defined unit types.',
+  $schema['bat_unit_bundle'] = array(
+    'description' => 'Stores information about defined unit bundles.',
     'fields' => array(
       'id' => array(
         'type' => 'serial',
         'not null' => TRUE,
-        'description' => 'Primary Key: Unique unit type identifier.',
+        'description' => 'Primary Key: Unique unit bundle identifier.',
       ),
       'type' => array(
-        'description' => 'The machine-readable name of this unit type.',
+        'description' => 'The machine-readable name of this unit bundle.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
       ),
       'label' => array(
-        'description' => 'The human-readable name of this unit type.',
+        'description' => 'The human-readable name of this unit bundle.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
@@ -125,14 +126,144 @@ function bat_unit_schema() {
         'not null' => TRUE,
         'default' => 0,
         'size' => 'tiny',
-        'description' => 'The weight of this unit type in relation to others.',
+        'description' => 'The weight of this unit bundle in relation to others.',
       ),
       'data' => array(
         'type' => 'text',
         'not null' => FALSE,
         'size' => 'big',
         'serialize' => TRUE,
-        'description' => 'A serialized array of additional data related to this unit type.',
+        'description' => 'A serialized array of additional data related to this unit bundle.',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0x01,
+        'size' => 'tiny',
+        'description' => 'The exportable status of the entity.',
+      ),
+      'module' => array(
+        'description' => 'The name of the providing module if the entity has been defined in code.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'unique keys' => array(
+      'type' => array('type'),
+    ),
+  );
+
+  $schema['bat_types'] = array(
+    'description' => 'The base table for Types.',
+    'fields' => array(
+      'type_id' => array(
+        'description' => 'Primary Key: Identifier for a Type.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'The {type_bundle}.type of this Type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'language' => array(
+        'description' => 'The language of the Type.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'name' => array(
+        'description' => 'The name of the Type - a human-readable identifier.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp when the Type was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the Type was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Boolean indicating whether the type is published (visible to non-administrators).',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'uid' => array(
+        'description' => 'The {users}.uid that created this type.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'data' => array(
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array of additional data.',
+      ),
+    ),
+    'primary key' => array('type_id'),
+    'indexes' => array(
+      'type' => array('type'),
+    ),
+  );
+
+  $schema['bat_type_bundle'] = array(
+    'description' => 'Stores information about defined type bundles.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique type bundle identifier.',
+      ),
+      'type' => array(
+        'description' => 'The machine-readable name of this type bundle.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'label' => array(
+        'description' => 'The human-readable name of this type bundle.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'weight' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'The weight of this type bundle in relation to others.',
+      ),
+      'data' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array of additional data related to this type bundle.',
+      ),
+      'default_event_value_field_ids' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array that stores this type bundle\'s default event field configuration.',
       ),
       'status' => array(
         'type' => 'int',
@@ -155,4 +286,24 @@ function bat_unit_schema() {
   );
 
   return $schema;
+}
+
+/**
+ * Create default unit bundle.
+ */
+function bat_unit_install_create_default_unit_bundle() {
+  $default_unit_bundle = bat_unit_bundle_create(array(
+    'type'  => 'default',
+    'label' => 'Default',
+  ));
+  $default_unit_bundle->save();
+}
+
+/**
+ * Create default unit bundle.
+ */
+function bat_unit_install_delete_default_unit_bundle() {
+  if ($default_unit_bundle = bat_unit_bundle_load('default')) {
+    $default_unit_bundle->delete();
+  }
 }

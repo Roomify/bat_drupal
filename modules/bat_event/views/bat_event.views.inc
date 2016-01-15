@@ -41,7 +41,7 @@ function bat_event_views_data_alter(&$data) {
   );
   $data['bat_events']['start_date'] = array(
     'title' => t('Start Date'),
-    'help' => t("A event's arrival date."),
+    'help' => t("A event's start date."),
     'field' => array(
       'float' => TRUE,
       'handler' => 'bat_event_handler_date_field',
@@ -53,7 +53,7 @@ function bat_event_views_data_alter(&$data) {
   );
   $data['bat_events']['end_date'] = array(
     'title' => t('End Date'),
-    'help' => t("A event's departure date."),
+    'help' => t("A event's end date."),
     'field' => array(
       'float' => TRUE,
       'handler' => 'bat_event_handler_date_field',

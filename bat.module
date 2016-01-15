@@ -23,6 +23,65 @@ function bat_permission() {
 }
 
 /**
+ * Implements hook_menu().
+ */
+function bat_menu() {
+  $items = array();
+
+  // Top level "BAT" container.
+  $items['admin/bat'] = array(
+    'title' => 'BAT',
+    'description' => 'Administer BAT.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+    'weight' => -7,
+  );
+
+  $items['admin/bat/config'] = array(
+    'title' => 'Configuration',
+    'description' => 'Configure settings and business rules for BAT management.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('configure bat settings'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 10,
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Main booking settings form.
+ */
+function bat_event_settings($form, &$form_state) {
+  // Management vertical tabs.
+  $form['bat_settings'] = array(
+    '#type' => 'vertical_tabs',
+    '#weight' => 99,
+    '#attached' => array(
+      'css' => array(
+        array(
+          'data' => '#bat-booking-settings .vertical-tabs .form-type-textfield input { width: auto; }',
+          'type' => 'inline',
+        ),
+      ),
+    ),
+  );
+
+  $form['bat_event_settings'] = array(
+    '#type' => 'fieldset',
+    '#group' => 'bat_settings',
+    '#title' => t('Booking settings'),
+  );
+
+  return system_settings_form($form);
+}
+
+
+/**
  * Generic access control for entities that BAT defines.
  *
  * @param string $op
@@ -250,7 +309,7 @@ function bat_entity_access_permissions($entity_type) {
 /**
  * Implements hook_query_alter().
  *
- * Enforces access control for bookable entities during database queries.
+ * Enforces access control for bat units during database queries.
  */
 function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL, $account = NULL, $op = 'view') {
   global $user;
@@ -395,8 +454,8 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
     'dateFormat' => 'dd/mm/yy',
     // Limit bookings to X days in advance according to the
     // chosen configuration in your BAT installation.
-    // Defaults to one day in advance.
-    'minDate' => '+' . variable_get('bat_event_start_date', 1) . 'd',
+    // Defaults to the current day.
+    'minDate' => '+' . variable_get('bat_event_start_date', 0) . 'd',
   );
 
   if ($year && $month) {
@@ -415,7 +474,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
   }
   else {
     $datepicker_options += array(
-      'minDate' => '+' . variable_get('bat_event_start_date', 1) . 'd',
+      'minDate' => '+' . variable_get('bat_event_start_date', 0) . 'd',
     );
   }
 
@@ -458,7 +517,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
             'bat' => array(
               'batStartYear' => $year,
               'batStartMonth' => $month,
-              'batBookingStartDay' => variable_get('bat_event_start_date', 1),
+              'batBookingStartDay' => variable_get('bat_event_start_date', 0),
               'batDateFormat' => 'dd/mm/yy',
 
               // Here we create a listing of all datepickers registered on the
