@@ -102,7 +102,7 @@ Drupal.behaviors.bat_event = {
         },
         eventOverlap: function(stillEvent, movingEvent) {
           // Prevent events from being drug over blocking events.
-          return !stillEvent.blocking;
+          return !stillEvent.blocking && (stillEvent.type == movingEvent.type);
         },
         eventDrop: function(event, delta, revertFunc) {
           saveBatEvent(event, revertFunc, calendars);
