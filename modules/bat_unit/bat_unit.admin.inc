@@ -241,9 +241,6 @@ function bat_unit_edit_form($form, &$form_state, $unit) {
     '#attributes' => array(
       'class' => array('unit-form-published'),
     ),
-    '#attached' => array(
-      'js' => array(drupal_get_path('module', 'bat_unit') . '/js/bat_unit.js'),
-    ),
     '#weight' => 95,
   );
   $form['options']['status'] = array(

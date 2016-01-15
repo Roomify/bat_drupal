@@ -1,6 +1,5 @@
 (function ($) {
 
-
   Drupal.behaviors.bat_calendar_reference = {
     attach: function(context) {
       var today = moment();
@@ -16,7 +15,7 @@
 
       $('.cal').once('cal', function() {
         var lastSource;
-        var cal_id = $(this).siblings('.availability-title').attr('id');
+        var cal_id = $(this).siblings('.calendar-title').attr('id');
 
         if (Drupal.settings.batCalendarReference[cal_id].eventGranularity == 'bat_daily') {
           views = 'timelineMonth, timelineYear';
@@ -70,10 +69,10 @@
 
       });
 
-
       // Resize takes care of some quirks on occasion
       $(window).resize();
 
     }
   };
+
 })(jQuery);

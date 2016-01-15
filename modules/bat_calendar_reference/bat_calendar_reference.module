@@ -10,9 +10,9 @@
  */
 function bat_calendar_reference_permission() {
   $permissions = array(
-    'reference unit availability' => array(
-      'title' => t('Reference unit availability'),
-      'description' => t('Allows users to embed availability information in other nodes.'),
+    'reference unit calendar events' => array(
+      'title' => t('Reference unit calendar events'),
+      'description' => t('Allows users to embed events information in other nodes.'),
     ),
   );
 
@@ -26,21 +26,21 @@ function bat_calendar_reference_menu() {
   $items['bat_calendar_reference/autocomplete/units/%/%/%'] = array(
     'page callback' => 'bat_calendar_reference_units_autocomplete',
     'page arguments' => array(3, 4, 5),
-    'access arguments' => array('reference unit availability'),
+    'access arguments' => array('reference unit calendar events'),
     'type' => MENU_CALLBACK,
   );
 
   $items['bat_calendar_reference/autocomplete/unit_types/%/%/%'] = array(
     'page callback' => 'bat_calendar_reference_unit_types_autocomplete',
     'page arguments' => array(3, 4, 5),
-    'access arguments' => array('reference unit availability'),
+    'access arguments' => array('reference unit calendar events'),
     'type' => MENU_CALLBACK,
   );
 
   $items['bat_calendar_reference/autocomplete/event_types/%/%/%'] = array(
     'page callback' => 'bat_calendar_reference_event_types_autocomplete',
     'page arguments' => array(3, 4, 5),
-    'access arguments' => array('reference unit availability'),
+    'access arguments' => array('reference unit calendar events'),
     'type' => MENU_CALLBACK,
   );
 
@@ -127,7 +127,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
 
         $unit_type_names = array();
         $unit_type_ids = array();
-        $id = drupal_html_id($field['field_name'] . '-availability-formatter');
+        $id = drupal_html_id($field['field_name'] . '-calendar-formatter');
         foreach ($items as $delta => $item) {
           if ($unit_type = bat_type_load($item['unit_type_id'])) {
             $unit_type_names[] = $unit_type->name;
@@ -143,7 +143,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
 
         if (!empty($unit_type_ids)) {
           $result[] = array(
-            '#prefix' => '<div id="' . $id . '" class="availability-title">',
+            '#prefix' => '<div id="' . $id . '" class="calendar-title">',
             '#markup' => '<h2>' . implode(', ', $unit_type_names) . '</h2>',
             '#suffix' => '</div>',
           );
@@ -178,7 +178,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
 
         $unit_names = array();
         $unit_ids = array();
-        $id = drupal_html_id($field['field_name'] . '-availability-formatter');
+        $id = drupal_html_id($field['field_name'] . '-calendar-formatter');
         foreach ($items as $delta => $item) {
           if ($unit = bat_unit_load($item['unit_id'])) {
             $unit_names[] = $unit->name;
@@ -194,7 +194,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
 
         if (!empty($unit_ids)) {
           $result[] = array(
-            '#prefix' => '<div id="' . $id . '" class="availability-title">',
+            '#prefix' => '<div id="' . $id . '" class="calendar-title">',
             '#markup' => '<h2>' . implode(', ', $unit_names) . '</h2>',
             '#suffix' => '</div>',
           );

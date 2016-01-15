@@ -509,21 +509,6 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
 }
 
 /**
- * Helper function to determine the $event style depending on permissions.
- */
-function bat_event_ui_get_style($event_style, $unit) {
-  $event_style = is_numeric($event_style) ? (int) $event_style : (int) BAT_EVENT_CALENDAR_ADMIN_STYLE;
-
-  // If user don't have 'view named availability information' permission.
-  if (!(user_access('view named availability information') || bat_unit_access('update availability', $unit))
-    && $event_style == BAT_EVENT_CALENDAR_ADMIN_STYLE) {
-    $event_style = (int) BAT_EVENT_CALENDAR_GENERIC_STYLE;
-  }
-
-  return $event_style;
-}
-
-/**
  * Define modal JS style and dependencies.
  */
 function bat_event_ui_modal_style() {

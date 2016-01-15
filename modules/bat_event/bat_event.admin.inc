@@ -349,12 +349,6 @@ function bat_event_edit_form($form, &$form_state, $event) {
     $submit += $form['#submit'];
   }
 
-  // Wrapper to show validation messages where the assigned dates are changed
-  // and the price is not re-assigned.
-  $form['availability_fieldset']['assigned_dates_msg'] = array(
-    '#markup' => '<div id="assigned-dates-msg"></div>',
-  );
-
   $form['actions']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save Event'),
@@ -395,89 +389,6 @@ function bat_event_edit_form($form, &$form_state, $event) {
   $form['#validate'][] = 'bat_event_edit_form_validate';
 
   return $form;
-}
-
-/**
- * Returns a list of unit bundles user can edit.
- */
-function bat_event_edit_form_get_unit_bundles() {
-  $efq = new EntityFieldQuery();
-  $efq->entityCondition('entity_type', 'bat_unit');
-  $efq->addTag('bat_availability_access');
-  $result = $efq->execute();
-  $entities = entity_load('bat_unit', array_keys($result['bat_unit']));
-  $types = array();
-  $all_types = bat_unit_get_types();
-  foreach ($entities as $entity) {
-    if (!isset($types[$entity->type])) {
-      $current_type = $all_types[$entity->type];
-      $types[$entity->type] = $current_type->label;
-    }
-  }
-  return $types;
-}
-
-/**
- * Returns a set of available units given a unit bundle, start and end dates.
- *
- * It makes special provisions for the currently selected unit - to consider
- * that as "available" as well.
- *
- * @param string $unit_bundle
- *   The unit bundle.
- * @param BatEvent $current_event
- *   The current event.
- * @param DateTime $start_date
- *   Start date.
- * @param DateTime $end_date
- *   End date.
- *
- * @return array|int
- *   Array containing available units or integer to indicate error code.
- */
-function bat_event_edit_form_get_units($unit_bundle, $current_event, $start_date, $end_date) {
-
-  // Set the unit bundles,
-  $unit_bundles = array($unit_bundle);
-  $current_event_state = '';
-
-  $units = array();
-
-  // The current unit for this event should also return as available.
-  if (isset($current_event->event_status) && isset($current_event->event_id)) {
-    $current_event_state = bat_availability_assign_id($current_event->event_id, $current_event->event_status);
-  }
-
-  $valid_states = array_keys(array_filter(variable_get('bat_valid_availability_states', drupal_map_assoc(array(BAT_AVAILABLE, BAT_ON_REQUEST)))));
-
-  if (variable_get('bat_price_calculation', BAT_PER_NIGHT) == BAT_PER_PERSON) {
-    $event_parameters = array(array('adults' => 1, 'children' => 0, 'childrens_age' => array()));
-  }
-  else {
-    $event_parameters = array(array('adults' => 1, 'children' => 0));
-  }
-
-  /*if (!empty($current_event->event_id)) {
-    $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array(bat_availability_assign_id($current_event->event_id, '0'), bat_availability_assign_id($current_event->event_id))), $unit_bundles);
-  }
-  else {
-    $ac = new AvailabilityAgent($start_date, $end_date, $event_parameters, 1, array_merge($valid_states, array($current_event_state)), $unit_bundles);
-  }
-  $available_units = $ac->checkAvailability(TRUE);*/
-
-  if (is_array($available_units)) {
-    foreach ($available_units as $type => $units_per_price) {
-      foreach ($units_per_price as $price => $units) {
-        foreach ($units as $unit_id => $unit) {
-          if (bat_unit_access('update availability', $unit['unit'])) {
-            $units[$type][$price][$unit_id] = $unit;
-          }
-        }
-      }
-    }
-  }
-
-  return empty($units) ? BAT_NO_MATCH : $units;
 }
 
 /**

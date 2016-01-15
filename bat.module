@@ -623,9 +623,7 @@ function bat_form_start_end_dates_validate($form, &$form_state) {
   // Check date validity.
   $errors = bat_check_dates_validity($start_date, $end_date, $single_day);
 
-  // For some forms, such as bat_availability_pricing_update_form and
-  // bat_availability_update_status_form, we need to ensure that the selected
-  // date matches with current values.
+  // For some forms we need to ensure that the selected date matches with current values.
   if (isset($form_state['values']['curr_month']) && isset($form_state['values']['curr_year'])) {
     $curr_month = $form_state['values']['curr_month'];
     $curr_year = $form_state['values']['curr_year'];
