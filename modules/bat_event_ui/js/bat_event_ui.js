@@ -65,7 +65,7 @@ Drupal.behaviors.bat_event = {
         resourceLabelText: 'Rooms',
         resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batEvent.unitType,
         selectOverlap: function(event) {
-          // allowing selections over background events but not allowing selections over any other types of events
+          // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';
         },
         events: '/bat/v2/events-calendar?unit_types=' + Drupal.settings.batEvent.unitType + '&event_types=' + Drupal.settings.batEvent.eventType,
@@ -105,10 +105,10 @@ Drupal.behaviors.bat_event = {
           return !stillEvent.blocking;
         },
         eventDrop: function(event, delta, revertFunc) {
-          saveBatEvent(event, revertFunc);
+          saveBatEvent(event, revertFunc, calendars);
         },
         eventResize: function(event, delta, revertFunc) {
-          saveBatEvent(event, revertFunc);
+          saveBatEvent(event, revertFunc, calendars);
         }
       });
     });
@@ -145,7 +145,7 @@ Drupal.BatEvent.Modal = function(element, eid, sd, ed, $unit_id) {
   $(calendars_table).trigger('getResponse');
 };
 
-function saveBatEvent(event, revertFunc) {
+function saveBatEvent(event, revertFunc, calendars) {
   // The event has been moved - attempt to update it.
   var unit_id = event.resourceId.substring(1);
 
@@ -160,7 +160,6 @@ function saveBatEvent(event, revertFunc) {
     success: function (token) {
       // Update event, using session token.
       var events_url = '/bat/v2/events';
-      console.log(events_url);
       $.ajax({
         type: "PUT",
         url: events_url + '/' + event.bat_id,
@@ -175,7 +174,10 @@ function saveBatEvent(event, revertFunc) {
           revertFunc();
         },
         success: function (data) {
-          alert('Event Saved!');
+          // Refresh calendar events if the event is saved successfully.
+          $.each(calendars, function(key, value) {
+            $(value[0]).fullCalendar('refetchEvents');
+          });
         }
       });
     }
