@@ -162,6 +162,58 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
           // Inject settings in javascript that we will use.
           $js_settings[$id] = array(
             'unitTypes' => $unit_type_ids,
+            'unitIDs' => '',
+            'eventType' => $event_type,
+            'eventGranularity' => $event_granularity,
+            'firstDay' => intval(variable_get('date_first_day', 0)),
+            'schedulerLicenseKey' => $schedulerlicensekey,
+          );
+        }
+      }
+      elseif ($field['type'] == 'bat_calendar_unit_reference') {
+        bat_event_ui_library_loaded('fullcalendar-scheduler', 'source');
+
+        drupal_add_js(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js');
+        drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');
+
+        $unit_names = array();
+        $unit_ids = array();
+        $id = drupal_html_id($field['field_name'] . '-availability-formatter');
+        foreach ($items as $delta => $item) {
+          if ($unit = bat_unit_load($item['unit_id'])) {
+            $unit_names[] = $unit->name;
+            $unit_ids[] = $unit->unit_id;
+          }
+
+          if ($type = bat_event_type_load($item['event_type_id'])) {
+            $event_type = $type->type;
+
+            $event_granularity = $type->event_granularity;
+          }
+        }
+
+        if (!empty($unit_ids)) {
+          $result[] = array(
+            '#prefix' => '<div id="' . $id . '" class="availability-title">',
+            '#markup' => '<h2>' . implode(', ', $unit_names) . '</h2>',
+            '#suffix' => '</div>',
+          );
+
+          $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', 'non-commercial');
+          if ($schedulerlicense == 'gpl') {
+            $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
+          }
+          elseif ($schedulerlicense == 'non-commercial') {
+            $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
+          }
+          elseif ($schedulerlicense == 'commercial') {
+            $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
+          }
+
+          // Inject settings in javascript that we will use.
+          $js_settings[$id] = array(
+            'unitTypes' => 'all',
+            'unitIDs' => $unit_ids,
             'eventType' => $event_type,
             'eventGranularity' => $event_granularity,
             'firstDay' => intval(variable_get('date_first_day', 0)),

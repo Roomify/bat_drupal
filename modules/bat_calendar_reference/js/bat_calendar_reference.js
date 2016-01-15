@@ -52,18 +52,19 @@
           },
           resourceAreaWidth: '25%',
           resourceLabelText: 'Rooms',
-          resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendarReference[cal_id].unitTypes,
-          events: '/bat/v2/events-calendar?unit_types=' + Drupal.settings.batCalendarReference[cal_id].unitTypes + '&event_types=' + Drupal.settings.batCalendarReference[cal_id].eventType,
+          resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendarReference[cal_id].unitTypes + '&ids=' + Drupal.settings.batCalendarReference[cal_id].unitIDs,
+          events: '/bat/v2/events-calendar?unit_types=' + Drupal.settings.batCalendarReference[cal_id].unitTypes + '&event_types=' + Drupal.settings.batCalendarReference[cal_id].eventType + '&unit_ids=' + Drupal.settings.batCalendarReference[cal_id].unitIDs,
           windowResize: function(view) {
             $(this).fullCalendar('refetchEvents');
-          },
-          viewRender: function(view, element) {
           },
           eventRender: function(event, el, view) {
             // Remove Time from events.
             el.find('.fc-time').remove();
-          },
-          eventAfterRender: function(event, element, view) {
+
+            // Append event title when rendering as background.
+            if (event.rendering == 'background' && event.fixed == 0) {
+              el.append('<span class="fc-title">' + (event.title || '&nbsp;') + '</span>');
+            }
           }
         });
 
