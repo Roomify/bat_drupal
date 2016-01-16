@@ -39,7 +39,7 @@ function bat_unit_schema() {
         'description' => 'Identifier for this unit\'s type.',
         'type' => 'int',
         'unsigned' => TRUE,
-        'not null' => TRUE,
+        'default' => NULL,
       ),
       'type' => array(
         'description' => 'The {unit_bundle}.type of this Unit.',
@@ -306,4 +306,21 @@ function bat_unit_install_delete_default_unit_bundle() {
   if ($default_unit_bundle = bat_unit_bundle_load('default')) {
     $default_unit_bundle->delete();
   }
+}
+
+/**
+ * Units should have type_id set to null if saved without a reference
+ * to a type_id.
+ *
+ * Implements hook_update
+ */
+function bat_unit_update_7100() {
+  db_change_field('bat_units', 'type_id', 'type_id',
+    array(
+      'description' => 'Identifier for this unit\'s type.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'default' => NULL,
+    )
+  );
 }
