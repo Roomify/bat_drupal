@@ -695,6 +695,7 @@ function bat_event_ui_fullcalendar_settings($form, &$form_state) {
       'gpl' => t('GPL License'),
       'none' => t('None'),
     ),
+    '#description' => t('Please visit http://fullcalendar.io/scheduler/license/ to find out about the license terms for the Scheduler View of FullCalendar'),
     '#ajax' => array(
       'callback' => 'bat_event_ui_fullcalendar_settings_ajax_callback',
       'wrapper' => 'label-settings',
