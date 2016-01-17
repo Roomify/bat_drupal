@@ -146,7 +146,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
             '#suffix' => '</div>',
           );
 
-          $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', 'non-commercial');
+          $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', '');
           if ($schedulerlicense == 'gpl') {
             $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
           }
@@ -197,7 +197,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
             '#suffix' => '</div>',
           );
 
-          $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', 'non-commercial');
+          $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', '');
           if ($schedulerlicense == 'gpl') {
             $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
           }
