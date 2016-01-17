@@ -586,16 +586,25 @@ function bat_event_ui_preprocess_bat_one_month_calendar(&$vars) {
     $event_type = $vars['event_type'];
   }
 
-  $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', 'non-commercial');
-  if ($schedulerlicense == 'gpl') {
-    $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
+  $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', '');
+  switch ($schedulerlicense) {
+    case 'gpl':
+      $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
+      break;
+    case 'non-commercial':
+      $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
+      break;
+    case 'commercial':
+      $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
+      break;
+    case 'none':
+      $schedulerlicensekey = '';
+      break;
+    default:
+      $schedulerlicensekey = '';
+      break;
   }
-  elseif ($schedulerlicense == 'non-commercial') {
-    $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
-  }
-  elseif ($schedulerlicense == 'commercial') {
-    $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
-  }
+  
 
   // Inject settings in javascript that will be used to setup the one months
   // display.
@@ -679,11 +688,12 @@ function bat_event_ui_fullcalendar_settings($form, &$form_state) {
   $form['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_key'] = array(
     '#type' => 'radios',
     '#title' => t('FullCalendar Scheduler License'),
-    '#default_value' => variable_get('bat_fullcalendar_scheduler_key', 'non-commercial'),
+    '#default_value' => variable_get('bat_fullcalendar_scheduler_key', ''),
     '#options' => array(
       'commercial' => t('Commercial License'),
       'non-commercial' => t('Non-Commercial Creative Commons'),
       'gpl' => t('GPL License'),
+      'none' => t('None'),
     ),
     '#ajax' => array(
       'callback' => 'bat_event_ui_fullcalendar_settings_ajax_callback',
