@@ -9,5 +9,6 @@
  * Implements hook_install()
  */
 function bat_install() {
-  drupal_set_message(t('Thanks for installing BAT! You must also install the BAT php library for this module to function, please see the README for more details.'));
+  $readme_path = drupal_get_path('module', 'bat') . '/README.md';
+  drupal_set_message(t('Thanks for installing BAT! You must also install the BAT php library for this module to function, please see the <a href="@README_LINK">README</a> for more details.', array('@README_LINK' => url($readme_path))));
 }
