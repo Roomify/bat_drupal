@@ -5,3 +5,9 @@
  * Install, update and uninstall functions for the basic BAT module.
  */
 
+/**
+ * Implements hook_install()
+ */
+function bat_install() {
+  drupal_set_message(t('Thanks for installing BAT! You must also install the BAT php library for this module to function, please see the README for more details.'));
+}
