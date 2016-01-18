@@ -477,11 +477,21 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   // Set the page title.
   drupal_set_title(t('View Event Data'));
 
+  // Ensure FullCalendar is loaded.
+  bat_event_ui_library_loaded('fullcalendar-scheduler', 'source');
+
+
   // Add styles.
   bat_event_ui_modal_style();
 
+  //@TODO Add alter hook to enable modules to inject different js and css files to render calendar 'bat_calendar_render'
+
   $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_event_ui.js';
   $css_file = drupal_get_path('module', 'bat_event_ui') . '/css/bat_event_ui.css';
+  // Add css styles for one-month-calendar.
+  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_one_month_calendar.css');
+  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');
+
 
   if ($type = bat_event_type_load($event_type)) {
     $event_granularity = $type->event_granularity;
@@ -489,6 +499,37 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   else {
     $event_granularity = 'both';
   }
+
+  $event_types = bat_event_get_types();
+  $ev_type = reset($event_types);
+  $event_type = $ev_type->type;
+
+  $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', '');
+  switch ($schedulerlicense) {
+    case 'gpl':
+      $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
+      break;
+    case 'non-commercial':
+      $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
+      break;
+    case 'commercial':
+      $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
+      break;
+    case 'none':
+      $schedulerlicensekey = '';
+      break;
+    default:
+      $schedulerlicensekey = '';
+      break;
+  }
+
+
+  // Inject settings in javascript that will be used to setup the one months
+  // display.
+  drupal_add_js(array('batCalendar' => array('eventType' => $event_type)), 'setting');
+  drupal_add_js(array('batCalendar' => array('schedulerLicenseKey' => $schedulerlicensekey)), 'setting');
+
+  //@TODO Place all Drupal JS settings under a single object called batCalendar and provide alter hook to change settings 'bat_calendar_settings'
 
   return array(
     '#theme' => 'bat_one_month_calendar',
@@ -561,59 +602,6 @@ function bat_event_ui_theme() {
   );
 }
 
-/**
- * Default implementation of hook_preprocess_bat_one_month_calendar().
- */
-function bat_event_ui_preprocess_bat_one_month_calendar(&$vars) {
-
-  // Load FullCalendar.
-  bat_event_ui_library_loaded('fullcalendar-scheduler', 'source');
-
-  // Add css styles for one-month-calendar.
-  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_one_month_calendar.css');
-  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');
-
-  // If dates are not provided then use the current date.
-  $year = (empty($vars['year'])) ? date('Y', time()) : check_plain($vars['year']);
-  $month = (empty($vars['month'])) ? date('n', time()) : check_plain($vars['month']);
-
-  if (empty($vars['event_type'])) {
-    $event_types = bat_event_get_types();
-    $ev_type = reset($event_types);
-    $event_type = $ev_type->type;
-  }
-  else {
-    $event_type = $vars['event_type'];
-  }
-
-  $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', '');
-  switch ($schedulerlicense) {
-    case 'gpl':
-      $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
-      break;
-    case 'non-commercial':
-      $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
-      break;
-    case 'commercial':
-      $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
-      break;
-    case 'none':
-      $schedulerlicensekey = '';
-      break;
-    default:
-      $schedulerlicensekey = '';
-      break;
-  }
-  
-
-  // Inject settings in javascript that will be used to setup the one months
-  // display.
-  drupal_add_js(array('batCalendar' => array('currentMonth' => intval($month))), 'setting');
-  drupal_add_js(array('batCalendar' => array('currentYear' => intval($year))), 'setting');
-  drupal_add_js(array('batCalendar' => array('firstDay' => intval(variable_get('date_first_day', 0)))), 'setting');
-  drupal_add_js(array('batCalendar' => array('eventType' => $event_type)), 'setting');
-  drupal_add_js(array('batCalendar' => array('schedulerLicenseKey' => $schedulerlicensekey)), 'setting');
-}
 
 /**
  *
