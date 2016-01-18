@@ -166,6 +166,12 @@ function bat_event_schema() {
         'serialize' => TRUE,
         'description' => 'A serialized array that stores this type bundle\'s default event field configuration.',
       ),
+      'default_event_label_field_name' => array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'length' => 32,
+        'description' => 'The name of a field to use to retrieve label information.',
+      ),
       'data' => array(
         'type' => 'text',
         'not null' => FALSE,
@@ -254,4 +260,17 @@ function bat_event_schema() {
   );
 
   return $schema;
+}
+
+/**
+ * Add default label name field.
+ */
+function bat_event_update_7100() {
+  $field = array(
+    'type' => 'varchar',
+    'not null' => FALSE,
+    'length' => 32,
+    'description' => 'The name of a field to use to retrieve label information.',
+  );
+  db_add_field('bat_event_type', 'default_event_label_field_name', $field);
 }

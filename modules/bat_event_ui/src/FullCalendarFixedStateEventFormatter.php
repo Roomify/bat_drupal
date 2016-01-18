@@ -45,10 +45,8 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
       $temp_value = $bat_event->getEventValue();
       $state_info = bat_event_load_state($bat_event->getEventValue());
 
-      // Set calendar label from event if present.
-      if (isset($bat_event->data['calendar_label'])) {
-        $state_info['calendar_label'] = $bat_event->data['calendar_label'];
-      }
+      // Set calendar label from event.
+      $state_info['calendar_label'] = $bat_event->label();
     }
 
     $formatted_event = array(
