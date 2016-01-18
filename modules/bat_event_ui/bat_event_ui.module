@@ -484,14 +484,20 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   // Add styles.
   bat_event_ui_modal_style();
 
-  //@TODO Add alter hook to enable modules to inject different js and css files to render calendar 'bat_calendar_render'
-
   $js_file = drupal_get_path('module', 'bat_event_ui') . '/js/bat_event_ui.js';
   $css_file = drupal_get_path('module', 'bat_event_ui') . '/css/bat_event_ui.css';
+
+  $calendar_files = array(
+    'js' => $js_file,
+    'css' => $css_file,
+  );
+
+  // Provide alter hook to change calendar js and css files.
+  drupal_alter('bat_calendar_render', $calendar_files);
+
   // Add css styles for one-month-calendar.
   drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_one_month_calendar.css');
   drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');
-
 
   if ($type = bat_event_type_load($event_type)) {
     $event_granularity = $type->event_granularity;
@@ -523,25 +529,55 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
       break;
   }
 
+  $calendar_views = 'timelineDay, timelineTenDay, timelineMonth, timelineYear';
+  $default_view = 'timelineDay';
+  if ($event_granularity == 'daily') {
+    $calendar_views = 'timelineMonth, timelineYear';
+    $default_view = 'timelineMonth';
+  }
 
-  // Inject settings in javascript that will be used to setup the one months
-  // display.
-  drupal_add_js(array('batCalendar' => array('eventType' => $event_type)), 'setting');
-  drupal_add_js(array('batCalendar' => array('schedulerLicenseKey' => $schedulerlicensekey)), 'setting');
+  else if ($event_granularity == 'bat_hourly') {
+    $calendar_views = 'timelineDay, timelineTenDay, timelineMonth';
+    $default_view = 'timelineDay';
+  }
+  // All Drupal JS settings inside the batCalendar object.
+  $calendar_settings = array(
+    'batCalendar' => array(
+      'schedulerLicenseKey' => $schedulerlicensekey,
+      'unitType' => $unit_type,
+      'eventType' => $event_type,
+      'eventGranularity' => $event_granularity,
+      'calendarHeight' => 500,
+      'editable' => TRUE,
+      'selectable' => TRUE,
+      'headerLeft' => 'today, prev, next',
+      'headerCenter' => 'title',
+      'headerRight' => $calendar_views,
+      'views' => $calendar_views,
+      'defaultView' => $default_view,
+      'viewsTimelineDayButtonText' => ':15 slots',
+      'viewsTimelineDaySlotDuration' => '00:15',
+      'viewsTimelineTenDayButtonText' => 'timeline',
+      'viewsTimelineTenDaySlotDuration' => array('days' => 10),
+      'resourceAreaWidth' => '25%',
+      'resourceLabelText' => 'Rooms',
+    ),
+  );
 
-  //@TODO Place all Drupal JS settings under a single object called batCalendar and provide alter hook to change settings 'bat_calendar_settings'
+  // Provide alter hook to change settings.
+  drupal_alter('bat_calendar_settings', $calendar_settings);
 
   return array(
     '#theme' => 'bat_one_month_calendar',
     '#form' => drupal_get_form('bat_event_ui_event_type_form'),
     '#attached' => array(
       'css' => array(
-        $css_file,
+        $calendar_files['css'],
       ),
       'js' => array(
-        $js_file,
+        $calendar_files['js'],
         array(
-          'data' => array('batEvent' => array('unitType' => $unit_type, 'eventType' => $event_type, 'eventGranularity' => $event_granularity)),
+          'data' => $calendar_settings,
           'type' => 'setting',
         ),
       ),
