@@ -38,12 +38,15 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
     // Get the default state info which will provide the default value for formatting
     $state_info = bat_event_load_state($default_value);
 
-    // However if the event is in the database then load the actual event and get it's value
+    // However if the event is in the database, then load the actual event and get its value.
     if ($event->getValue()) {
-      // Load the event from the database to get the actual state and load that info
+      // Load the event from the database to get the actual state and load that info.
       $bat_event = bat_event_load($event->getValue());
       $temp_value = $bat_event->getEventValue();
       $state_info = bat_event_load_state($bat_event->getEventValue());
+
+      // Set calendar label from event.
+      $state_info['calendar_label'] = $bat_event->label();
     }
 
     $formatted_event = array(
