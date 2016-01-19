@@ -1,0 +1,43 @@
+<?php
+
+
+
+/**
+ * Implements hook_requirements().
+ */
+function bat_fullcalendar_requirements($phase) {
+  $requirements = array();
+  $t = get_t();
+  switch ($phase) {
+    case 'runtime':
+      if (!bat_event_ui_library_loaded('fullcalendar-scheduler', 'minified')) {
+        $description = array();
+        $fullcalendar_library = libraries_detect('fullcalendar-scheduler');
+        if (!$fullcalendar_library['installed']) {
+          $description[] = $t('Could not load the FullCalendar Scheduler Javascript Library');
+        }
+        if (!bat_event_ui_library_loaded('moment')) {
+          $description[] = $t('Could not load the Moment Library');
+        }
+        if (!bat_event_ui_library_loaded('fullcalendar')) {
+          $description[] = $t('Could not load the FullCalendar Library');
+        }
+        $requirements['fullcalendar'] = array(
+          'title' => $t('FullCalendar'),
+          'description' => implode('<br />', $description),
+          'value' => 'FullCalendar Scheduler Libraries Missing',
+          'severity' => REQUIREMENT_ERROR,
+        );
+      }
+      else {
+        $requirements['fullcalendar'] = array(
+          'title' => $t('FullCalendar'),
+          'description' => $t('The FullCalendar, FullCalendar Scheduler and the Moment Library are installed'),
+          'value' => 'FullCalendar, Scheduler and Moment Installed',
+          'severity' => REQUIREMENT_OK,
+        );
+      }
+  }
+
+  return $requirements;
+}

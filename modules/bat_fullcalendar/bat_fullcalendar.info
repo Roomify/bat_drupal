@@ -1,0 +1,9 @@
+name = BAT Fullcalendar
+description = Provides a generalized API for manipulating FullCalendar widgets for BAT
+core = 7.x
+
+package = BAT
+
+dependencies[] = bat_api
+dependencies[] = bat_unit
+dependencies[] = bat_event

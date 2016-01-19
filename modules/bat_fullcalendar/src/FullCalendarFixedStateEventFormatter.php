@@ -2,16 +2,16 @@
 
 /**
  * @file
- * Class FullCalendarOpenStateEventFormatter
+ * Class FullCalendarFixedStateEventFormatter
  */
 
-namespace Drupal\bat_event_ui;
+namespace Drupal\bat_fullcalendar;
 
 use Roomify\Bat\Event\Event;
 use Roomify\Bat\Event\EventInterface;
 use Roomify\Bat\EventFormatter\AbstractEventFormatter;
 
-class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
+class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
 
   /**
    * @var string
@@ -35,28 +35,34 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
     // Get the unit entity default value
     $default_value = $bat_unit->getEventDefaultValue($this->event_type->type);
 
+    // Get the default state info which will provide the default value for formatting
+    $state_info = bat_event_load_state($default_value);
+
+    // However if the event is in the database, then load the actual event and get its value.
     if ($event->getValue()) {
+      // Load the event from the database to get the actual state and load that info.
       $bat_event = bat_event_load($event->getValue());
-      // Change the default value to the one that the event actually stores in the entity
-      $default_value = $bat_event->getEventValue();
+      $temp_value = $bat_event->getEventValue();
+      $state_info = bat_event_load_state($bat_event->getEventValue());
+
+      // Set calendar label from event.
+      $state_info['calendar_label'] = $bat_event->label();
     }
 
     $formatted_event = array(
       'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
       'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
-      'title' => $bat_unit->formatEventValue($this->event_type->type, $default_value),
-      'blocking' => 0,
-      'fixed' => 0,
+      'title' => $state_info['calendar_label'],
+      'color' => $state_info['color'],
+      'blocking' => 1,
+      'fixed' => 1,
     );
 
-    if ($event->getValue() < 100) {
-      $formatted_event['color']  = 'orange';
+    // Render non blocking events in the background.
+    if ($state_info['blocking'] == 0) {
+      $formatted_event['rendering'] = 'background';
+      $formatted_event['blocking'] = 0;
     }
-    elseif ($event->getValue() >= 100) {
-      $formatted_event['color'] = 'green';
-    }
-
-    $formatted_event['rendering'] = 'background';
 
     $formatted_event['type'] = $this->event_type->type;
 

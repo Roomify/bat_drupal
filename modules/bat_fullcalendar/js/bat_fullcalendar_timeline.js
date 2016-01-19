@@ -126,14 +126,17 @@ Drupal.behaviors.bat_event = {
 Drupal.batCalendar.Modal = function(element, eid, sd, ed, $unit_id) {
   Drupal.CTools.Modal.show('bat-modal-style');
   // base url the part that never change is used to identify our ajax instance
-  var base = Drupal.settings.basePath + '?q=admin/bat/calendar/';
+  var base = Drupal.settings.basePath + '?q=admin/bat/fullcalendar/';
   // Create a drupal ajax object that points to the event form.
   var element_settings = {
     url : base + $unit_id + '/event/' + Drupal.settings.batCalendar.eventType + '/' + eid + '/' + sd + '/' + ed,
     event : 'getResponse',
     progress : { type: 'throbber' }
   };
-  // To made all calendars trigger correctly the getResponse event we need to
+
+  console.log(element_settings);
+
+  // To make all calendars trigger correctly the getResponse event we need to
   // initialize the ajax instance with the global calendar table element.
   var calendars_table = $(element.el).closest('.calendar-set');
 

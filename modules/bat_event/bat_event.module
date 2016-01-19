@@ -976,7 +976,7 @@ class BatEvent extends Entity {
     // If the user has configured a field to store the event name, return that
     // field's value.
     $event_type = bat_event_type_load($this->type);
-    if (isset($event_type->default_event_label_field_name)) {
+    if (isset($event_type->default_event_label_field_name) && ($event_type->default_event_label_field_name != '')) {
       $event_wrapper = entity_metadata_wrapper('bat_event', $this);
       $value = $event_wrapper->{$event_type->default_event_label_field_name}->value(array('sanitize' => TRUE));
       // Handle entity reference fields - if this is an object, return its
