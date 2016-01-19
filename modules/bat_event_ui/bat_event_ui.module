@@ -83,28 +83,6 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   return $render_array;
 }
 
-
-
-/**
- * Implements hook_theme().
- */
-function bat_event_ui_theme() {
-  return array(
-    'bat_one_month_calendar' => array(
-      'template' => 'bat_one_month_calendar',
-      'variables' => array(
-        'url' => NULL,
-        'form' => NULL,
-        'year' => NULL,
-        'month' => NULL,
-        'event_type' => NULL,
-        'link_options' => NULL,
-      ),
-    ),
-  );
-}
-
-
 /**
  *
  */
