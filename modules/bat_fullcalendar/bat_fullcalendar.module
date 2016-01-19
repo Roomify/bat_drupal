@@ -70,7 +70,6 @@ function bat_fullcalendar_menu() {
 function bat_fullcalendar_event_management($unit, $event_type, $event_id = NULL, $start_date = 0, $end_date = 0) {
   // Include modal library.
   ctools_include('modal');
-  dpm('hi');
 
   // If any info missing we cannot load the event.
   if ($event_id == NULL || $start_date == 0 || $end_date == 0) {
