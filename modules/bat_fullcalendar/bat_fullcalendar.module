@@ -169,20 +169,12 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $unit, $event_t
     '#value' => $end_date,
   );
 
-  if ($event_id == -2) {
-    $form['event_title'] = array(
-      '#prefix' => '<h2>',
-      '#markup' => check_plain($unit->name),
-      '#suffix' => '</h2>',
-    );
-  }
-  else {
-    $form['event_title'] = array(
-      '#prefix' => '<h2>',
-      '#markup' => t('@unit_name', array('@unit_name' => $unit->name)),
-      '#suffix' => '</h2>',
-    );
-  }
+
+  $form['event_title'] = array(
+    '#prefix' => '<h2>',
+    '#markup' => t('@unit_name', array('@unit_name' => $unit->name)),
+    '#suffix' => '</h2>',
+  );
 
   $date_format = variable_get('bat_date_format', 'Y-m-d H:i');
   $form['event_details'] = array(
@@ -195,10 +187,9 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $unit, $event_t
 
   if ($type_bundle->fixed_event_states) {
     $state_options = bat_unit_state_options($event_type);
-    unset($state_options[$new_event_id]);
 
     $form['change_event_status'] = array(
-      '#title' => t('Change the state for this event to:') . ' ',
+      '#title' => t('Change the state for this event to') . ': ',
       '#type' => 'select',
       '#options' => $state_options,
       '#ajax' => array(
@@ -253,32 +244,29 @@ function bat_fullcalendar_ajax_event_status_change($form, $form_state) {
   $event_type = $form_state['values']['event_type'];
   $state_id = $form_state['values']['change_event_status'];
 
-  // If we have a new event id, go ahead and create a new event.
-  if (($event_id != $new_event_id) && $new_event_id != -1) {
-    $event = bat_event_create(array('type' => $event_type));
-    $event->created = REQUEST_TIME;
-    $event->uid = $user->uid;
+  $event = bat_event_create(array('type' => $event_type));
+  $event->created = REQUEST_TIME;
+  $event->uid = $user->uid;
 
-    $event->start_date = $start_date->format('Y-m-d H:i');
-    // Always subtract one minute from the end time. FullCalendar provides
-    // start and end time with the assumption that the last minute is *excluded*
-    // while BAT deals with times assuming that the last minute is included.
-    $end_date->sub(new DateInterval('PT1M'));
-    $event->end_date = $end_date->format('Y-m-d H:i');
+  $event->start_date = $start_date->format('Y-m-d H:i');
+  // Always subtract one minute from the end time. FullCalendar provides
+  // start and end time with the assumption that the last minute is *excluded*
+  // while BAT deals with times assuming that the last minute is included.
+  $end_date->sub(new DateInterval('PT1M'));
+  $event->end_date = $end_date->format('Y-m-d H:i');
 
-    $event->event_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit_id;
-    $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $state_id;
+  $event->event_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit_id;
+  $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $state_id;
 
-    $event->save();
+  $event->save();
 
-    $state_options = bat_unit_state_options($event_type);
-    $form['form_wrapper_bottom'] = array(
-      '#prefix' => '<div>',
-      '#markup' => t('New Event state is <strong>@state</strong>.', array('@state' => $state_options[$state_id])),
-      '#suffix' => '</div>',
-      '#weight' => 9,
-    );
-  }
+  $state_options = bat_unit_state_options($event_type);
+  $form['form_wrapper_bottom'] = array(
+    '#prefix' => '<div>',
+    '#markup' => t('New Event state is <strong>@state</strong>.', array('@state' => $state_options[$state_id])),
+    '#suffix' => '</div>',
+    '#weight' => 9,
+  );
 
   return $form;
 }
@@ -722,6 +710,10 @@ function bat_fullcalendar_modal_style($style = 'default') {
       'animation' => 'fadeIn',
     ),
   );
+
+  // Allow other modules to change the modal style
+  drupal_alter('bat_fullcalendar_modal_style', $modal_style);
+
 
   // Add the ctool modal configuration to settings.
   drupal_add_js($modal_style, 'setting');
