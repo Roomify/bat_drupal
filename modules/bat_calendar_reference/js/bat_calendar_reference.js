@@ -4,9 +4,6 @@
     attach: function(context) {
       var today = moment();
 
-      var views = 'timelineDay, timelineTenDay, timelineMonth, timelineYear';
-      var defaultView = 'timelineMonth';
-
       businessHours = {
         start: '00:00',
         end: '24:00',
@@ -15,30 +12,21 @@
 
       $('.cal').once('cal', function() {
         var lastSource;
-        var cal_id = $(this).siblings('.calendar-title').attr('id');
-
-        if (Drupal.settings.batCalendarReference[cal_id].eventGranularity == 'bat_daily') {
-          views = 'timelineMonth, timelineYear';
-          defaultView = 'timelineMonth';
-        }
-        else if (Drupal.settings.batCalendarReference[cal_id].eventGranularity == 'bat_hourly') {
-          views = 'timelineDay, timelineTenDay, timelineMonth';
-          defaultView = 'timelineDay';
-        }
+        var cal_id = $(this).attr('id');
 
         $(this).fullCalendar({
-          schedulerLicenseKey: Drupal.settings.batCalendarReference[cal_id].schedulerLicenseKey,
-          editable: false,
-          selectable: false,
+          schedulerLicenseKey: Drupal.settings.batCalendar[cal_id].schedulerLicenseKey,
+          editable: Drupal.settings.batCalendar[cal_id].editable,
+          selectable: Drupal.settings.batCalendar[cal_id].selectable,
           dayNamesShort:[Drupal.t("Sun"), Drupal.t("Mon"), Drupal.t("Tue"), Drupal.t("Wed"), Drupal.t("Thu"), Drupal.t("Fri"), Drupal.t("Sat")],
           monthNames:[Drupal.t("January"), Drupal.t("February"), Drupal.t("March"), Drupal.t("April"), Drupal.t("May"), Drupal.t("June"), Drupal.t("July"), Drupal.t("August"), Drupal.t("September"), Drupal.t("October"), Drupal.t("November"), Drupal.t("December")],
           header: {
-            left: 'today, prev, next',
-            center: 'title',
-            right: views,
+            left: Drupal.settings.batCalendar[cal_id].headerLeft,
+            center: Drupal.settings.batCalendar[cal_id].headerCenter,
+            right: Drupal.settings.batCalendar[cal_id].headerRight,
           },
           businessHours: businessHours,
-          defaultView: defaultView,
+          defaultView: Drupal.settings.batCalendar[cal_id].defaultView,
           views: {
             timelineDay: {
               buttonText: ':15 slots',
@@ -49,10 +37,10 @@
               duration: { days: 10 }
             }
           },
-          resourceAreaWidth: '25%',
-          resourceLabelText: 'Rooms',
-          resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendarReference[cal_id].unitTypes + '&ids=' + Drupal.settings.batCalendarReference[cal_id].unitIDs,
-          events: '/bat/v2/events-calendar?unit_types=' + Drupal.settings.batCalendarReference[cal_id].unitTypes + '&event_types=' + Drupal.settings.batCalendarReference[cal_id].eventType + '&unit_ids=' + Drupal.settings.batCalendarReference[cal_id].unitIDs,
+          resourceAreaWidth: Drupal.settings.batCalendar[cal_id].resourceAreaWidth,
+          resourceLabelText: Drupal.settings.batCalendar[cal_id].resourceLabelText,
+          resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendar[cal_id].unitTypes + '&ids=' + Drupal.settings.batCalendar[cal_id].unitIDs,
+          events: '/bat/v2/events-calendar?unit_types=' + Drupal.settings.batCalendar[cal_id].unitTypes + '&event_types=' + Drupal.settings.batCalendar[cal_id].eventType + '&unit_ids=' + Drupal.settings.batCalendar[cal_id].unitIDs,
           windowResize: function(view) {
             $(this).fullCalendar('refetchEvents');
           },

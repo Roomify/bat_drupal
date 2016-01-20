@@ -110,22 +110,19 @@ function bat_calendar_reference_field_formatter_prepare_view($entity_type, $enti
  * Implements hook_field_formatter_view().
  */
 function bat_calendar_reference_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-
-  $result = array();
   $element = array();
-  $js_settings = array();
+  $fc_user_settings = array();
+
+  $header = '';
+
+  $calendar_id = drupal_html_id($field['field_name'] . '-calendar-formatter');
 
   switch ($display['type']) {
     case 'bat_calendar_reference_default':
       if ($field['type'] == 'bat_calendar_unit_type_reference') {
-        bat_fullcalendar_library_loaded('fullcalendar-scheduler', 'source');
-
-        drupal_add_js(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js');
-        drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');
-
         $unit_type_names = array();
         $unit_type_ids = array();
-        $id = drupal_html_id($field['field_name'] . '-calendar-formatter');
+
         foreach ($items as $delta => $item) {
           if ($unit_type = bat_type_load($item['unit_type_id'])) {
             $unit_type_names[] = $unit_type->name;
@@ -140,43 +137,25 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
         }
 
         if (!empty($unit_type_ids)) {
-          $result[] = array(
-            '#prefix' => '<div id="' . $id . '" class="calendar-title">',
-            '#markup' => '<h2>' . implode(', ', $unit_type_names) . '</h2>',
-            '#suffix' => '</div>',
-          );
-
-          $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', '');
-          if ($schedulerlicense == 'gpl') {
-            $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
-          }
-          elseif ($schedulerlicense == 'non-commercial') {
-            $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
-          }
-          elseif ($schedulerlicense == 'commercial') {
-            $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
-          }
+          $header = '<div class="calendar-title"><h2>' . implode(', ', $unit_type_names) . '</h2></div>';
 
           // Inject settings in javascript that we will use.
-          $js_settings[$id] = array(
+          $fc_user_settings[$calendar_id] = array(
             'unitTypes' => $unit_type_ids,
             'unitIDs' => '',
             'eventType' => $event_type,
+            'calendar_id' => 'fullcalendar-scheduler',
+            'modal_style' => 'default',
             'eventGranularity' => $event_granularity,
-            'firstDay' => intval(variable_get('date_first_day', 0)),
-            'schedulerLicenseKey' => $schedulerlicensekey,
+            'editable' => FALSE,
+            'selectable' => FALSE,
           );
         }
       }
       elseif ($field['type'] == 'bat_calendar_unit_reference') {
-        bat_fullcalendar_library_loaded('fullcalendar-scheduler', 'source');
-
-        drupal_add_js(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js');
-        drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');
-
         $unit_names = array();
         $unit_ids = array();
-        $id = drupal_html_id($field['field_name'] . '-calendar-formatter');
+
         foreach ($items as $delta => $item) {
           if ($unit = bat_unit_load($item['unit_id'])) {
             $unit_names[] = $unit->name;
@@ -191,31 +170,18 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
         }
 
         if (!empty($unit_ids)) {
-          $result[] = array(
-            '#prefix' => '<div id="' . $id . '" class="calendar-title">',
-            '#markup' => '<h2>' . implode(', ', $unit_names) . '</h2>',
-            '#suffix' => '</div>',
-          );
-
-          $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', '');
-          if ($schedulerlicense == 'gpl') {
-            $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
-          }
-          elseif ($schedulerlicense == 'non-commercial') {
-            $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
-          }
-          elseif ($schedulerlicense == 'commercial') {
-            $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
-          }
+          $header = '<div class="calendar-title"><h2>' . implode(', ', $unit_names) . '</h2></div>';
 
           // Inject settings in javascript that we will use.
-          $js_settings[$id] = array(
+          $fc_user_settings[$calendar_id] = array(
             'unitTypes' => 'all',
             'unitIDs' => $unit_ids,
             'eventType' => $event_type,
+            'calendar_id' => 'fullcalendar-scheduler',
+            'modal_style' => 'default',
             'eventGranularity' => $event_granularity,
-            'firstDay' => intval(variable_get('date_first_day', 0)),
-            'schedulerLicenseKey' => $schedulerlicensekey,
+            'editable' => FALSE,
+            'selectable' => FALSE,
           );
         }
       }
@@ -223,18 +189,26 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
       break;
   }
 
-  if (!empty($result)) {
+  if (!empty($fc_user_settings)) {
+    $calendar_settings = array(
+      'modal_style' => 'default',
+      'calendar_id' => 'fullcalendar-scheduler',
+      'user_settings' => array('batCalendar' => $fc_user_settings),
+    );
+
     $element[] = array(
-      '#theme' => 'bat_calendar_field_calendar',
-      'calendar' => $result,
-      '#attached' => array(
-        'js' => array(
-          array(
-            'data' => array('batCalendarReference' => $js_settings),
-            'type' => 'setting',
-          ),
-        )
+      '#theme' => 'bat_fullcalendar',
+      '#calendar_settings' => $calendar_settings,
+      '#js_files' => array(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js'),
+      '#css_files' => array(drupal_get_path('module', 'bat_fullcalendar') . '/css/fullcalendar.theme.css'),
+      '#attributes' => array(
+        'id' => $calendar_id,
+        'class' => array(
+          'cal',
+          'clearfix',
+        ),
       ),
+      '#prefix' => $header,
     );
   }
 
@@ -997,16 +971,4 @@ function bat_calendar_reference_autocomplete_event_type_validate($element, &$for
  */
 function bat_calendar_reference_field_widget_error($element, $error, $form, &$form_state) {
   form_error($element['unit_id'], $error['message']);
-}
-
-/**
- * Implements hook_theme().
- */
-function bat_calendar_reference_theme() {
-  return array(
-    'bat_calendar_field_calendar' => array(
-      'render element' => 'bat_calendar_field_calendar',
-      'template' => 'bat_calendar_field_calendar',
-    ),
-  );
 }

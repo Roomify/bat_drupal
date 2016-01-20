@@ -37,7 +37,6 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   // Set the page title.
   drupal_set_title(t('View Event Data'));
 
-
   // Pick what modal style to use
   $calendar_settings['modal_style'] = 'default';
 
@@ -55,9 +54,11 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   // All Drupal JS settings inside the batCalendar object.
   $fc_user_settings = array(
     'batCalendar' => array(
-      'unitType' => $unit_type,
-      'eventType' => $event_type,
-      'eventGranularity' =>  $event_granularity,
+      array(
+        'unitType' => $unit_type,
+        'eventType' => $event_type,
+        'eventGranularity' =>  $event_granularity,
+      ),
     ),
   );
 
@@ -141,5 +142,3 @@ function bat_event_ui_event_type_form_submit($form, &$form_state) {
 
   $form_state['redirect'] = arg(0) . '/' . arg(1) . '/' . arg(2) . '/' . $type . '/' . $event_type;
 }
-
-

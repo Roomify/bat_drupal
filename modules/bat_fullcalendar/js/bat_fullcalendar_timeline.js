@@ -37,37 +37,37 @@ Drupal.behaviors.bat_event = {
     $.each(calendars, function(key, value) {
 
       $(value[0]).once().fullCalendar({
-        schedulerLicenseKey: Drupal.settings.batCalendar.schedulerLicenseKey,
-        height: Drupal.settings.batCalendar.calendarHeight,
-        editable: Drupal.settings.batCalendar.editable,
-        selectable: Drupal.settings.batCalendar.selectable,
+        schedulerLicenseKey: Drupal.settings.batCalendar[0].schedulerLicenseKey,
+        height: Drupal.settings.batCalendar[0].calendarHeight,
+        editable: Drupal.settings.batCalendar[0].editable,
+        selectable: Drupal.settings.batCalendar[0].selectable,
         dayNamesShort:[Drupal.t("Sun"), Drupal.t("Mon"), Drupal.t("Tue"), Drupal.t("Wed"), Drupal.t("Thu"), Drupal.t("Fri"), Drupal.t("Sat")],
         monthNames:[Drupal.t("January"), Drupal.t("February"), Drupal.t("March"), Drupal.t("April"), Drupal.t("May"), Drupal.t("June"), Drupal.t("July"), Drupal.t("August"), Drupal.t("September"), Drupal.t("October"), Drupal.t("November"), Drupal.t("December")],
         header: {
-          left: Drupal.settings.batCalendar.headerLeft,
-          center: Drupal.settings.batCalendar.headerCenter,
-          right: Drupal.settings.batCalendar.headerRight,
+          left: Drupal.settings.batCalendar[0].headerLeft,
+          center: Drupal.settings.batCalendar[0].headerCenter,
+          right: Drupal.settings.batCalendar[0].headerRight,
         },
         businessHours: businessHours,
-        defaultView: Drupal.settings.batCalendar.defaultView,
+        defaultView: Drupal.settings.batCalendar[0].defaultView,
         views: {
           timelineDay: {
-            buttonText: Drupal.settings.batCalendar.viewsTimelineDayButtonText,
-            slotDuration: Drupal.settings.batCalendar.viewsTimelineDaySlotDuration,
+            buttonText: Drupal.settings.batCalendar[0].viewsTimelineDayButtonText,
+            slotDuration: Drupal.settings.batCalendar[0].viewsTimelineDaySlotDuration,
           },
           timelineTenDay: {
-            type: Drupal.settings.batCalendar.viewsTimelineTenDayButtonText,
-            duration: Drupal.settings.batCalendar.viewsTimelineTenDaySlotDuration,
+            type: Drupal.settings.batCalendar[0].viewsTimelineTenDayButtonText,
+            duration: Drupal.settings.batCalendar[0].viewsTimelineTenDaySlotDuration,
           }
         },
-        resourceAreaWidth: Drupal.settings.batCalendar.resourceAreaWidth,
-        resourceLabelText: Drupal.settings.batCalendar.resourceLabelText,
-        resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendar.unitType,
+        resourceAreaWidth: Drupal.settings.batCalendar[0].resourceAreaWidth,
+        resourceLabelText: Drupal.settings.batCalendar[0].resourceLabelText,
+        resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendar[0].unitType,
         selectOverlap: function(event) {
           // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';
         },
-        events: '/bat/v2/events-calendar?unit_types=' + Drupal.settings.batCalendar.unitType + '&event_types=' + Drupal.settings.batCalendar.eventType,
+        events: '/bat/v2/events-calendar?unit_types=' + Drupal.settings.batCalendar[0].unitType + '&event_types=' + Drupal.settings.batCalendar[0].eventType,
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
@@ -129,7 +129,7 @@ Drupal.batCalendar.Modal = function(element, eid, sd, ed, $unit_id) {
   var base = Drupal.settings.basePath + '?q=admin/bat/fullcalendar/';
   // Create a drupal ajax object that points to the event form.
   var element_settings = {
-    url : base + $unit_id + '/event/' + Drupal.settings.batCalendar.eventType + '/' + eid + '/' + sd + '/' + ed,
+    url : base + $unit_id + '/event/' + Drupal.settings.batCalendar[0].eventType + '/' + eid + '/' + sd + '/' + ed,
     event : 'getResponse',
     progress : { type: 'throbber' }
   };
