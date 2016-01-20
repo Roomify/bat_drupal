@@ -445,18 +445,12 @@ function bat_fullcalendar_libraries_info() {
  *
  * @param $name - string fullcalendar or fullcalendar-scheduler
  * @param $variant - string source or minified
+ *
  * @return bool
  *   Boolean indicating if the library is properly loaded or not.
  */
 function bat_fullcalendar_library_loaded($name, $variant = 'minified') {
-  $status = FALSE;
-
-  // Load FullCalendar
-  if (libraries_load($name, $variant) && !empty($library['loaded'])) {
-    $status = TRUE;
-  }
-
-  return $status;
+  return ($library = libraries_load($name, $variant)) && !empty($library['loaded']);
 }
 
 function bat_fullcalendar_configure($user_settings) {

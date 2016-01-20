@@ -118,7 +118,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
   switch ($display['type']) {
     case 'bat_calendar_reference_default':
       if ($field['type'] == 'bat_calendar_unit_type_reference') {
-        bat_event_ui_library_loaded('fullcalendar-scheduler', 'source');
+        bat_fullcalendar_library_loaded('fullcalendar-scheduler', 'source');
 
         drupal_add_js(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js');
         drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');
@@ -169,7 +169,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
         }
       }
       elseif ($field['type'] == 'bat_calendar_unit_reference') {
-        bat_event_ui_library_loaded('fullcalendar-scheduler', 'source');
+        bat_fullcalendar_library_loaded('fullcalendar-scheduler', 'source');
 
         drupal_add_js(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js');
         drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/fullcalendar.theme.css');

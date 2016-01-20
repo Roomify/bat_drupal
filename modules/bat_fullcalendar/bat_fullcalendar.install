@@ -10,16 +10,16 @@ function bat_fullcalendar_requirements($phase) {
   $t = get_t();
   switch ($phase) {
     case 'runtime':
-      if (!bat_event_ui_library_loaded('fullcalendar-scheduler', 'minified')) {
+      if (!bat_fullcalendar_library_loaded('fullcalendar-scheduler', 'minified')) {
         $description = array();
         $fullcalendar_library = libraries_detect('fullcalendar-scheduler');
         if (!$fullcalendar_library['installed']) {
           $description[] = $t('Could not load the FullCalendar Scheduler Javascript Library');
         }
-        if (!bat_event_ui_library_loaded('moment')) {
+        if (!bat_fullcalendar_library_loaded('moment')) {
           $description[] = $t('Could not load the Moment Library');
         }
-        if (!bat_event_ui_library_loaded('fullcalendar')) {
+        if (!bat_fullcalendar_library_loaded('fullcalendar')) {
           $description[] = $t('Could not load the FullCalendar Library');
         }
         $requirements['fullcalendar'] = array(
