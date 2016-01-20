@@ -8,7 +8,6 @@
  */
 
 
-
 /**
  * Implements hook_permission().
  */
@@ -168,7 +167,6 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $unit, $event_t
     '#type' => 'hidden',
     '#value' => $end_date,
   );
-
 
   $form['event_title'] = array(
     '#prefix' => '<h2>',
@@ -437,6 +435,7 @@ function bat_fullcalendar_libraries_info() {
       ),
     ),
   );
+
   return $libraries;
 }
 
@@ -453,6 +452,9 @@ function bat_fullcalendar_library_loaded($name, $variant = 'minified') {
   return ($library = libraries_load($name, $variant)) && !empty($library['loaded']);
 }
 
+/**
+ *
+ */
 function bat_fullcalendar_configure($user_settings) {
   // Set the scheduler license
   $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', '');
@@ -476,48 +478,45 @@ function bat_fullcalendar_configure($user_settings) {
 
   $calendar_views = 'timelineDay, timelineTenDay, timelineMonth, timelineYear';
   $default_view = 'timelineDay';
+
   if ($user_settings['batCalendar']['eventGranularity'] == 'bat_daily') {
     $calendar_views = 'timelineMonth, timelineYear';
     $default_view = 'timelineMonth';
   }
-
-  else if ($user_settings['batCalendar']['eventGranularity']) {
+  elseif ($user_settings['batCalendar']['eventGranularity']) {
     $calendar_views = 'timelineDay, timelineTenDay, timelineMonth';
     $default_view = 'timelineDay';
   }
 
-
   $config = array(
-      'batCalendar' => array(
-        'schedulerLicenseKey' => $schedulerlicensekey,
-        'unitType' => '',
-        'eventType' => '',
-        'eventGranularity' => 'bat_daily',
-        'calendarHeight' => 500,
-        'editable' => TRUE,
-        'selectable' => TRUE,
-        'headerLeft' => 'today, prev, next',
-        'headerCenter' => 'title',
-        'headerRight' => $calendar_views,
-        'views' => $calendar_views,
-        'defaultView' => $default_view,
-        'viewsTimelineDayButtonText' => ':15 slots',
-        'viewsTimelineDaySlotDuration' => '00:15',
-        'viewsTimelineTenDayButtonText' => 'timeline',
-        'viewsTimelineTenDaySlotDuration' => array('days' => 10),
-        'resourceAreaWidth' => '25%',
-        'resourceLabelText' => 'Rooms',
-      ),
+    'batCalendar' => array(
+      'schedulerLicenseKey' => $schedulerlicensekey,
+      'unitType' => '',
+      'eventType' => '',
+      'eventGranularity' => 'bat_daily',
+      'calendarHeight' => 500,
+      'editable' => TRUE,
+      'selectable' => TRUE,
+      'headerLeft' => 'today, prev, next',
+      'headerCenter' => 'title',
+      'headerRight' => $calendar_views,
+      'views' => $calendar_views,
+      'defaultView' => $default_view,
+      'viewsTimelineDayButtonText' => ':15 slots',
+      'viewsTimelineDaySlotDuration' => '00:15',
+      'viewsTimelineTenDayButtonText' => 'timeline',
+      'viewsTimelineTenDaySlotDuration' => array('days' => 10),
+      'resourceAreaWidth' => '25%',
+      'resourceLabelText' => 'Rooms',
+    ),
   );
 
   $settings = array_replace_recursive($config, $user_settings);
-
 
   // Allow other modules to alter further
   drupal_alter('bat_calendar_settings', $calendar_settings);
 
   return $settings;
-
 }
 
 /**
@@ -565,7 +564,6 @@ function bat_fullcalendar_set_css_files($user_css_files = array()) {
   return $css_files;
 }
 
-
 /**
  * Theme function for FullCalendar
  */
@@ -577,14 +575,16 @@ function theme_bat_fullcalendar($vars) {
   // Check if user has defined js files and swap those in
   if (!isset($vars['js_files'])) {
     $js_files =  bat_fullcalendar_set_js_files();
-  } else {
+  }
+  else {
     $js_files = bat_fullcalendar_set_js_files($vars['js_files']);
   }
 
   // Check for CSS fiels
   if (!isset($vars['css_files'])) {
     $css_files =  bat_fullcalendar_set_css_files();
-  } else {
+  }
+  else {
     $css_files = bat_fullcalendar_set_css_files($vars['css_files']);
   }
 
@@ -594,9 +594,7 @@ function theme_bat_fullcalendar($vars) {
   // Add FullCalendar JS.
   bat_fullcalendar_library_loaded($calendar_id);
 
-
   bat_fullcalendar_modal_style($modal_style);
-
 
   foreach ($js_files as $js_file) {
     drupal_add_js($js_file, array('type' => 'file', 'scope' => 'footer'));
@@ -608,13 +606,12 @@ function theme_bat_fullcalendar($vars) {
 
   drupal_add_js($settings, 'setting');
 
-  $renderarray =  array(
+  $render_array =  array(
     '#markup' => '<div class="calendar-set clearfix" id="calendar"></div>',
   );
 
-  return render($renderarray);
+  return render($render_array);
 }
-
 
 /**
  * Implements hook_theme().
