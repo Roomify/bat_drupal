@@ -8,7 +8,8 @@
  */
 
 /**
- *
+ * @param $units
+ * @param $context
  */
 function hook_bat_facets_search_results_alter(&$units, $context) {
 	unset($units[0]);

@@ -600,7 +600,7 @@ function bat_event_states_delete_event_form($form, &$form_state, $event_id) {
 }
 
 /**
- *
+ * Submit callback for bat_event_states_delete_event_form form.
  */
 function bat_event_states_delete_event_form_submit($form, &$form_state) {
   db_delete('bat_event_state')
@@ -1441,6 +1441,12 @@ function bat_event_field_validate($entity_type, $entity, $field, $instance, $lan
   }
 }
 
+/**
+ * @param $field
+ * @param $options
+ *
+ * @return array
+ */
 function bat_event_potential_references($field, $options = array()) {
   // Fill in default options.
   $options += array(
@@ -1471,7 +1477,10 @@ function bat_event_potential_references($field, $options = array()) {
 }
 
 /**
+ * @param $field
+ * @param $options
  *
+ * @return array
  */
 function _bat_event_potential_references($field, $options) {
   $query = db_select('bat_event_state', 'u');
@@ -1671,7 +1680,9 @@ function bat_event_get_event_type_tables($machine_name) {
 }
 
 /**
+ * Create 6 tables for store events of type $machine_name.
  *
+ * @param $machine_name
  */
 function bat_event_create_event_type_schema($machine_name) {
   $schema = array();

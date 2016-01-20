@@ -453,7 +453,10 @@ function bat_fullcalendar_library_loaded($name, $variant = 'minified') {
 }
 
 /**
+ * Fullcalendar settings.
  *
+ * @param $user_settings
+ * @return array
  */
 function bat_fullcalendar_configure($user_settings) {
   // Set the scheduler license
@@ -521,6 +524,7 @@ function bat_fullcalendar_configure($user_settings) {
 
 /**
  * Sets up JS files for fullcalendar and calls an alter to allow other modules to change them
+ *
  * @param array $user_js_files
  * @return array
  */
@@ -543,6 +547,7 @@ function bat_fullcalendar_set_js_files($user_js_files = array()) {
 
 /**
  * Sets up CSS files for fullcalendar and calls an alter to allow other modules to change them
+ *
  * @param array $user_css_files
  * @return array
  */
