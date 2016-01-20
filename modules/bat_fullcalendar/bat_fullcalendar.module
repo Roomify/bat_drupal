@@ -563,7 +563,7 @@ function bat_fullcalendar_set_css_files($user_css_files = array()) {
     );
   }
 
-  //Provide alter hook to change calendar css files
+  // Provide alter hook to change calendar css files
   drupal_alter('bat_fullcalendar_render_css', $css_files);
 
   return $css_files;
