@@ -125,7 +125,8 @@ Drupal.behaviors.bat_event = {
  */
 Drupal.batCalendar.Modal = function(element, eid, sd, ed, $unit_id) {
   Drupal.CTools.Modal.show('bat-modal-style');
-  // base url the part that never change is used to identify our ajax instance
+
+  // The base url (which doesn't change) is used to identify our ajax instance.
   var base = Drupal.settings.basePath + '?q=admin/bat/fullcalendar/';
   // Create a drupal ajax object that points to the event form.
   var element_settings = {
@@ -134,13 +135,12 @@ Drupal.batCalendar.Modal = function(element, eid, sd, ed, $unit_id) {
     progress : { type: 'throbber' }
   };
 
-  console.log(element_settings);
-
   // To make all calendars trigger correctly the getResponse event we need to
   // initialize the ajax instance with the global calendar table element.
   var calendars_table = $(element.el).closest('.calendar-set');
 
-  // create new instance only once if exists just override the url
+  // Create a new instance only once.
+  // If it exists just override the url.
   if (Drupal.ajax[base] === undefined) {
     Drupal.ajax[base] = new Drupal.ajax(element_settings.url, calendars_table, element_settings);
   }
@@ -148,8 +148,8 @@ Drupal.batCalendar.Modal = function(element, eid, sd, ed, $unit_id) {
     Drupal.ajax[base].element_settings.url = element_settings.url;
     Drupal.ajax[base].options.url = element_settings.url;
   }
-  // We need to trigger manually the AJAX getResponse due fullcalendar select
-  // event is not recognized by Drupal AJAX
+  // We need to trigger the AJAX getResponse manually because the
+  // fullcalendar select event is not recognized by Drupal's AJAX.
   $(calendars_table).trigger('getResponse');
 };
 
