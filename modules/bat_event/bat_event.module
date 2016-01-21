@@ -470,16 +470,26 @@ function bat_event_states_form_set_default($form, &$form_state) {
  * Form submit for event states management
  */
 function bat_event_states_form_submit($form, &$form_state) {
-  $max_id = db_query("SELECT MAX(id) as max_id FROM {bat_event_state}")->fetchCol();
+  $event_type = $form_state['values']['event_type'];
 
   $event_state = array(
-    'id' => reset($max_id) + 1,
-    'event_type' => $form_state['values']['event_type'],
     'label' => $form_state['values']['label'],
     'color' => $form_state['values']['color'],
     'calendar_label' => $form_state['values']['calendar_label'],
     'blocking' => $form_state['values']['blocking'],
   );
+
+  bat_event_save_state($event_state, $event_type);
+}
+
+/**
+ * @param $event_state
+ */
+function bat_event_save_state($event_state, $event_type) {
+  $max_id = db_query("SELECT MAX(id) as max_id FROM {bat_event_state}")->fetchCol();
+
+  $event_state['id'] = reset($max_id) + 1;
+  $event_state['event_type'] = $event_type;
 
   drupal_write_record('bat_event_state', $event_state);
 }
@@ -565,6 +575,7 @@ function bat_event_states_edit_event_form_submit($form, &$form_state) {
       'label' => $form_state['values']['label'],
       'color' => $form_state['values']['color'],
       'calendar_label' => $form_state['values']['calendar_label'],
+      'blocking' => $form_state['values']['blocking'],
     ))
     ->condition('id', $form_state['values']['state_id'])
     ->execute();
