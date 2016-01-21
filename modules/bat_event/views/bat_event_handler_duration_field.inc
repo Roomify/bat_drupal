@@ -4,7 +4,7 @@
  * @file
  */
 
-class bat_event_handler_nights_field extends views_handler_field_numeric {
+class bat_event_handler_duration_field extends views_handler_field {
   function construct() {
     parent::construct();
   }
@@ -17,7 +17,7 @@ class bat_event_handler_nights_field extends views_handler_field_numeric {
   function query() {
     $this->ensure_my_table();
 
-    $this->field_alias = $this->table_alias . '_nights';
+    $this->field_alias = $this->table_alias . '_duration';
 
     $alias = $this->field_alias;
     $counter = 0;
@@ -27,13 +27,15 @@ class bat_event_handler_nights_field extends views_handler_field_numeric {
 
     // Add the field.
     $params = $this->options['group_type'] != 'group' ? array('function' => $this->options['group_type']) : array();
-    $this->query->add_field(NULL, '(TO_DAYS(' . $this->table_alias . '.end_date) - TO_DAYS(' . $this->table_alias . '.start_date))', $this->field_alias, $params);
+    $this->query->add_field(NULL, 'TIMESTAMPDIFF(SECOND, ' . $this->table_alias . '.start_date, ' . $this->table_alias . '.end_date)', $this->field_alias, $params);
 
     $this->add_additional_fields();
   }
 
   function render($values) {
-    $value = number_format($values->{$this->field_alias}, $this->options['precision'], $this->options['decimal'], $this->options['separator']);
-    return $this->sanitize_value($value);
+    $value = $values->{$this->field_alias};
+    $value += 60;
+
+    return $this->sanitize_value(format_interval($value));
   }
 }

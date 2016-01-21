@@ -11,7 +11,6 @@
  * Implements hook_views_data_alter().
  */
 function bat_unit_views_data_alter(&$data) {
-
   // Views alterations for Bat Units.
   $data['bat_units']['type']['field'] = array(
     'title' => t('Booking Unit Bundle'),
@@ -116,5 +115,4 @@ function bat_unit_views_data_alter(&$data) {
       'handler' => 'bat_type_handler_type_operations_field',
     ),
   );
-
 }

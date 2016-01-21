@@ -100,13 +100,12 @@ function bat_event_views_data_alter(&$data) {
   );
 
   $data['bat_events']['nights'] = array(
-    'title' => t('Nights'),
-    'help' => t("Event's number of nights."),
+    'title' => t('Duration'),
+    'help' => t("Event's duration."),
     'field' => array(
       'float' => TRUE,
-      'handler' => 'bat_event_handler_nights_field',
+      'handler' => 'bat_event_handler_duration_field',
       'click sortable' => TRUE,
     ),
   );
-
 }
