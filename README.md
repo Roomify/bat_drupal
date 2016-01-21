@@ -31,6 +31,8 @@ BAT aims to address the following tasks.
 ### PHP Libraries
 The core booking and availability management functionality is provided through a PHP library called BAT, also developed by Roomify. The required version is described in the composer.json file in the root of the module. The library is available on [Github](https://github.com/roomify/bat) and through [Packagist](https://packagist.org/packages/roomify/bat).
 
+NB: you may need to modify your composer configuration to allow installing development releases. ("minimum-stability": "dev") See [Composer Stability Flags](https://igor.io/2013/02/07/composer-stability-flags.html) for more information.
+
 ### Drupal Modules
 
 Before enabling BAT you are going to need to download at least the following modules:
