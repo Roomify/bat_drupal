@@ -346,6 +346,16 @@ function bat_unit_views_api() {
 }
 
 /**
+ * Implements hook_views_pre_render().
+ */
+function bat_unit_views_pre_render(&$view) {
+  // Hide "Calendars" field until module "BAT Event UI" is enabled.
+  if ($view->name == 'unit_management' && !module_exists('bat_event_ui')) {
+    $view->field['calendars']->options['exclude'] = TRUE;
+  }
+}
+
+/**
  * Implements hook_menu_local_tasks_alter().
  */
 function bat_unit_menu_local_tasks_alter(&$data, $router_item, $root_path) {
