@@ -372,7 +372,7 @@ function bat_event_states_form($form, &$form_state, $event_type) {
         '#type' => 'submit',
         '#value' => t('Set default state'),
         '#limit_validation_errors' => array(array('states')),
-        '#submit' => 'bat_event_states_form_set_default',
+        '#submit' => array(),
         '#ajax' => array(
           'callback' => 'bat_event_states_form_set_default',
           'wrapper' => 'event-state-wrapper',

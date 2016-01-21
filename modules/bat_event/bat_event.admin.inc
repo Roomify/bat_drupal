@@ -248,20 +248,20 @@ function bat_event_edit_form($form, &$form_state, $event) {
     }
   }
 
-  $unitid = '';
-  if (isset($_GET['unitid'])) {
-    $unitid = (is_numeric(check_plain($_GET['unitid']))) ? check_plain($_GET['unitid']) : '';
-
-    if (bat_unit_load($unitid) == NULL || $startdate == '' || $enddate == '') {
-      $unitid = '';
-    }
-  }
-
   // Add the field related form elements.
   $form_state['bat_event'] = $event;
   field_attach_form('bat_event', $event, $form, $form_state);
 
   isset($form['event_unit_reference']['#language']) ? $language = $form['event_unit_reference']['#language'] : $language = LANGUAGE_NONE;
+
+  $unitid = '';
+  if (isset($_GET['unitid'])) {
+    $unitid = check_plain($_GET['unitid']);
+
+    if ($unit = bat_unit_load($unitid)) {
+      $form['event_unit_reference'][$language][0]['target_id']['#default_value'] = $unit->name . ' (' . $unit->unit_id . ')';
+    }
+  }
 
   // The unit reference value should be mandatory.
   $form['event_unit_reference'][$language][0]['target_id']['#required'] = TRUE;
@@ -271,7 +271,6 @@ function bat_event_edit_form($form, &$form_state, $event) {
     '#type' => 'vertical_tabs',
     '#weight' => 99,
   );
-
 
   // Add the user account and e-mail fields.
   $form['user'] = array(

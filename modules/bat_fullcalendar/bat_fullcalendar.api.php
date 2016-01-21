@@ -13,7 +13,7 @@
  * @param $calendar_settings
  */
 function hook_bat_calendar_settings_alter(&$calendar_settings) {
-
+	// No example.
 }
 
 /**
@@ -22,7 +22,7 @@ function hook_bat_calendar_settings_alter(&$calendar_settings) {
  * @param $js_files
  */
 function hook_bat_fullcalendar_render_js_alter(&$js_files) {
-
+	// No example.
 }
 
 /**
@@ -31,7 +31,7 @@ function hook_bat_fullcalendar_render_js_alter(&$js_files) {
  * @param $css_files
  */
 function hook_bat_fullcalendar_render_css_alter(&$css_files) {
-
+	// No example.
 }
 
 /**
@@ -40,5 +40,5 @@ function hook_bat_fullcalendar_render_css_alter(&$css_files) {
  * @param $modal_style
  */
 function hook_bat_fullcalendar_modal_style(&$modal_style) {
-
+	// No example.
 }

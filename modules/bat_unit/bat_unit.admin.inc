@@ -208,15 +208,6 @@ function bat_unit_edit_form($form, &$form_state, $unit) {
     '#attributes' => array(
       'class' => array('unit-form-author'),
     ),
-    '#attached' => array(
-      'js' => array(
-        drupal_get_path('module', 'bat_unit') . '/js/bat_unit.js',
-        array(
-          'type' => 'setting',
-          'data' => array('anonymous' => variable_get('anonymous', t('Anonymous'))),
-        ),
-      ),
-    ),
     '#weight' => 90,
   );
   $form['author']['author_name'] = array(
