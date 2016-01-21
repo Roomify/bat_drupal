@@ -209,7 +209,8 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $unit, $event_t
       $field = field_info_field($field_name);
       $instance = field_info_instance('bat_event', $field_name, $event_type);
 
-      $widget = field_default_form('bat_event', NULL, $field, $instance, LANGUAGE_NONE, NULL, $form, $form_state);
+      $element = array('#parents' => array());
+      $widget = field_default_form('bat_event', NULL, $field, $instance, LANGUAGE_NONE, NULL, $element, $form_state);
 
       $form[$field_name] = $widget[$field_name];
       $form[$field_name]['#weight'] = 1;
