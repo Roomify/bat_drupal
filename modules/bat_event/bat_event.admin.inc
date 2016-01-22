@@ -428,8 +428,9 @@ function bat_event_edit_form_submit(&$form, &$form_state) {
   }
 
   // Subtract one minute from the end date since BAT considers the last minute of an event included
-  $event->end_date_object->sub(new DateInterval('PT1M'));
-  $event->end_date = $event->end_date_object->format('Y-m-d H:i');
+  $end_date = new DateTime($event->end_date);
+  $end_date->sub(new DateInterval('PT1M'));
+  $event->end_date = $end_date->format('Y-m-d H:i');
 
   // Add in created and changed times.
   $event->created = !empty($event->date) ? strtotime($event->date) : REQUEST_TIME;

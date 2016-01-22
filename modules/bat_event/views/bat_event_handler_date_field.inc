@@ -15,6 +15,12 @@ class bat_event_handler_date_field extends views_handler_field_date {
   function render($values) {
     $value = $this->get_value($values);
     $date = new DateTime($value);
+
+    if ($this->table == 'bat_events' && $this->field == 'end_date') {
+      // Add a minute to then end date.
+      $date->add(new DateInterval('PT1M'));
+    }
+
     $value = $date->getTimestamp();
     $format = $this->options['date_format'];
     if (in_array($format, array('custom', 'raw time ago', 'time ago', 'raw time span', 'time span', 'raw time span', 'inverse time span', 'time span'))) {

@@ -1449,13 +1449,13 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
 
     foreach ($entity_info['view modes'] as $view_mode => $data) {
       $instance['display'][$view_mode] = $display + array(
-          'label' => 'hidden',
-          'type' => 'commerce_price_formatted_amount',
-          'settings' => array(
-            'calculation' => $calculation,
-          ),
-          'weight' => $weight,
-        );
+        'label' => 'hidden',
+        'type' => 'commerce_price_formatted_amount',
+        'settings' => array(
+          'calculation' => $calculation,
+        ),
+        'weight' => $weight,
+      );
     }
 
     field_create_instance($instance);
