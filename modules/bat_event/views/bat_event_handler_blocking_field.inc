@@ -50,4 +50,18 @@ class bat_event_handler_blocking_filter extends views_handler_filter_boolean_ope
       }
     }
   }
+
+  function admin_summary() {
+    if ($this->is_a_group()) {
+      return t('grouped');
+    }
+    if (!empty($this->options['exposed'])) {
+      return t('exposed');
+    }
+    if (empty($this->value_options)) {
+      $this->get_value_options();
+    }
+
+    return $this->value_options[$this->value];
+  }
 }
