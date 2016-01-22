@@ -31,7 +31,7 @@ before_script:
 
   # Install required packages for behat.
   - cd ./test/behat
-  - composer -n update
+  - composer -n install
 
   # Make the site.
   - cd $TRAVIS_BUILD_DIR
