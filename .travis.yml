@@ -63,7 +63,7 @@ before_script:
   - sleep 5
 
 script:
-  - cd $TRAVIS_BUILD_DIR/test/behat
+  - cd $TRAVIS_BUILD_DIR/bat/test/behat
   # behat.yml includes behat.local.yml so it must exist
   - touch behat.local.yml
   - ./bin/behat
