@@ -22,6 +22,8 @@ before_script:
   # Install drush.
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - composer global require drush/drush:7.*
+  # Install drush composer extension.
+  - drush dl composer-8.x-1.x
 
   # Run composer
   - cd ./test/behat
