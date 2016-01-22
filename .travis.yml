@@ -12,6 +12,9 @@ mysql:
   username: root
   encoding: utf8
 
+addons:
+  firefox: "42.0"
+
 before_script:
   # Set github access token for composer.
   - git config --global github.accesstoken $GITHUB_OAUTH_TOKEN
@@ -88,5 +91,5 @@ cache:
     - $HOME/.cache
     - $HOME/.composer/cache
     - vendor
-    - test/behat/vendor
+    - bat/test/behat/vendor
     - $HOME/.drush/cache
