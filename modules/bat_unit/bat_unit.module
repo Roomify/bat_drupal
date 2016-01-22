@@ -734,7 +734,33 @@ function bat_unit_page_view($unit, $view_mode = 'full') {
  * FORM_ID = bat_unit_bundle_operation_form
  * Prevent a unit bundle with associated units from being deleted.
  */
-function bat_unit_form_bat_unit_bundle_operation_form_alter(&$form, &$form_state, $form_id) {
+function bat_unit_form_bat_type_delete_form_alter(&$form, &$form_state) {
+  if ($unit_bundle = $form_state['bat_type']) {
+    // Load the units associated with this bundle.
+    $query = new EntityFieldQuery();
+
+    $query->entityCondition('entity_type', 'bat_unit')
+          ->propertyCondition('type_id', $unit_bundle->type_id);
+    $units = $query->execute();
+    if (isset($units['bat_unit']) && count($units['bat_unit'])) {
+
+      // This bundle has associated units, don't allow deletion.
+      form_set_error('confirm', t('This unit bundle has associated units. Please delete all units before attempting to delete this unit bundle.'));
+
+      unset($form['description']);
+      unset($form['actions']);
+      unset($form['confirm']);
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = bat_unit_bundle_operation_form
+ * Prevent a unit bundle with associated units from being deleted.
+ */
+function bat_unit_form_bat_unit_bundle_operation_form_alter(&$form, &$form_state) {
   // Check if units of a unit bundle exist before allowing deletion.
   if ($form_state['op'] == 'delete') {
     $unit_bundle = $form_state['bat_unit_bundle'];
@@ -743,7 +769,7 @@ function bat_unit_form_bat_unit_bundle_operation_form_alter(&$form, &$form_state
     $query = new EntityFieldQuery();
 
     $query->entityCondition('entity_type', 'bat_unit')
-          ->propertyCondition('type', $unit_bundle->type);
+          ->propertyCondition('type_id', $unit_bundle->type_id);
     $units = $query->execute();
     if (isset($units['bat_unit']) && count($units['bat_unit'])) {
 
@@ -1344,7 +1370,7 @@ function bat_type_page_view($type, $view_mode = 'full') {
  * FORM_ID = bat_type_bundle_operation_form
  * Prevent a Bat type bundle with associated unit bundles from being deleted.
  */
-function bat_unit_form_bat_type_bundle_operation_form_alter(&$form, &$form_state, $form_id) {
+function bat_unit_form_bat_type_bundle_operation_form_alter(&$form, &$form_state) {
   // Check if types of a type bundle exist before allowing deletion.
   if ($form_state['op'] == 'delete') {
     $type_bundle = $form_state['bat_type_bundle'];

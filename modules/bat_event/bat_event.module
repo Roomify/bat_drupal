@@ -239,7 +239,7 @@ function bat_event_permission() {
  *
  * FORM_ID = views_exposed_form
  */
-function bat_event_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
+function bat_event_form_views_exposed_form_alter(&$form, &$form_state) {
   // Events admin view exposed filters.
   if ($form['#id'] == 'views-exposed-form-events-page-1') {
     $form['start_date']['#type'] = 'date_popup';
