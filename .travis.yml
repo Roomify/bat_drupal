@@ -1,0 +1,71 @@
+language: php
+
+sudo: false
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+
+mysql:
+  database: drupal
+  username: root
+  encoding: utf8
+
+addons:
+  firefox: "42.0"
+
+before_script:
+  # Update composer.
+  - composer self-update
+
+  # Install drush.
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - composer global require drush/drush:7.*
+
+  # Run composer
+  - cd ./tests/behat
+  - composer --prefer-source install
+  - cd $TRAVIS_BUILD_DIR
+
+  - drush make test/project.make bat
+
+  - cd bat
+  - php -d sendmail_path=$(which true) ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://root:@127.0.0.1/drupal --account-name=admin --account-pass=test --site-mail=webmaster@roomify.us --site-name="bat"
+  # Following step with -y should also run composer install.
+  - drush -y en bat bat_api bat_calendar_reference bat_event bat_event_ui bat_facets bat_fullcalendar bat_unit composer_manager
+  - drush cc all --yes
+
+  # Run a webserver and wait until it is started up.
+  - drush --debug runserver "http://127.0.0.1" > ~/debug.txt 2>&1 &
+  - sleep 10
+
+  # Move tests dir to working dir.
+  - mv $TRAVIS_BUILD_DIR/tests .
+
+  # Setup display for selenium
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3
+
+  - wget http://selenium-release.storage.googleapis.com/2.48/selenium-server-standalone-2.48.2.jar
+  - java -jar selenium-server-standalone-2.48.2.jar -p 4444 &> /tmp/selenium.log &
+  - sleep 5
+
+script:
+  - cd $TRAVIS_BUILD_DIR/bat_drupal/test/behat
+  # behat.yml includes behat.local.yml so it must exist
+  - touch behat.local.yml
+  - ./bin/behat
+
+# after_script:
+# - bash $TRAVIS_BUILD_DIR/scripts/upload.sh
+
+after_failure:
+  - echo "### DB LOG ###"
+  - cd $TRAVIS_BUILD_DIR/bat
+  - drush sqlq 'SELECT * FROM watchdog\G'
+  - echo
+
+notifications:
+    slack: roomify:Z9qyI59J2b9NAF0XvdCn8VhH
