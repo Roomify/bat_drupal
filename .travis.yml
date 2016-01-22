@@ -32,9 +32,9 @@ before_script:
   # Install required packages for behat.
   - cd ./test/behat
   - composer -n install
-  - cd $TRAVIS_BUILD_DIR
 
   # Make the site.
+  - cd $TRAVIS_BUILD_DIR
   - drush make test/project.make bat
 
   # Copy the bat module into the Drupal site.
@@ -91,5 +91,5 @@ cache:
     - $HOME/.cache
     - $HOME/.composer/cache
     - vendor
-    - bat/test/behat/vendor
+    - test/behat/vendor
     - $HOME/.drush/cache
