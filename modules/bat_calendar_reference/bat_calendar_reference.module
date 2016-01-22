@@ -361,7 +361,8 @@ function _bat_calendar_reference_units_potential_references($field, $options) {
   $unit_type_alias = $query->addField('u', 'type', 'type');
 
   if (is_array($field['settings']['referenceable_unit_types'])) {
-    if (!empty(array_filter($field['settings']['referenceable_unit_types']))) {
+    $referenceable_unit_types = array_filter($field['settings']['referenceable_unit_types']);
+    if (!empty($referenceable_unit_types)) {
       $query->condition('u.type_id', array_filter($field['settings']['referenceable_unit_types']), 'IN');
     }
   }
@@ -464,7 +465,8 @@ function _bat_calendar_reference_event_types_potential_references($field, $optio
   $event_type_label_alias = $query->addField('u', 'label', 'label');
 
   if (is_array($field['settings']['referenceable_event_types'])) {
-    if (!empty(array_filter($field['settings']['referenceable_event_types']))) {
+    $referenceable_event_types = array_filter($field['settings']['referenceable_event_types']);
+    if (!empty($referenceable_event_types)) {
       $query->condition('u.id', array_filter($field['settings']['referenceable_event_types']), 'IN');
     }
   }
@@ -561,7 +563,8 @@ function _bat_calendar_reference_unit_types_potential_references($field, $option
   $type_name_alias = $query->addField('u', 'name', 'name');
 
   if (is_array($field['settings']['referenceable_event_types'])) {
-    if (!empty(array_filter($field['settings']['referenceable_event_types']))) {
+    $referenceable_event_types = array_filter($field['settings']['referenceable_event_types']);
+    if (!empty($referenceable_event_types)) {
       $query->condition('u.type_id', array_filter($field['settings']['referenceable_event_types']), 'IN');
     }
   }
