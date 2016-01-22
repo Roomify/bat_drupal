@@ -19,3 +19,4 @@ files[] = views/bat_event_handler_event_type_field.inc
 files[] = views/bat_event_handler_date_filter.inc
 files[] = views/bat_event_handler_duration_field.inc
 files[] = views/bat_event_handler_value_field.inc
+files[] = views/bat_event_handler_blocking_field.inc

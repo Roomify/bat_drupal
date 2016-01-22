@@ -115,4 +115,12 @@ function bat_event_views_data_alter(&$data) {
       'handler' => 'bat_event_handler_value_field',
     ),
   );
+
+  $data['bat_events']['blocking'] = array(
+    'title' => t('Blocking'),
+    'help' => t("Event's blocking state."),
+    'filter' => array(
+      'handler' => 'bat_event_handler_blocking_filter',
+    ),
+  );
 }
