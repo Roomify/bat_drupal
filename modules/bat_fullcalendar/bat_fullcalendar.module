@@ -486,11 +486,11 @@ function bat_fullcalendar_configure($user_settings) {
     $calendar_views = 'timelineDay, timelineTenDay, timelineMonth, timelineYear';
     $default_view = 'timelineDay';
 
-    if ($user_settings['batCalendar'][0]['eventGranularity'] == 'bat_daily') {
+    if ($user_setting['eventGranularity'] == 'bat_daily') {
       $calendar_views = 'timelineMonth, timelineYear';
       $default_view = 'timelineMonth';
     }
-    elseif ($user_settings['eventGranularity']) {
+    elseif ($user_setting['eventGranularity']) {
       $calendar_views = 'timelineDay, timelineTenDay, timelineMonth';
       $default_view = 'timelineDay';
     }
