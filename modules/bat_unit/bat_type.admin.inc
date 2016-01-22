@@ -13,34 +13,23 @@
  */
 class BatTypeUIController extends EntityDefaultUIController {
   /**
-   * Overrides hook_menu() defaults. Main reason for doing this is that
-   * parent class hook_menu() is optimized for entity type administration.
+   * Overrides hook_menu() defaults.
    */
   public function hook_menu() {
-    $items = array();
+    $items = parent::hook_menu();
+
     $id_count = count(explode('/', $this->path));
     $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%' . $this->entityType;
-    $items[$this->path] = array(
-      'title' => 'Types',
-      'description' => 'Add, edit, and update Types.',
-      'page callback' => 'system_admin_menu_block_page',
-      'access arguments' => array('access type overview'),
-      'file path' => drupal_get_path('module', 'system'),
-      'file' => 'system.admin.inc',
-      'weight' => 10,
-    );
+
+    $items[$this->path]['description'] = 'Add, edit, and update Types.';
+    $items[$this->path]['weight'] = 10;
 
     // Change the add page menu to multiple types of entities.
-    $items[$this->path . '/add'] = array(
-      'title' => 'Add a Type',
-      'description' => 'Create a new Type.',
-      'page callback'  => 'bat_type_add_page',
-      'access callback'  => '_bat_type_add_access',
-      'type' => MENU_NORMAL_ITEM,
-      'weight' => 20,
-      'file' => 'bat_type.admin.inc',
-      'file path' => drupal_get_path('module', $this->entityInfo['module']),
-    );
+    $items[$this->path . '/add']['title'] = 'Add a Type';
+    $items[$this->path . '/add']['description'] = 'Create a new Type.';
+    $items[$this->path . '/add']['page callback'] = 'bat_type_add_page';
+    $items[$this->path . '/add']['access callback'] = '_bat_type_add_access';
+    unset($items[$this->path . '/add']['title callback']);
 
     // Add menu items to add each different bundle of Bat Types.
     foreach (bat_unit_get_type_bundles() as $bundle) {
@@ -132,6 +121,7 @@ class BatTypeUIController extends EntityDefaultUIController {
         'file path' => drupal_get_path('module', $this->entityInfo['module']),
       );
     }
+
     return $items;
   }
 
@@ -141,18 +131,28 @@ class BatTypeUIController extends EntityDefaultUIController {
    */
   public function addPage() {
     $item = menu_get_item();
-    $content = system_admin_menu_block($item);
-    if (count($content) == 1) {
-      $item = array_shift($content);
-      drupal_goto($item['href']);
+    $bundles = bat_unit_get_type_bundles();
+
+    // If there is only one unit bundle go straight to that page
+    if (count($bundles) == 1) {
+      $bundle = reset($bundles);
+      drupal_goto($this->path . '/add/' . $bundle->type);
+    }
+
+    $items = array();
+    foreach ($bundles as $bundle) {
+      $items[] = array(
+        'title' => t('Add @type_bundle_label type', array('@type_bundle_label' => $bundle->label)),
+        'href' => $this->path . '/add/' . $bundle->type,
+        'description' => '',
+      );
     }
 
     return array(
       '#theme' => 'bat_type_add_list',
-      '#content' => $content,
+      '#content' => $items,
     );
   }
-
 
   /**
    * Creates the markup for the add Bat Units pages when units are added through
@@ -178,7 +178,14 @@ class BatTypeUIController extends EntityDefaultUIController {
 }
 
 /**
- * Form callback wrapper: edit a  type.
+ * Form callback wrapper: edit a type.
+ */
+function bat_type_form($form, $form_state) {
+  return bat_type_form_wrapper($form_state['bat_type']);
+}
+
+/**
+ * Form callback wrapper: edit a type.
  *
  * @param $type
  *   The Battype object being edited by this form.
@@ -464,6 +471,7 @@ function bat_type_add_units_page() {
  */
 function theme_bat_type_add_list($variables) {
   $content = $variables['content'];
+
   if ($content) {
     $output = '<dl class="type-type-list">';
     foreach ($content as $item) {
@@ -480,6 +488,7 @@ function theme_bat_type_add_list($variables) {
       $output = '<p>' . t('No Types have been created yet.') . '</p>';
     }
   }
+
   return $output;
 }
 

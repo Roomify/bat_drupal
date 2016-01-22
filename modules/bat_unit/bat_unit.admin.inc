@@ -13,33 +13,24 @@
  */
 class BatUnitUIController extends EntityDefaultUIController {
   /**
-   * Overrides hook_menu() defaults. Main reason for doing this is that
-   * parent class hook_menu() is optimized for entity type administration.
+   * Overrides hook_menu() defaults.
    */
   public function hook_menu() {
-    $items = array();
+    $items = parent::hook_menu();
+
     $id_count = count(explode('/', $this->path));
     $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%' . $this->entityType;
-    $items[$this->path] = array(
-      'title' => 'Units',
-      'description' => 'Add, edit, and update units.',
-      'page callback' => 'system_admin_menu_block_page',
-      'access arguments' => array('access units overview'),
-      'file path' => drupal_get_path('module', 'system'),
-      'file' => 'system.admin.inc',
-      'weight' => 10,
-    );
+
+    $items[$this->path]['description'] = 'Add, edit, and update units.';
+    $items[$this->path]['weight'] = 10;
+
     // Change the add page menu to multiple types of entities.
-    $items[$this->path . '/add'] = array(
-      'title' => 'Add a Unit',
-      'description' => 'Create a new unit.',
-      'page callback'  => 'bat_unit_add_page',
-      'access callback'  => '_bat_unit_add_access',
-      'type' => MENU_NORMAL_ITEM,
-      'weight' => 20,
-      'file' => 'bat_unit.admin.inc',
-      'file path' => drupal_get_path('module', $this->entityInfo['module']),
-    );
+    $items[$this->path . '/add']['title'] = 'Add a Unit';
+    $items[$this->path . '/add']['description'] = 'Create a new unit.';
+    $items[$this->path . '/add']['page callback'] = 'bat_unit_add_page';
+    $items[$this->path . '/add']['access callback'] = '_bat_unit_add_access';
+    unset($items[$this->path . '/add']['title callback']);
+
     // Add menu items to add each different type of units.
     foreach (bat_unit_get_bundles() as $bundle) {
       $items[$this->path . '/add/' . $bundle->type] = array(
@@ -97,16 +88,35 @@ class BatUnitUIController extends EntityDefaultUIController {
    */
   public function addPage() {
     $item = menu_get_item();
-    $content = system_admin_menu_block($item);
-    if (count($content) == 1) {
-      $item = array_shift($content);
-      drupal_goto($item['href']);
+    $bundles = bat_unit_get_bundles();
+
+    // If there is only one unit bundle go straight to that page
+    if (count($bundles) == 1) {
+      $bundle = reset($bundles);
+      drupal_goto($this->path . '/add/' . $bundle->type);
     }
+
+    $items = array();
+    foreach ($bundles as $bundle) {
+      $items[] = array(
+        'title' => t('Add @unit_bundle_label unit', array('@unit_bundle_label' => $bundle->label)),
+        'href' => $this->path . '/add/' . $bundle->type,
+        'description' => '',
+      );
+    }
+
     return array(
       '#theme' => 'bat_unit_add_list',
-      '#content' => $content,
+      '#content' => $items,
     );
   }
+}
+
+/**
+ * Form callback wrapper: edit a Unit.
+ */
+function bat_unit_form($form, $form_state) {
+  return bat_unit_form_wrapper($form_state['bat_unit']);
 }
 
 /**
