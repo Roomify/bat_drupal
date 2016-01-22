@@ -31,7 +31,7 @@ before_script:
 
   # Install required packages for behat.
   - cd ./test/behat
-  - composer -n install
+  - composer -n update
 
   # Make the site.
   - cd $TRAVIS_BUILD_DIR
@@ -94,5 +94,6 @@ cache:
     - $HOME/.cache
     - $HOME/.composer/cache
     - vendor
+    - test/behat/bin
     - test/behat/vendor
     - $HOME/.drush/cache
