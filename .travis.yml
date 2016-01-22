@@ -24,7 +24,7 @@ before_script:
   - composer global require drush/drush:7.*
 
   # Run composer
-  - cd ./tests/behat
+  - cd ./test/behat
   - composer --prefer-source install
   - cd $TRAVIS_BUILD_DIR
 
@@ -40,8 +40,8 @@ before_script:
   - drush --debug runserver "http://127.0.0.1" > ~/debug.txt 2>&1 &
   - sleep 10
 
-  # Move tests dir to working dir.
-  - mv $TRAVIS_BUILD_DIR/tests .
+  # Move test dir to working dir.
+  - mv $TRAVIS_BUILD_DIR/test .
 
   # Setup display for selenium
   - export DISPLAY=:99.0
