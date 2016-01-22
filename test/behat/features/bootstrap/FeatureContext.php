@@ -155,7 +155,6 @@ class FeatureContext extends DrupalSubContextBase implements CustomSnippetAccept
     $this->iAmDoingOnTheType('edit', $type_name);
   }
 
-
   /**
    * Asserts that a given node type is editable.
    */
@@ -166,30 +165,6 @@ class FeatureContext extends DrupalSubContextBase implements CustomSnippetAccept
 
     // Set internal browser on the node edit page.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
-  }
-
-  /**
-   * Fill commerce address form fields in a single step.
-   */
-  private function fillCommerceAddress($args, $type) {
-    // Replace <random> or member <property> token if is set for any field
-    foreach ($args as $delta => $arg) {
-      if (preg_match("/^<random>$/", $arg, $matches)) {
-        $random = new Random();
-        $args[$delta] = $random->name();
-      }
-    }
-
-    // Need to manually fill country to trigger the AJAX refresh of fields for given country
-    $country_field = str_replace('\\"', '"', "{$type}[commerce_customer_address][und][0][country]");
-    $country_value = str_replace('\\"', '"', $args[4]);
-    $this->getSession()->getPage()->fillField($country_field, $country_value);
-    $this->minkContext->iWaitForAjaxToFinish();
-
-    $this->minkContext->fillField("{$type}[commerce_customer_address][und][0][locality]", $args[1]);
-    $this->minkContext->fillField("{$type}[commerce_customer_address][und][0][administrative_area]", $args[2]);
-    $this->minkContext->fillField("{$type}[commerce_customer_address][und][0][postal_code]", $args[3]);
-    $this->minkContext->fillField("{$type}[commerce_customer_address][und][0][thoroughfare]", $args[0]);
   }
 
   /**
@@ -250,101 +225,6 @@ class FeatureContext extends DrupalSubContextBase implements CustomSnippetAccept
   }
 
   /**
-   * Fills the constraint range field form.
-   *
-   * @param $minimum
-   * @param $maximum
-   * @param $constraint_type
-   * @param $start_day
-   * @param $start
-   * @param $end
-   */
-  protected function addAvailabilityConstraint($minimum = NULL, $maximum = NULL, $constraint_type = NULL, $start_day = NULL, $start = NULL, $end = NULL) {
-    $items = $this->getSession()->getPage()->findAll('css', 'table[id^="rooms-constraints-range-values"] tbody tr');
-    $delta = count($items) - 1;
-
-    if ($constraint_type == 'must') {
-      $this->minkContext->pressButton('add_checkin_day_' . $delta);
-    }
-    else {
-      $this->minkContext->pressButton('add_min_max_' . $delta);
-    }
-    $this->minkContext->iWaitForAjaxToFinish();
-
-    if (!isset($start) || !isset($end)) {
-      $this->minkContext->selectOption('rooms_constraints_range[und][' . $delta . '][group_conditions][period]', 'always');
-    }
-    else {
-      $this->minkContext->selectOption('rooms_constraints_range[und][' . $delta . '][group_conditions][period]', 'dates');
-      $this->minkContext->iWaitForAjaxToFinish();
-
-      $start_date = new DateTime($start);
-      $end_date = new DateTime($end);
-      $this->minkContext->fillField('rooms_constraints_range[und][' . $delta . '][group_conditions][start_date][date]', $start_date->format('d/m/Y'));
-      $this->minkContext->fillField('rooms_constraints_range[und][' . $delta . '][group_conditions][end_date][date]', $end_date->format('d/m/Y'));
-    }
-
-    if (isset($start_day)) {
-      if ($constraint_type == 'must') {
-        $this->minkContext->selectOption('rooms_constraints_range[und][' . $delta . '][group_conditions][booking_must_start]', $start_day);
-      }
-      elseif ($constraint_type == 'if') {
-        $this->minkContext->checkOption('rooms_constraints_range[und][' . $delta . '][group_conditions][booking_if_start]');
-        $this->minkContext->iWaitForAjaxToFinish();
-
-        $this->minkContext->selectOption('rooms_constraints_range[und][' . $delta . '][group_conditions][booking_if_start_day]', $start_day);
-      }
-    }
-
-    if ($constraint_type != 'must') {
-      if (is_numeric($minimum)) {
-        $this->minkContext->checkOption('rooms_constraints_range[und][' . $delta . '][group_conditions][minimum_stay]');
-        $this->minkContext->iWaitForAjaxToFinish();
-
-        $this->minkContext->fillField('rooms_constraints_range[und][' . $delta . '][group_conditions][minimum_stay_nights]', $minimum);
-      }
-
-      if (is_numeric($maximum)) {
-        $this->minkContext->checkOption('rooms_constraints_range[und][' . $delta . '][group_conditions][maximum_stay]');
-        $this->minkContext->iWaitForAjaxToFinish();
-
-        $this->minkContext->fillField('rooms_constraints_range[und][' . $delta . '][group_conditions][maximum_stay_nights]', $maximum);
-      }
-    }
-
-    $this->minkContext->pressButton('rooms_constraints_range_add_more');
-    $this->minkContext->iWaitForAjaxToFinish();
-  }
-
-  /**
-   * @param $unit_name
-   * @param $start
-   * @param $end
-   * @return bool
-   */
-  protected function findUnitAvailability($unit_name, $start, $end) {
-    $unit_id = $this->findBookableUnitByName($unit_name);
-    $start_date = new DateTime($start);
-    $end_date = new DateTime($end);
-
-    $agent = new AvailabilityAgent($start_date, $end_date);
-    $units = $agent->checkAvailability();
-
-    if (is_array($units)) {
-      foreach ($units as $units_per_type) {
-        foreach ($units_per_type as $units) {
-          foreach ($units as $id => $unit) {
-            if ($id == $unit_id) {
-              return TRUE;
-            }
-          }
-        }
-      }
-    }
-    return FALSE;
-  }
-
-  /**
    * Fills a field using JS to avoid event firing.
    * @param string $field
    * @param string$value
@@ -365,4 +245,35 @@ class FeatureContext extends DrupalSubContextBase implements CustomSnippetAccept
     ));
   }
 
+  /**
+   * Redirects user to the action page for the given unit.
+   *
+   * @param $action
+   * @param $unit_name
+   */
+  protected function iAmDoingOnTheType($action, $type_name) {
+    $unit_id = $this->findTypeByName($type_name);
+    $url = "admin/bat/config/types/type/$type_id/$action";
+    $this->getSession()->visit($this->locatePath($url));
+  }
+
+  /**
+   * Returns a type_id from its name.
+   *
+   * @param $type_name
+   * @return int
+   * @throws RuntimeException
+   */
+  protected function findTypeByName($type_name) {
+    $efq = new EntityFieldQuery();
+    $efq->entityCondition('entity_type', 'bat_type')
+      ->propertyCondition('name', $type_name);
+    $results = $efq->execute();
+    if ($results && isset($results['bat_type'])) {
+      return key($results['bat_type']);
+    }
+    else {
+      throw new RuntimeException('Unable to find that type');
+    }
+  }
 }
