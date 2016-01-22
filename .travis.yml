@@ -16,6 +16,8 @@ addons:
   firefox: "42.0"
 
 before_script:
+  # Copy module to tmp dir for later use.
+  - mkdir /tmp/bat; cp -r * /tmp/bat
   # Update composer.
   - composer self-update
 
@@ -30,12 +32,14 @@ before_script:
   - composer install
   - cd $TRAVIS_BUILD_DIR
 
+  # Make the site.
   - drush make test/project.make bat
+
+  # Copy the bat module into the Drupal site.
+  - mv /tmp/bat bat/sites/all/modules/bat
 
   - cd bat
   - php -d sendmail_path=$(which true) ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://root:@127.0.0.1/drupal --account-name=admin --account-pass=test --site-mail=webmaster@roomify.us --site-name="bat"
-  # Link this module into the Drupal site.
-  - ln -s $TRAVIS_BUILD_DIR sites/all/modules/bat
   # Following step with -y should also run composer install.
   - drush -y en bat bat_api bat_calendar_reference bat_event bat_event_ui bat_facets bat_fullcalendar bat_unit composer_manager
   - drush cc all --yes
