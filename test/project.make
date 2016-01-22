@@ -6,13 +6,7 @@ projects[drupal][version] = 7.41
 
 defaults[projects][subdir] = contrib
 
-; Agency & Roomify Modules
-projects[bat][type] = module
-projects[bat][download][type] = git
-projects[bat][download][url] = https://github.com/Roomify/bat_drupal
-projects[bat][download][branch] = 7.x-1.x
-projects[bat][subdir] = bat
-
+; Pull the latest version of bat_api
 projects[bat_api][type] = module
 projects[bat_api][download][type] = git
 projects[bat_api][download][url] = https://github.com/Roomify/bat_api.git
