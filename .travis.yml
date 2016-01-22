@@ -27,7 +27,7 @@ before_script:
 
   # Run composer
   - cd ./test/behat
-  - composer --prefer-source install
+  - composer install
   - cd $TRAVIS_BUILD_DIR
 
   - drush make test/project.make bat
