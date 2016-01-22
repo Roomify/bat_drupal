@@ -1,8 +1,21 @@
 {
-  "require": {
-    "drupal/drupal-extension": "~3.1"
-  },
-  "config": {
-    "bin-dir": "bin/"
-  }
+    "require": {
+        "behat/behat": "*",
+        "behat/mink": "*",
+        "behat/mink-goutte-driver": "*",
+        "behat/mink-selenium2-driver": "*",
+        "drupal/drupal-extension": "~3.1",
+        "symfony/process": "*",
+        "behat/symfony2-extension": "*",
+        "symfony/form": "*",
+        "symfony/validator": "*",
+        "behat/mink-extension": "*",
+        "symfony/http-kernel": "*",
+        "fabpot/goutte": "2.0.4",
+        "roomify/roomify-extension": "~1.0"
+    },
+    "minimum-stability": "dev",
+    "config": {
+        "bin-dir": "bin"
+    }
 }
