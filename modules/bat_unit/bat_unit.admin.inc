@@ -44,6 +44,7 @@ class BatUnitUIController extends EntityDefaultUIController {
         'file path' => drupal_get_path('module', $this->entityInfo['module']),
       );
     }
+
     // Loading and editing Unit entities.
     $items[$this->path . '/unit/' . $wildcard] = array(
       'title callback' => 'bat_unit_page_title',
@@ -77,6 +78,17 @@ class BatUnitUIController extends EntityDefaultUIController {
       'weight' => 10,
       'file' => 'bat_unit.admin.inc',
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
+    );
+
+    // Menu item for viewing unit.
+    $items['unit/' . $wildcard] = array(
+      'title callback' => 'bat_unit_page_title',
+      'title arguments' => array(1),
+      'page callback' => 'bat_unit_page_view',
+      'page arguments' => array(1),
+      'access callback' => 'bat_unit_access',
+      'access arguments' => array('view', 1),
+      'type' => MENU_CALLBACK,
     );
 
     return $items;
