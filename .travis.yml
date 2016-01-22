@@ -16,20 +16,22 @@ addons:
   firefox: "42.0"
 
 before_script:
+  # Set github access token for composer.
+  - git config --global github.accesstoken $GITHUB_OAUTH_TOKEN
   # Copy module to tmp dir for later use.
   - mkdir /tmp/bat; cp -r * /tmp/bat
   # Update composer.
-  - composer self-update
+  - composer -n self-update
 
   # Install drush.
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - composer global require drush/drush:7.*
+  - composer -n global require drush/drush:7.*
   # Install drush composer extension.
   - drush dl composer-8.x-1.x
 
-  # Run composer
+  # Install required packages for behat.
   - cd ./test/behat
-  - composer install
+  - composer -n install
   - cd $TRAVIS_BUILD_DIR
 
   # Make the site.
