@@ -19,8 +19,6 @@ default:
       drush_driver: 'drush'
       drush:
         root: ../..
-      drupal:
-        drupal_root: ../..
 
 imports:
   - behat.local.yml
