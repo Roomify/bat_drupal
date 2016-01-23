@@ -46,6 +46,13 @@ class FeatureContext extends DrupalSubContextBase implements CustomSnippetAccept
   public $Types = array();
 
   /**
+   * Keep track of Types bundles so they can be cleaned up.
+   *
+   * @var array
+   */
+  public $typeBundles = array();
+
+  /**
    * Keep track of events so they can be cleaned up.
    *
    * @var array
@@ -118,6 +125,12 @@ class FeatureContext extends DrupalSubContextBase implements CustomSnippetAccept
     if (!empty($this->Types)) {
       foreach ($this->Types as $type) {
         $type->delete();
+      }
+    }
+
+    if (!empty($this->typeBundles)) {
+      foreach ($this->typeBundles as $type_bundle) {
+        $type_bundle->delete();
       }
     }
 
