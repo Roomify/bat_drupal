@@ -50,11 +50,11 @@ Scenario: Create Type bundle, Type and Units
   And I should see the text "Single"
   Then I am on "admin/bat/unit-management"
   When I click "Units"
-  Then I should be on "admin/bat/config/types/type/1/units"
+  Then the url should match "admin/bat/config/types/type/\d/units"
   Then I should see the link "Add Units"
   When I click "Add Units"
   And I should see the text "Number of Units to create"
   When I fill in "units" with "5"
   When I press the "Add" button
-  Then I should be on "admin/bat/config/types/type/1/units"
+  Then the url should match "admin/bat/config/types/type/\d/units"
   And I should see the text "Single 1"
