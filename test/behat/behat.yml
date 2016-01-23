@@ -20,7 +20,7 @@ default:
       drush:
         root: ../..
       drupal:
-        drupal_root: '%paths.base%/../..'
+        drupal_root: ../..
 
 imports:
   - behat.local.yml
