@@ -127,15 +127,15 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
       $fields_options[$field['field_name']] = $field['field_name'];
     }
 
-    $form['label'] = array(
+    $form['event_label'] = array(
       '#type' => 'fieldset',
       '#group' => 'additional_settings',
-      '#title' => t('Label'),
+      '#title' => t('Label Source'),
       '#tree' => TRUE,
       '#weight' => 80,
     );
 
-    $form['label']['default_event_label_field_name'] = array(
+    $form['event_label']['default_event_label_field_name'] = array(
       '#type' => 'select',
       '#title' => t('Select your label field', array('@event' => $event_type->label)),
       '#default_value' => isset($event_type->default_event_label_field_name) ? $event_type->default_event_label_field_name : NULL,
@@ -155,7 +155,7 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
     '#weight' => 40,
     '#submit' => array('bat_event_type_form_submit'),
   );
-
+  
   return $form;
 }
 
@@ -168,8 +168,8 @@ function bat_event_type_form_submit(&$form, &$form_state) {
       $form_state['bat_event_type']->default_event_value_field_ids[$event] = $field;
     }
   }
-  if (isset($form_state['values']['label']['default_event_label_field_name'])) {
-    $form_state['bat_event_type']->default_event_label_field_name = $form_state['values']['label']['default_event_label_field_name'];
+  if (isset($form_state['values']['event_label']['default_event_label_field_name'])) {
+    $form_state['bat_event_type']->default_event_label_field_name = $form_state['values']['event_label']['default_event_label_field_name'];
   }
 
   $event_type = entity_ui_form_submit_build_entity($form, $form_state);
