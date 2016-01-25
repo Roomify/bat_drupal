@@ -80,7 +80,7 @@ function bat_facets_availability($form, &$form_state, $elements) {
   $form['container']['arrival'] = array(
     '#type' => 'date_popup',
     '#description' => '',
-    '#date_format' => variable_get('bat_date_format', 'd-m-Y'),
+    '#date_format' => variable_get('bat_date_format', 'Y-m-d H:i'),
     '#title' => t('Arrival date'),
     '#default_value' => isset($arrival) ? $arrival : '',
     '#datepicker_options' => array_merge($datepicker_options, array('endDateSelector' => $end_date_selector)),
@@ -90,7 +90,7 @@ function bat_facets_availability($form, &$form_state, $elements) {
   $form['container']['departure'] = array(
     '#type' => 'date_popup',
     '#description' => '',
-    '#date_format' => variable_get('bat_date_format', 'd-m-Y'),
+    '#date_format' => variable_get('bat_date_format', 'Y-m-d H:i'),
     '#title' => t('Departure date'),
     '#default_value' => isset($departure) ? $departure : '',
     '#datepicker_options' => array_merge($datepicker_options, array('startDateSelector' => $start_date_selector)),

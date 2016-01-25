@@ -50,31 +50,43 @@ function bat_menu() {
     'file' => 'system.admin.inc',
   );
 
+  $items['admin/bat/config/date-format'] = array(
+    'title' => 'Date format',
+    'description' => 'Configure date format.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bat_date_format_form'),
+    'access arguments' => array('configure bat settings'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 30,
+  );
+
   return $items;
 }
 
 /**
  * Main booking settings form.
  */
-function bat_event_settings($form, &$form_state) {
-  // Management vertical tabs.
-  $form['bat_settings'] = array(
-    '#type' => 'vertical_tabs',
-    '#weight' => 99,
-    '#attached' => array(
-      'css' => array(
-        array(
-          'data' => '#bat-booking-settings .vertical-tabs .form-type-textfield input { width: auto; }',
-          'type' => 'inline',
-        ),
-      ),
-    ),
+function bat_date_format_form($form, &$form_state) {
+  $form['bat_date_format'] = array(
+    '#type' => 'item',
+    '#title' => t('BAT PHP Date Format'),
+    '#description' => t("A custom date format for events, search summary and calendar pop-ups. Define a php date format string like 'Y-m-d H:i' (see <a href=\"@link\">http://php.net/date</a> for more details).", array('@link' => 'http://php.net/date')),
   );
 
-  $form['bat_event_settings'] = array(
-    '#type' => 'fieldset',
-    '#group' => 'bat_settings',
-    '#title' => t('Booking settings'),
+  $form['bat_date_format']['bat_date_format'] = array(
+    '#type' => 'textfield',
+    '#size' => 12,
+    '#prefix' => '<div class="container-inline form-item">' . t('Date format') . ': &nbsp;',
+    '#suffix' => '</div>',
+    '#default_value' => variable_get('bat_date_format', 'Y-m-d H:i'),
+  );
+
+  $form['bat_date_format']['bat_daily_date_format'] = array(
+    '#type' => 'textfield',
+    '#size' => 12,
+    '#prefix' => '<div class="container-inline form-item">' . t('Daily date format') . ': &nbsp;',
+    '#suffix' => '</div>',
+    '#default_value' => variable_get('bat_daily_date_format', 'Y-m-d'),
   );
 
   return system_settings_form($form);
@@ -451,7 +463,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
 
   // Specify the default datepicker parameters (see date_popup_element_info())
   $datepicker_options = array(
-    'dateFormat' => 'dd/mm/yy',
+    'dateFormat' => date_popup_format_to_popup(variable_get('bat_daily_date_format', 'Y-m-d')),
     // Limit bookings to X days in advance according to the
     // chosen configuration in your BAT installation.
     // Defaults to the current day.
@@ -462,9 +474,9 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
     // Calculate min and max dates of the specified year/month.
     $date = new DateTime();
     $date->setDate($year, $month, 01);
-    $min_date = $date->format('d/m/Y');
+    $min_date = $date->format(variable_get('bat_daily_date_format', 'Y-m-d'));
     $date->modify('last day of this month');
-    $max_date = $date->format('d/m/Y');
+    $max_date = $date->format(variable_get('bat_daily_date_format', 'Y-m-d'));
     $datepicker_options += array(
       'minDate' => $min_date,
       'maxDate' => $max_date,
@@ -484,7 +496,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
     '#type' => 'date_popup',
     '#title' => variable_get_value('bat_arrival_date'),
     '#date_type' => DATE_DATETIME,
-    '#date_format' => 'd/m/Y',
+    '#date_format' => variable_get('bat_daily_date_format', 'Y-m-d'),
     '#date_increment' => 1,
     '#date_year_range' => '-1:+3',
     // Default parameters defined above, with an additional parameter
@@ -499,7 +511,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
     '#type' => 'date_popup',
     '#title' => variable_get_value('bat_departure_date'),
     '#date_type' => DATE_DATETIME,
-    '#date_format' => 'd/m/Y',
+    '#date_format' => variable_get('bat_daily_date_format', 'Y-m-d'),
     '#date_increment' => 1,
     '#date_year_range' => '-1:+3',
     // Default parameters defined above, with an additional parameter

@@ -243,11 +243,11 @@ function bat_event_form_views_exposed_form_alter(&$form, &$form_state) {
   // Events admin view exposed filters.
   if ($form['#id'] == 'views-exposed-form-events-page-1') {
     $form['start_date']['#type'] = 'date_popup';
-    $form['start_date']['#date_format'] = 'd/m/Y';
+    $form['start_date']['#date_format'] = variable_get('bat_daily_date_format', 'Y-m-d');
     $form['start_date']['#date_label_position'] = 'before';
 
     $form['end_date']['#type'] = 'date_popup';
-    $form['end_date']['#date_format'] = 'd/m/Y';
+    $form['end_date']['#date_format'] = variable_get('bat_daily_date_format', 'Y-m-d');
     $form['end_date']['#date_label_position'] = 'before';
 
     $form['#attached']['css'][] = array(
@@ -2035,4 +2035,19 @@ function bat_event_form_bat_type_bundle_form_submit($form, &$form_state) {
   }
 
   $form_state['bat_type_bundle']->save();
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function bat_event_views_pre_render(&$view) {
+  // Use "Rooms PHP Date Format" for booking start date and end date.
+  if ($view->base_table == 'bat_events') {
+    if (isset($view->field['start_date']->options['custom_date_format'])) {
+      $view->field['start_date']->options['custom_date_format'] = variable_get('bat_date_format', 'Y-m-d H:i');
+    }
+    if (isset($view->field['end_date']->options['custom_date_format'])) {
+      $view->field['end_date']->options['custom_date_format'] = variable_get('bat_date_format', 'Y-m-d H:i');
+    }
+  }
 }
