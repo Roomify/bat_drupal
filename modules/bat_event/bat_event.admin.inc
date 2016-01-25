@@ -550,7 +550,7 @@ function theme_bat_event_add_list($variables) {
 }
 
 /**
- * Sets the breadcrumb for administrative unit pages.
+ * Sets the breadcrumb for administrative BAT pages.
  */
 function bat_event_set_breadcrumb() {
   $breadcrumb = array(

@@ -456,8 +456,9 @@ function bat_unit_set_breadcrumb() {
   $breadcrumb = array(
     l(t('Home'), '<front>'),
     l(t('Administration'), 'admin'),
-    l(t('bat'), 'admin/bat'),
-    l(t('bat'), 'admin/bat/config/units'),
+    l(t('BAT'), 'admin/bat'),
+    l(t('Configuration'), 'admin/bat/config'),
+    l(t('Units'), 'admin/bat/config/units'),
   );
 
   drupal_set_breadcrumb($breadcrumb);

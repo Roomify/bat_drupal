@@ -182,7 +182,7 @@ class BatTypeUIController extends EntityDefaultUIController {
  */
 function bat_type_form($form, &$form_state, $type, $op = 'edit') {
   // Add the breadcrumb for the form's location.
-  bat_type_type_set_breadcrumb();
+  bat_type_set_breadcrumb();
   drupal_set_title(t('Edit @type_name', array('@type_name' => $type->name)));
 
   $type->date = format_date($type->created, 'custom', 'Y-m-d H:i:s O');
@@ -202,7 +202,7 @@ function bat_type_form($form, &$form_state, $type, $op = 'edit') {
  */
 function bat_type_form_wrapper($type) {
   // Add the breadcrumb for the form's location.
-  bat_type_type_set_breadcrumb();
+  bat_type_set_breadcrumb();
   drupal_set_title(t('Edit @type_name', array('@type_name' => $type->name)));
 
   $type->date = format_date($type->created, 'custom', 'Y-m-d H:i:s O');
@@ -222,7 +222,7 @@ function bat_type_create_form_wrapper($type) {
   global $user;
 
   // Add the breadcrumb for the form's location.
-  bat_type_type_set_breadcrumb();
+  bat_type_set_breadcrumb();
 
   $type = bat_type_create(array('type' => $type, 'uid' => $user->uid));
   $type->created = REQUEST_TIME;
@@ -242,7 +242,7 @@ function bat_type_add_units_form_wrapper($type, $unit_type) {
   global $user;
 
   // Add the breadcrumb for the form's location.
-  bat_type_type_set_breadcrumb();
+  bat_type_set_breadcrumb();
 
   $unit_model = bat_unit_create(array('type' => $unit_type, 'uid' => $user->uid));
   $unit_model->type_id = $type->type_id;
@@ -263,7 +263,7 @@ function bat_type_add_units_form_wrapper($type, $unit_type) {
  */
 function bat_type_delete_form_wrapper($type) {
   // Add the breadcrumb for the form's location.
-  bat_type_type_set_breadcrumb();
+  bat_type_set_breadcrumb();
   return drupal_get_form('bat_type_delete_form', $type);
 }
 
@@ -527,14 +527,15 @@ function theme_bat_type_unit_add_list($variables) {
 /**
  * Sets the breadcrumb for administrative BAT pages.
  */
-function bat_type_type_set_breadcrumb() {
+function bat_type_set_breadcrumb() {
   $breadcrumb = array(
     l(t('Home'), '<front>'),
     l(t('Administration'), 'admin'),
-    l(t('bat'), 'admin/bat'),
-    l(t('bat'), 'admin/bat/config'),
-    l(t('bat'), 'admin/bat/config/type-types'),
+    l(t('BAT'), 'admin/bat'),
+    l(t('Configuration'), 'admin/bat/config'),
+    l(t('Types'), 'admin/bat/config/type-types'),
   );
+
   drupal_set_breadcrumb($breadcrumb);
 }
 
