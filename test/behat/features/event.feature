@@ -27,7 +27,7 @@ Scenario: Type manager can access the Event Types page and create, edit and dele
   When I press the "Save settings" button
   Then the url should match "admin/bat/events/event-types/manage/availability/fields"
   When I click "Edit"
-  When I select "field_custom_label" from "label[default_event_label_field_name]"
+  When I select "field_custom_label" from "event_label[default_event_label_field_name]"
   When I press the "Save Event type" button
   Then I should be on "admin/bat/events/event-types"
   And I should see text matching "Availability"
