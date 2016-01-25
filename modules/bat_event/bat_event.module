@@ -258,6 +258,8 @@ function bat_event_form_views_exposed_form_alter(&$form, &$form_state) {
 }
 
 /**
+ * @param $event_type
+ *
  * @return array
  */
 function bat_event_get_states($event_type = NULL) {
@@ -288,6 +290,7 @@ function bat_event_get_states($event_type = NULL) {
 
 /**
  * Returns information about the configuration of a given fixed event state
+ *
  * @param $state_id
  *
  * @return array
@@ -1337,6 +1340,9 @@ class BatEventTypeController extends EntityAPIControllerExportable {
     foreach ($ids as $id) {
       // Delete all tables necessary for this Event Type.
       bat_event_delete_event_type_schema($id);
+
+      // Delete the states associated with this Event Type.
+      bat_event_delete_states_by_type($id);
     }
   }
 
@@ -1670,7 +1676,9 @@ function bat_event_field_widget_error($element, $error, $form, &$form_state) {
 }
 
 /**
- * Given an event machine name drop all the tables that store event data for that event
+ * Given an event machine name drop all the tables that store event data for that event.
+ *
+ * @param $machine_name
  */
 function bat_event_delete_event_type_schema($machine_name) {
   foreach (bat_event_get_event_type_tables($machine_name) as $name) {
@@ -1679,7 +1687,21 @@ function bat_event_delete_event_type_schema($machine_name) {
 }
 
 /**
- * Utility function to return the table names required to start an event using BAT conventions
+ * Delete the states associated with $type.
+ *
+ * @param $type
+ */
+function bat_event_delete_states_by_type($type) {
+  db_delete('bat_event_state')
+    ->condition('event_type', $type)
+    ->execute();
+}
+
+/**
+ * Utility function to return the table names
+ * required to start an event using BAT conventions.
+ *
+ * @param $machine_name
  */
 function bat_event_get_event_type_tables($machine_name) {
   return array('bat_event_' . $machine_name . '_day_state',

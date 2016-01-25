@@ -188,11 +188,6 @@ function bat_unit_entity_info_alter(&$entity_info) {
       ),
     );
   }
-  // Create custom build mode.
-  $entity_info['node']['view modes']['bat_list'] = array(
-    'label' => t('Bat Results View'),
-    'custom settings' => FALSE,
-  );
 
   // Work on Bat Types.
   foreach (bat_unit_get_type_bundles() as $bundle => $info) {
@@ -206,6 +201,7 @@ function bat_unit_entity_info_alter(&$entity_info) {
       ),
     );
   }
+
   // Create custom build mode.
   $entity_info['node']['view modes']['bat_list'] = array(
     'label' => t('Bat Results View'),
@@ -945,7 +941,6 @@ class BatUnitController extends EntityAPIController {
    *   A unit object with all default fields initialized.
    */
   public function create(array $values = array()) {
-    $unit_bundle = bat_unit_bundle_load($values['type'], TRUE);
     // Add values that are specific to our Unit.
     $values += array(
       'unit_id' => '',
@@ -996,6 +991,7 @@ class BatUnitBundleController extends EntityAPIControllerExportable {
       'is_new' => TRUE,
       'data' => '',
     );
+
     $unit_bundle = parent::create($values);
 
     return $unit_bundle;
@@ -1617,7 +1613,6 @@ class BatTypeController extends EntityAPIController {
    *   A Bat Type object with all default fields initialized.
    */
   public function create(array $values = array()) {
-    $type_bundle = bat_type_bundle_load($values['type'], TRUE);
     // Add values that are specific to our Bat Type.
     $values += array(
       'type_id' => '',
@@ -1668,6 +1663,7 @@ class BatTypeBundleController extends EntityAPIControllerExportable {
       'is_new' => TRUE,
       'data' => '',
     );
+
     $type_bundle = parent::create($values);
 
     return $type_bundle;
