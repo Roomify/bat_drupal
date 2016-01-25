@@ -18,7 +18,7 @@
  */
 function bat_unit_entity_info() {
   $return['bat_unit'] = array(
-    'label' => t('Units'),
+    'label' => t('Unit'),
     // The entity class and controller class extend the classes provided by the
     // Entity API.
     'entity class' => 'BatUnit',
