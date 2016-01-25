@@ -125,10 +125,18 @@ class BatUnitUIController extends EntityDefaultUIController {
 }
 
 /**
- * Form callback wrapper: edit a Unit.
+ * Form callback: edit a Unit.
  */
-function bat_unit_form($form, $form_state) {
-  return bat_unit_form_wrapper($form_state['bat_unit']);
+function bat_unit_form($form, &$form_state, $unit, $op = 'edit') {
+  // Add the breadcrumb for the form's location.
+  bat_unit_set_breadcrumb();
+  drupal_set_title(t('Edit @unit_name', array('@unit_name' => $unit->name)));
+
+  $unit->date = format_date($unit->created, 'custom', 'Y-m-d H:i:s O');
+  $account = user_load($unit->uid);
+  $unit->author_name = isset($account->name) ? $account->name : '';
+
+  return bat_unit_edit_form($form, $form_state, $unit);
 }
 
 /**

@@ -178,10 +178,18 @@ class BatTypeUIController extends EntityDefaultUIController {
 }
 
 /**
- * Form callback wrapper: edit a type.
+ * Form callback: edit a type.
  */
-function bat_type_form($form, $form_state) {
-  return bat_type_form_wrapper($form_state['bat_type']);
+function bat_type_form($form, &$form_state, $type, $op = 'edit') {
+  // Add the breadcrumb for the form's location.
+  bat_type_type_set_breadcrumb();
+  drupal_set_title(t('Edit @type_name', array('@type_name' => $type->name)));
+
+  $type->date = format_date($type->created, 'custom', 'Y-m-d H:i:s O');
+  $account = user_load($type->uid);
+  $type->author_name = isset($account->name) ? $account->name : '';
+
+  return bat_type_edit_form($form, $form_state, $type);
 }
 
 /**
@@ -396,7 +404,7 @@ function bat_type_edit_form_validate(&$form, &$form_state) {
  */
 function bat_type_edit_form_submit(&$form, &$form_state) {
   $type = entity_ui_controller('bat_type')->entityFormSubmitBuildEntity($form, $form_state);
-  $type->created = !empty($unit->date) ? strtotime($unit->date) : REQUEST_TIME;
+  $type->created = !empty($type->date) ? strtotime($type->date) : REQUEST_TIME;
 
   if ($type->type_id !== '') {
     $type->changed = time();
