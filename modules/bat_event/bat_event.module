@@ -1359,8 +1359,20 @@ function bat_event_field_info() {
       'settings' => array('event_type' => ''),
       'default_widget' => 'bat_event_state_reference_autocomplete',
       'default_formatter' => 'bat_event_state_reference_default',
+      'property_type' => 'bat_event_state_reference',
+      'property_callbacks' => array('bat_event_state_reference_info_callback'),
     ),
   );
+}
+
+/**
+ * Callback to alter the property info of State reference fields.
+ *
+ * @see bat_event_field_info().
+ */
+function bat_event_state_reference_info_callback(&$info, $entity_type, $field, $instance, $field_type) {
+  $property['getter callback'] = 'entity_metadata_field_verbatim_get';
+  $property['setter callback'] = 'entity_metadata_field_verbatim_set';
 }
 
 /**
@@ -1441,7 +1453,6 @@ function bat_event_field_validate($entity_type, $entity, $field, $instance, $lan
   $ids = array();
 
   // Check for non-numeric values.
-  // First check non-numeric "nid's to avoid losing time with them.
   foreach ($items as $delta => $item) {
     if (is_array($item) && !empty($item['state_id'])) {
       if (is_numeric($item['state_id'])) {
@@ -1629,8 +1640,8 @@ function bat_event_autocomplete_validate($element, &$form_state, $form) {
     // Check whether we have an explicit "[state_id:n]" input.
     preg_match('/^(?:\s*|(.*) )?\[\s*state_id\s*:\s*(\d+)\s*\]$/', $value, $matches);
     if (!empty($matches)) {
-      // Explicit nid. Check that the 'title' part matches the actual title for
-      // the nid.
+      // Explicit state_id. Check that the 'title' part matches the actual title for
+      // the state_id.
       list(, $title, $state_id) = $matches;
       if (!empty($title)) {
         $state = bat_event_load_state($state_id);

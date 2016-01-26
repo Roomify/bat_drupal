@@ -277,7 +277,6 @@ function bat_calendar_reference_field_settings_form($field, $instance, $has_data
  */
 function bat_calendar_reference_field_validate($entity_type, $entity, $field, $instance, $langcode, $items, &$errors) {
   // Check for non-numeric values.
-  // First check non-numeric "nid's to avoid losing time with them.
   foreach ($items as $delta => $item) {
     if (is_array($item)) {
       if (!empty($item['unit_id'])) {
