@@ -576,25 +576,9 @@ function bat_calendar_reference_unit_types_potential_references($field, $options
  * @return array
  */
 function _bat_calendar_reference_unit_types_potential_references($field, $options) {
-  // Avoid useless work.
-  if (!isset($field['settings']['referenceable_event_types'])) {
-    return array();
-  }
-
-  if (!count($field['settings']['referenceable_event_types'])) {
-    return array();
-  }
-
   $query = db_select('bat_types', 'u');
   $unit_unit_id_alias = $query->addField('u', 'type_id');
   $type_name_alias = $query->addField('u', 'name', 'name');
-
-  if (is_array($field['settings']['referenceable_event_types'])) {
-    $referenceable_event_types = array_filter($field['settings']['referenceable_event_types']);
-    if (!empty($referenceable_event_types)) {
-      $query->condition('u.type_id', array_filter($field['settings']['referenceable_event_types']), 'IN');
-    }
-  }
 
   if ($options['string'] !== '') {
     switch ($options['match']) {
