@@ -2,7 +2,7 @@
 
 /**
  * @file
- * BatUnit bundle editing UI.
+ * BatUnitBundle editing UI.
  */
 
 /**

@@ -495,6 +495,13 @@ function bat_fullcalendar_configure($user_settings) {
       $default_view = 'timelineDay';
     }
 
+    if (isset($user_setting['views']) && !empty($user_setting['views'])) {
+      $calendar_views = $user_setting['views'];
+    }
+    if (isset($user_setting['defaultView']) && !empty($user_setting['defaultView'])) {
+      $default_view = $user_setting['defaultView'];
+    }
+
     $config = array(
       'schedulerLicenseKey' => $schedulerlicensekey,
       'unitType' => '',

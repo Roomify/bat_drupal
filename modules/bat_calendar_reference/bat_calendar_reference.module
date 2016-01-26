@@ -59,14 +59,14 @@ function bat_calendar_reference_field_info() {
         'referenceable_unit_types' => array(),
       ),
       'default_widget' => 'bat_calendar_reference_unit_autocomplete',
-      'default_formatter' => 'bat_calendar_reference_default',
+      'default_formatter' => 'bat_calendar_reference_timeline_view',
     ),
     'bat_calendar_unit_type_reference' => array(
       'label' => t('BAT Calendar Unit Type Reference'),
       'description' => t('Display unit type events information embedded from other fieldable content.'),
       'settings' => array(),
       'default_widget' => 'bat_calendar_reference_unit_type_autocomplete',
-      'default_formatter' => 'bat_calendar_reference_default',
+      'default_formatter' => 'bat_calendar_reference_timeline_view',
     ),
   );
 }
@@ -88,12 +88,18 @@ function bat_calendar_reference_field_is_empty($item, $field) {
  */
 function bat_calendar_reference_field_formatter_info() {
   $ret = array(
-    'bat_calendar_reference_default' => array(
-      'label' => t('BAT Calendar'),
+    'bat_calendar_reference_month_view' => array(
+      'label' => t('Month View'),
+      'description' => t('Displays event information on a calendar.'),
+      'field types' => array('bat_calendar_unit_reference', 'bat_calendar_unit_type_reference', 'entityreference'),
+    ),
+    'bat_calendar_reference_timeline_view' => array(
+      'label' => t('Timeline View'),
       'description' => t('Displays event information on a calendar.'),
       'field types' => array('bat_calendar_unit_reference', 'bat_calendar_unit_type_reference', 'entityreference'),
     ),
   );
+
   return $ret;
 }
 
@@ -118,7 +124,8 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
   $calendar_id = drupal_html_id($field['field_name'] . '-calendar-formatter');
 
   switch ($display['type']) {
-    case 'bat_calendar_reference_default':
+    case 'bat_calendar_reference_timeline_view':
+    case 'bat_calendar_reference_month_view':
       if ($field['type'] == 'bat_calendar_unit_type_reference') {
         $unit_type_names = array();
         $unit_type_ids = array();
@@ -149,7 +156,17 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
             'eventGranularity' => $event_granularity,
             'editable' => FALSE,
             'selectable' => FALSE,
+            'background' => '1',
           );
+
+          if ($display['type'] == 'bat_calendar_reference_month_view') {
+            $fc_user_settings[$calendar_id]['defaultView'] = 'month';
+            $fc_user_settings[$calendar_id]['views'] = 'month';
+            $fc_user_settings[$calendar_id]['background'] = '0';
+            $fc_user_settings[$calendar_id]['headerLeft'] = 'today';
+            $fc_user_settings[$calendar_id]['headerCenter'] = 'title';
+            $fc_user_settings[$calendar_id]['headerRight'] = 'prev, next';
+          }
         }
       }
       elseif ($field['type'] == 'bat_calendar_unit_reference') {
@@ -182,7 +199,17 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
             'eventGranularity' => $event_granularity,
             'editable' => FALSE,
             'selectable' => FALSE,
+            'background' => '1',
           );
+
+          if ($display['type'] == 'bat_calendar_reference_month_view') {
+            $fc_user_settings[$calendar_id]['defaultView'] = 'month';
+            $fc_user_settings[$calendar_id]['views'] = 'month';
+            $fc_user_settings[$calendar_id]['background'] = '0';
+            $fc_user_settings[$calendar_id]['headerLeft'] = 'today';
+            $fc_user_settings[$calendar_id]['headerCenter'] = 'title';
+            $fc_user_settings[$calendar_id]['headerRight'] = 'prev, next';
+          }
         }
       }
 

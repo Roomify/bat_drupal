@@ -410,13 +410,11 @@ function bat_event_edit_form_submit(&$form, &$form_state) {
   // If we are dealing with a new event.
   if ($form_state['bat_event']->event_id == '') {
 
-    $event = bat_event_create(
-      array(
+    $event = bat_event_create(array(
       'type' => $form_state['bat_event']->type,
       'start_date' => $form_state['values']['start_date'],
-      'end_date' => $form_state['values']['end_date']
-      )
-    );
+      'end_date' => $form_state['values']['end_date'],
+    ));
     $form_state['bat_event'] = $event;
 
     $event = entity_ui_controller('bat_event')->entityFormSubmitBuildEntity($form, $form_state);

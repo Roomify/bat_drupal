@@ -19,10 +19,16 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
   private $event_type;
 
   /**
+   * @var bool
+   */
+  private $background;
+
+  /**
    * @param $event_type
    */
-  public function __construct($event_type) {
+  public function __construct($event_type, $background = TRUE) {
     $this->event_type = $event_type;
+    $this->background = $background;
   }
 
   /**
@@ -60,7 +66,9 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
 
     // Render non blocking events in the background.
     if ($state_info['blocking'] == 0) {
-      $formatted_event['rendering'] = 'background';
+      if ($this->background) {
+        $formatted_event['rendering'] = 'background';
+      }
       $formatted_event['blocking'] = 0;
     }
 

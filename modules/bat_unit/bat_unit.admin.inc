@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * Unit editing UI.
+ * BatUnit editing UI.
  *
  * We make very little use of the EntityAPI interface for this - preferring
  * instead to use views. That offers more flexibility to change a UI that will,
