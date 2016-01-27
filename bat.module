@@ -12,7 +12,7 @@
  */
 function bat_permission() {
   $permissions = array(
-    'configure BAT settings' => array(
+    'configure bat settings' => array(
       'title' => t('Configure BAT'),
       'description' => t('Allows users to manage site-wide BAT configuration settings.'),
       'restrict access' => TRUE,
@@ -693,4 +693,26 @@ function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $sin
   }
 
   return $errors;
+}
+
+/**
+ * Loads a DateTime object from a string.
+ *
+ * @param string $date_string
+ *   Expects to see a date in the form Y-m-d H:i:s
+ *
+ * @return DateTime
+ *   Object or null if invalid
+ */
+function bat_date_load($date_string) {
+  $date_string = check_plain($date_string);
+
+  try {
+    $date = new DateTime($date_string);
+  }
+  catch (Exception $e) {
+    $date = 0;
+  }
+
+  return $date;
 }

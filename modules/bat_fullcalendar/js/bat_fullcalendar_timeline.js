@@ -62,7 +62,7 @@ Drupal.behaviors.bat_event = {
         },
         resourceAreaWidth: Drupal.settings.batCalendar[0].resourceAreaWidth,
         resourceLabelText: Drupal.settings.batCalendar[0].resourceLabelText,
-        resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendar[0].unitType,
+        resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendar[0].unitType + '&event_type=' + Drupal.settings.batCalendar[0].eventType,
         selectOverlap: function(event) {
           // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';
@@ -72,22 +72,27 @@ Drupal.behaviors.bat_event = {
           $(this).fullCalendar('refetchEvents');
         },
         eventClick: function(event, jsEvent, view) {
-          var unit_id = event.resourceId.substring(1);
-          var sd = event.start.format('YYYY-MM-DD HH:mm');
-          event.end.add(1, 'm');
-          var ed = event.end.format('YYYY-MM-DD HH:mm');
+          if (event.editable) {
+            var unit_id = event.resourceId.substring(1);
+            var sd = event.start.format('YYYY-MM-DD HH:mm');
+            event.end.add(1, 'm');
+            var ed = event.end.format('YYYY-MM-DD HH:mm');
 
-          // Open the modal for edit
-          Drupal.batCalendar.Modal(view, event.bat_id, sd, ed, unit_id);
+            // Open the modal for edit
+            Drupal.batCalendar.Modal(view, event.bat_id, sd, ed, unit_id);
+          }
         },
         select: function(start, end, jsEvent, view, resource) {
-          var unit_id = resource.id.substring(1);
+          if (resource.create_event) {
+            var unit_id = resource.id.substring(1);
 
-          var ed = end.format('YYYY-MM-DD HH:mm');
-          var sd = start.format('YYYY-MM-DD HH:mm');
+            var ed = end.format('YYYY-MM-DD HH:mm');
+            var sd = start.format('YYYY-MM-DD HH:mm');
 
-          // Open the modal for edit
-          Drupal.batCalendar.Modal(this, 0, sd, ed, unit_id);
+            // Open the modal for edit
+            Drupal.batCalendar.Modal(this, 0, sd, ed, unit_id);
+          }
+
           $(value[0]).fullCalendar('unselect');
         },
         eventRender: function(event, el, view) {
@@ -104,16 +109,26 @@ Drupal.behaviors.bat_event = {
           return !stillEvent.blocking && (stillEvent.type == movingEvent.type);
         },
         eventDrop: function(event, delta, revertFunc) {
-          // Prevent events from being dropped over unit types row.
-          if (event.resourceId.match(/^S[0-9]+$/)) {
-            saveBatEvent(event, revertFunc, calendars);
+          if (event.editable) {
+            // Prevent events from being dropped over unit types row.
+            if (event.resourceId.match(/^S[0-9]+$/)) {
+              saveBatEvent(event, revertFunc, calendars);
+            }
+            else {
+              revertFunc();
+            }
           }
           else {
             revertFunc();
           }
         },
         eventResize: function(event, delta, revertFunc) {
-          saveBatEvent(event, revertFunc, calendars);
+          if (event.editable) {
+            saveBatEvent(event, revertFunc, calendars);
+          }
+          else {
+            revertFunc();
+          }
         }
       });
     });
@@ -192,7 +207,7 @@ function saveBatEvent(event, revertFunc, calendars) {
       type:"get",
       dataType:"text",
       error:function (jqXHR, textStatus, errorThrown) {
-        alert(errorThrown);
+        alert(Drupal.settings.batCalendar[0].errorMessage);
       },
       success: function (token) {
         // Update event, using session token.
@@ -207,7 +222,7 @@ function saveBatEvent(event, revertFunc, calendars) {
           },
           contentType: 'application/json',
           error: function (jqXHR, textStatus, errorThrown) {
-            alert(errorThrown);
+            alert(Drupal.settings.batCalendar[0].errorMessage);
             revertFunc();
           },
           success: function (request) {

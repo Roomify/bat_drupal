@@ -22,12 +22,6 @@ function bat_fullcalendar_permission() {
       'title' => t('View past event information'),
       'description' => t('Allow users to view event info in the past (especially via event reference field).'),
     ),
-    'update calendar events of own bat_unit entities' => array(
-      'title' => t('Edit calendar events of own units of any type'),
-    ),
-    'update calendar events of any bat_unit entity' => array(
-      'title' => t('Edit calendar events of any unit of any type'),
-    ),
   );
 
   return $permissions;
@@ -39,11 +33,12 @@ function bat_fullcalendar_permission() {
 function bat_fullcalendar_menu() {
   $items = array();
 
-  $items['admin/bat/fullcalendar/%bat_unit/event'] = array(
+  $items['admin/bat/fullcalendar/%bat_unit/event/%bat_event_type/%/%bat_date/%bat_date'] = array(
     'title' => 'Event Management',
     'page callback' => 'bat_fullcalendar_event_management',
-    'page arguments' => array(3),
-    'access arguments' => array('administer calendar events'),
+    'page arguments' => array(3, 5, 6, 7, 8),
+    'access callback' => 'bat_fullcalendar_event_management_access',
+    'access arguments' => array(3, 5, 6, 7, 8),
     'type' => MENU_CALLBACK,
     'weight' => 30,
   );
@@ -61,29 +56,44 @@ function bat_fullcalendar_menu() {
   return $items;
 }
 
+/**
+ * The EventManager page access callback.
+ *
+ * @param $unit
+ * @param $event_type
+ * @param $event_id
+ * @param $start_date
+ * @param $end_date
+ */
+function bat_fullcalendar_event_management_access($unit, $event_type, $event_id, $start_date, $end_date) {
+  if ($event_id == 0) {
+    return bat_event_access('create', bat_event_create(array('type' => $event_type->type)));
+  }
+  else {
+    $event = bat_event_load($event_id);
+    return bat_event_access('update', $event);
+  }
+}
 
 /**
  * The EventManager page shows when clicking on an event in the
  * calendar - will allow a user to manipulate that event.
+ *
+ * @param $unit
+ * @param $event_type
+ * @param $event_id
+ * @param $start_date
+ * @param $end_date
  */
-function bat_fullcalendar_event_management($unit, $event_type, $event_id = NULL, $start_date = 0, $end_date = 0) {
+function bat_fullcalendar_event_management($unit, $event_type, $event_id, $start_date, $end_date) {
   // Include modal library.
   ctools_include('modal');
 
   // If any info missing we cannot load the event.
-  if ($event_id == NULL || $start_date == 0 || $end_date == 0) {
+  if ($event_id == NULL || $start_date === 0 || $end_date === 0) {
     $output[] = ctools_modal_command_dismiss();
     drupal_set_message(t('Unable to load event.'), 'error');
   }
-
-  // Basic check to avoid damage from dirty input.
-  $event_id = check_plain($event_id);
-  $start_date = check_plain($start_date);
-  $end_date = check_plain($end_date);
-
-  // Process start and end date.
-  $sd = new DateTime($start_date);
-  $ed = new DateTime($end_date);
 
   if ($event_id > 0) {
     $event = bat_event_load($event_id);
@@ -123,7 +133,7 @@ function bat_fullcalendar_event_management($unit, $event_type, $event_id = NULL,
     exit();
   }
 
-  ctools_modal_render(t('Event Management'), drupal_get_form('bat_fullcalendar_event_manager_form', $unit, $event_type, $event_id, $sd, $ed));
+  ctools_modal_render(t('Event Management'), drupal_get_form('bat_fullcalendar_event_manager_form', $unit, $event_type, $event_id, $start_date, $end_date));
 }
 
 /**
@@ -150,7 +160,7 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $unit, $event_t
 
   $form['event_type'] = array(
     '#type' => 'hidden',
-    '#value' => $event_type,
+    '#value' => $event_type->type,
   );
 
   $form['event_id'] = array(
@@ -181,10 +191,8 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $unit, $event_t
     '#suffix' => '</div>',
   );
 
-  $type_bundle = bat_event_type_load($event_type);
-
-  if ($type_bundle->fixed_event_states) {
-    $state_options = bat_unit_state_options($event_type);
+  if ($event_type->fixed_event_states) {
+    $state_options = bat_unit_state_options($event_type->type);
 
     $form['change_event_status'] = array(
       '#title' => t('Change the state for this event to') . ': ',
@@ -198,8 +206,8 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $unit, $event_t
     );
   }
   else {
-    if (isset($type_bundle->default_event_value_field_ids[$event_type])) {
-      $field_name = $type_bundle->default_event_value_field_ids[$event_type];
+    if (isset($event_type->default_event_value_field_ids[$event_type->type])) {
+      $field_name = $event_type->default_event_value_field_ids[$event_type->type];
 
       $form['field_name'] = array(
         '#type' => 'hidden',
@@ -207,7 +215,7 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $unit, $event_t
       );
 
       $field = field_info_field($field_name);
-      $instance = field_info_instance('bat_event', $field_name, $event_type);
+      $instance = field_info_instance('bat_event', $field_name, $event_type->type);
 
       $element = array('#parents' => array());
       $widget = field_default_form('bat_event', NULL, $field, $instance, LANGUAGE_NONE, NULL, $element, $form_state);
@@ -521,6 +529,7 @@ function bat_fullcalendar_configure($user_settings) {
       'viewsTimelineTenDaySlotDuration' => array('days' => 10),
       'resourceAreaWidth' => '25%',
       'resourceLabelText' => 'Rooms',
+      'errorMessage' => t('Action not allowed. User may not have the right permissions.'),
     );
 
     $settings['batCalendar'][$id] = array_replace_recursive($config, $user_setting);
@@ -707,7 +716,7 @@ function bat_fullcalendar_settings_ajax_callback($form, $form_state) {
 /**
  * Define modal JS style and dependencies.
  *
- * @TODO define alternative modal styles based on what we will be needing.
+ * @param $style
  */
 function bat_fullcalendar_modal_style($style = 'default') {
 

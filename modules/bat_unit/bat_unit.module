@@ -68,6 +68,7 @@ function bat_unit_entity_info() {
       ),
     ),
   );
+
   // The entity that holds information about the entity types.
   $return['bat_unit_bundle'] = array(
     'label' => t('Unit Bundle'),
@@ -142,6 +143,7 @@ function bat_unit_entity_info() {
       ),
     ),
   );
+
   // The entity that holds information about the entity types.
   $return['bat_type_bundle'] = array(
     'label' => t('Type Bundle'),
@@ -478,10 +480,8 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
  *
  * @return bool
  *   TRUE if the user has add permission, otherwise FALSE.
- *
- * @see node_menu()
  */
-function _bat_unit_add_access() {
+function bat_unit_add_access() {
   if (user_access('administer bat_unit_bundle entities')) {
     // There are no unit bundles defined that the user has permission to
     // create, but the user does have the permission to administer the content
@@ -1092,10 +1092,8 @@ function bat_type_bat_entity_access_view_condition_bat_type_alter(&$conditions, 
  *
  * @return bool
  *   TRUE if the user has add permission, otherwise FALSE.
- *
- * @see node_menu()
  */
-function _bat_type_add_access() {
+function bat_type_add_access() {
   if (user_access('administer bat_type_bundle entities')) {
     // There are no type bundles defined that the user has permission to
     // create, but the user does have the permission to administer the content

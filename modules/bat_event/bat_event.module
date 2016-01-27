@@ -646,10 +646,8 @@ function bat_event_access($op, $event = NULL, $account = NULL) {
  *
  * @return bool
  *   TRUE if the user has add permission, otherwise FALSE.
- *
- * @see node_menu()
  */
-function _bat_event_add_access() {
+function bat_event_add_access() {
   if (user_access('administer bat_event_type entities')) {
     // There are no event types defined that the user has permission to create
     // but the user does have the permission to administer the content types, so

@@ -41,7 +41,7 @@ class BatEventUIController extends EntityDefaultUIController {
       'title' => 'Add an Event',
       'description' => 'Add a new Event',
       'page callback'  => 'bat_event_add_page',
-      'access callback'  => '_bat_event_add_access',
+      'access callback'  => 'bat_event_add_access',
       'type' => MENU_NORMAL_ITEM,
       'weight' => 20,
       'file' => 'bat_event.admin.inc',

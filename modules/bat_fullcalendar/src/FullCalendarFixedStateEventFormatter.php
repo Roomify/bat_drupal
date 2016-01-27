@@ -35,6 +35,8 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
    * {@inheritdoc}
    */
   public function format(EventInterface $event) {
+    $editable = FALSE;
+
     // Load the unit entity from Drupal
     $bat_unit = bat_unit_load($event->getUnitId());
 
@@ -53,6 +55,10 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
 
       // Set calendar label from event.
       $state_info['calendar_label'] = $bat_event->label();
+
+      if (bat_event_access('update', $bat_event)) {
+        $editable = TRUE;
+      }
     }
 
     $formatted_event = array(
@@ -62,6 +68,7 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
       'color' => $state_info['color'],
       'blocking' => 1,
       'fixed' => 1,
+      'editable' => $editable,
     );
 
     // Render non blocking events in the background.

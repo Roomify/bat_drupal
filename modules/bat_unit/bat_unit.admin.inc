@@ -29,7 +29,7 @@ class BatUnitUIController extends EntityDefaultUIController {
     $items[$this->path . '/add']['title'] = 'Add a Unit';
     $items[$this->path . '/add']['description'] = 'Create a new unit.';
     $items[$this->path . '/add']['page callback'] = 'bat_unit_add_page';
-    $items[$this->path . '/add']['access callback'] = '_bat_unit_add_access';
+    $items[$this->path . '/add']['access callback'] = 'bat_unit_add_access';
     unset($items[$this->path . '/add']['title callback']);
 
     // Add menu items to add each different type of units.

@@ -35,6 +35,8 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
    * {@inheritdoc}
    */
   public function format(EventInterface $event) {
+    $editable = FALSE;
+
     // Load the unit entity from Drupal
     $bat_unit = bat_unit_load($event->getUnitId());
 
@@ -43,8 +45,13 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
 
     if ($event->getValue()) {
       $bat_event = bat_event_load($event->getValue());
+
       // Change the default value to the one that the event actually stores in the entity
       $default_value = $bat_event->getEventValue();
+
+      if (bat_event_access('update', $bat_event)) {
+        $editable = TRUE;
+      }
     }
 
     $formatted_event = array(
@@ -53,6 +60,7 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
       'title' => $bat_unit->formatEventValue($this->event_type->type, $default_value),
       'blocking' => 0,
       'fixed' => 0,
+      'editable' => $editable,
     );
 
     if ($event->getValue() < 100) {

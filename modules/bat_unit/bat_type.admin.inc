@@ -29,7 +29,7 @@ class BatTypeUIController extends EntityDefaultUIController {
     $items[$this->path . '/add']['title'] = 'Add a Type';
     $items[$this->path . '/add']['description'] = 'Create a new Type.';
     $items[$this->path . '/add']['page callback'] = 'bat_type_add_page';
-    $items[$this->path . '/add']['access callback'] = '_bat_type_add_access';
+    $items[$this->path . '/add']['access callback'] = 'bat_type_add_access';
     unset($items[$this->path . '/add']['title callback']);
 
     // Add menu items to add each different bundle of Bat Types.
