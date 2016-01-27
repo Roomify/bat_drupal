@@ -2,8 +2,7 @@
 
 /**
  * @file
- * Manage Events - Events are tied to a customer profile and possible a
- * Unit ID and Order ID.
+ * Manage Events - Events store the EventValue of a Unit over a period of time.
  */
 
 use Roomify\Bat\Event\Event;

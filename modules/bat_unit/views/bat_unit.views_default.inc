@@ -51,7 +51,7 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['fields']['status']['field'] = 'status';
   $handler->display->display_options['fields']['status']['label'] = 'Published';
   $handler->display->display_options['fields']['status']['separator'] = '';
-  /* Field: Type: Calendar links */
+  /* Field: Type: Event Management */
   $handler->display->display_options['fields']['calendars']['id'] = 'calendars';
   $handler->display->display_options['fields']['calendars']['table'] = 'bat_types';
   $handler->display->display_options['fields']['calendars']['field'] = 'calendars';

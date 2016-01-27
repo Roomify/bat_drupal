@@ -100,7 +100,7 @@ function bat_unit_views_data_alter(&$data) {
 
   $data['bat_types']['calendars'] = array(
     'field' => array(
-      'title' => t('Calendar links'),
+      'title' => t('Event Management'),
       'help' => t('Display links to manage all calendars for this Type.'),
       'handler' => 'bat_type_handler_type_calendars_field',
     ),
