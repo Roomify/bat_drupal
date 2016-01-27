@@ -56,6 +56,7 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['fields']['calendars']['table'] = 'bat_types';
   $handler->display->display_options['fields']['calendars']['field'] = 'calendars';
   $handler->display->display_options['fields']['calendars']['label'] = 'Calendars';
+  $handler->display->display_options['fields']['calendars']['hide_empty'] = TRUE;
   /* Field: Type: Operations links */
   $handler->display->display_options['fields']['operations']['id'] = 'operations';
   $handler->display->display_options['fields']['operations']['table'] = 'bat_types';

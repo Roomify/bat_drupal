@@ -37,7 +37,7 @@ function bat_event_menu() {
   $items['bat_event/state_event/autocomplete/%/%/%'] = array(
     'page callback' => 'bat_event_reference_autocomplete',
     'page arguments' => array(3, 4, 5),
-    'access arguments' => array('configure bat settings'),
+    'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
 

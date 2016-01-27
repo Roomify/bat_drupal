@@ -553,10 +553,10 @@ function theme_bat_event_add_list($variables) {
 function bat_event_set_breadcrumb() {
   $breadcrumb = array(
     l(t('Home'), '<front>'),
-    l(t('Administration'), 'admin'),
-    l(t('BAT'), 'admin/bat'),
-    l(t('Events'), 'admin/bat/events'),
+    (drupal_valid_path('admin')) ? l(t('Administration'), 'admin') : '',
+    (drupal_valid_path('admin/bat')) ? l(t('BAT'), 'admin/bat') : '',
+    (drupal_valid_path('admin/bat/events')) ? l(t('Events'), 'admin/bat/events') : '',
   );
 
-  drupal_set_breadcrumb($breadcrumb);
+  drupal_set_breadcrumb(array_filter($breadcrumb));
 }

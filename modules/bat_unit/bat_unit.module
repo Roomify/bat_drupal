@@ -14,6 +14,17 @@
  */
 
 /**
+ * Implements hook_module_implements_alter().
+ */
+function bat_unit_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'views_data_alter' && isset($implementations['bat_unit'])) {
+    $group = $implementations['bat_unit'];
+    unset($implementations['bat_unit']);
+    $implementations['bat_unit'] = $group;
+  }
+}
+
+/**
  * Implements hook_entity_info().
  */
 function bat_unit_entity_info() {

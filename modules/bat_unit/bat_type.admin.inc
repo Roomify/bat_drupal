@@ -531,13 +531,13 @@ function theme_bat_type_unit_add_list($variables) {
 function bat_type_set_breadcrumb() {
   $breadcrumb = array(
     l(t('Home'), '<front>'),
-    l(t('Administration'), 'admin'),
-    l(t('BAT'), 'admin/bat'),
-    l(t('Configuration'), 'admin/bat/config'),
-    l(t('Types'), 'admin/bat/config/type-types'),
+    (drupal_valid_path('admin')) ? l(t('Administration'), 'admin') : '',
+    (drupal_valid_path('admin/bat')) ? l(t('BAT'), 'admin/bat') : '',
+    (drupal_valid_path('admin/bat/config')) ? l(t('Configuration'), 'admin/bat/config') : '',
+    (drupal_valid_path('admin/bat/config/type-types')) ? l(t('Types'), 'admin/bat/config/type-types') : '',
   );
 
-  drupal_set_breadcrumb($breadcrumb);
+  drupal_set_breadcrumb(array_filter($breadcrumb));
 }
 
 /**

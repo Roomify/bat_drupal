@@ -23,13 +23,18 @@ class bat_type_handler_type_calendars_field extends views_handler_field {
     $type = bat_type_load($values->type_id);
     $type_bundle = bat_type_bundle_load($type->type);
     if (is_array($type_bundle->default_event_value_field_ids)) {
-      foreach ($type_bundle->default_event_value_field_ids as $event => $field) {
+      foreach ($type_bundle->default_event_value_field_ids as $event_type => $field) {
         if (!empty($field)) {
-          $event_label = bat_event_get_types($event)->label;
-          $links[$field] = array(
-            'title' => 'Manage ' . $event_label,
-            'href' => 'admin/bat/calendar/' . $type->type_id . '/' . $event,
-          );
+          $event_type_path = 'admin/bat/calendar/' . $type->type_id . '/' . $event_type;
+
+          // Check if user has permission to access $event_type_path.
+          if (drupal_valid_path($event_type_path)) {
+            $event_type_label = bat_event_get_types($event_type)->label;
+            $links[$field] = array(
+              'title' => 'Manage ' . $event_type_label,
+              'href' => $event_type_path,
+            );
+          }
         }
       }
     }
@@ -45,6 +50,10 @@ class bat_type_handler_type_calendars_field extends views_handler_field {
           ),
         ),
       ));
+    }
+    else {
+      // Hide this field.
+      $this->options['exclude'] = TRUE;
     }
   }
 }

@@ -115,4 +115,6 @@ function bat_unit_views_data_alter(&$data) {
       'handler' => 'bat_type_handler_type_operations_field',
     ),
   );
+
+  $data['views_entity_bat_unit']['megarow_links']['field']['handler'] = 'bat_unit_handler_field_megarow_links';
 }
