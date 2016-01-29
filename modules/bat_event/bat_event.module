@@ -274,6 +274,7 @@ function bat_event_get_states($event_type = NULL) {
   foreach ($states as $event_state) {
     $event_states[$event_state->id] = array(
       'id' => $event_state->id,
+      'machine_name' => $event_state->machine_name,
       'event_type' => $event_state->event_type,
       'label' => $event_state->label,
       'color' => $event_state->color,
@@ -288,7 +289,7 @@ function bat_event_get_states($event_type = NULL) {
 }
 
 /**
- * Returns information about the configuration of a given fixed event state
+ * Returns information about the configuration of a given fixed event state.
  *
  * @param $state_id
  *
@@ -302,6 +303,23 @@ function bat_event_load_state($state_id) {
   }
 
   return FALSE;
+}
+
+/**
+ * Returns information about the configuration of a given fixed event state.
+ *
+ * @param $state_id
+ *
+ * @return array
+ */
+function bat_event_load_state_by_machine_name($state_machine_name) {
+  $state_id = db_select('bat_event_state', 'n')
+                ->fields('n', array('id'))
+                ->condition('machine_name', $state_machine_name)
+                ->execute()
+                ->fetchField();
+
+  return bat_event_load_state($state_id);
 }
 
 /**
@@ -327,7 +345,7 @@ function bat_event_states_form($form, &$form_state, $event_type) {
   if ($event_type->fixed_event_states) {
     $event_states = bat_event_get_states($event_type->type);
 
-    $header = array(t('ID'), t('Label'), t('Blocking'), t('Operations'));
+    $header = array(t('ID'), t('Machine name'), t('Label'), t('Blocking'), t('Operations'));
 
     $default_state = 0;
 
@@ -349,6 +367,7 @@ function bat_event_states_form($form, &$form_state, $event_type) {
 
       $rows[] = array(
         $event_state['id'],
+        $event_state['machine_name'],
         $event_state['label'],
         $event_state['blocking'],
         theme('links', array('links' => $operations, 'attributes' => array('class' => array('links', 'inline')))),
@@ -396,6 +415,15 @@ function bat_event_states_form($form, &$form_state, $event_type) {
       '#type' => 'textfield',
       '#title' => t('Label'),
       '#required' => TRUE,
+    );
+
+    $form['new_state']['machine_name'] = array(
+      '#type' => 'machine_name',
+      '#maxlength' => 32,
+      '#machine_name' => array(
+        'exists' => 'bat_event_get_states',
+        'source' => array('new_state', 'label'),
+      ),
     );
 
     $form['new_state']['color'] = array(
@@ -479,6 +507,7 @@ function bat_event_states_form_submit($form, &$form_state) {
     'color' => $form_state['values']['color'],
     'calendar_label' => $form_state['values']['calendar_label'],
     'blocking' => $form_state['values']['blocking'],
+    'machine_name' => $form_state['values']['machine_name'],
   );
 
   bat_event_save_state($event_state, $event_type);
@@ -488,12 +517,26 @@ function bat_event_states_form_submit($form, &$form_state) {
  * @param $event_state
  */
 function bat_event_save_state($event_state, $event_type) {
-  $max_id = db_query("SELECT MAX(id) as max_id FROM {bat_event_state}")->fetchCol();
+  if (!empty($event_state['id'])) {
+    db_update('bat_event_state')
+      ->fields(array(
+        'machine_name' => $event_state['machine_name'],
+        'label' => $event_state['label'],
+        'color' => $event_state['color'],
+        'calendar_label' => $event_state['calendar_label'],
+        'blocking' => $event_state['blocking'],
+      ))
+      ->condition('id', $event_state['id'])
+      ->execute();
+  }
+  else {
+    $max_id = db_query("SELECT MAX(id) as max_id FROM {bat_event_state}")->fetchCol();
 
-  $event_state['id'] = reset($max_id) + 1;
-  $event_state['event_type'] = $event_type;
+    $event_state['id'] = reset($max_id) + 1;
+    $event_state['event_type'] = $event_type;
 
-  drupal_write_record('bat_event_state', $event_state);
+    drupal_write_record('bat_event_state', $event_state);
+  }
 }
 
 /**

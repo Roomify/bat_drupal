@@ -207,6 +207,12 @@ function bat_event_schema() {
         'not null' => TRUE,
         'description' => 'Primary Key: Unique event state identifier.',
       ),
+      'machine_name' => array(
+        'description' => 'Machine name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
       'event_type' => array(
         'description' => 'Event type machine name.',
         'type' => 'varchar',
@@ -272,5 +278,31 @@ function bat_event_update_7100() {
     'length' => 32,
     'description' => 'The name of a field to use to retrieve label information.',
   );
+
   db_add_field('bat_event_type', 'default_event_label_field_name', $field);
+}
+
+/**
+ * Add event state machine name field.
+ */
+function bat_event_update_7101() {
+  $field = array(
+    'description' => 'Machine name.',
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'initial' => 'machine_name',
+  );
+
+  db_add_field('bat_event_state', 'machine_name', $field);
+}
+
+/**
+ * Generate machine names for the existing states.
+ */
+function bat_event_update_7102() {
+  foreach (bat_event_get_states() as $state) {
+    $state['machine_name'] = $state['event_type'] . '_' . $state['id'];
+    bat_event_save_state($state, $state['event_type']);
+  }
 }
