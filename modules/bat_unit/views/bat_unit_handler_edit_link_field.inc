@@ -12,12 +12,11 @@ class bat_unit_handler_edit_link_field extends bat_unit_handler_link_field {
     $this->additional_fields['type'] = 'type';
   }
 
-
   function render($values) {
     $type = $values->{$this->aliases['type']};
 
     // Creating a dummy unit to check access against.
-    $dummy_unit = (object) array('type' => $type);
+    $dummy_unit = (object) array('type' => $type, 'unit_id' => NULL);
     if (!bat_unit_access('update', $dummy_unit)) {
       return;
     }

@@ -510,6 +510,12 @@ function bat_fullcalendar_configure($user_settings) {
       $default_view = $user_setting['defaultView'];
     }
 
+    $business_hours = array(
+      'start' => '00:00',
+      'end' => '24:00',
+      'dow' => array(0, 1, 2, 3, 4, 5, 6),
+    );
+
     $config = array(
       'schedulerLicenseKey' => $schedulerlicensekey,
       'unitType' => '',
@@ -530,6 +536,7 @@ function bat_fullcalendar_configure($user_settings) {
       'resourceAreaWidth' => '25%',
       'resourceLabelText' => 'Rooms',
       'errorMessage' => t('Action not allowed. User may not have the right permissions.'),
+      'businessHours' => $business_hours,
     );
 
     $settings['batCalendar'][$id] = array_replace_recursive($config, $user_setting);

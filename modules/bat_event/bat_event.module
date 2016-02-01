@@ -95,6 +95,7 @@ function bat_event_entity_info() {
       'menu wildcard' => '%bat_event',
     ),
   );
+
   // The entity that holds information about the entity types.
   $return['bat_event_type'] = array(
     'label' => t('Event Type'),

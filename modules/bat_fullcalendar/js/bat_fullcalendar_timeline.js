@@ -7,23 +7,6 @@ Drupal.batCalendar.Modal = Drupal.batCalendar.Modal || {};
 Drupal.behaviors.bat_event = {
   attach: function(context) {
 
-    openingTime = '';
-
-    if (openingTime.length === 0) {
-      businessHours = {
-        start: '00:00',
-        end: '24:00',
-        dow: [0, 1, 2, 3, 4, 5, 6],
-      };
-    }
-    else {
-      businessHours = {
-        start: openingTime.opening,
-        end: openingTime.closing,
-        dow: openingTime.dow
-      };
-    }
-
     var calendars = [];
     calendars[0] = new Array('#calendar');
 
@@ -48,8 +31,9 @@ Drupal.behaviors.bat_event = {
           center: Drupal.settings.batCalendar[0].headerCenter,
           right: Drupal.settings.batCalendar[0].headerRight,
         },
-        businessHours: businessHours,
+        businessHours: Drupal.settings.batCalendar[0].businessHours,
         defaultView: Drupal.settings.batCalendar[0].defaultView,
+        selectConstraint: 'businessHours',
         views: {
           timelineDay: {
             buttonText: Drupal.settings.batCalendar[0].viewsTimelineDayButtonText,

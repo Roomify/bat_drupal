@@ -82,6 +82,16 @@ function bat_unit_views_data_alter(&$data) {
   $data['bat_units']['type_id']['filter']['handler'] = 'bat_unit_handler_type_id_filter';
   $data['bat_units']['type_id']['field']['handler'] = 'bat_unit_handler_type_id_field';
 
+  $data['bat_units']['type_id']['relationship'] = array(
+    'title' => t('Type'),
+    'help' => t('Relate this unit its type'),
+    'handler' => 'views_handler_relationship',
+    'base' => 'bat_types',
+    'base field' => 'type_id',
+    'field' => 'type_id',
+    'label' => t('Type'),
+  );
+
   // Views alterations for Bat Types.
   $data['bat_types']['link_type'] = array(
     'field' => array(

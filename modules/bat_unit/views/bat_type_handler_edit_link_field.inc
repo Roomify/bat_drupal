@@ -12,7 +12,6 @@ class bat_type_handler_edit_link_field extends bat_type_handler_link_field {
     $this->additional_fields['type'] = 'type';
   }
 
-
   function render($values) {
     $type = $values->{$this->aliases['type']};
 
