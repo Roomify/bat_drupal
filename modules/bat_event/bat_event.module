@@ -1206,8 +1206,9 @@ class BatEventController extends EntityAPIController {
     // We have a unit defined so lets block availability there unless its a
     // event that is to be deleted.
     if (field_get_items('bat_event', $entity, 'event_unit_reference') !== FALSE) {
-      if (isset($event_type->data[$entity->type])) {
-        $field = $event_type->data[$entity->type];
+
+      if (isset($event_type->default_event_value_field_ids[$entity->type])) {
+        $field = $event_type->default_event_value_field_ids[$entity->type];
         $field_info = field_info_field($field);
         $values = field_get_items('bat_event', $entity, $field);
 
