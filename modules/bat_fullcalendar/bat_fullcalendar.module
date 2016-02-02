@@ -308,9 +308,8 @@ function bat_fullcalendar_event_manager_form_submit($form, &$form_state) {
   $event->save();
 
   $unit = bat_unit_load($unit_id);
-  $bat_type = bat_type_load($unit->type_id);
 
-  $value = field_view_value('bat_type', $bat_type, $field_name, $form_state['values'][$field_name][LANGUAGE_NONE][0]);
+  $value = field_view_value('bat_event', $event, $field_name, $form_state['values'][$field_name][LANGUAGE_NONE][0]);
 
   $form['form_wrapper_bottom'] = array(
     '#prefix' => '<div>',
