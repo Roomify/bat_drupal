@@ -142,9 +142,6 @@ function bat_event_form_wrapper($event) {
   // Set the page title.
   $type = bat_event_get_types($event->type);
   drupal_set_title(t('#@event_id - @event_type', array('@event_type' => $type->label, '@event_id' => $event->event_id)));
-  $event->date = format_date($event->created, 'custom', 'Y-m-d H:i:s O');
-  $account = user_load($event->uid);
-  $event->owner_name = $account->name;
 
   return drupal_get_form('bat_event_edit_form', $event);
 }
@@ -166,7 +163,7 @@ function bat_event_create_form_wrapper($type) {
   // Create a event object.
   $event = bat_event_create(array('type' => $type));
   $event->created = REQUEST_TIME;
-  $event->owner_name = $user->name;
+  $event->uid = $user->uid;
 
   return drupal_get_form('bat_event_edit_form', $event);
 }
@@ -194,6 +191,10 @@ function bat_event_delete_form_wrapper($event) {
  *     with only an event type defined.
  */
 function bat_event_edit_form($form, &$form_state, $event) {
+  $event->date = format_date($event->created, 'custom', 'Y-m-d H:i:s O');
+  $account = user_load($event->uid);
+  $event->owner_name = $account->name;
+
   if ($event->end_date_object) {
     // We are about to display an event, so we to add a minute to then end date.
     $event->end_date_object->add(new DateInterval('PT1M'));
