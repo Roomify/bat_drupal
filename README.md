@@ -61,7 +61,7 @@ To display calendars and dates we use the following libraries:
 ## Configuration
  - Enable at least the BAT, BAT Unit, BAT Event and BAT Event UI modules (if you want to view events on a calendar)
  - For BAT Event UI to work you need the BAT API module which is in a separate project - http://drupal.org/project/bat_api - *you need branch 7.x-2.x*
- - Make sure to set the jQuery for the admin theme to at least 1.10 by visiting *admin/config/development/jquery_update*
+ - Make sure to set the jQuery for the admin theme to at least 1.10 by visiting *admin/config/development/jquery_update* or your calendars will not appear
 
 ## Setup
 
