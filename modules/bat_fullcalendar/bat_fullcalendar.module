@@ -536,6 +536,7 @@ function bat_fullcalendar_configure($user_settings) {
       'resourceLabelText' => 'Rooms',
       'errorMessage' => t('Action not allowed. User may not have the right permissions.'),
       'businessHours' => $business_hours,
+      'selectConstraint' => NULL,
     );
 
     $settings['batCalendar'][$id] = array_replace_recursive($config, $user_setting);

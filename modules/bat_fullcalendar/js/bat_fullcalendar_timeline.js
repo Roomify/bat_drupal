@@ -33,7 +33,7 @@ Drupal.behaviors.bat_event = {
         },
         businessHours: Drupal.settings.batCalendar[0].businessHours,
         defaultView: Drupal.settings.batCalendar[0].defaultView,
-        selectConstraint: 'businessHours',
+        selectConstraint: Drupal.settings.batCalendar[0].selectConstraint,
         views: {
           timelineDay: {
             buttonText: Drupal.settings.batCalendar[0].viewsTimelineDayButtonText,
