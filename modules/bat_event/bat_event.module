@@ -183,20 +183,25 @@ function bat_event_type_add_event_state_reference($entity) {
 }
 
 /**
- * Create a field of type 'Entity Reference' to reference a Bat Unit.
+ * Create fields of type 'Entity Reference' to reference the target entity.
+ *
+ * We need to create a field/instance for each possible target entity type.
  */
-function bat_event_type_add_unit_reference($entity) {
+function bat_event_type_add_target_entity_field($entity) {
   field_info_cache_clear();
 
-  // "event_unit_reference" field.
-  if (field_read_field('event_unit_reference') === FALSE) {
+  $entity_info = entity_get_info($entity->target_entity_type);
+  $field_name = 'event_' . $entity->target_entity_type . '_reference';
+
+  // field for this target entity type.
+  if (field_read_field($field_name) === FALSE) {
     $field = array(
-      'field_name' => 'event_unit_reference',
+      'field_name' => $field_name,
       'type' => 'entityreference',
       'cardinality' => 1,
       'locked' => 1,
       'settings' => array(
-        'target_type' => 'bat_unit',
+        'target_type' => $entity->target_entity_type,
       ),
     );
     field_create_field($field);
@@ -204,12 +209,12 @@ function bat_event_type_add_unit_reference($entity) {
 
   field_cache_clear();
 
-  // "event_unit_reference" field instance.
-  if (field_read_instance('bat_event', 'event_unit_reference', $entity->type) === FALSE) {
+  // field instance for this target entity type.
+  if (field_read_instance('bat_event', $field_name, $entity->type) === FALSE) {
     $instance = array(
-      'field_name' => 'event_unit_reference',
+      'field_name' => $field_name,
       'entity_type' => 'bat_event',
-      'label' => 'Unit',
+      'label' => $entity_info['label'],
       'bundle' => $entity->type,
       'required' => FALSE,
       'widget' => array(
@@ -1181,15 +1186,22 @@ class BatEventController extends EntityAPIController {
 
     $event_type = bat_event_type_load($entity->type);
 
+    // Construct target entity reference field name using this event type's target entity type.
+    $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+
     // We are going to be updating the event - so the first step is to remove
     // the old event.
-    if ((!isset($entity->is_new)) && ($entity->original->start_date != '') && ($entity->original->end_date != '') &&
-        field_get_items('bat_event', $entity->original, 'event_unit_reference') !== FALSE) {
+    if ((!isset($entity->is_new)) &&
+        ($entity->original->start_date != '') &&
+        ($entity->original->end_date != '') &&
+        (field_get_items('bat_event', $entity->original, $target_field_name) !== FALSE)) {
 
-      $event_unit_reference = field_get_items('bat_event', $entity->original, 'event_unit_reference');
-      $unit_id = $event_unit_reference[0]['target_id'];
-      $bat_unit = bat_unit_load($unit_id);
-      $unit = new Unit($unit_id, $bat_unit->getEventDefaultValue($event_type->type));
+      // Get the referenced entity ID.
+      $event_target_entity_reference = field_get_items('bat_event', $entity->original, $target_field_name);
+      $target_entity_id = $event_target_entity_reference[0]['target_id'];
+      // Load the referenced entity.
+      $target_entity = entity_load_single($event_type->target_entity_type, $target_entity_id);
+      $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->type));
 
       $this->batStoreSave($unit,
         new \DateTime($entity->original->start_date),
@@ -1204,9 +1216,8 @@ class BatEventController extends EntityAPIController {
 
     parent::save($entity);
 
-    // We have a unit defined so lets block availability there unless its a
-    // event that is to be deleted.
-    if (field_get_items('bat_event', $entity, 'event_unit_reference') !== FALSE) {
+    // Now we store the new event.
+    if (field_get_items('bat_event', $entity, $target_field_name) !== FALSE) {
 
       if (isset($event_type->default_event_value_field_ids[$entity->type])) {
         $field = $event_type->default_event_value_field_ids[$entity->type];
@@ -1230,10 +1241,10 @@ class BatEventController extends EntityAPIController {
         $event_value = $event_state_reference[0]['state_id'];
       }
 
-      $event_unit_reference = field_get_items('bat_event', $entity, 'event_unit_reference');
-      $unit_id = $event_unit_reference[0]['target_id'];
-      $bat_unit = bat_unit_load($unit_id);
-      $unit = new Unit($unit_id, $bat_unit->getEventDefaultValue($event_type->type));
+      $event_target_entity_reference = field_get_items('bat_event', $entity, $target_field_name);
+      $target_entity_id = $event_target_entity_reference[0]['target_id'];
+      $target_entity = entity_load_single($event_type->target_entity_type, $target_entity_id);
+      $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->type));
 
       $this->batStoreSave($unit,
         new \DateTime($entity->start_date),
@@ -1288,17 +1299,22 @@ class BatEventController extends EntityAPIController {
   }
 
   public function deleteEvent($event) {
+    $event_type = bat_event_type_load($event->type);
+
+    // Construct target entity reference field name using this event type's target entity type.
+    $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+
     // Check if the event had a unit associated with it and if so update the
     // availability calendar.
-    if (field_get_items('bat_event', $event, 'event_unit_reference') !== FALSE &&
+    if (field_get_items('bat_event', $event, $target_field_name) !== FALSE &&
         isset($event->start_date) && isset($event->end_date)) {
 
-      $event_unit_reference = field_get_items('bat_event', $event, 'event_unit_reference');
-      $unit_id = $event_unit_reference[0]['target_id'];
+      $event_target_entity_reference = field_get_items('bat_event', $entity->original, $target_field_name);
+      $target_entity_id = $event_target_entity_reference[0]['target_id'];
 
-      $bat_unit = bat_unit_load($unit_id);
-      $unit = new Unit($unit_id, $bat_unit->getEventDefaultValue($event->type));
-      $event_type = bat_event_type_load($event->type);
+      // Load the referenced entity.
+      $target_entity = entity_load_single($event_type->target_entity_type, $target_entity_id);
+      $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event->type));
 
       $this->batStoreSave($unit,
         clone($event->start_date_object),
@@ -1309,7 +1325,6 @@ class BatEventController extends EntityAPIController {
         $event->event_id,
         TRUE
       );
-
     }
   }
 
@@ -1361,7 +1376,7 @@ class BatEventTypeController extends EntityAPIControllerExportable {
       bat_event_create_event_type_schema($entity->type);
 
       // Create a field of type 'Entity Reference' to reference a Bat Unit.
-      bat_event_type_add_unit_reference($entity);
+      bat_event_type_add_target_entity_field($entity);
       if (isset($entity->fixed_event_states)) {
         if ($entity->fixed_event_states) {
           // Create a field of type 'Bat Event State Reference' to reference an Event State.
