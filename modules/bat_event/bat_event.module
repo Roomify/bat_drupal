@@ -149,7 +149,7 @@ function bat_event_entity_info_alter(&$entity_info) {
 function bat_event_type_add_event_state_reference($entity) {
   field_info_cache_clear();
 
-  // "event_unit_reference" field.
+  // "event_state_reference" field.
   if (field_read_field('event_state_reference') === FALSE) {
     $field = array(
       'field_name' => 'event_state_reference',
@@ -163,7 +163,7 @@ function bat_event_type_add_event_state_reference($entity) {
 
   field_cache_clear();
 
-  // "event_unit_reference" field instance.
+  // "event_state_reference" field instance.
   if (field_read_instance('bat_event', 'event_state_reference', $entity->type) === FALSE) {
     $instance = array(
       'field_name' => 'event_state_reference',
