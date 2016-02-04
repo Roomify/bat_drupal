@@ -2,7 +2,7 @@
 
 api = 2
 core = 7.x
-projects[drupal][version] = 7.41
+projects[drupal][version] = 7.42
 
 defaults[projects][subdir] = contrib
 
@@ -61,13 +61,6 @@ libraries[fullcalendar][type] = library
 libraries[fullcalendar][destination] = libraries
 libraries[fullcalendar][download][type] = get
 libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v2.6.0/fullcalendar-2.6.0.zip
-
-; moment
-libraries[moment][directory_name] = moment
-libraries[moment][type] = library
-libraries[moment][destination] = libraries
-libraries[moment][download][type] = get
-libraries[moment][download][url] = http://momentjs.com/downloads/moment.min.js
 
 ; scheduler
 libraries[scheduler][directory_name] = fullcalendar-scheduler

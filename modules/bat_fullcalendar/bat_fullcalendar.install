@@ -20,9 +20,6 @@ function bat_fullcalendar_requirements($phase) {
         if (!$fullcalendar_library['installed']) {
           $description[] = $t('Could not load the FullCalendar Scheduler Javascript Library');
         }
-        if (!bat_fullcalendar_library_loaded('moment')) {
-          $description[] = $t('Could not load the Moment Library');
-        }
         if (!bat_fullcalendar_library_loaded('fullcalendar')) {
           $description[] = $t('Could not load the FullCalendar Library');
         }

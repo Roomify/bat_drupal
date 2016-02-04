@@ -56,7 +56,6 @@ To display calendars and dates we use the following libraries:
 
 - Fullcalendar - http://fullcalendar.io/ - You need to [download the following zip](https://github.com/arshaw/fullcalendar/releases/download/v2.6.0/fullcalendar-2.6.0.zip) and unpack it in your site's libraries directory, in a directory called fullcalendar
 - Fullcalendar Scheduler - http://fullcalendar.io/ - You need to [download the following zip](https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.2.0/fullcalendar-scheduler-1.2.0.zip) and unpack in your site's libraries directory in a directory called fullcalendar-scheduler. Please note that scheduler is a premium add-on to fullcalendar, and you must purchase a license if you intend to use it in a commercial project. See: [Scheduler License Information](http://fullcalendar.io/scheduler/license/) (Scheduler is not developed by Roomify)
-- MomentJS - http://momentjs.com/ - The [moment.js](http://momentjs.com/downloads/moment.min.js) library should be placed in your site's library directory under the moment directory, so that you end up with the file located here: <library path>/moment/moment.min.js
 
 ## Configuration
  - Enable at least the BAT, BAT Unit, BAT Event and BAT Event UI modules (if you want to view events on a calendar)

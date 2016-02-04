@@ -330,38 +330,6 @@ function bat_fullcalendar_event_manager_form_submit($form, &$form_state) {
  * Implements hook_libraries_info().
  */
 function bat_fullcalendar_libraries_info() {
-  $libraries['moment'] = array(
-    'name' => 'Moment',
-    'vendor url' => 'http://momentjs.com',
-    'download url' => 'http://momentjs.com/downloads/moment.min.js',
-    'version arguments' => array(
-      'file' => 'moment.min.js',
-      // 2.10.6
-      'pattern' => '/(\d+\.\d+\.\d)/',
-    ),
-    'files' => array(
-      'js' => array(
-        'moment.min.js',
-      ),
-    ),
-    'variants' => array(
-      'minified' => array(
-        'files' => array(
-          'js' => array(
-            'moment.min.js',
-          ),
-        ),
-      ),
-      'source' => array(
-        'files' => array(
-          'js' => array(
-            'moment.js',
-          ),
-        ),
-      ),
-    ),
-  );
-
   $libraries['fullcalendar'] = array(
     'name' => 'Full Calendar',
     'vendor url' => 'http://fullcalendar.io',
@@ -374,6 +342,7 @@ function bat_fullcalendar_libraries_info() {
     ),
     'files' => array(
       'js' => array(
+        'lib/moment.min.js',
         'fullcalendar.js',
         'gcal.js',
       ),
@@ -392,7 +361,7 @@ function bat_fullcalendar_libraries_info() {
             'fullcalendar.min.css',
           ),
         ),
-        'dependencies' => array('moment (>=2.10.6)'),
+        'dependencies' => array(),
       ),
       'source' => array(
         'files' => array(
@@ -404,7 +373,7 @@ function bat_fullcalendar_libraries_info() {
             'fullcalendar.css',
           ),
         ),
-        'dependencies' => array('moment (>=2.10.6)'),
+        'dependencies' => array(),
       ),
     ),
   );
@@ -433,7 +402,7 @@ function bat_fullcalendar_libraries_info() {
             'scheduler.min.css',
           ),
         ),
-        'dependencies' => array('moment (>=2.10.6)', 'fullcalendar (>=2.6.0)'),
+        'dependencies' => array('fullcalendar (>=2.6.0)'),
       ),
       'source' => array(
         'files' => array(
@@ -444,7 +413,7 @@ function bat_fullcalendar_libraries_info() {
             'scheduler.css',
           ),
         ),
-        'dependencies' => array('moment (>=2.10.6)', 'fullcalendar (>=2.6.0)'),
+        'dependencies' => array('fullcalendar (>=2.6.0)'),
       ),
     ),
   );
