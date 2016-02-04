@@ -348,7 +348,7 @@ function bat_event_update_7103() {
     field_update_field($new_field);
   }
 
-  foreach(bat_event_get_types() as $bundle => $event_type) {
+  foreach (bat_event_get_types() as $bundle => $event_type) {
     // Get old field instance.
     $old_instance = field_info_instance($entity_type, $old_name, $bundle);
 

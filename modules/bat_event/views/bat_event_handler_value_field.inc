@@ -10,11 +10,11 @@ class bat_event_handler_value_field extends views_handler_field {
   }
 
   function query() {
-  	$this->field_alias = 'event_id';
+    $this->field_alias = 'event_id';
   }
 
   function render($values) {
-  	$event = bat_event_load($this->get_value($values));
+    $event = bat_event_load($this->get_value($values));
     $event_type = bat_event_type_load($event->type);
 
     if ($event_type->fixed_event_states) {

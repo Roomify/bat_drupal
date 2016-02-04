@@ -44,7 +44,7 @@ class bat_unit_handler_field_megarow_links extends views_handler_field_megarow_l
       // Hide this field.
       $this->options['exclude'] = TRUE;
     }
-    else if ($nb_links > 1) {
+    elseif ($nb_links > 1) {
       $element = array(
         '#prefix' => $this->getElementPrefix($values),
         '#markup' => theme('links__ctools_dropbutton', array('links' => $links, 'attributes' => array('class' => array('links', 'inline')))),
