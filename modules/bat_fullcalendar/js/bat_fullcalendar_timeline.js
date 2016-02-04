@@ -199,7 +199,7 @@ function saveBatEvent(event, revertFunc, calendars) {
         $.ajax({
           type: "PUT",
           url: events_url + '/' + event.bat_id,
-          data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), unit_id: unit_id}),
+          data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), target_id: unit_id}),
           dataType: 'json',
           beforeSend: function (request) {
             request.setRequestHeader("X-CSRF-Token", token);
