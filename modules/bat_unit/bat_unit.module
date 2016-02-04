@@ -405,6 +405,22 @@ function bat_unit_menu_local_tasks_alter(&$data, $router_item, $root_path) {
 
 
 /**
+ * @section Bat Hooks
+ *
+ * Bat Integration.
+ */
+
+/**
+ * Implements hook_bat_event_target_entity_types()
+ *
+ * Register BAT Unit as a BAT event target entity type.
+ */
+function bat_unit_bat_event_target_entity_types() {
+  return(array('bat_unit'));
+}
+
+
+/**
  * @section Bat Unit
  *
  * The following code deals with Bat Units and their bundles. (entity types)

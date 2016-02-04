@@ -157,7 +157,7 @@ function saveBatEvent(event, revertFunc, calendars) {
   var unit_id = event.resourceId.substring(1);
 
   // Retrieve all events for the unit and time we're dragging onto.
-  var events_url = '/bat/v2/events?unit_ids=' + unit_id + '&start_date=' + event.start.format('YYYY-MM-DD HH:mm') +
+  var events_url = '/bat/v2/events?target_ids=' + unit_id + '&target_entity_type=bat_unit&start_date=' + event.start.format('YYYY-MM-DD HH:mm') +
                    '&end_date=' + event.end.format('YYYY-MM-DD HH:mm') + '&event_types=' + event.type;
   proceed = true;
   jQuery.ajax({
@@ -199,7 +199,7 @@ function saveBatEvent(event, revertFunc, calendars) {
         $.ajax({
           type: "PUT",
           url: events_url + '/' + event.bat_id,
-          data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), unit_id: unit_id}),
+          data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), target_id: unit_id}),
           dataType: 'json',
           beforeSend: function (request) {
             request.setRequestHeader("X-CSRF-Token", token);

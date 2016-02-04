@@ -262,7 +262,11 @@ function bat_fullcalendar_ajax_event_status_change($form, $form_state) {
   $end_date->sub(new DateInterval('PT1M'));
   $event->end_date = $end_date->format('Y-m-d H:i');
 
-  $event->event_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit_id;
+  $event_type_entity = bat_event_type_load($event_type);
+  // Construct target entity reference field name using this event type's target entity type.
+  $target_field_name = 'event_' . $event_type_entity->target_entity_type . '_reference';
+  $event->{$target_field_name}[LANGUAGE_NONE][0]['target_id'] = $unit_id;
+
   $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $state_id;
 
   $event->save();
@@ -302,7 +306,8 @@ function bat_fullcalendar_event_manager_form_submit($form, &$form_state) {
   $end_date->sub(new DateInterval('PT1M'));
   $event->end_date = $end_date->format('Y-m-d H:i');
 
-  $event->event_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit_id;
+  // TODO: genericize the event target entity?
+  $event->event_bat_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit_id;
   $event->{$field_name} = $form_state['values'][$field_name];
 
   $event->save();

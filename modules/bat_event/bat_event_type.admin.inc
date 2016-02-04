@@ -90,6 +90,34 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
     '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granularity : 'bat_daily',
   );
 
+  if (isset($event_type->is_new)) {
+    // Check for available Target Entity types.
+    $target_entity_types = module_invoke_all('bat_event_target_entity_types');
+    if (count($target_entity_types) == 1) {
+      // If there's only one target entity type, we simply store the value
+      // without showing it to the user.
+      $form['target_entity_type'] = array(
+        '#type' => 'value',
+        '#value' => $target_entity_types[0],
+      );
+    }
+    else {
+      // Build option list.
+      $options = array();
+      foreach ($target_entity_types as $target_entity_type) {
+        $target_entity_info = entity_get_info($target_entity_type);
+        $options[$target_entity_type] = $target_entity_info['label'];
+      }
+      $form['target_entity_type'] = array(
+        '#type' => 'select',
+        '#title' => t('Target Entity Type'),
+        '#description' => t('Select the target entity type for this Event type. In most cases you will wish to leave this as "Unit".'),
+        '#options' => $options,
+        // Default to BAT Unit if available.
+        '#default_value' => isset($target_entity_types['bat_unit']) ? 'bat_unit' : '',
+      );
+    }
+  }
 
   if (!isset($event_type->is_new) && $event_type->fixed_event_states == 0) {
     $fields_options = array();

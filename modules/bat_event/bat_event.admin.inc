@@ -253,19 +253,23 @@ function bat_event_edit_form($form, &$form_state, $event) {
   $form_state['bat_event'] = $event;
   field_attach_form('bat_event', $event, $form, $form_state);
 
-  isset($form['event_unit_reference']['#language']) ? $language = $form['event_unit_reference']['#language'] : $language = LANGUAGE_NONE;
+  $event_type = bat_event_type_load($event->type);
+  // Construct target entity reference field name using this event type's target entity type.
+  $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
 
-  $unitid = '';
-  if (isset($_GET['unitid'])) {
-    $unitid = check_plain($_GET['unitid']);
+  isset($form[$target_field_name]['#language']) ? $language = $form[$target_field_name]['#language'] : $language = LANGUAGE_NONE;
 
-    if ($unit = bat_unit_load($unitid)) {
-      $form['event_unit_reference'][$language][0]['target_id']['#default_value'] = $unit->name . ' (' . $unit->unit_id . ')';
+  $targetid = '';
+  if (isset($_GET['targetid'])) {
+    $targetid = check_plain($_GET['targetid']);
+
+    if ($target_entity = entity_load_single($event_type->target_entity_type, $targetid)) {
+      $form[$target_field_name][$language][0]['target_id']['#default_value'] = $target_entity->name . ' (' . $targetid . ')';
     }
   }
 
   // The unit reference value should be mandatory.
-  $form['event_unit_reference'][$language][0]['target_id']['#required'] = TRUE;
+  $form[$target_field_name][$language][0]['target_id']['#required'] = TRUE;
 
   // Management vertical tabs.
   $form['additional_settings'] = array(
@@ -448,11 +452,6 @@ function bat_event_edit_form_submit(&$form, &$form_state) {
 
   // Add the event to $form_state to be altered by other submit handlers.
   $form_state['event'] = $event;
-
-  $event_unit_reference = field_get_items('bat_event', $event, 'event_unit_reference');
-  if ($event_unit_reference !== FALSE) {
-    $unit_id = $event_unit_reference[0]['target_id'];
-  }
 
   $form_state['redirect'] = 'admin/bat/events';
 }

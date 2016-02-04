@@ -97,11 +97,6 @@ function bat_event_views_default_views() {
   $handler->display->display_options['relationships']['uid']['table'] = 'bat_events';
   $handler->display->display_options['relationships']['uid']['field'] = 'uid';
   $handler->display->display_options['relationships']['uid']['required'] = TRUE;
-  /* Relationship: Entity Reference: Referenced Entity */
-  $handler->display->display_options['relationships']['event_unit_reference_target_id']['id'] = 'event_unit_reference_target_id';
-  $handler->display->display_options['relationships']['event_unit_reference_target_id']['table'] = 'field_data_event_unit_reference';
-  $handler->display->display_options['relationships']['event_unit_reference_target_id']['field'] = 'event_unit_reference_target_id';
-  $handler->display->display_options['relationships']['event_unit_reference_target_id']['required'] = TRUE;
   /* Field: Events: Events ID */
   $handler->display->display_options['fields']['event_id']['id'] = 'event_id';
   $handler->display->display_options['fields']['event_id']['table'] = 'bat_events';
@@ -125,19 +120,6 @@ function bat_event_views_default_views() {
   $handler->display->display_options['fields']['end_date']['date_format'] = 'custom';
   $handler->display->display_options['fields']['end_date']['custom_date_format'] = 'd-m-Y H:i';
   $handler->display->display_options['fields']['end_date']['second_date_format'] = 'long';
-  /* Field: Events: Unit */
-  $handler->display->display_options['fields']['event_unit_reference']['id'] = 'event_unit_reference';
-  $handler->display->display_options['fields']['event_unit_reference']['table'] = 'field_data_event_unit_reference';
-  $handler->display->display_options['fields']['event_unit_reference']['field'] = 'event_unit_reference';
-  $handler->display->display_options['fields']['event_unit_reference']['settings'] = array(
-    'link' => 1,
-  );
-  /* Field: Units: Type_id */
-  $handler->display->display_options['fields']['type_id']['id'] = 'type_id';
-  $handler->display->display_options['fields']['type_id']['table'] = 'bat_units';
-  $handler->display->display_options['fields']['type_id']['field'] = 'type_id';
-  $handler->display->display_options['fields']['type_id']['relationship'] = 'event_unit_reference_target_id';
-  $handler->display->display_options['fields']['type_id']['label'] = 'Unit Type';
   /* Field: Events: Event Type */
   $handler->display->display_options['fields']['type']['id'] = 'type';
   $handler->display->display_options['fields']['type']['table'] = 'bat_events';
@@ -181,21 +163,6 @@ function bat_event_views_default_views() {
   $handler->display->display_options['filters']['event_id']['expose']['operator'] = 'event_id_op';
   $handler->display->display_options['filters']['event_id']['expose']['identifier'] = 'event_id';
   $handler->display->display_options['filters']['event_id']['expose']['remember_roles'] = array(
-    2 => '2',
-    1 => 0,
-    3 => 0,
-  );
-  /* Filter criterion: Events: Unit (event_unit_reference) */
-  $handler->display->display_options['filters']['event_unit_reference_target_id']['id'] = 'event_unit_reference_target_id';
-  $handler->display->display_options['filters']['event_unit_reference_target_id']['table'] = 'field_data_event_unit_reference';
-  $handler->display->display_options['filters']['event_unit_reference_target_id']['field'] = 'event_unit_reference_target_id';
-  $handler->display->display_options['filters']['event_unit_reference_target_id']['group'] = 1;
-  $handler->display->display_options['filters']['event_unit_reference_target_id']['exposed'] = TRUE;
-  $handler->display->display_options['filters']['event_unit_reference_target_id']['expose']['operator_id'] = 'event_unit_reference_target_id_op';
-  $handler->display->display_options['filters']['event_unit_reference_target_id']['expose']['label'] = 'Unit';
-  $handler->display->display_options['filters']['event_unit_reference_target_id']['expose']['operator'] = 'event_unit_reference_target_id_op';
-  $handler->display->display_options['filters']['event_unit_reference_target_id']['expose']['identifier'] = 'event_unit_reference_target_id';
-  $handler->display->display_options['filters']['event_unit_reference_target_id']['expose']['remember_roles'] = array(
     2 => '2',
     1 => 0,
     3 => 0,
@@ -245,22 +212,6 @@ function bat_event_views_default_views() {
   $handler->display->display_options['filters']['end_date']['expose']['operator'] = 'end_date_op';
   $handler->display->display_options['filters']['end_date']['expose']['identifier'] = 'end_date';
   $handler->display->display_options['filters']['end_date']['expose']['remember_roles'] = array(
-    2 => '2',
-    1 => 0,
-    3 => 0,
-  );
-  /* Filter criterion: Units: Type_id */
-  $handler->display->display_options['filters']['type_id']['id'] = 'type_id';
-  $handler->display->display_options['filters']['type_id']['table'] = 'bat_units';
-  $handler->display->display_options['filters']['type_id']['field'] = 'type_id';
-  $handler->display->display_options['filters']['type_id']['relationship'] = 'event_unit_reference_target_id';
-  $handler->display->display_options['filters']['type_id']['group'] = 1;
-  $handler->display->display_options['filters']['type_id']['exposed'] = TRUE;
-  $handler->display->display_options['filters']['type_id']['expose']['operator_id'] = 'type_id_op';
-  $handler->display->display_options['filters']['type_id']['expose']['label'] = 'Unit Type';
-  $handler->display->display_options['filters']['type_id']['expose']['operator'] = 'type_id_op';
-  $handler->display->display_options['filters']['type_id']['expose']['identifier'] = 'type_id';
-  $handler->display->display_options['filters']['type_id']['expose']['remember_roles'] = array(
     2 => '2',
     1 => 0,
     3 => 0,
