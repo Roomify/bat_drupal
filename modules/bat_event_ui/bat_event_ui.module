@@ -89,6 +89,34 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
  */
 function bat_event_ui_event_type_form($form, &$form_state) {
   $form = array();
+
+  // Check for available Target Entity types.
+  $target_entity_types = module_invoke_all('bat_event_target_entity_types');
+  if (count($target_entity_types) == 1) {
+    // If there's only one target entity type, we simply store the value
+    // without showing it to the user.
+    $form['target_entity_type'] = array(
+      '#type' => 'value',
+      '#value' => $target_entity_types[0],
+    );
+  }
+  else {
+    // Build option list.
+    $options = array();
+    foreach ($target_entity_types as $target_entity_type) {
+      $target_entity_info = entity_get_info($target_entity_type);
+      $options[$target_entity_type] = $target_entity_info['label'];
+    }
+    $form['target_entity_type'] = array(
+      '#type' => 'select',
+      '#title' => t('Target Entity Type'),
+      '#options' => $options,
+      // Default to BAT Unit if available.
+      '#default_value' => isset($target_entity_types['bat_unit']) ? 'bat_unit' : '', 
+    );
+  }
+
+
   $event_types = bat_event_get_types();
   foreach ($event_types as $event_type) {
     $event_types_options[$event_type->type] = $event_type->label;
