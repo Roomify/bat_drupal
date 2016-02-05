@@ -658,38 +658,16 @@ function bat_form_start_end_dates_validate($form, &$form_state) {
  *   The start date
  * @param DateTime $end_date
  *   The end date
- * @param bool $single_day
- *   TRUE validating that start_date can be equal to end_date.
  *
  * @return array
  *   An array with error messages.
  */
-function bat_check_dates_validity(DateTime $start_date, DateTime $end_date, $single_day = FALSE) {
+function bat_check_dates_validity(DateTime $start_date, DateTime $end_date) {
   $errors = array();
-  // The end date must be greater than start date, unless same day bookings are
-  // enabled, in which case it must not be before the start date.
-  if (($end_date < $start_date) || (($end_date == $start_date) && !$single_day)) {
-    if ($single_day) {
-      $errors[] = t('End date must be on or after the start date.');
-    }
-    else {
-      $errors[] = t('End date must be after start date.');
-    }
-  }
 
-  // The end date must not be more that the allowed number of days in advance for booking.
-  $current_date = new DateTime();
-  $booking_interval = $current_date->diff($end_date);
-
-  // The following exercise is necessary in order to get a properly
-  // instantiated date interval when starting with only seconds.
-  $d1 = new DateTime();
-  $d2 = new DateTime();
-  $d2->add(new DateInterval('PT' . variable_get('bat_advance_bookings_period', 15552000).'S'));
-  $advanced_bookings_interval = $d2->diff($d1);
-
-  if (($booking_interval->format('%a') > $advanced_bookings_interval->format('%a')) && (!user_access('book in advance without limitation'))) {
-    $errors[] = 'You cannot book that far into the future - bookings can only be made ' . $advanced_bookings_interval->format('%a') . ' days in advance';
+  // The end date must be greater or equal than start date.
+  if ($end_date < $start_date) {
+    $errors[] = t('End date must be on or after the start date.');
   }
 
   return $errors;
