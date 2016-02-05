@@ -1309,7 +1309,7 @@ class BatEventController extends EntityAPIController {
     if (field_get_items('bat_event', $event, $target_field_name) !== FALSE &&
         isset($event->start_date) && isset($event->end_date)) {
 
-      $event_target_entity_reference = field_get_items('bat_event', $entity->original, $target_field_name);
+      $event_target_entity_reference = field_get_items('bat_event', $event, $target_field_name);
       $target_entity_id = $event_target_entity_reference[0]['target_id'];
 
       // Load the referenced entity.
