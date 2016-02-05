@@ -1674,11 +1674,17 @@ function bat_event_field_widget_form(&$form, &$form_state, $field, $instance, $l
 function bat_event_autocomplete_value($element, $input = FALSE, $form_state) {
   if ($input === FALSE) {
     $state_id = $element['#default_value'];
+
     if (!empty($state_id)) {
-      $state = bat_event_load_state($state_id);
-      $value = $state['label'];
-      $value .= ' [state_id:' . $state_id . ']';
-      return $value;
+      if ($state = bat_event_load_state($state_id)) {
+        $value = $state['label'];
+        $value .= ' [state_id:' . $state_id . ']';
+
+        return $value;
+      }
+      else {
+        return '';
+      }
     }
   }
 }

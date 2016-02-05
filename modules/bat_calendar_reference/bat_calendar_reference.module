@@ -797,6 +797,9 @@ function bat_calendar_reference_unit_autocomplete_value($element, $input = FALSE
 
         return $value;
       }
+      else {
+        return '';
+      }
     }
   }
 }
@@ -817,6 +820,9 @@ function bat_calendar_reference_unit_type_autocomplete_value($element, $input = 
 
         return $value;
       }
+      else {
+        return '';
+      }
     }
   }
 }
@@ -836,6 +842,9 @@ function bat_calendar_reference_event_type_autocomplete_value($element, $input =
         $value .= ' [event_type_id:' . $event_type . ']';
 
         return $value;
+      }
+      else {
+        return '';
       }
     }
   }

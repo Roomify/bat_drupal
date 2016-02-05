@@ -25,8 +25,9 @@
             center: Drupal.settings.batCalendar[cal_id].headerCenter,
             right: Drupal.settings.batCalendar[cal_id].headerRight,
           },
-          businessHours: businessHours,
+          businessHours: Drupal.settings.batCalendar[cal_id].businessHours,
           defaultView: Drupal.settings.batCalendar[cal_id].defaultView,
+          selectConstraint: Drupal.settings.batCalendar[cal_id].selectConstraint,
           views: {
             timelineDay: {
               buttonText: ':15 slots',
