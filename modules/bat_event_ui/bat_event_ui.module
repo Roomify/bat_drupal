@@ -65,16 +65,8 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   $calendar_settings['user_settings'] = $fc_user_settings;
   $calendar_settings['calendar_id'] = 'fullcalendar-scheduler';
 
-
-  // Drupal I love you so - render the form and then send it as markup - the two step
-  // is to avoid a strict warning for php 5.6 and over
-  $selection_form = drupal_get_form('bat_event_ui_event_type_form');
-  $form_markup = drupal_render($selection_form);
-
   $render_array = array(
-    'event_type_form' => array(
-      '#markup' => $form_markup,
-    ),
+    'event_type_form' => drupal_get_form('bat_event_ui_event_type_form'),
     'calendar' => array(
       '#theme' => 'bat_fullcalendar',
       '#calendar_settings' => $calendar_settings,
