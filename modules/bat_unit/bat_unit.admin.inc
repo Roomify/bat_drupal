@@ -340,7 +340,9 @@ function bat_unit_edit_form_submit(&$form, &$form_state) {
     $unit = $form_state['bat_unit'];
     $unit = entity_ui_controller('bat_unit')->entityFormSubmitBuildEntity($form, $form_state);
   }
+
   $unit->changed = time();
+
   if (isset($unit->author_name)) {
     if ($account = user_load_by_name($unit->author_name)) {
       $unit->uid = $account->uid;
@@ -349,6 +351,7 @@ function bat_unit_edit_form_submit(&$form, &$form_state) {
       $unit->uid = 0;
     }
   }
+
   $unit->created = !empty($unit->date) ? strtotime($unit->date) : REQUEST_TIME;
   $unit->save();
   drupal_set_message(t('Bat Unit @name saved', array('@name' => $unit->name)));

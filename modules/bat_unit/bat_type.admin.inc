@@ -411,6 +411,15 @@ function bat_type_edit_form_submit(&$form, &$form_state) {
     $type->changed = time();
   }
 
+  if (isset($type->author_name)) {
+    if ($account = user_load_by_name($type->author_name)) {
+      $type->uid = $account->uid;
+    }
+    else {
+      $type->uid = 0;
+    }
+  }
+
   $type->save();
   drupal_set_message(t('Type @name saved', array('@name' => $type->name)));
 
