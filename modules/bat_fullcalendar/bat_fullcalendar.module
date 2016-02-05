@@ -95,10 +95,28 @@ function bat_fullcalendar_event_management($unit, $event_type, $event_id, $start
     drupal_set_message(t('Unable to load event.'), 'error');
   }
 
+  $modal_content = module_invoke_all('bat_fullcalendar_modal_content', $unit, $event_type, $event_id, $start_date, $end_date);
+  $modal_content = array_pop($modal_content);
+
+  if (isset($modal_content['title']) && isset($modal_content['content'])) {
+    ctools_modal_render($modal_content['title'], $modal_content['content']);
+  }
+  elseif (isset($modal_content['commands'])) {
+    print ajax_render($modal_content['commands']);
+    exit();
+  }
+}
+
+/**
+ * Implements hook_bat_fullcalendar_modal_content();
+ */
+function bat_fullcalendar_bat_fullcalendar_modal_content($unit, $event_type, $event_id, $start_date, $end_date) {
   if ($event_id > 0) {
-    $event = bat_event_load($event_id);
-    // For existing bookings allow to edit in the modal.
+    // For existing events allow to edit in the modal.
     module_load_include('inc', 'bat_event', 'bat_event.admin');
+
+    $event = bat_event_load($event_id);
+
     $form_state = array(
       'title' => t('Edit event'),
       'ajax' => TRUE,
@@ -113,6 +131,7 @@ function bat_fullcalendar_event_management($unit, $event_type, $event_id, $start
         ),
       ),
     );
+
     // Wrap the form via ctools modal.
     $output = ctools_modal_form_wrapper('bat_event_edit_form', $form_state);
     if ($form_state['executed']) {
@@ -129,11 +148,19 @@ function bat_fullcalendar_event_management($unit, $event_type, $event_id, $start
       }
     }
 
-    print ajax_render($output);
-    exit();
+    return array(
+      'bat_fullcalendar' => array(
+        'commands' => $output,
+      ),
+    );
   }
 
-  ctools_modal_render(t('Event Management'), drupal_get_form('bat_fullcalendar_event_manager_form', $unit, $event_type, $event_id, $start_date, $end_date));
+  return array(
+    'bat_fullcalendar' => array(
+      'title' => t('Event Management'),
+      'content' => drupal_get_form('bat_fullcalendar_event_manager_form', $unit, $event_type, $event_id, $start_date, $end_date),
+    ),
+  );
 }
 
 /**
