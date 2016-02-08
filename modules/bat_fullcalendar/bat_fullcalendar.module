@@ -740,8 +740,8 @@ function bat_fullcalendar_modal_style($style = 'default') {
     'bat-modal-style' => array(
       'modalSize' => array(
         'type' => 'fixed',
-        'width' => 450,
-        'height' => 500,
+        'width' => 500,
+        'height' => 520,
         'addWidth' => 0,
         'addHeight' => 0,
       ),
