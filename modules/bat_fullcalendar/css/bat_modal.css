@@ -34,6 +34,7 @@
   -moz-box-shadow: -1em 1em 1em rgba(0, 0, 0, 0.5);
   box-shadow: -1em 1em 1em rgba(0, 0, 0, 0.5);
   background: #FFF;
+  height: 100% !important;
 }
 .page-admin-bat .ctools-modal-content .modal-header {
   background: #fff url('../images/bg-shade-light.png') repeat-x bottom left;
@@ -53,11 +54,13 @@
   color: #555;
 }
 .page-admin-bat .ctools-modal-content .modal-content {
-  width: 96% !important;
-  padding: 15px 2%;
+  width: 92% !important;
+  padding: 20px 4%;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
+  height: 100% !important;
+  min-height: 475px !important;
 }
 .page-admin-bat .ctools-modal-content a.close {
   color: #666;
