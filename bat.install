@@ -9,6 +9,6 @@
  * Implements hook_install()
  */
 function bat_install() {
-  $readme_path = drupal_get_path('module', 'bat') . '/README.md';
-  drupal_set_message(t('Thanks for installing BAT! You must also install the BAT php library for this module to function, please see the <a href="@README_LINK">README</a> for more details.', array('@README_LINK' => url($readme_path))));
+  $docs_path =  'http://docs.roomify.us';
+  drupal_set_message(t('Thanks for installing BAT! Checkout the Roomify BAT <a href="@DOCS_LINK">documentation</a> for information on how to fully configure BAT.', array('@DOCS_LINK' => url($docs_path))));
 }
