@@ -381,6 +381,7 @@ function bat_fullcalendar_libraries_info() {
       'minified' => array(
         'files' => array(
           'js' => array(
+            'lib/moment.min.js',
             'fullcalendar.min.js',
             'gcal.js',
           ),
@@ -393,6 +394,7 @@ function bat_fullcalendar_libraries_info() {
       'source' => array(
         'files' => array(
           'js' => array(
+            'lib/moment.min.js',
             'fullcalendar.js',
             'gcal.js',
           ),
