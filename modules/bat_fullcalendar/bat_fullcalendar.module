@@ -255,7 +255,7 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $entity_id, $ev
         '#value' => t('Update value'),
         '#weight' => 2,
         '#ajax' => array(
-          'callback' => 'bat_fullcalendar_event_manager_form_submit',
+          'callback' => 'bat_fullcalendar_event_manager_form_ajax_submit',
           'wrapper' => 'replace_textfield_div',
         ),
       );
@@ -312,7 +312,7 @@ function bat_fullcalendar_ajax_event_status_change($form, $form_state) {
 /**
  * The callback for the change_event_status widget of the event manager form.
  */
-function bat_fullcalendar_event_manager_form_submit($form, &$form_state) {
+function bat_fullcalendar_event_manager_form_ajax_submit($form, &$form_state) {
   global $user;
 
   $start_date = $form_state['values']['bat_start_date'];
