@@ -37,18 +37,15 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
   public function format(EventInterface $event) {
     $editable = FALSE;
 
-    $bat_event = bat_event_load($event->getValue());
-    if ($bat_event) {
-      $event_type = bat_event_type_load($bat_event->type);
+    // Load the target entity from Drupal
+    $target_entity = entity_load_single($this->event_type->target_entity_type, $event->getUnitId());
 
-      // Load the target entity from Drupal
-      $target_entity = entity_load_single($event_type->target_entity_type, $event->getUnitId());
-
-      // Get the target entity default value
-      $default_value = $target_entity->getEventDefaultValue($this->event_type->type);
-    }
+    // Get the target entity default value
+    $default_value = $target_entity->getEventDefaultValue($this->event_type->type);
 
     if ($event->getValue()) {
+      $bat_event = bat_event_load($event->getValue());
+
       // Change the default value to the one that the event actually stores in the entity
       $default_value = $bat_event->getEventValue();
 
@@ -60,13 +57,11 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
     $formatted_event = array(
       'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00Z',
       'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00Z',
+      'title' => $target_entity->formatEventValue($this->event_type->type, $default_value),
       'blocking' => 0,
       'fixed' => 0,
       'editable' => $editable,
     );
-    if ($bat_event) {
-      $formatted_event['title'] = $target_entity->formatEventValue($this->event_type->type, $default_value);
-    }
 
     if ($event->getValue() < 100) {
       $formatted_event['color']  = 'orange';
