@@ -33,7 +33,7 @@ function bat_fullcalendar_permission() {
 function bat_fullcalendar_menu() {
   $items = array();
 
-  $items['admin/bat/fullcalendar/%bat_unit/event/%bat_event_type/%/%bat_date/%bat_date'] = array(
+  $items['admin/bat/fullcalendar/%/event/%bat_event_type/%/%bat_date/%bat_date'] = array(
     'title' => 'Event Management',
     'page callback' => 'bat_fullcalendar_event_management',
     'page arguments' => array(3, 5, 6, 7, 8),
@@ -59,13 +59,13 @@ function bat_fullcalendar_menu() {
 /**
  * The EventManager page access callback.
  *
- * @param $unit
+ * @param $entity_id
  * @param $event_type
  * @param $event_id
  * @param $start_date
  * @param $end_date
  */
-function bat_fullcalendar_event_management_access($unit, $event_type, $event_id, $start_date, $end_date) {
+function bat_fullcalendar_event_management_access($entity_id, $event_type, $event_id, $start_date, $end_date) {
   if ($event_id == 0) {
     return bat_event_access('create', bat_event_create(array('type' => $event_type->type)));
   }
@@ -79,13 +79,13 @@ function bat_fullcalendar_event_management_access($unit, $event_type, $event_id,
  * The EventManager page shows when clicking on an event in the
  * calendar - will allow a user to manipulate that event.
  *
- * @param $unit
+ * @param $entity_id
  * @param $event_type
  * @param $event_id
  * @param $start_date
  * @param $end_date
  */
-function bat_fullcalendar_event_management($unit, $event_type, $event_id, $start_date, $end_date) {
+function bat_fullcalendar_event_management($entity_id, $event_type, $event_id, $start_date, $end_date) {
   // Include modal library.
   ctools_include('modal');
 
@@ -95,7 +95,7 @@ function bat_fullcalendar_event_management($unit, $event_type, $event_id, $start
     drupal_set_message(t('Unable to load event.'), 'error');
   }
 
-  $modal_content = module_invoke_all('bat_fullcalendar_modal_content', $unit, $event_type, $event_id, $start_date, $end_date);
+  $modal_content = module_invoke_all('bat_fullcalendar_modal_content', $entity_id, $event_type, $event_id, $start_date, $end_date);
   $modal_content = array_pop($modal_content);
 
   if (isset($modal_content['title']) && isset($modal_content['content'])) {
@@ -110,7 +110,7 @@ function bat_fullcalendar_event_management($unit, $event_type, $event_id, $start
 /**
  * Implements hook_bat_fullcalendar_modal_content();
  */
-function bat_fullcalendar_bat_fullcalendar_modal_content($unit, $event_type, $event_id, $start_date, $end_date) {
+function bat_fullcalendar_bat_fullcalendar_modal_content($entity_id, $event_type, $event_id, $start_date, $end_date) {
   if ($event_id > 0) {
     // For existing events allow to edit in the modal.
     module_load_include('inc', 'bat_event', 'bat_event.admin');
@@ -158,7 +158,7 @@ function bat_fullcalendar_bat_fullcalendar_modal_content($unit, $event_type, $ev
   return array(
     'bat_fullcalendar' => array(
       'title' => t('Event Management'),
-      'content' => drupal_get_form('bat_fullcalendar_event_manager_form', $unit, $event_type, $event_id, $start_date, $end_date),
+      'content' => drupal_get_form('bat_fullcalendar_event_manager_form', $entity_id, $event_type, $event_id, $start_date, $end_date),
     ),
   );
 }
@@ -166,7 +166,7 @@ function bat_fullcalendar_bat_fullcalendar_modal_content($unit, $event_type, $ev
 /**
  * The Event Manager Form.
  */
-function bat_fullcalendar_event_manager_form($form, $form_state, $unit, $event_type, $event_id, $start_date, $end_date) {
+function bat_fullcalendar_event_manager_form($form, $form_state, $entity_id, $event_type, $event_id, $start_date, $end_date) {
   $form = array();
   $new_event_id = $event_id;
 
@@ -180,9 +180,9 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $unit, $event_t
   $form['#prefix'] = '<div id="replace_textfield_div">';
   $form['#suffix'] = '</div>';
 
-  $form['unit_id'] = array(
+  $form['entity_id'] = array(
     '#type' => 'hidden',
-    '#value' => $unit->unit_id,
+    '#value' => $entity_id,
   );
 
   $form['event_type'] = array(
@@ -317,7 +317,7 @@ function bat_fullcalendar_event_manager_form_submit($form, &$form_state) {
 
   $start_date = $form_state['values']['bat_start_date'];
   $end_date = $form_state['values']['bat_end_date'];
-  $unit_id = $form_state['values']['unit_id'];
+  $entity_id = $form_state['values']['entity_id'];
   $event_id = $form_state['values']['event_id'];
   $event_type = $form_state['values']['event_type'];
   $field_name = $form_state['values']['field_name'];
@@ -333,13 +333,16 @@ function bat_fullcalendar_event_manager_form_submit($form, &$form_state) {
   $end_date->sub(new DateInterval('PT1M'));
   $event->end_date = $end_date->format('Y-m-d H:i');
 
-  // TODO: genericize the event target entity?
-  $event->event_bat_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit_id;
+  $event_type_entity = bat_event_type_load($event_type);
+  // Construct target entity reference field name using this event type's target entity type.
+  $target_field_name = 'event_' . $event_type_entity->target_entity_type . '_reference';
+  $event->{$target_field_name}[LANGUAGE_NONE][0]['target_id'] = $entity_id;
+
   $event->{$field_name} = $form_state['values'][$field_name];
 
   $event->save();
 
-  $unit = bat_unit_load($unit_id);
+  $unit = entity_load_single($event_type_entity->target_entity_type, $entity_id);
 
   $value = field_view_value('bat_event', $event, $field_name, $form_state['values'][$field_name][LANGUAGE_NONE][0]);
 
