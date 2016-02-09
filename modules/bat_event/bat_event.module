@@ -1313,18 +1313,19 @@ class BatEventController extends EntityAPIController {
       $target_entity_id = $event_target_entity_reference[0]['target_id'];
 
       // Load the referenced entity.
-      $target_entity = entity_load_single($event_type->target_entity_type, $target_entity_id);
-      $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event->type));
+      if ($target_entity = entity_load_single($event_type->target_entity_type, $target_entity_id)) {
+        $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event->type));
 
-      $this->batStoreSave($unit,
-        clone($event->start_date_object),
-        clone($event->end_date_object),
-        $event->type,
-        $event_type->event_granularity,
-        $unit->getDefaultValue(),
-        $event->event_id,
-        TRUE
-      );
+        $this->batStoreSave($unit,
+          clone($event->start_date_object),
+          clone($event->end_date_object),
+          $event->type,
+          $event_type->event_granularity,
+          $unit->getDefaultValue(),
+          $event->event_id,
+          TRUE
+        );
+      }
     }
   }
 

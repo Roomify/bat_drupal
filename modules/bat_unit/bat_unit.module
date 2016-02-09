@@ -887,8 +887,6 @@ class BatUnit extends Entity {
     $field_info = field_info_field($field);
     $field_info_instance = field_info_instance('bat_type', $field, $bat_type->type);
 
-    $formatter = $bat_type->getEventValueFormatter($event_type);
-
     if ($field_info['type'] == 'commerce_price') {
       if (empty($field_info_instance['widget']['settings']['currency_code']) ||
           $field_info_instance['widget']['settings']['currency_code'] == 'default') {
@@ -980,6 +978,27 @@ class BatUnitController extends EntityAPIController {
     $unit = parent::create($values);
 
     return $unit;
+  }
+
+  public function getReferencedIds($unit_type, $ids = array()) {
+    $query = db_select('bat_units', 'n')
+            ->fields('n', array('unit_id', 'type_id', 'type', 'name'));
+    if (!empty($ids)) {
+      $query->condition('unit_id', $ids, 'IN');
+    }
+    $query->condition('type_id', $unit_type);
+    $bat_units = $query->execute()->fetchAll();
+
+    $units = array();
+    foreach ($bat_units as $unit) {
+      $units[] = array(
+        'id' => $unit->unit_id,
+        'name' => $unit->name,
+        'type_id' => $unit_type,
+      );
+    }
+
+    return $units;
   }
 
   /**
