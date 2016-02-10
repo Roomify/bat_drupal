@@ -40,7 +40,7 @@
           },
           resourceAreaWidth: Drupal.settings.batCalendar[cal_id].resourceAreaWidth,
           resourceLabelText: Drupal.settings.batCalendar[cal_id].resourceLabelText,
-          resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendar[cal_id].unitTypes + '&ids=' + Drupal.settings.batCalendar[cal_id].unitIDs,
+          resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendar[cal_id].unitTypes + '&ids=' + Drupal.settings.batCalendar[cal_id].unitIDs + '&event_type=' + Drupal.settings.batCalendar[cal_id].eventType,
           events: '/bat/v2/events-calendar?unit_types=' + Drupal.settings.batCalendar[cal_id].unitTypes + '&event_types=' + Drupal.settings.batCalendar[cal_id].eventType + '&unit_ids=' + Drupal.settings.batCalendar[cal_id].unitIDs + '&background=' + Drupal.settings.batCalendar[cal_id].background,
           windowResize: function(view) {
             $(this).fullCalendar('refetchEvents');
