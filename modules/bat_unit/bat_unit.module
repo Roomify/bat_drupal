@@ -1792,15 +1792,6 @@ class RoomifyTypeInlineEntityFormController extends EntityInlineEntityFormContro
       '#type' => 'actions',
       '#tree' => FALSE,
     );
-    if (!empty($type->name) && bat_type_access('delete', $type)) {
-      $form['actions']['delete'] = array(
-        '#type' => 'submit',
-        '#value' => t('Delete Type'),
-        '#suffix' => l(t('Cancel'), 'admin/bat/config/types'),
-        '#submit' => $submit + array('bat_type_form_submit_delete'),
-        '#weight' => 45,
-      );
-    }
 
     return $form;
   }
