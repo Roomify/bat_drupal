@@ -1690,6 +1690,41 @@ class BatTypeController extends EntityAPIController {
  */
 class RoomifyTypeInlineEntityFormController extends EntityInlineEntityFormController {
 
+  /**
+   * Overrides EntityInlineEntityFormController::tableFields().
+   */
+  public function tableFields($bundles) {
+    $info = entity_get_info($this->entityType);
+    $metadata = entity_get_property_info($this->entityType);
+
+    $fields = array();
+    $fields['name'] = array(
+      'type' => 'property',
+      'label' => t('Name'),
+      'weight' => 1,
+    );
+
+    $fields['name'] = array(
+      'type' => 'property',
+      'label' => t('Name'),
+      'weight' => 1,
+    );
+
+    if (count($bundles) > 1) {
+      $bundle_key = $info['entity keys']['bundle'];
+      $fields[$bundle_key] = array(
+        'type' => 'property',
+        'label' => $metadata ? $metadata['properties'][$bundle_key]['label'] : t('Type'),
+        'weight' => 2,
+      );
+    }
+
+    return $fields;
+  }
+
+  /**
+   * Overrides EntityInlineEntityFormController::entityForm().
+   */
   public function entityForm($form, &$form_state) {
     module_load_include('inc', 'bat_unit', 'bat_type.admin');
     $info = entity_get_info($this->entityType);
