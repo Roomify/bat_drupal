@@ -153,10 +153,14 @@ function bat_unit_entity_info() {
         ),
       ),
     ),
-    'inline entity form' => array(
-      'controller' => 'RoomifyTypeInlineEntityFormController',
-    ),
   );
+
+  // Enable Inline Entity Form support if module is present.
+  if (module_exists('inline_entity_form')) {
+    $return['bat_type']['inline entity form'] = array(
+      'controller' => 'RoomifyTypeInlineEntityFormController',
+    );
+  }
 
   // The entity that holds information about the entity types.
   $return['bat_type_bundle'] = array(
