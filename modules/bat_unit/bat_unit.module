@@ -155,6 +155,13 @@ function bat_unit_entity_info() {
     ),
   );
 
+  // Enable Inline Entity Form support if module is present.
+  if (module_exists('inline_entity_form')) {
+    $return['bat_type']['inline entity form'] = array(
+      'controller' => 'RoomifyTypeInlineEntityFormController',
+    );
+  }
+
   // The entity that holds information about the entity types.
   $return['bat_type_bundle'] = array(
     'label' => t('Type Bundle'),
@@ -1680,6 +1687,179 @@ class BatTypeController extends EntityAPIController {
     return $content;
   }
 
+}
+
+
+/**
+ * The Inline Entity Form Controller for RoomifyType entities.
+ */
+if (module_exists('inline_entity_form')) {
+  class RoomifyTypeInlineEntityFormController extends EntityInlineEntityFormController {
+
+    /**
+     * Overrides EntityInlineEntityFormController::tableFields().
+     */
+    public function tableFields($bundles) {
+      $info = entity_get_info($this->entityType);
+      $metadata = entity_get_property_info($this->entityType);
+
+      $fields = array();
+      $fields['name'] = array(
+        'type' => 'property',
+        'label' => t('Name'),
+        'weight' => 1,
+      );
+
+      $fields['name'] = array(
+        'type' => 'property',
+        'label' => t('Name'),
+        'weight' => 1,
+      );
+
+      if (count($bundles) > 1) {
+        $bundle_key = $info['entity keys']['bundle'];
+        $fields[$bundle_key] = array(
+          'type' => 'property',
+          'label' => $metadata ? $metadata['properties'][$bundle_key]['label'] : t('Type'),
+          'weight' => 2,
+        );
+      }
+
+      return $fields;
+    }
+
+    /**
+     * Overrides EntityInlineEntityFormController::entityForm().
+     */
+    public function entityForm($form, &$form_state) {
+      module_load_include('inc', 'bat_unit', 'bat_type.admin');
+      $info = entity_get_info($this->entityType);
+      $type = $form['#entity'];
+      if (!isset($type->status)) {
+        $type->status = 0;
+      }
+
+      if (!empty($info['fieldable'])) {
+        $langcode = entity_language($this->entityType, $entity);
+        field_attach_form($this->entityType, $type, $form, $form_state, $langcode);
+      }
+
+      $form['#attributes']['class'][] = 'bat-management-form bat-type-inline-edit-form';
+      $form['#attached']['css'] = array(
+        drupal_get_path('module', 'bat_type') . '/css/bat_type.css',
+        drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css',
+      );
+      $form['type'] = array(
+        '#type' => 'value',
+        '#value' => $type->type,
+      );
+
+      // Add the default field elements.
+      $form['name'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Type name'),
+        '#default_value' => isset($type->name) ? $type->name : '',
+        '#maxlength' => 255,
+        '#required' => TRUE,
+        '#weight' => -99,
+      );
+
+      // Add the field related form elements.
+      $form_state['bat_type'] = $type;
+      field_attach_form('bat_type', $type, $form, $form_state, isset($type->language)? $type->language : NULL);
+      $form['additional_settings'] = array(
+        '#type' => 'vertical_tabs',
+        '#weight' => 99,
+      );
+
+      // Type author information for administrators.
+      $form['author'] = array(
+        '#type' => 'fieldset',
+        '#access' => user_access('bypass bat_type entities access'),
+        '#title' => t('Authoring information'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#group' => 'additional_settings',
+        '#attributes' => array(
+          'class' => array('type-form-author'),
+        ),
+        '#attached' => array(
+          'js' => array(
+            array(
+              'type' => 'setting',
+              'data' => array('anonymous' => variable_get('anonymous', t('Anonymous'))),
+            ),
+          ),
+        ),
+        '#weight' => 90,
+      );
+      $form['author']['author_name'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Authored by'),
+        '#maxlength' => 60,
+        '#autocomplete_path' => 'user/autocomplete',
+        '#default_value' => !empty($type->author_name) ? $type->author_name : '',
+        '#weight' => -1,
+        '#description' => t('Leave blank for %anonymous.', array('%anonymous' => variable_get('anonymous', t('Anonymous')))),
+      );
+      $form['author']['date'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Authored on'),
+        '#maxlength' => 25,
+        '#description' => t('Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC. Leave blank to use the time of form submission.', array('%time' => !empty($type->date) ? date_format(date_create($type->date), 'Y-m-d H:i:s O') : format_date($type->created, 'custom', 'Y-m-d H:i:s O'), '%timezone' => !empty($type->date) ? date_format(date_create($type->date), 'O') : format_date($type->created, 'custom', 'O'))),
+        '#default_value' => !empty($type->date) ? $type->date : '',
+      );
+
+      // Type publishing options for administrators.
+      $form['options'] = array(
+        '#type' => 'fieldset',
+        '#access' => user_access('bypass bat_type entities access'),
+        '#title' => t('Publishing options'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#group' => 'additional_settings',
+        '#attributes' => array(
+          'class' => array('type-form-published'),
+        ),
+        '#weight' => 95,
+      );
+      $form['options']['status'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Published'),
+        '#default_value' => $type->status,
+      );
+
+      $form['actions'] = array(
+        '#type' => 'actions',
+        '#tree' => FALSE,
+      );
+
+      return $form;
+    }
+
+    /**
+     * Overrides EntityInlineEntityFormController::entityFormSubmit().
+     */
+    public function entityFormSubmit(&$entity_form, &$form_state) {
+      parent::entityFormSubmit($entity_form, $form_state);
+      $entity = $entity_form['#entity'];
+
+      if ($entity->type_id !== '') {
+        $entity->changed = time();
+      }
+
+      if (isset($entity->author_name)) {
+        if ($account = user_load_by_name($entity->author_name)) {
+          $entity->uid = $account->uid;
+        }
+        else {
+          $entity->uid = 0;
+        }
+      }
+
+      $entity->save();
+    }
+  }
 }
 
 /**
