@@ -94,6 +94,7 @@ function bat_event_entity_info() {
       'controller class' => 'BatEventUIController',
       'menu wildcard' => '%bat_event',
     ),
+    'metadata controller class' => 'BatEventMetadataController',
   );
 
   // The entity that holds information about the entity types.
@@ -1141,6 +1142,28 @@ class BatEventType extends Entity {
 
   public function __construct($values = array()) {
     parent::__construct($values, 'bat_event_type');
+  }
+
+}
+
+/**
+ * The MetadataController for BatEvent entities
+ */
+class BatEventMetadataController extends EntityDefaultMetadataController {
+
+  public function entityPropertyInfo() {
+    $info = parent::entityPropertyInfo();
+
+    $properties = array('event_id', 'type', 'language', 'created', 'changed', 'uid');
+
+    foreach ($properties as $property) {
+      if (isset($info['bat_event']['properties'][$property])) {
+        $info['bat_event']['properties'][$property]['getter callback'] = 'entity_property_verbatim_get';
+        $info['bat_event']['properties'][$property]['setter callback'] = 'entity_property_verbatim_set';
+      }
+    }
+
+    return $info;
   }
 
 }

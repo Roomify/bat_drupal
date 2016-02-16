@@ -69,6 +69,7 @@ function bat_unit_entity_info() {
       'controller class' => 'BatUnitUIController',
       'menu wildcard' => '%bat_unit',
     ),
+    'metadata controller class' => 'BatUnitMetadataController',
     'translation' => array(
       'entity_translation' => array(
         'base path' => 'admin/bat/units/unit/%bat_unit',
@@ -142,6 +143,7 @@ function bat_unit_entity_info() {
       'file' => 'bat_type.admin.inc',
       'controller class' => 'BatTypeUIController',
     ),
+    'metadata controller class' => 'BatTypeMetadataController',
     // The information below is used by the BatUnitUIController (which extends
     // the EntityDefaultUIController).
     'translation' => array(
@@ -955,6 +957,28 @@ class BatUnitBundle extends Entity {
 }
 
 /**
+ * The MetadataController for BatUnit entities
+ */
+class BatUnitMetadataController extends EntityDefaultMetadataController {
+
+  public function entityPropertyInfo() {
+    $info = parent::entityPropertyInfo();
+
+    $properties = array('unit_id', 'type_id', 'type', 'language', 'name', 'created', 'changed', 'status', 'uid');
+
+    foreach ($properties as $property) {
+      if (isset($info['bat_unit']['properties'][$property])) {
+        $info['bat_unit']['properties'][$property]['getter callback'] = 'entity_property_verbatim_get';
+        $info['bat_unit']['properties'][$property]['setter callback'] = 'entity_property_verbatim_set';
+      }
+    }
+
+    return $info;
+  }
+
+}
+
+/**
  * The Controller for BatUnit entities
  */
 class BatUnitController extends EntityAPIController {
@@ -1641,6 +1665,28 @@ class BatTypeBundle extends Entity {
 
   public function __construct($values = array()) {
     parent::__construct($values, 'bat_type_bundle');
+  }
+
+}
+
+/**
+ * The MetadataController for BatType entities
+ */
+class BatTypeMetadataController extends EntityDefaultMetadataController {
+
+  public function entityPropertyInfo() {
+    $info = parent::entityPropertyInfo();
+
+    $properties = array('type_id', 'type', 'language', 'name', 'created', 'changed', 'status', 'uid');
+
+    foreach ($properties as $property) {
+      if (isset($info['bat_type']['properties'][$property])) {
+        $info['bat_type']['properties'][$property]['getter callback'] = 'entity_property_verbatim_get';
+        $info['bat_type']['properties'][$property]['setter callback'] = 'entity_property_verbatim_set';
+      }
+    }
+
+    return $info;
   }
 
 }
