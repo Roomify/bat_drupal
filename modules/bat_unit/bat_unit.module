@@ -1750,11 +1750,6 @@ if (module_exists('inline_entity_form')) {
       $metadata = entity_get_property_info($this->entityType);
 
       $fields = array();
-      $fields['name'] = array(
-        'type' => 'property',
-        'label' => t('Name'),
-        'weight' => 1,
-      );
 
       $fields['name'] = array(
         'type' => 'property',
@@ -1786,7 +1781,7 @@ if (module_exists('inline_entity_form')) {
       }
 
       if (!empty($info['fieldable'])) {
-        $langcode = entity_language($this->entityType, $entity);
+        $langcode = entity_language($this->entityType, $type);
         field_attach_form($this->entityType, $type, $form, $form_state, $langcode);
       }
 
