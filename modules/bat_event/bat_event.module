@@ -1427,6 +1427,57 @@ class BatEventTypeController extends EntityAPIControllerExportable {
     }
   }
 
+  /**
+   * @param $entity
+   * @param $prefix
+   */
+  public function export($entity, $prefix = '') {
+    $vars = get_object_vars($entity);
+    unset($vars[$this->statusKey], $vars[$this->moduleKey], $vars['is_new']);
+    if ($this->nameKey != $this->idKey) {
+      unset($vars[$this->idKey]);
+    }
+
+    // Export event states.
+    if ($entity->fixed_event_states) {
+      $event_states = array();
+      foreach (bat_event_get_states($entity->type) as $state) {
+        $event_states[] = array(
+          'machine_name' => $state['machine_name'],
+          'label' => $state['label'],
+          'color' => $state['color'],
+          'calendar_label' => $state['calendar_label'],
+          'locked' => $state['locked'],
+          'blocking' => $state['blocking'],
+          'default_state' => $state['default_state'],
+        );
+      }
+
+      $vars['event_states'] = $event_states;
+    }
+
+    return entity_var_json_export($vars, $prefix);
+  }
+
+  /**
+   * @param $export
+   */
+  public function import($export) {
+    $vars = drupal_json_decode($export);
+    if (is_array($vars)) {
+      if (isset($vars['event_states'])) {
+        $event_type = $vars['type'];
+
+        foreach ($vars['event_states'] as $event_state) {
+          bat_event_save_state($event_state, $event_type);
+        }
+      }
+
+      return $this->create($vars);
+    }
+    return FALSE;
+  }
+
 }
 
 /**
