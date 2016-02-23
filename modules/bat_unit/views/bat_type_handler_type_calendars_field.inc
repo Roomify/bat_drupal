@@ -20,7 +20,8 @@ class bat_type_handler_type_calendars_field extends views_handler_field {
 
   function render($values) {
     $links = array();
-    $type = bat_type_load($values->type_id);
+
+    $type = bat_type_load($this->get_value($values, 'type_id'));
     $type_bundle = bat_type_bundle_load($type->type);
     if (is_array($type_bundle->default_event_value_field_ids)) {
       foreach ($type_bundle->default_event_value_field_ids as $event_type => $field) {
