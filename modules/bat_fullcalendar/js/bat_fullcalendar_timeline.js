@@ -11,7 +11,7 @@ Drupal.behaviors.bat_event = {
     calendars[0] = new Array('#calendar');
 
     // Refresh the event once the modal is closed.
-    $(document).one("CToolsDetachBehaviors", function() {
+    $(document).one('CToolsDetachBehaviors', function() {
       $.each(calendars, function(key, value) {
         $(value[0]).fullCalendar('refetchEvents');
       });
@@ -24,8 +24,8 @@ Drupal.behaviors.bat_event = {
         height: Drupal.settings.batCalendar[0].calendarHeight,
         editable: Drupal.settings.batCalendar[0].editable,
         selectable: Drupal.settings.batCalendar[0].selectable,
-        dayNamesShort:[Drupal.t("Sun"), Drupal.t("Mon"), Drupal.t("Tue"), Drupal.t("Wed"), Drupal.t("Thu"), Drupal.t("Fri"), Drupal.t("Sat")],
-        monthNames:[Drupal.t("January"), Drupal.t("February"), Drupal.t("March"), Drupal.t("April"), Drupal.t("May"), Drupal.t("June"), Drupal.t("July"), Drupal.t("August"), Drupal.t("September"), Drupal.t("October"), Drupal.t("November"), Drupal.t("December")],
+        dayNamesShort:[Drupal.t('Sun'), Drupal.t('Mon'), Drupal.t('Tue'), Drupal.t('Wed'), Drupal.t('Thu'), Drupal.t('Fri'), Drupal.t('Sat')],
+        monthNames:[Drupal.t('January'), Drupal.t('February'), Drupal.t('March'), Drupal.t('April'), Drupal.t('May'), Drupal.t('June'), Drupal.t('July'), Drupal.t('August'), Drupal.t('September'), Drupal.t('October'), Drupal.t('November'), Drupal.t('December')],
         header: {
           left: Drupal.settings.batCalendar[0].headerLeft,
           center: Drupal.settings.batCalendar[0].headerCenter,
@@ -48,12 +48,12 @@ Drupal.behaviors.bat_event = {
         },
         resourceAreaWidth: Drupal.settings.batCalendar[0].resourceAreaWidth,
         resourceLabelText: Drupal.settings.batCalendar[0].resourceLabelText,
-        resources: '/bat/v2/units-calendar?types=' + Drupal.settings.batCalendar[0].unitType + '&event_type=' + Drupal.settings.batCalendar[0].eventType,
+        resources: Drupal.settings.basePath + '?q=bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[0].unitType + '&event_type=' + Drupal.settings.batCalendar[0].eventType,
         selectOverlap: function(event) {
           // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';
         },
-        events: '/bat/v2/events-calendar?unit_types=' + Drupal.settings.batCalendar[0].unitType + '&event_types=' + Drupal.settings.batCalendar[0].eventType,
+        events: Drupal.settings.basePath + '?q=bat/v2/events-calendar&unit_types=' + Drupal.settings.batCalendar[0].unitType + '&event_types=' + Drupal.settings.batCalendar[0].eventType,
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
@@ -159,7 +159,7 @@ function saveBatEvent(event, revertFunc, calendars) {
   var unit_id = event.resourceId.substring(1);
 
   // Retrieve all events for the unit and time we're dragging onto.
-  var events_url = '/bat/v2/events?target_ids=' + unit_id + '&target_entity_type=bat_unit&start_date=' + event.start.format('YYYY-MM-DD HH:mm') +
+  var events_url = Drupal.settings.basePath + '?q=bat/v2/events&target_ids=' + unit_id + '&target_entity_type=bat_unit&start_date=' + event.start.format('YYYY-MM-DD HH:mm') +
                    '&end_date=' + event.end.format('YYYY-MM-DD HH:mm') + '&event_types=' + event.type;
   proceed = true;
   jQuery.ajax({
@@ -189,22 +189,22 @@ function saveBatEvent(event, revertFunc, calendars) {
   if (proceed == true) {
     // Get session token.
     $.ajax({
-      url:"/services/session/token",
-      type:"get",
-      dataType:"text",
+      url: Drupal.settings.basePath + '?q=services/session/token',
+      type: 'get',
+      dataType: 'text',
       error:function (jqXHR, textStatus, errorThrown) {
         alert(Drupal.settings.batCalendar[0].errorMessage);
       },
       success: function (token) {
         // Update event, using session token.
-        var events_url = '/bat/v2/events';
+        var events_url = Drupal.settings.basePath + '?q=bat/v2/events';
         $.ajax({
-          type: "PUT",
+          type: 'PUT',
           url: events_url + '/' + event.bat_id,
           data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), target_id: unit_id}),
           dataType: 'json',
           beforeSend: function (request) {
-            request.setRequestHeader("X-CSRF-Token", token);
+            request.setRequestHeader('X-CSRF-Token', token);
           },
           contentType: 'application/json',
           error: function (jqXHR, textStatus, errorThrown) {
