@@ -24,6 +24,7 @@ Drupal.behaviors.bat_event = {
         height: Drupal.settings.batCalendar[0].calendarHeight,
         editable: Drupal.settings.batCalendar[0].editable,
         selectable: Drupal.settings.batCalendar[0].selectable,
+        displayEventTime: false,
         dayNamesShort:[Drupal.t('Sun'), Drupal.t('Mon'), Drupal.t('Tue'), Drupal.t('Wed'), Drupal.t('Thu'), Drupal.t('Fri'), Drupal.t('Sat')],
         monthNames:[Drupal.t('January'), Drupal.t('February'), Drupal.t('March'), Drupal.t('April'), Drupal.t('May'), Drupal.t('June'), Drupal.t('July'), Drupal.t('August'), Drupal.t('September'), Drupal.t('October'), Drupal.t('November'), Drupal.t('December')],
         header: {
@@ -81,15 +82,6 @@ Drupal.behaviors.bat_event = {
 
           $(value[0]).fullCalendar('unselect');
         },
-        eventRender: function(event, el, view) {
-          // Remove Time from events.
-          el.find('.fc-time').remove();
-
-          // Append event title when rendering as background.
-          if (event.rendering == 'background' && event.fixed == 0) {
-            el.append('<span class="fc-title">' + (event.title || '&nbsp;') + '</span>');
-          }
-        },
         eventOverlap: function(stillEvent, movingEvent) {
           // Prevent events from being drug over blocking events.
           return !stillEvent.blocking && (stillEvent.type == movingEvent.type);
@@ -114,6 +106,46 @@ Drupal.behaviors.bat_event = {
           }
           else {
             revertFunc();
+          }
+        },
+        eventAfterRender: function(event, element, view) {
+          // Append event title when rendering as background.
+          if (event.rendering == 'background' && event.fixed == 0) {
+            if ((view.type == 'timelineMonth' || view.type == 'timelineYear') && Drupal.settings.batCalendar[0].repeatEventTitle) {
+              var start = event.start.clone();
+
+              if (event.end === null) {
+                var end = event.start.clone();
+              }
+              else {
+                var end = event.end.clone();
+              }
+
+              var index = 0;
+
+              // Event width.
+              var width = element.width()
+              // Event colspan number.
+              var colspan = element.get(0).colSpan;
+
+              if (event.end != null) {
+                // Single cell width.
+                var cell_width = width/(end.diff(start, 'days'));
+
+                while (start <= end) {
+                  element.append('<span class="fc-title" style="position:absolute; top:8px; left:' + (index * cell_width + 3) + 'px;">' + (event.title || '&nbsp;') + '</span>');
+                  start = start.add(1, 'day');
+                  index++;
+                }
+              }
+              else {
+                element.append('<span class="fc-title" style="position:absolute; top:8px; left:3px;">' + (event.title || '&nbsp;') + '</span>');
+                start = start.add(1, 'day');
+              }
+            }
+            else {
+              element.append('<span class="fc-title">' + (event.title || '&nbsp;') + '</span>');
+            }
           }
         }
       });
