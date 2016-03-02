@@ -129,10 +129,11 @@ Drupal.behaviors.bat_event = {
               var colspan = element.get(0).colSpan;
 
               if (event.end != null) {
+                end.add(1, 'minute');
                 // Single cell width.
                 var cell_width = width/(end.diff(start, 'days'));
 
-                while (start <= end) {
+                while (start < end) {
                   element.append('<span class="fc-title" style="position:absolute; top:8px; left:' + (index * cell_width + 3) + 'px;">' + (event.title || '&nbsp;') + '</span>');
                   start = start.add(1, 'day');
                   index++;
