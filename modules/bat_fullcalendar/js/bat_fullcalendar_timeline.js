@@ -21,6 +21,7 @@ Drupal.behaviors.bat_event = {
 
       $(value[0]).once().fullCalendar({
         schedulerLicenseKey: Drupal.settings.batCalendar[0].schedulerLicenseKey,
+        slotWidth: Drupal.settings.batCalendar[0].slotWidth,
         height: Drupal.settings.batCalendar[0].calendarHeight,
         editable: Drupal.settings.batCalendar[0].editable,
         selectable: Drupal.settings.batCalendar[0].selectable,
