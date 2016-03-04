@@ -641,6 +641,10 @@ function theme_bat_fullcalendar($vars) {
         'clearfix',
       ),
     );
+
+    if (isset($vars['calendar_settings']['class']) && !empty($vars['calendar_settings']['class'])) {
+      $attributes['class'] = array_merge($attributes['class'], $vars['calendar_settings']['class']);
+    }
   }
 
   // Override default settings with ones coming form user

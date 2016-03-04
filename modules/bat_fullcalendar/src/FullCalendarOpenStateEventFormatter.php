@@ -63,11 +63,11 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
       'editable' => $editable,
     );
 
-    if ($event->getValue() < 100) {
-      $formatted_event['color']  = 'orange';
+    if ($event->getValue() == 0) {
+      $formatted_event['color'] = variable_get('bat_open_state_default_zero_color', '#F3C776');
     }
-    elseif ($event->getValue() >= 100) {
-      $formatted_event['color'] = 'green';
+    else {
+      $formatted_event['color'] = variable_get('bat_open_state_default_color', '#9DDC9D');
     }
 
     if ($this->background) {

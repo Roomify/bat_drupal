@@ -146,7 +146,7 @@ Drupal.behaviors.bat_event = {
               }
             }
             else {
-              element.append('<span class="fc-title">' + (event.title || '&nbsp;') + '</span>');
+              element.append('<span class="fc-title" style="position:absolute; top:8px; left:3px;">' + (event.title || '&nbsp;') + '</span>');
             }
           }
         }

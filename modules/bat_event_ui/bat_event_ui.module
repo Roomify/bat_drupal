@@ -65,6 +65,13 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   $calendar_settings['user_settings'] = $fc_user_settings;
   $calendar_settings['calendar_id'] = 'fullcalendar-scheduler';
 
+  if ($ev_type->fixed_event_states) {
+    $calendar_settings['class'] = array('fixed_event_states');
+  }
+  else {
+    $calendar_settings['class'] = array('open_event_states');
+  }
+
   $render_array = array(
     'event_type_form' => drupal_get_form('bat_event_ui_event_type_form'),
     'calendar' => array(
