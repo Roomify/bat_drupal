@@ -1750,11 +1750,6 @@ if (module_exists('inline_entity_form')) {
       $metadata = entity_get_property_info($this->entityType);
 
       $fields = array();
-      $fields['name'] = array(
-        'type' => 'property',
-        'label' => t('Name'),
-        'weight' => 1,
-      );
 
       $fields['name'] = array(
         'type' => 'property',
