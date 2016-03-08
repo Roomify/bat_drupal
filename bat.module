@@ -92,6 +92,36 @@ function bat_date_format_form($form, &$form_state) {
   return system_settings_form($form);
 }
 
+/**
+* Implements hook_date_format_types().
+*/
+function bat_date_format_types() {
+  return array(
+    'bat_daily'  => t('BAT Daily Date format'),
+    'bat'  => t('BAT Date format'),
+  );
+}
+
+/**
+* Implements hook_date_formats().
+*/
+function bat_date_formats() {
+  $formats = array();
+  $formats[] = array(
+    'type'    => 'bat_daily',
+    'format'  => variable_get('bat_daily_date_format', 'Y-m-d'),
+    'locales' => array(),
+  );
+  $formats[] = array(
+    'type'    => 'bat',
+    'format'  => variable_get('bat_date_format', 'Y-m-d H:i'),
+    'locales' => array(),
+  );
+  foreach ($formats as $format) {
+    variable_set('date_format_' . $format['type'], $format['format']);
+  }
+  return $formats;
+}
 
 /**
  * Generic access control for entities that BAT defines.
