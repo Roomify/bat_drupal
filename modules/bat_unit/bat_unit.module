@@ -73,6 +73,7 @@ function bat_unit_entity_info() {
     'translation' => array(
       'entity_translation' => array(
         'base path' => 'admin/bat/units/unit/%bat_unit',
+        'path wildcard' => '%bat_unit',
         'path schemes' => array(
           'default' => array(),
         ),
@@ -152,6 +153,7 @@ function bat_unit_entity_info() {
     'translation' => array(
       'entity_translation' => array(
         'base path' => 'admin/bat/config/types/type/%bat_type',
+        'path wildcard' => '%bat_type',
         'path schemes' => array(
           'default' => array(),
         ),
