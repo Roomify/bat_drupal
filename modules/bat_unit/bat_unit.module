@@ -73,6 +73,9 @@ function bat_unit_entity_info() {
     'translation' => array(
       'entity_translation' => array(
         'base path' => 'admin/bat/units/unit/%bat_unit',
+        'path schemes' => array(
+          'default' => array(),
+        ),
         'default settings' => array(
           'default_language' => LANGUAGE_NONE,
           'hide_language_selector' => FALSE,
@@ -149,6 +152,9 @@ function bat_unit_entity_info() {
     'translation' => array(
       'entity_translation' => array(
         'base path' => 'admin/bat/config/types/type/%bat_type',
+        'path schemes' => array(
+          'default' => array(),
+        ),
         'default settings' => array(
           'default_language' => LANGUAGE_NONE,
           'hide_language_selector' => FALSE,
