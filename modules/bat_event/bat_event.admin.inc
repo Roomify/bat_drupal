@@ -466,7 +466,13 @@ function bat_event_form_submit_delete($form, &$form_state) {
     $form_state['event_deleted'] = TRUE;
   }
   else {
-    $form_state['redirect'] = 'admin/bat/events/event/' . $form_state['bat_event']->event_id . '/delete';
+    $destination = array();
+    if (isset($_GET['destination'])) {
+      $destination = drupal_get_destination();
+      unset($_GET['destination']);
+    }
+
+    $form_state['redirect'] = array('admin/bat/events/event/' . $form_state['bat_event']->event_id . '/delete', array('query' => $destination));
   }
 }
 

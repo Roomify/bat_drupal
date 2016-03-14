@@ -210,5 +210,11 @@ function bat_event_type_form_submit(&$form, &$form_state) {
  * Form API submit callback for the delete button.
  */
 function bat_event_type_form_submit_delete(&$form, &$form_state) {
-  $form_state['redirect'] = 'admin/bat/events/event_types/manage/' . $form_state['bat_event_type']->type . '/delete';
+  $destination = array();
+  if (isset($_GET['destination'])) {
+    $destination = drupal_get_destination();
+    unset($_GET['destination']);
+  }
+
+  $form_state['redirect'] = array('admin/bat/events/event_types/manage/' . $form_state['bat_event_type']->type . '/delete', array('query' => $destination));
 }

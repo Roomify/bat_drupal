@@ -377,7 +377,13 @@ function bat_unit_edit_form_submit(&$form, &$form_state) {
  * Form API submit callback for the delete button.
  */
 function bat_unit_form_submit_delete(&$form, &$form_state) {
-  $form_state['redirect'] = 'admin/bat/config/units/unit/' . $form_state['bat_unit']->unit_id . '/delete';
+  $destination = array();
+  if (isset($_GET['destination'])) {
+    $destination = drupal_get_destination();
+    unset($_GET['destination']);
+  }
+
+  $form_state['redirect'] = array('admin/bat/config/units/unit/' . $form_state['bat_unit']->unit_id . '/delete', array('query' => $destination));
 }
 
 /**
