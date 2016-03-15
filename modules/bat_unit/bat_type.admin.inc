@@ -453,7 +453,7 @@ function bat_type_delete_form($form, &$form_state, $type) {
   $form = confirm_form($form,
     t('Are you sure you want to delete Type %name?', array('%name' => $type->name)),
     'admin/bat/config/types/type',
-    '<p>' . t('This action cannot be undone.') . '</p>',
+    '<p>' . t('Deleting a type is going to delete the associated units and leave any events referencing those units without a unit reference. Please proceed only if you are sure this is the right thing to do.') . '</p>',
     t('Delete'),
     t('Cancel'),
     'confirm'
