@@ -21,8 +21,8 @@ Drupal.behaviors.bat_datepicker = {
               date.setDate(date.getDate() + instance.settings.endDateDays);
             }
 
-            date = $.datepicker.formatDate(format, date, instance.settings);
             $(this).datepicker("option", "minDate", date);
+            $(this).datepicker("option", "maxDate", Drupal.settings.datePopup[this.id].settings.maxDate);
           }
         }
 
