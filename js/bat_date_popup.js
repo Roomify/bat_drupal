@@ -16,7 +16,12 @@ Drupal.behaviors.bat_datepicker = {
           startDate = $(instance.settings.startDateSelector).val();
           format = instance.settings.dateFormat || $.datepicker._defaults.dateFormat;
           if (startDate !== undefined && startDate !== '') {
-            date = $.datepicker.parseDate(format, startDate, instance.settings);
+            date = new Date(startDate);
+            if (instance.settings.endDateDays !== undefined) {
+              date.setDate(date.getDate() + instance.settings.endDateDays);
+            }
+
+            date = $.datepicker.formatDate(format, date, instance.settings);
             $(this).datepicker("option", "minDate", date);
           }
         }
