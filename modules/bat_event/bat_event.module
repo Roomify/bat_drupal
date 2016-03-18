@@ -1304,8 +1304,12 @@ class BatEventController extends EntityAPIController {
    * @param bool|FALSE $remove - set to TRUE if the event is to be removed (event_id set to zero)
    */
   public function batStoreSave(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE ) {
-    $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE);
-    $event_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_EVENT);
+    global $databases;
+
+    $prefix = $databases['default']['default']['prefix'];
+
+    $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
+    $event_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_EVENT, $prefix);
 
     $units = array($unit);
     $state_calendar = new Calendar($units, $state_store);
@@ -2221,11 +2225,16 @@ function bat_event_views_pre_render(&$view) {
  * @param $valid_name_states
  * @param $type_id
  * @param $event_type
+ * @param $intersect
  *
  * @return array|bool
  */
-function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type) {
-  $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE);
+function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE) {
+  global $databases;
+
+  $prefix = $databases['default']['default']['prefix'];
+
+  $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
 
   $valid_states = array();
   foreach ($valid_name_states as $name) {
@@ -2241,8 +2250,11 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
   }
 
   if (count($bat_units)) {
+    //$constraints = bat_event_constraints_get_info();
+    $constraints = array();
+
     $calendar = new Calendar($bat_units, $state_store);
-    $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, array());
+    $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints, $intersect);
 
     $valid_unit_ids = array_keys($response->getIncluded());
 
@@ -2252,4 +2264,37 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
   }
 
   return FALSE;
+}
+
+/**
+ * @see hook_event_constraints_info()
+ * @see hook_event_constraints_info_alter()
+ */
+function bat_event_constraints_get_info() {
+  // Use the advanced drupal_static() pattern, since this is called very often.
+  static $drupal_static_fast;
+  if (!isset($drupal_static_fast)) {
+    $drupal_static_fast['bat_event_constraints_info'] = &drupal_static(__FUNCTION__);
+  }
+  $constraints_info = &$drupal_static_fast['bat_event_constraints_info'];
+
+  if (empty($constraints_info)) {
+    if ($cache = cache_get('bat_event_constraints_info')) {
+      $constraints_info = $cache->data;
+    }
+    else {
+      $constraints_info = module_invoke_all('bat_event_constraints_info');
+      // Merge in default values.
+      /*foreach ($constraints_info as $name => $data) {
+        $constraints_info[$name] += array(
+        );
+      }*/
+
+      // Let other modules alter the entity info.
+      drupal_alter('bat_event_constraints_info', $constraints_info);
+      cache_set('bat_event_constraints_info', $constraints_info);
+    }
+  }
+
+  return $constraints_info;
 }

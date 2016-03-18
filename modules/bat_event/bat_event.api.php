@@ -29,3 +29,17 @@ function hook_bat_facets_search_results_alter(&$units, $context) {
 function hook_bat_event_target_entity_types() {
   return(array('bat_unit'));
 }
+
+/**
+ *
+ */
+function hook_event_constraints_info() {
+
+}
+
+/**
+ * @param $constraints_info
+ */
+function hook_event_constraints_info_alter($constraints_info) {
+
+}
