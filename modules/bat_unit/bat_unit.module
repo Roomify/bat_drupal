@@ -334,6 +334,46 @@ function bat_unit_query_bat_unit_access_alter(QueryAlterableInterface $query) {
 }
 
 /**
+ * Implements hook_action_info().
+ */
+function bat_unit_action_info() {
+  return array(
+    'bat_unit_publish' => array(
+      'type' => 'bat_unit',
+      'label' => t('Publish unit'),
+      'behavior' => array('bat_unit_publish'),
+      'configurable' => FALSE,
+      'vbo_configurable' => FALSE,
+      'triggers' => array('any'),
+    ),
+    'bat_unit_unpublish' => array(
+      'type' => 'bat_unit',
+      'label' => t('Unpublish unit'),
+      'behavior' => array('bat_unit_unpublish'),
+      'configurable' => FALSE,
+      'vbo_configurable' => FALSE,
+      'triggers' => array('any'),
+    ),
+  );
+}
+
+/**
+ * VBO action: Publish unit.
+ */
+function bat_unit_publish(&$unit, $context) {
+  $unit->status = 1;
+  $unit->save();
+}
+
+/**
+ * VBO action: Unpublish unit.
+ */
+function bat_unit_unpublish(&$unit, $context) {
+  $unit->status = 0;
+  $unit->save();
+}
+
+/**
  * Implements hook_theme().
  */
 function bat_unit_theme() {

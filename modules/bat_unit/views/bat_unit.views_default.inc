@@ -95,7 +95,10 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['pager']['type'] = 'full';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '25';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '50';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
   $handler->display->display_options['style_plugin'] = 'table_megarows';
   $handler->display->display_options['style_options']['columns'] = array(
     'unit_id' => 'unit_id',
@@ -135,7 +138,7 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['empty']['area']['empty'] = TRUE;
   $handler->display->display_options['empty']['area']['content'] = 'There are no Units of this Type yet!';
   $handler->display->display_options['empty']['area']['format'] = 'filtered_text';
-  /* Field: Bulk operations: Units */
+  /* Field: Bulk operations: Unit */
   $handler->display->display_options['fields']['views_bulk_operations']['id'] = 'views_bulk_operations';
   $handler->display->display_options['fields']['views_bulk_operations']['table'] = 'bat_units';
   $handler->display->display_options['fields']['views_bulk_operations']['field'] = 'views_bulk_operations';
@@ -152,18 +155,35 @@ function bat_unit_views_default_views() {
       'override_label' => 0,
       'label' => '',
     ),
+    'action::bat_unit_publish' => array(
+      'selected' => 1,
+      'postpone_processing' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::bat_unit_unpublish' => array(
+      'selected' => 1,
+      'postpone_processing' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
   );
-  /* Field: Units: Units ID */
+  /* Field: Unit: Unit ID */
   $handler->display->display_options['fields']['unit_id']['id'] = 'unit_id';
   $handler->display->display_options['fields']['unit_id']['table'] = 'bat_units';
   $handler->display->display_options['fields']['unit_id']['field'] = 'unit_id';
-  $handler->display->display_options['fields']['unit_id']['label'] = 'Unit ID';
   $handler->display->display_options['fields']['unit_id']['separator'] = '';
-  /* Field: Units: Name */
+  /* Field: Unit: Label */
   $handler->display->display_options['fields']['name']['id'] = 'name';
   $handler->display->display_options['fields']['name']['table'] = 'bat_units';
   $handler->display->display_options['fields']['name']['field'] = 'name';
-  /* Field: Units: Megarow links */
+  /* Field: Unit: Status */
+  $handler->display->display_options['fields']['status']['id'] = 'status';
+  $handler->display->display_options['fields']['status']['table'] = 'bat_units';
+  $handler->display->display_options['fields']['status']['field'] = 'status';
+  /* Field: Unit: Megarow links */
   $handler->display->display_options['fields']['megarow_links']['id'] = 'megarow_links';
   $handler->display->display_options['fields']['megarow_links']['table'] = 'views_entity_bat_unit';
   $handler->display->display_options['fields']['megarow_links']['field'] = 'megarow_links';
@@ -172,7 +192,7 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['fields']['megarow_links']['megarow'] = array(
     'links' => 'Edit Unit|admin/bat/config/units/unit/[unit_id]/edit',
   );
-  /* Contextual filter: Units: Type_id */
+  /* Contextual filter: Unit: Type_id */
   $handler->display->display_options['arguments']['type_id']['id'] = 'type_id';
   $handler->display->display_options['arguments']['type_id']['table'] = 'bat_units';
   $handler->display->display_options['arguments']['type_id']['field'] = 'type_id';
