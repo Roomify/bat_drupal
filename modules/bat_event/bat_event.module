@@ -237,6 +237,17 @@ function bat_event_permission() {
       'restrict access' => TRUE,
     ),
   );
+
+  $entity_info = entity_get_info('bat_event');
+  $labels = $entity_info['permission labels'];
+  if (!empty($entity_info['entity keys']['bundle'])) {
+    foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
+      $permissions['view calendar data for any ' . $bundle_name . ' event'] = array(
+        'title' => t('View calendar data for any %bundle @entity_type', array('@entity_type' => $labels['plural'], '%bundle' => $bundle_info['label'])),
+      );
+    }
+  }
+
   return $permissions + bat_entity_access_permissions('bat_event');
 }
 
