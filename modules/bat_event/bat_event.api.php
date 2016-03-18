@@ -33,13 +33,13 @@ function hook_bat_event_target_entity_types() {
 /**
  *
  */
-function hook_event_constraints_info() {
+function hook_bat_event_constraints_info() {
 
 }
 
 /**
  * @param $constraints_info
  */
-function hook_event_constraints_info_alter($constraints_info) {
+function hook_bat_event_constraints_info_alter($constraints_info) {
 
 }
