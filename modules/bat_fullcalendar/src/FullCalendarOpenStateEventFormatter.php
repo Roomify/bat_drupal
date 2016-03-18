@@ -76,6 +76,9 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
 
     $formatted_event['type'] = $this->event_type->type;
 
+    // Allow other modules to alter the event data.
+    drupal_alter('bat_fullcalendar_formatted_event', $formatted_event);
+
     return $formatted_event;
   }
 
