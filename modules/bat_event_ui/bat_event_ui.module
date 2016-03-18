@@ -72,8 +72,10 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
     $calendar_settings['class'] = array('open_event_states');
   }
 
+  drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_event_ui.css');
+
   $render_array = array(
-    'event_type_form' => drupal_get_form('bat_event_ui_event_type_form'),
+    'event_type_form' => drupal_get_form('bat_event_ui_event_type_form', $unit_type, $event_type),
     'calendar' => array(
       '#theme' => 'bat_fullcalendar',
       '#calendar_settings' => $calendar_settings,
@@ -86,23 +88,25 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
 /**
  * "Event type" and "Unit type" to shows in the calendar view.
  */
-function bat_event_ui_event_type_form($form, &$form_state) {
-  $form = array();
-  $event_types = bat_event_get_types();
-  foreach ($event_types as $event_type) {
-    $event_types_options[$event_type->type] = $event_type->label;
+function bat_event_ui_event_type_form($form, &$form_state, $unit_type, $event_type) {
+  if (isset($form_state['values']['event_types'])) {
+    $event_type = $form_state['values']['event_types'];
   }
 
-  $ev_types = array_keys($event_types_options);
-  $ev_type = reset($ev_types);
-
-  $event_types_options = array('all' => t('All')) + $event_types_options;
+  $event_types = bat_event_get_types();
+  foreach ($event_types as $ev_type) {
+    $event_types_options[$ev_type->type] = $ev_type->label;
+  }
 
   $form['event_types'] = array(
     '#type' => 'select',
     '#title' => 'Event type',
     '#options' => $event_types_options,
-    '#default_value' => (arg(4)) ? arg(4) : $ev_type,
+    '#default_value' => $event_type,
+    '#ajax' => array(
+      'callback' => 'bat_event_ui_event_type_form_callback',
+      'wrapper' => 'unit-type-wrapper',
+    ),
   );
 
   $types = bat_unit_get_types();
@@ -110,14 +114,24 @@ function bat_event_ui_event_type_form($form, &$form_state) {
     $types_options = array(
       'all' => t('All'),
     );
+
     foreach ($types as $type) {
-      $types_options[$type->type_id] = $type->name;
+      $type_bundle = bat_type_bundle_load($type->type);
+
+      if (is_array($type_bundle->default_event_value_field_ids)) {
+        if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
+          $types_options[$type->type_id] = $type->name;
+        }
+      }
     }
+
     $form['unit_type'] = array(
       '#type' => 'select',
       '#title' => 'Unit type',
       '#options' => $types_options,
-      '#default_value' => (arg(3)) ? arg(3) : 'all',
+      '#default_value' => $unit_type,
+      '#prefix' => '<div id="unit-type-wrapper">',
+      '#suffix' => '</div>',
     );
   }
 
@@ -130,14 +144,18 @@ function bat_event_ui_event_type_form($form, &$form_state) {
 }
 
 /**
+ * Ajax callback for bat_event_ui_event_type_form form.
+ */
+function bat_event_ui_event_type_form_callback($form, &$form_state) {
+  return $form['unit_type'];
+}
+
+/**
  * Submit callback for bat_event_ui_event_type_form form.
  */
 function bat_event_ui_event_type_form_submit($form, &$form_state) {
-  // Check the type.
-  isset($form_state['values']['unit_type']) ? $type = $form_state['values']['unit_type'] : $type = arg(3);
+  $type = $form_state['values']['unit_type'];
+  $event_type = $form_state['values']['event_types'];
 
-  // Check the event type.
-  isset($form_state['values']['event_types']) ? $event_type = $form_state['values']['event_types'] : $event_type = arg(4);
-
-  $form_state['redirect'] = arg(0) . '/' . arg(1) . '/' . arg(2) . '/' . $type . '/' . $event_type;
+  $form_state['redirect'] = 'admin/bat/calendar/' . $type . '/' . $event_type;
 }

@@ -1,8 +1,13 @@
-.page-admin-bat-units {
-  font: normal 81.3%/1.538em "Lucida Grande", "Lucida Sans Unicode", sans-serif;
-}
-
 /* Ensure that datepicker is visible in the modal popup. */
 #ui-datepicker-div {
   z-index: 1005 !important;
+}
+
+#bat-event-ui-event-type-form {
+	display: inline-block;
+}
+#bat-event-ui-event-type-form .form-item-event-types,
+#bat-event-ui-event-type-form #unit-type-wrapper {
+	float: left;
+	margin-right: 10px;
 }
