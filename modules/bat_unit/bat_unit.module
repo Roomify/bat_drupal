@@ -925,17 +925,6 @@ class BatUnit extends Entity {
     return $field_view_value['#markup'];
   }
 
-  /**
-   * Get all constraints relative to this unit.
-   *
-   * @return mixed
-   */
-  public function getConstraints() {
-    $constraints = module_invoke_all('bat_unit_constraints', $this);
-
-    return $constraints;
-  }
-
 }
 
 /**

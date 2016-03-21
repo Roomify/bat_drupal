@@ -2250,8 +2250,10 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
   }
 
   if (count($bat_units)) {
-    //$constraints = bat_event_constraints_get_info();
     $constraints = array();
+    foreach (bat_event_constraints_get_info() as $constraint) {
+      $constraints[] = $constraint['constraint'];
+    }
 
     $calendar = new Calendar($bat_units, $state_store);
     $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints, $intersect);
@@ -2284,11 +2286,6 @@ function bat_event_constraints_get_info() {
     }
     else {
       $constraints_info = module_invoke_all('bat_event_constraints_info');
-      // Merge in default values.
-      /*foreach ($constraints_info as $name => $data) {
-        $constraints_info[$name] += array(
-        );
-      }*/
 
       // Let other modules alter the entity info.
       drupal_alter('bat_event_constraints_info', $constraints_info);

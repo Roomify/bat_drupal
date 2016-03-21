@@ -36,17 +36,3 @@
 function hook_bat_entity_access($op, $entity, $account, $entity_type) {
   // No example.
 }
-
-/**
- * @param $units
- */
-function hook_bat_global_constraints($units) {
-	// No example.
-}
-
-/**
- * @param $unit
- */
-function hook_bat_unit_constraints($unit) {
-	// No example.
-}
