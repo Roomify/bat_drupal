@@ -1306,7 +1306,7 @@ class BatEventController extends EntityAPIController {
   public function batStoreSave(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE ) {
     global $databases;
 
-    $prefix = $databases['default']['default']['prefix'];
+    $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
 
     $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
     $event_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_EVENT, $prefix);
@@ -2232,7 +2232,7 @@ function bat_event_views_pre_render(&$view) {
 function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE) {
   global $databases;
 
-  $prefix = $databases['default']['default']['prefix'];
+  $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
 
   $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
 

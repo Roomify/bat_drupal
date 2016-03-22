@@ -144,7 +144,7 @@ function bat_facets_availability_submit($form, &$form_state) {
 function bat_facets_search_api_query_alter($query) {
   global $databases;
 
-  $prefix = $databases['default']['default']['prefix'];
+  $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
 
   if ($query->getIndex()->getEntityType()) {
     $info = entity_get_info($query->getIndex()->getEntityType());
