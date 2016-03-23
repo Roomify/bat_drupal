@@ -2303,7 +2303,7 @@ function bat_event_action_info() {
   return array(
     'bat_event_unit_set_state' => array(
       'type' => 'bat_unit',
-      'label' => t('Set event state'),
+      'label' => t('Assign fixed-state event to units'),
       'behavior' => array('bat_event_unit_set_state'),
       'configurable' => TRUE,
       'vbo_configurable' => FALSE,
@@ -2313,7 +2313,7 @@ function bat_event_action_info() {
 }
 
 /**
- * VBO action: Set event state.
+ * VBO action: Assign fixed-state event to units.
  */
 function bat_event_unit_set_state(&$unit, $context) {
   $type = bat_type_load($unit->type_id);
@@ -2343,7 +2343,7 @@ function bat_event_unit_set_state(&$unit, $context) {
 }
 
 /**
- * Configuration form for the VBO action: Set event state.
+ * Configuration form for the VBO action: Assign fixed-state event to units.
  */
 function bat_event_unit_set_state_form($context, &$form_state) {
   $form = array();
