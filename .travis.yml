@@ -19,8 +19,8 @@ before_script:
   # Remove xdebug for the moment. We aren't generating code coverage, and it slows us down.
   - rm /home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
 
-  # Set github access token for composer.
-  - git config --global github.accesstoken $GITHUB_OAUTH_TOKEN
+  # Set github access token for composer if available.
+  - if [[ $GITHUB_OAUTH_TOKEN ]]; then git config --global github.accesstoken $GITHUB_OAUTH_TOKEN; fi
   # Copy module to tmp dir for later use.
   - mkdir /tmp/bat; cp -r * /tmp/bat
   # Update composer.
