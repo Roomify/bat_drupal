@@ -162,6 +162,13 @@ function bat_unit_views_default_views() {
       'override_label' => 0,
       'label' => '',
     ),
+    'action::bat_event_unit_set_state' => array(
+      'selected' => 1,
+      'postpone_processing' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
     'action::bat_unit_unpublish' => array(
       'selected' => 1,
       'postpone_processing' => 0,
