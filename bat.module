@@ -481,7 +481,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
  * @return array
  *   The array holding the field definitions
  */
-function bat_date_range_fields($year = NULL, $month = NULL) {
+function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'hourly') {
   $date_range_fields = array();
 
   // Create unique ids and selectors for each datepicker.
@@ -561,6 +561,7 @@ function bat_date_range_fields($year = NULL, $month = NULL) {
               'batStartMonth' => $month,
               'batBookingStartDay' => variable_get('bat_event_start_date', 0),
               'batDateFormat' => 'dd/mm/yy',
+              'batDateGranularity' => $granularity,
 
               // Here we create a listing of all datepickers registered on the
               // current page. This is available for use in your own custom
