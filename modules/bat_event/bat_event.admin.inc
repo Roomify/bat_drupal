@@ -226,7 +226,8 @@ function bat_event_edit_form($form, &$form_state, $event) {
     '#weight' => -1,
   );
 
-  $form['bat_date_range'] += bat_date_range_fields();
+  $event_type = bat_event_type_load($event->type);
+  $form['bat_date_range'] += bat_date_range_fields(NULL, NULL, $event_type->event_granularity);
 
   // Unset the default for max days away for events since we are on the admin.
   drupal_add_js(array('bat' => array('batEventStartDay' => 0)), 'setting');
@@ -253,7 +254,6 @@ function bat_event_edit_form($form, &$form_state, $event) {
   $form_state['bat_event'] = $event;
   field_attach_form('bat_event', $event, $form, $form_state);
 
-  $event_type = bat_event_type_load($event->type);
   // Construct target entity reference field name using this event type's target entity type.
   $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
 

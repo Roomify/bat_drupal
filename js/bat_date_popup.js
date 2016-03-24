@@ -16,11 +16,19 @@ Drupal.behaviors.bat_datepicker = {
           startDate = $(instance.settings.startDateSelector).val();
           format = instance.settings.dateFormat || $.datepicker._defaults.dateFormat;
           if (startDate !== undefined && startDate !== '') {
-            date = new Date(startDate);
+
+            // Parse start date using the datepicker format.
+            date = $.datepicker.parseDate(format, startDate);
+
             if (instance.settings.endDateDays !== undefined) {
               date.setDate(date.getDate() + instance.settings.endDateDays);
             }
 
+            // If this event type is of daily granularity, ensure that the end date
+            // must be at least one day greater than the start date.
+            if (Drupal.settings.bat.batDateGranularity == 'bat_daily') {
+              date = new Date(date.valueOf()+864E5);
+            }
             $(this).datepicker("option", "minDate", date);
             $(this).datepicker("option", "maxDate", Drupal.settings.datePopup[this.id].settings.maxDate);
           }
