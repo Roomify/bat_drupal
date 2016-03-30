@@ -482,12 +482,12 @@ function bat_unit_entity_delete($entity, $type) {
  */
 
 /**
- * Implements hook_bat_event_target_entity_types()
+ * Implements hook_bat_event_target_entity_types().
  *
  * Register BAT Unit as a BAT event target entity type.
  */
 function bat_unit_bat_event_target_entity_types() {
-  return(array('bat_unit'));
+  return array('bat_unit');
 }
 
 
@@ -619,7 +619,7 @@ function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
  * Helper function to easily get unit bundles in an array for use in forms, etc.
  *
  * @return array
- *  An array of unit bundles keyed by bundle name and labels
+ *   An array of unit bundles keyed by bundle name and labels
 */
 function bat_unit_bundles_ids() {
   $unit_bundles = array();
@@ -636,7 +636,7 @@ function bat_unit_bundles_ids() {
  * Helper function to easily get unit types in an array for use in forms, etc.
  *
  * @return array
- *  An array of unit types keyed by type id and labels
+ *   An array of unit types keyed by type id and labels
 */
 function bat_unit_types_ids() {
   $unit_types = array();
@@ -853,7 +853,7 @@ function bat_unit_unit_bundle_new() {
       'hourly_availability' => 0,
     ),
     'bat_opening_time' => '',
- );
+  );
 }
 
 /**
@@ -1224,7 +1224,7 @@ function bat_unit_get_types($bundle_name = NULL, $reset = FALSE) {
  * Helper function to easily get Bat Type bundles in an array for use in forms, etc.
  *
  * @return array
- *  An array of type bundles keyed by bundle name and labels
+ *   An array of type bundles keyed by bundle name and labels
 */
 function bat_type_bundles_ids() {
   $type_bundles = array();
@@ -1473,7 +1473,7 @@ function bat_type_bundle_new() {
       'hourly_availability' => 0,
     ),
     'bat_opening_time' => '',
- );
+  );
 }
 
 /**
@@ -1803,7 +1803,7 @@ if (module_exists('inline_entity_form')) {
 
       // Add the field related form elements.
       $form_state['bat_type'] = $type;
-      field_attach_form('bat_type', $type, $form, $form_state, isset($type->language)? $type->language : NULL);
+      field_attach_form('bat_type', $type, $form, $form_state, isset($type->language) ? $type->language : NULL);
       $form['additional_settings'] = array(
         '#type' => 'vertical_tabs',
         '#weight' => 99,

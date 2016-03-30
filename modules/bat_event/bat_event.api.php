@@ -8,6 +8,8 @@
  */
 
 /**
+ * Allow modules to alter results from faceted search.
+ *
  * @param $units
  * @param $context
  */
@@ -27,19 +29,21 @@ function hook_bat_facets_search_results_alter(&$units, $context) {
  *   Single-dimensional array with machine names of entity types.
  */
 function hook_bat_event_target_entity_types() {
-  return(array('bat_unit'));
+  return array('bat_unit');
 }
 
 /**
- *
+ * Allow modules to define event constraints.
  */
 function hook_bat_event_constraints_info() {
-
+  // No example.
 }
 
 /**
+ * Allow modules to alter defined event constraints.
+ *
  * @param $constraints_info
  */
 function hook_bat_event_constraints_info_alter($constraints_info) {
-
+  // No example.
 }

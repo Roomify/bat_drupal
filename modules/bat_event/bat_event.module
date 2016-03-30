@@ -964,10 +964,6 @@ function bat_event_theme() {
       'render element' => 'elements',
       'template' => 'bat_event',
     ),
-    'bat_event_extra_data' => array(
-      'variables' => array('event_extra_data', 'event' => NULL),
-      'template' => 'bat_event-extra-data',
-    ),
   );
 }
 
@@ -1294,7 +1290,7 @@ class BatEventController extends EntityAPIController {
   /**
    * Handles saving to the BatStore
    *
-   * @param \Drupal\bat\Unit $unit - The unit to save
+   * @param \Roomify\Bat\Unit\Unit $unit - The unit to save
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $event_type
@@ -2163,7 +2159,6 @@ function bat_event_form_bat_type_bundle_form_alter(&$form, &$form_state) {
     $fields = field_info_instances('bat_type', $type_bundle->type);
 
     foreach ($fields as $field) {
-      $field_info = field_info_field($field['field_name']);
       $fields_options[$field['field_name']] = $field['field_name'];
     }
 
@@ -2205,7 +2200,7 @@ function bat_event_form_bat_type_bundle_form_submit($form, &$form_state) {
  * Implements hook_views_pre_render().
  */
 function bat_event_views_pre_render(&$view) {
-  // Use "Rooms PHP Date Format" for booking start date and end date.
+  // Use "BAT PHP Date Format" for event Start date and End date.
   if ($view->base_table == 'bat_events') {
     if (isset($view->field['start_date']->options['custom_date_format'])) {
       $view->field['start_date']->options['custom_date_format'] = variable_get('bat_date_format', 'Y-m-d H:i');

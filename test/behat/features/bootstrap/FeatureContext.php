@@ -112,7 +112,7 @@ class FeatureContext extends DrupalSubContextBase implements CustomSnippetAccept
       $result = $query2->execute();
       if (isset($result['bat_event'])) {
         $event_ids = array_keys($result['bat_event']);
-        bat_event_delete_multiple($booking_ids);
+        bat_event_delete_multiple($event_ids);
       }
     }
 
@@ -178,63 +178,6 @@ class FeatureContext extends DrupalSubContextBase implements CustomSnippetAccept
 
     // Set internal browser on the node edit page.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
-  }
-
-  /**
-   * Retrieves the last booking ID.
-   *
-   * @return int
-   *   The last booking ID.
-   *
-   * @throws RuntimeException
-   */
-  protected function getLastBooking() {
-    $efq = new EntityFieldQuery();
-    $efq->entityCondition('entity_type', 'rooms_booking')
-      ->entityOrderBy('entity_id', 'DESC')
-      ->range(0, 1);
-    $result = $efq->execute();
-    if (isset($result['rooms_booking'])) {
-      $return = key($result['rooms_booking']);
-      return $return;
-    }
-    else {
-      throw new RuntimeException('Unable to find the last booking');
-    }
-  }
-
-  /**
-   * Checks if one unit is being locked by a booking in a date range.
-   * @param $unit_name
-   * @param $start_date
-   * @param $end_date
-   * @param $status
-   */
-  protected function checkUnitLockedByLastBooking($unit_name, $start_date, $end_date, $status) {
-    $booking_id = $this->getLastBooking();
-    $expected_value = rooms_availability_assign_id($booking_id, $status);
-    $this->checkUnitPropertyRange($unit_name, $start_date, $end_date, $expected_value, 'availability');
-  }
-
-  /**
-   * Adds options field to any room_unit or room_unit_type entity.
-   *
-   * @param TableNode $table
-   *   Table containing options definitions.
-   * @param $wrapper
-   *   The entity wrapper to attach the options.
-   */
-  protected function addOptionsToEntity(TableNode $table, $wrapper) {
-    $delta = 0;
-    if (isset($wrapper->rooms_booking_unit_options)) {
-      $delta = count($wrapper->rooms_booking_unit_options);
-    }
-
-    foreach ($table->getHash() as $entityHash) {
-      $wrapper->rooms_booking_unit_options[$delta] = $entityHash;
-      $delta++;
-    }
-    $wrapper->save();
   }
 
   /**

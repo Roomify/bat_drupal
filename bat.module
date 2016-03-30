@@ -93,8 +93,8 @@ function bat_date_format_form($form, &$form_state) {
 }
 
 /**
-* Implements hook_date_format_types().
-*/
+ * Implements hook_date_format_types().
+ */
 function bat_date_format_types() {
   return array(
     'bat_daily'  => t('BAT Daily Date format'),
@@ -103,8 +103,8 @@ function bat_date_format_types() {
 }
 
 /**
-* Implements hook_date_formats().
-*/
+ * Implements hook_date_formats().
+ */
 function bat_date_formats() {
   $formats = array();
   $formats[] = array(
@@ -414,12 +414,12 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   // Loop over every possible bundle for the given entity type.
   foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
     // If the user has access to operation entities of the current bundle...
-    if (user_access($op  . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name, $account)) {
+    if (user_access($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name, $account)) {
       // Add a condition granting access if the entity specified by the view
       // query is of the same bundle.
       $conditions->condition($base_table . '.' . $entity_info['entity keys']['bundle'], $bundle_name);
     }
-    elseif ($account->uid && !empty($entity_info['access arguments']['user key']) && user_access($op  . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name, $account)) {
+    elseif ($account->uid && !empty($entity_info['access arguments']['user key']) && user_access($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name, $account)) {
       // Add an AND condition group that grants access if the entity specified
       // by the view query matches the same bundle and belongs to the user.
       $conditions->condition(db_and()
@@ -433,7 +433,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   if (!empty($entity_info['access arguments']['user key'])) {
     // Perform 'operation own' access control for the entity in the query if the
     // user is authenticated.
-    if ($account->uid && user_access($op  . ' own ' . $entity_type . ' entities', $account)) {
+    if ($account->uid && user_access($op . ' own ' . $entity_type . ' entities', $account)) {
       $conditions->condition($base_table . '.' . $entity_info['access arguments']['user key'], $account->uid);
     }
   }

@@ -125,7 +125,6 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
     $fields = field_info_instances('bat_event', $event_type->type);
 
     foreach ($fields as $field) {
-      $field_info = field_info_field($field['field_name']);
       $fields_options[$field['field_name']] = $field['field_name'];
     }
 
@@ -151,7 +150,6 @@ function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
     $fields = field_info_instances('bat_event', $event_type->type);
 
     foreach ($fields as $field) {
-      $field_info = field_info_field($field['field_name']);
       $fields_options[$field['field_name']] = $field['field_name'];
     }
 
