@@ -96,13 +96,103 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
 
   $render_array = array(
     'event_type_form' => drupal_get_form('bat_event_ui_event_type_form', $unit_type, $event_type),
+    'bulk_update_form' => array(),
     'calendar' => array(
       '#theme' => 'bat_fullcalendar',
       '#calendar_settings' => $calendar_settings,
     ),
   );
 
+  if ($ev_type->fixed_event_states) {
+    $render_array['bulk_update_form'] = drupal_get_form('bat_event_ui_bulk_update_form', $unit_type, $event_type);
+  }
+
   return $render_array;
+}
+
+/**
+ * Bulk update form.
+ */
+function bat_event_ui_bulk_update_form($form, &$form_state, $unit_type, $event_type) {
+  $form['event_type'] = array(
+    '#type' => 'hidden',
+    '#value' => $event_type,
+  );
+
+  if ($unit_type == 'all') {
+    $types = bat_unit_get_types(NULL, TRUE);
+
+    $types_options = array();
+
+    foreach ($types as $type) {
+      $type_bundle = bat_type_bundle_load($type->type);
+
+      if (is_array($type_bundle->default_event_value_field_ids)) {
+        if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
+          $types_options[$type->type_id] = $type->name;
+        }
+      }
+    }
+
+    $form['type'] = array(
+      '#type' => 'select',
+      '#title' => t('Type'),
+      '#options' => $types_options,
+      '#required' => TRUE,
+    );
+  }
+  else {
+    $form['type'] = array(
+      '#type' => 'hidden',
+      '#value' => $unit_type,
+    );
+  }
+
+  $form += bat_date_range_fields();
+
+  $form['state'] = array(
+    '#type' => 'select',
+    '#title' => t('State'),
+    '#options' => bat_unit_state_options($event_type, array('blocking' => 0)),
+    '#required' => TRUE,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Update'),
+  );
+
+  return $form;
+}
+
+/**
+ * Submit callback for bat_event_ui_bulk_update_form form.
+ */
+function bat_event_ui_bulk_update_form_submit($form, &$form_state) {
+  $values = $form_state['values'];
+
+  $event_type = $values['event_type'];
+  $start_date = new DateTime($values['bat_start_date']);
+  $end_date = new DateTime($values['bat_end_date']);
+  $event_state = $values['state'];
+  $type = bat_type_load($values['type']);
+
+  $units = bat_unit_load_multiple(FALSE, array('type_id' => $type->type_id));
+
+  foreach ($units as $unit) {
+    $event = bat_event_create(array(
+      'type' => $event_type,
+      'start_date' => $start_date->format('Y-m-d H:i:s'),
+      'end_date' => $end_date->format('Y-m-d H:i:s'),
+      'uid' => $type->uid,
+      'created' => REQUEST_TIME,
+    ));
+
+    $event->event_bat_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit->unit_id;
+    $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $event_state;
+
+    $event->save();
+  }
 }
 
 /**
