@@ -38,14 +38,21 @@ Drupal.behaviors.bat_event = {
         selectConstraint: Drupal.settings.batCalendar[0].selectConstraint,
         minTime: Drupal.settings.batCalendar[0].minTime,
         maxTime: Drupal.settings.batCalendar[0].maxTime,
+        defaultDate: $.fullCalendar.moment(Drupal.settings.batCalendar[0].defaultDate),
         views: {
           timelineDay: {
             buttonText: Drupal.settings.batCalendar[0].viewsTimelineDayButtonText,
             slotDuration: Drupal.settings.batCalendar[0].viewsTimelineDaySlotDuration,
           },
           timelineTenDay: {
-            type: Drupal.settings.batCalendar[0].viewsTimelineTenDayButtonText,
+            buttonText: Drupal.settings.batCalendar[0].viewsTimelineTenDayButtonText,
             duration: Drupal.settings.batCalendar[0].viewsTimelineTenDaySlotDuration,
+            type: 'timeline',
+          },
+          timelineThirtyDay: {
+            buttonText: Drupal.settings.batCalendar[0].viewsTimelineThirtyDayButtonText,
+            duration: Drupal.settings.batCalendar[0].viewsTimelineThirtyDaySlotDuration,
+            type: 'timeline',
           }
         },
         resourceAreaWidth: Drupal.settings.batCalendar[0].resourceAreaWidth,

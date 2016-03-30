@@ -500,8 +500,8 @@ function bat_fullcalendar_configure($user_settings) {
     $default_view = 'timelineDay';
 
     if ($user_setting['eventGranularity'] == 'bat_daily') {
-      $calendar_views = 'timelineMonth, timelineYear';
-      $default_view = 'timelineMonth';
+      $calendar_views = 'timelineThirtyDay, timelineYear';
+      $default_view = 'timelineThirtyDay';
     }
     elseif ($user_setting['eventGranularity']) {
       $calendar_views = 'timelineDay, timelineTenDay, timelineMonth';
@@ -537,8 +537,10 @@ function bat_fullcalendar_configure($user_settings) {
       'defaultView' => $default_view,
       'viewsTimelineDayButtonText' => ':15 slots',
       'viewsTimelineDaySlotDuration' => '00:15',
-      'viewsTimelineTenDayButtonText' => 'timeline',
+      'viewsTimelineTenDayButtonText' => '10 days',
       'viewsTimelineTenDaySlotDuration' => array('days' => 10),
+      'viewsTimelineThirtyDayButtonText' => '30 days',
+      'viewsTimelineThirtyDaySlotDuration' => array('days' => 30),
       'resourceAreaWidth' => '25%',
       'resourceLabelText' => 'Types',
       'errorMessage' => t('Action not allowed. User may not have the right permissions.'),
@@ -546,12 +548,13 @@ function bat_fullcalendar_configure($user_settings) {
       'selectConstraint' => NULL,
       'minTime' => '00:00:00',
       'maxTime' => '24:00:00',
+      'defaultDate' => (new DateTime())->modify('-5 days')->format('Y-m-d'),
       'repeatEventTitle' => TRUE,
     );
 
     $settings['batCalendar'][$id] = array_replace_recursive($config, $user_setting);
 
-    // Allow other modules to alter further
+    // Allow other modules to alter further.
     drupal_alter('bat_calendar_settings', $settings);
   }
 
