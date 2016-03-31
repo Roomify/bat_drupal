@@ -506,17 +506,21 @@ function theme_bat_type_add_list($variables) {
   }
   else {
     if (user_access('administer type bundles')) {
-      $output = '<p>' . t('Type cannot be added because you have not created any Type bundles yet. Go to the <a href="@create-type_bundle">type bundle creation page</a> to add a new type type.', array('@create-type_bundle' => url('admin/bat/config/type-bundles/add'))) . '</p>';
+      $output = '<p>' . t('Type cannot be added because you have not created any Type bundles yet. Go to the <a href="@create-type_bundle">type bundle creation page</a> to add a new type bundle.', array('@create-type_bundle' => url('admin/bat/config/type-bundles/add'))) . '</p>';
     }
     else {
-      $output = '<p>' . t('No Types have been created yet.') . '</p>';
+      $output = '<p>' . t('No Type bundles have been created yet.') . '</p>';
     }
   }
 
   return $output;
 }
 
-
+/**
+ * Displays the list of available Unit bundles for Unit creation.
+ *
+ * @ingroup themeable
+ */
 function theme_bat_type_unit_add_list($variables) {
   $bundles = $variables['content']['bundles'];
   $item = $variables['content']['item'];
@@ -531,12 +535,13 @@ function theme_bat_type_unit_add_list($variables) {
   }
   else {
     if (user_access('administer type bundles')) {
-      $output = '<p>' . t('Type cannot be added because you have not created any Type bundles yet. Go to the <a href="@create-type_bundle">type bundle creation page</a> to add a new type type.', array('@create-type_bundle' => url('admin/bat/config/type-bundles/add'))) . '</p>';
+      $output = '<p>' . t('Unit cannot be added because you have not created any Unit bundles yet. Go to the <a href="@create-unit_bundle">unit bundle creation page</a> to add a new unit bundle.', array('@create-unit_bundle' => url('admin/bat/config/unit-bundles/add'))) . '</p>';
     }
     else {
-      $output = '<p>' . t('No Types have been created yet.') . '</p>';
+      $output = '<p>' . t('No Unit bundles have been created yet.') . '</p>';
     }
   }
+
   return $output;
 }
 
