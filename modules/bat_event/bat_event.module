@@ -2264,6 +2264,76 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
 }
 
 /**
+ * Given a date range and a set of valid states it will return all units within the
+ * set of valid states.
+ *
+ * @param DateTime $start_date
+ * @param DateTime $end_date
+ * @param $valid_name_states
+ * @param $type_id
+ * @param $event_type
+ * @param $intersect
+ *
+ * @return array
+ */
+function bat_event_get_calendar_response(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE) {
+  global $databases;
+
+  $results = array(
+    'included' => array(),
+    'excluded' => array(),
+  );
+
+  $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
+
+  $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
+
+  $valid_states = array();
+  foreach ($valid_name_states as $name) {
+    $state = bat_event_load_state_by_machine_name($name);
+    $valid_states[] = $state['id'];
+  }
+
+  $drupal_units = bat_unit_load_multiple(FALSE, array('type_id' => $type_id));
+  $bat_units = array();
+
+  foreach ($drupal_units as $unit_id => $unit) {
+    $bat_units[] = new Unit($unit_id, $unit->getEventDefaultValue($event_type));
+  }
+
+  if (count($bat_units)) {
+    $constraints = array();
+    foreach (bat_event_constraints_get_info() as $constraint) {
+      $constraints[] = $constraint['constraint'];
+    }
+
+    $calendar = new Calendar($bat_units, $state_store);
+    $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints, $intersect);
+
+    $valid_unit_ids = array_keys($response->getIncluded());
+
+    $excluded = array();
+    foreach ($response->getExcluded() as $unit_id => $ex) {
+      if (isset($ex['constraint'])) {
+        $p = $ex['constraint']->toString();
+        $excluded[$unit_id] = t($p['text'], $p['args']);
+      }
+      else {
+        $excluded[$unit_id] = '';
+      }
+    }
+
+    $results['excluded'] = $excluded;
+
+    if (count($valid_unit_ids)) {
+      $results['included'] = $valid_unit_ids;
+    }
+  }
+
+  return $results;
+}
+
+/**
  * @see hook_event_constraints_info()
  * @see hook_event_constraints_info_alter()
  */
