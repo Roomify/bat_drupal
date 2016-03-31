@@ -410,37 +410,39 @@ function bat_event_edit_form_validate(&$form, &$form_state) {
   $event_type = bat_event_type_load($form_state['values']['type']);
   $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
 
-  if ($form_state['values']['bat_start_date'] != '' && $form_state['values']['bat_end_date'] != '' &&
-      $form_state['values'][$target_field_name][LANGUAGE_NONE][0]['target_id'] != '') {
-    global $databases;
+  if ($event_type->fixed_event_states) {
+    if ($form_state['values']['bat_start_date'] != '' && $form_state['values']['bat_end_date'] != '' &&
+        $form_state['values'][$target_field_name][LANGUAGE_NONE][0]['target_id'] != '') {
+      global $databases;
 
-    $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
+      $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
 
-    $event_store = new DrupalDBStore($event_type->type, DrupalDBStore::BAT_EVENT, $prefix);
+      $event_store = new DrupalDBStore($event_type->type, DrupalDBStore::BAT_EVENT, $prefix);
 
-    $start_date = new DateTime($form_state['values']['bat_start_date']);
-    $end_date = new DateTime($form_state['values']['bat_end_date']);
-    $end_date->sub(new DateInterval('PT1M'));
+      $start_date = new DateTime($form_state['values']['bat_start_date']);
+      $end_date = new DateTime($form_state['values']['bat_end_date']);
+      $end_date->sub(new DateInterval('PT1M'));
 
-    $unit = bat_unit_load($form_state['values'][$target_field_name][LANGUAGE_NONE][0]['target_id']);
+      $unit = bat_unit_load($form_state['values'][$target_field_name][LANGUAGE_NONE][0]['target_id']);
 
-    $bat_units = array(
-      new Unit($unit->unit_id, $unit->getEventDefaultValue($event_type->type)),
-    );
+      $bat_units = array(
+        new Unit($unit->unit_id, $unit->getEventDefaultValue($event_type->type)),
+      );
 
-    $calendar = new Calendar($bat_units, $event_store);
-    $events = $calendar->getEvents($start_date, $end_date);
+      $calendar = new Calendar($bat_units, $event_store);
+      $events = $calendar->getEvents($start_date, $end_date);
 
-    foreach ($events[$unit->unit_id] as $event) {
-      $event_id = $event->getValue();
+      foreach ($events[$unit->unit_id] as $event) {
+        $event_id = $event->getValue();
 
-      if ($event_id != $form_state['bat_event']->event_id) {
-        if ($event = bat_event_load($event_id)) {
-          $state = bat_event_load_state($event->event_state_reference[LANGUAGE_NONE][0]['state_id']);
+        if ($event_id != $form_state['bat_event']->event_id) {
+          if ($event = bat_event_load($event_id)) {
+            $state = bat_event_load_state($event->event_state_reference[LANGUAGE_NONE][0]['state_id']);
 
-          if ($state['blocking']) {
-            form_set_error('', t('Cannot save this event as an event in a blocking state exists within the same timeframe.'));
-            break;
+            if ($state['blocking']) {
+              form_set_error('', t('Cannot save this event as an event in a blocking state exists within the same timeframe.'));
+              break;
+            }
           }
         }
       }
