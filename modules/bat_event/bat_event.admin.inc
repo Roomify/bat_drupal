@@ -9,6 +9,11 @@
  * more often than not, be end-user facing.
  */
 
+use Roomify\Bat\Event\Event;
+use Roomify\Bat\Calendar\Calendar;
+use Roomify\Bat\Store\DrupalDBStore;
+use Roomify\Bat\Unit\Unit;
+
 /**
  * UI controller.
  */
@@ -401,6 +406,46 @@ function bat_event_edit_form($form, &$form_state, $event) {
 function bat_event_edit_form_validate(&$form, &$form_state) {
   // Notify field widgets to validate their data.
   entity_form_field_validate('bat_event', $form, $form_state);
+
+  $event_type = bat_event_type_load($form_state['values']['type']);
+  $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+
+  if ($form_state['values']['bat_start_date'] != '' && $form_state['values']['bat_end_date'] != '' &&
+      $form_state['values'][$target_field_name][LANGUAGE_NONE][0]['target_id'] != '') {
+    global $databases;
+
+    $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
+
+    $event_store = new DrupalDBStore($event_type->type, DrupalDBStore::BAT_EVENT, $prefix);
+
+    $start_date = new DateTime($form_state['values']['bat_start_date']);
+    $end_date = new DateTime($form_state['values']['bat_end_date']);
+    $end_date->sub(new DateInterval('PT1M'));
+
+    $unit = bat_unit_load($form_state['values'][$target_field_name][LANGUAGE_NONE][0]['target_id']);
+
+    $bat_units = array(
+      new Unit($unit->unit_id, $unit->getEventDefaultValue($event_type->type)),
+    );
+
+    $calendar = new Calendar($bat_units, $event_store);
+    $events = $calendar->getEvents($start_date, $end_date);
+
+    foreach ($events[$unit->unit_id] as $event) {
+      $event_id = $event->getValue();
+
+      if ($event_id != $form_state['bat_event']->event_id) {
+        if ($event = bat_event_load($event_id)) {
+          $state = bat_event_load_state($event->event_state_reference[LANGUAGE_NONE][0]['state_id']);
+
+          if ($state['blocking']) {
+            form_set_error('', t('Cannot save this event as an event in a blocking state exists within the same timeframe.'));
+            break;
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
