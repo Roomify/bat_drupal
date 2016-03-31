@@ -114,7 +114,14 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
  * Bulk update form.
  */
 function bat_event_ui_bulk_update_form($form, &$form_state, $unit_type, $event_type) {
-  $form['event_type'] = array(
+  $form['bulk_update'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Update event state'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+
+  $form['bulk_update']['event_type'] = array(
     '#type' => 'hidden',
     '#value' => $event_type,
   );
@@ -134,7 +141,7 @@ function bat_event_ui_bulk_update_form($form, &$form_state, $unit_type, $event_t
       }
     }
 
-    $form['type'] = array(
+    $form['bulk_update']['type'] = array(
       '#type' => 'select',
       '#title' => t('Type'),
       '#options' => $types_options,
@@ -142,22 +149,22 @@ function bat_event_ui_bulk_update_form($form, &$form_state, $unit_type, $event_t
     );
   }
   else {
-    $form['type'] = array(
+    $form['bulk_update']['type'] = array(
       '#type' => 'hidden',
       '#value' => $unit_type,
     );
   }
 
-  $form += bat_date_range_fields();
+  $form['bulk_update'] += bat_date_range_fields();
 
-  $form['state'] = array(
+  $form['bulk_update']['state'] = array(
     '#type' => 'select',
     '#title' => t('State'),
     '#options' => bat_unit_state_options($event_type, array('blocking' => 0)),
     '#required' => TRUE,
   );
 
-  $form['submit'] = array(
+  $form['bulk_update']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Update'),
   );
@@ -171,9 +178,11 @@ function bat_event_ui_bulk_update_form($form, &$form_state, $unit_type, $event_t
 function bat_event_ui_bulk_update_form_submit($form, &$form_state) {
   $values = $form_state['values'];
 
-  $event_type = $values['event_type'];
   $start_date = new DateTime($values['bat_start_date']);
   $end_date = new DateTime($values['bat_end_date']);
+  $end_date->sub(new DateInterval('PT1M'));
+
+  $event_type = $values['event_type'];
   $event_state = $values['state'];
   $type = bat_type_load($values['type']);
 
