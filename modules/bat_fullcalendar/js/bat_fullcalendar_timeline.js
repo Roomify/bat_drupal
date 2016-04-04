@@ -119,7 +119,7 @@ Drupal.behaviors.bat_event = {
         eventAfterRender: function(event, element, view) {
           // Append event title when rendering as background.
           if (event.rendering == 'background' && event.fixed == 0) {
-            if ((view.type == 'timelineMonth' || view.type == 'timelineYear') && Drupal.settings.batCalendar[0].repeatEventTitle) {
+            if ((view.type == 'timelineThirtyDay' || view.type == 'timelineMonth' || view.type == 'timelineYear') && Drupal.settings.batCalendar[0].repeatEventTitle) {
               var start = event.start.clone();
               start.subtract(start.hour(), 'hours').subtract(start.minute(), 'minutes');
 
