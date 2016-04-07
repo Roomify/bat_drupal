@@ -502,10 +502,14 @@ function bat_fullcalendar_configure($user_settings) {
     if ($user_setting['eventGranularity'] == 'bat_daily') {
       $calendar_views = 'timelineThirtyDay, timelineYear';
       $default_view = 'timelineThirtyDay';
+
+      $default_date = (new DateTime())->modify('-5 days')->format('Y-m-d');
     }
     elseif ($user_setting['eventGranularity']) {
       $calendar_views = 'timelineDay, timelineTenDay, timelineMonth';
       $default_view = 'timelineDay';
+
+      $default_date = (new DateTime())->format('Y-m-d');
     }
 
     if (isset($user_setting['views']) && !empty($user_setting['views'])) {
@@ -525,7 +529,7 @@ function bat_fullcalendar_configure($user_settings) {
       'schedulerLicenseKey' => $schedulerlicensekey,
       'unitType' => '',
       'eventType' => '',
-      'eventGranularity' => 'bat_daily',
+      'eventGranularity' => $user_setting['eventGranularity'],
       'slotWidth' => FALSE,
       'calendarHeight' => 500,
       'editable' => TRUE,
@@ -548,7 +552,7 @@ function bat_fullcalendar_configure($user_settings) {
       'selectConstraint' => NULL,
       'minTime' => '00:00:00',
       'maxTime' => '24:00:00',
-      'defaultDate' => (new DateTime())->modify('-5 days')->format('Y-m-d'),
+      'defaultDate' => $default_date,
       'repeatEventTitle' => TRUE,
     );
 
