@@ -93,12 +93,18 @@ function bat_event_schema() {
       'start_date' => array(
         'type' => 'datetime',
         'mysql_type' => 'datetime',
+        'pgsql_type' => 'timestamp without time zone',
+        'sqlite_type' => 'varchar',
+        'sqlsrv_type' => 'smalldatetime',
         'not null' => FALSE,
         'description' => 'The start date for the event.',
       ),
       'end_date' => array(
         'type' => 'datetime',
         'mysql_type' => 'datetime',
+        'pgsql_type' => 'timestamp without time zone',
+        'sqlite_type' => 'varchar',
+        'sqlsrv_type' => 'smalldatetime',
         'not null' => FALSE,
         'description' => 'The end date for the event.',
       ),
