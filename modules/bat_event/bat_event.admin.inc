@@ -426,7 +426,7 @@ function bat_event_edit_form_validate(&$form, &$form_state) {
       $unit = bat_unit_load($form_state['values'][$target_field_name][LANGUAGE_NONE][0]['target_id']);
 
       $bat_units = array(
-        new Unit($unit->unit_id, $unit->getEventDefaultValue($event_type->type)),
+        new Unit($unit->unit_id, 0),
       );
 
       $calendar = new Calendar($bat_units, $event_store);
