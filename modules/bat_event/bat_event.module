@@ -280,30 +280,40 @@ function bat_event_form_views_exposed_form_alter(&$form, &$form_state) {
  * @return array
  */
 function bat_event_get_states($event_type = NULL) {
-  $event_states = array();
+  $event_states = &drupal_static(__FUNCTION__, array());
 
-  $query = db_select('bat_event_state', 'n')
-            ->fields('n', array());
+  if (empty($event_states)) {
+    $query = db_select('bat_event_state', 'n')
+              ->fields('n', array());
+    $states = $query->execute()->fetchAll();
+
+    foreach ($states as $event_state) {
+      $event_states[$event_state->id] = array(
+        'id' => $event_state->id,
+        'machine_name' => $event_state->machine_name,
+        'event_type' => $event_state->event_type,
+        'label' => $event_state->label,
+        'color' => $event_state->color,
+        'calendar_label' => $event_state->calendar_label,
+        'locked' => $event_state->locked,
+        'blocking' => $event_state->blocking,
+        'default_state' => $event_state->default_state,
+      );
+    }
+  }
+
   if ($event_type !== NULL) {
-    $query->condition('event_type', $event_type);
+    $states = array();
+    foreach ($event_states as $id => $state) {
+      if ($state['event_type'] == $event_type) {
+        $states[$id] = $state;
+      }
+    }
+    return $states;
   }
-  $states = $query->execute()->fetchAll();
-
-  foreach ($states as $event_state) {
-    $event_states[$event_state->id] = array(
-      'id' => $event_state->id,
-      'machine_name' => $event_state->machine_name,
-      'event_type' => $event_state->event_type,
-      'label' => $event_state->label,
-      'color' => $event_state->color,
-      'calendar_label' => $event_state->calendar_label,
-      'locked' => $event_state->locked,
-      'blocking' => $event_state->blocking,
-      'default_state' => $event_state->default_state,
-    );
+  else {
+    return $event_states;
   }
-
-  return $event_states;
 }
 
 /**
