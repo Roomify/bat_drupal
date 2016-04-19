@@ -2241,18 +2241,22 @@ function bat_event_views_pre_render(&$view) {
  * @return array|bool
  */
 function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE) {
+  // Instantiate a BAT Calendar
   $calendar = bat_event_get_calendar($start_date, $end_date, $type_id, $event_type);
 
-  return bat_event_get_matching_units_by_calendar($calendar, $start_date, $end_date, $valid_name_states, $intersect);
+  return bat_event_get_matching_units_from_calendar($calendar, $start_date, $end_date, $valid_name_states, $intersect);
 }
 
 /**
+ * Retrieves relevant units and instantiates a BAT calendar object than can be reused. It is preferred to
+ * user this function so as to reduce the cost of setting up a calendar (i.e. loading units).
+ *
  * @param DateTime $start_date
  * @param DateTime $end_date
  * @param $type_id
  * @param $event_type
  *
- * @return
+ * @return Calendar
  */
 function bat_event_get_calendar(DateTime $start_date, DateTime $end_date, $type_id, $event_type) {
   global $databases;
@@ -2274,6 +2278,10 @@ function bat_event_get_calendar(DateTime $start_date, DateTime $end_date, $type_
 }
 
 /**
+ * Returns matching units based on a provided Calendar. A Calendar can be instantiated in a numbder
+ * of ways - bat_even offers bat_event_get_calendar. Using an already setup calendar multiple times
+ * reduces overall load.
+ * 
  * @param $calendar
  * @param DateTime $start_date
  * @param DateTime $end_date
@@ -2283,7 +2291,7 @@ function bat_event_get_calendar(DateTime $start_date, DateTime $end_date, $type_
  *
  * @return array|bool
  */
-function bat_event_get_matching_units_by_calendar($calendar, $start_date, $end_date, $valid_name_states, $intersect = FALSE, $reset = TRUE) {
+function bat_event_get_matching_units_from_calendar($calendar, DateTime $start_date, DateTime $end_date, $valid_name_states, $intersect = FALSE, $reset = TRUE) {
   $valid_states = array();
   foreach ($valid_name_states as $name) {
     $state = bat_event_load_state_by_machine_name($name);
