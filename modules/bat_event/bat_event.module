@@ -2242,7 +2242,7 @@ function bat_event_views_pre_render(&$view) {
  */
 function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE) {
   // Instantiate a BAT Calendar
-  $calendar = bat_event_get_calendar($start_date, $end_date, $type_id, $event_type);
+  $calendar = bat_event_get_calendar($type_id, $event_type);
 
   return bat_event_get_matching_units_from_calendar($calendar, $start_date, $end_date, $valid_name_states, $intersect);
 }
@@ -2251,14 +2251,12 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
  * Retrieves relevant units and instantiates a BAT calendar object than can be reused. It is preferred to
  * user this function so as to reduce the cost of setting up a calendar (i.e. loading units).
  *
- * @param DateTime $start_date
- * @param DateTime $end_date
  * @param $type_id
  * @param $event_type
  *
  * @return Calendar
  */
-function bat_event_get_calendar(DateTime $start_date, DateTime $end_date, $type_id, $event_type) {
+function bat_event_get_calendar($type_id, $event_type) {
   global $databases;
 
   $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
