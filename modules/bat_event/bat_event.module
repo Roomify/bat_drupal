@@ -2249,7 +2249,7 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
 
 /**
  * Retrieves relevant units and instantiates a BAT calendar object than can be reused. It is preferred to
- * user this function so as to reduce the cost of setting up a calendar (i.e. loading units).
+ * use this function to reduce the cost of setting up a calendar (i.e. loading units).
  *
  * @param $type_id
  * @param $event_type
@@ -2276,10 +2276,10 @@ function bat_event_get_calendar($type_id, $event_type) {
 }
 
 /**
- * Returns matching units based on a provided Calendar. A Calendar can be instantiated in a numbder
- * of ways - bat_even offers bat_event_get_calendar. Using an already setup calendar multiple times
+ * Returns matching units based on a provided Calendar. A Calendar can be instantiated in a numder
+ * of ways - bat_event offers bat_event_get_calendar. Using an already setup calendar multiple times
  * reduces overall load.
- * 
+ *
  * @param $calendar
  * @param DateTime $start_date
  * @param DateTime $end_date
