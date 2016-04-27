@@ -1186,6 +1186,24 @@ class BatEventMetadataController extends EntityDefaultMetadataController {
       }
     }
 
+    $info['bat_event']['properties']['start_date'] = array(
+      'label' => t('Start Date'),
+      'description' => t('The start date for the event.'),
+      'type' => 'date',
+      'getter callback' => 'entity_property_verbatim_get',
+      'setter callback' => 'entity_property_verbatim_set',
+      'schema field' => 'start_date',
+    );
+
+    $info['bat_event']['properties']['end_date'] = array(
+      'label' => t('End Date'),
+      'description' => t('The end date for the event.'),
+      'type' => 'date',
+      'getter callback' => 'entity_property_verbatim_get',
+      'setter callback' => 'entity_property_verbatim_set',
+      'schema field' => 'end_date',
+    );
+
     return $info;
   }
 
