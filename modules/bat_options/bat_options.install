@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the BAT Options module.
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function bat_options_field_schema($field) {
+  if ($field['type'] == 'bat_options') {
+    return array(
+      'columns' => array(
+        'name' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+        ),
+        'quantity' => array(
+          'type' => 'int',
+          'not null' => FALSE,
+        ),
+        'operation' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+        'value' => array(
+          'type' => 'float',
+          'not null' => FALSE,
+        ),
+        'type' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+    );
+  }
+}
