@@ -363,10 +363,10 @@ function bat_fullcalendar_libraries_info() {
   $libraries['fullcalendar'] = array(
     'name' => 'Full Calendar',
     'vendor url' => 'http://fullcalendar.io',
-    'download url' => 'https://github.com/arshaw/fullcalendar/releases/download/v2.6.0/fullcalendar-2.6.0.zip',
+    'download url' => 'https://github.com/arshaw/fullcalendar/releases/download/v2.7.0/fullcalendar-2.7.0.zip',
     'version arguments' => array(
       'file' => 'fullcalendar.js',
-      // 2.6.0
+      // 2.7.0
       'pattern' => '/v(\d+\.\d+\.\d)/',
       'lines' => 3,
     ),
@@ -413,10 +413,10 @@ function bat_fullcalendar_libraries_info() {
   $libraries['fullcalendar-scheduler'] = array(
     'name' => 'Fullcalendar Scheduler',
     'vendor url' => 'http://fullcalendar.io',
-    'download url' => 'https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.2.0/fullcalendar-scheduler-1.2.0.zip',
+    'download url' => 'https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.3.0/fullcalendar-scheduler-1.3.0.zip',
     'version arguments' => array(
       'file' => 'scheduler.min.js',
-      // 1.2.0
+      // 1.3.0
       'pattern' => '/(\d+\.\d+\.\d)/',
     ),
     'files' => array(
@@ -434,7 +434,7 @@ function bat_fullcalendar_libraries_info() {
             'scheduler.min.css',
           ),
         ),
-        'dependencies' => array('fullcalendar (>=2.6.0)'),
+        'dependencies' => array('fullcalendar (>=2.7.0)'),
       ),
       'source' => array(
         'files' => array(
@@ -445,7 +445,7 @@ function bat_fullcalendar_libraries_info() {
             'scheduler.css',
           ),
         ),
-        'dependencies' => array('fullcalendar (>=2.6.0)'),
+        'dependencies' => array('fullcalendar (>=2.7.0)'),
       ),
     ),
   );

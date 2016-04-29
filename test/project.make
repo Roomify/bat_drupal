@@ -2,7 +2,7 @@
 
 api = 2
 core = 7.x
-projects[drupal][version] = 7.42
+projects[drupal][version] = 7.43
 
 defaults[projects][subdir] = contrib
 
@@ -21,7 +21,7 @@ projects[ctools][version] = 1.9
 
 projects[date][version] = 2.9
 
-projects[entity][version] = 1.6
+projects[entity][version] = 1.7
 
 projects[entityreference][version] = 1.1
 
@@ -31,9 +31,9 @@ projects[jquery_update][version] = 3.0-alpha3
 
 projects[libraries][version] = 2.2
 
-projects[search_api][version] = 1.16
+projects[search_api][version] = 1.18
 
-projects[services][version] = 3.12
+projects[services][version] = 3.14
 
 projects[variable][version] = 2.5
 
@@ -43,7 +43,7 @@ projects[views_bulk_operations][version] = 3.3
 
 projects[views_megarow][version] = 1.5
 
-projects[xautoload][version] = 5.5
+projects[xautoload][version] = 5.7
 
 
 ; +++++ Libraries +++++
@@ -60,14 +60,14 @@ libraries[fullcalendar][directory_name] = fullcalendar
 libraries[fullcalendar][type] = library
 libraries[fullcalendar][destination] = libraries
 libraries[fullcalendar][download][type] = get
-libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v2.6.0/fullcalendar-2.6.0.zip
+libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v2.7.0/fullcalendar-2.7.0.zip
 
 ; scheduler
 libraries[scheduler][directory_name] = fullcalendar-scheduler
 libraries[scheduler][type] = library
 libraries[scheduler][destination] = libraries
 libraries[scheduler][download][type] = get
-libraries[scheduler][download][url] = https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.2.0/fullcalendar-scheduler-1.2.0.zip
+libraries[scheduler][download][url] = https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.3.0/fullcalendar-scheduler-1.3.0.zip
 
 ; jquery.timepicker
 libraries[jquery.timepicker][directory_name] = jquery.timepicker
