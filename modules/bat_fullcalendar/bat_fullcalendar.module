@@ -205,6 +205,8 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $entity_id, $ev
     '#value' => $end_date,
   );
 
+  $unit = entity_load_single($event_type->target_entity_type, $entity_id);
+
   $form['event_title'] = array(
     '#prefix' => '<h2>',
     '#markup' => t('@unit_name', array('@unit_name' => $unit->name)),
