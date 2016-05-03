@@ -541,6 +541,8 @@ function bat_fullcalendar_configure($user_settings) {
       'defaultView' => $default_view,
       'viewsTimelineDayButtonText' => ':15 slots',
       'viewsTimelineDaySlotDuration' => '00:15',
+      'viewsTimelineSevenDayButtonText' => '7 days',
+      'viewsTimelineSevenDaySlotDuration' => array('days' => 7),
       'viewsTimelineTenDayButtonText' => '10 days',
       'viewsTimelineTenDaySlotDuration' => array('days' => 10),
       'viewsTimelineThirtyDayButtonText' => '30 days',

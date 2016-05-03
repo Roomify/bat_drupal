@@ -45,6 +45,11 @@ Drupal.behaviors.bat_event = {
             buttonText: Drupal.settings.batCalendar[0].viewsTimelineDayButtonText,
             slotDuration: Drupal.settings.batCalendar[0].viewsTimelineDaySlotDuration,
           },
+          timelineSevenDay: {
+            buttonText: Drupal.settings.batCalendar[0].viewsTimelineSevenDayButtonText,
+            duration: Drupal.settings.batCalendar[0].viewsTimelineSevenDaySlotDuration,
+            type: 'timeline',
+          },
           timelineTenDay: {
             buttonText: Drupal.settings.batCalendar[0].viewsTimelineTenDayButtonText,
             duration: Drupal.settings.batCalendar[0].viewsTimelineTenDaySlotDuration,
