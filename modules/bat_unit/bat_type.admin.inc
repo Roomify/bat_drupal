@@ -39,7 +39,7 @@ class BatTypeUIController extends EntityDefaultUIController {
         'title arguments' => array('@type_bundle_label' => $bundle->label),
         'page callback' => 'bat_type_create_form_wrapper',
         'page arguments' => array($bundle->type),
-        'access callback' => 'bat_type_bundle_access',
+        'access callback' => 'bat_type_access',
         'access arguments' => array('create', bat_type_create(array('type' => $bundle->type, 'uid' => 0))),
         'file' => 'bat_type.admin.inc',
         'file path' => drupal_get_path('module', $this->entityInfo['module']),
