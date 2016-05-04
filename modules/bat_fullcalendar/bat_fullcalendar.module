@@ -549,6 +549,8 @@ function bat_fullcalendar_configure($user_settings) {
       'viewsTimelineTenDaySlotDuration' => array('days' => 10),
       'viewsTimelineThirtyDayButtonText' => '30 days',
       'viewsTimelineThirtyDaySlotDuration' => array('days' => 30),
+      'viewsTimeline365DayButtonText' => '1 year',
+      'viewsTimeline365DaySlotDuration' => array('days' => 365),
       'resourceAreaWidth' => '25%',
       'resourceLabelText' => 'Types',
       'errorMessage' => t('Action not allowed. User may not have the right permissions.'),
