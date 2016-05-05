@@ -130,7 +130,7 @@ Drupal.behaviors.bat_event = {
         eventAfterRender: function(event, element, view) {
           // Append event title when rendering as background.
           if (event.rendering == 'background' && event.fixed == 0) {
-            if ((view.type == 'timelineThirtyDay' || view.type == 'timelineMonth' || view.type == 'timelineYear') && Drupal.settings.batCalendar[0].repeatEventTitle) {
+            if ((view.type == 'timelineThirtyDay' || view.type == 'timelineMonth' || view.type == 'timelineYear' || view.type == 'timeline365Day') && Drupal.settings.batCalendar[0].repeatEventTitle) {
               var start = event.start.clone();
               start.subtract(start.hour(), 'hours').subtract(start.minute(), 'minutes');
 
@@ -139,17 +139,23 @@ Drupal.behaviors.bat_event = {
               }
               else {
                 var end = event.end.clone();
+
+                if (end > view.end) {
+                  end = view.end.clone();
+                }
+                else if (end.unix() != view.end.unix()) {
+                  end.add(1, 'minute');
+                }
               }
 
               var index = 0;
 
               // Event width.
-              var width = element.width()
+              var width = element.width();
               // Event colspan number.
               var colspan = element.get(0).colSpan;
 
               if (event.end != null) {
-                end.add(1, 'minute');
                 // Single cell width.
                 var cell_width = width/(end.diff(start, 'days'));
 
