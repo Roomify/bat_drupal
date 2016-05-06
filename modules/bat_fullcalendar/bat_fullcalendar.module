@@ -561,6 +561,7 @@ function bat_fullcalendar_configure($user_settings) {
       'hiddenDays' => array(),
       'defaultDate' => $default_date,
       'repeatEventTitle' => TRUE,
+      'customButtons' => array(),
     );
 
     $settings['batCalendar'][$id] = array_replace_recursive($config, $user_setting);

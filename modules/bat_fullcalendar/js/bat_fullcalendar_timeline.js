@@ -66,6 +66,7 @@ Drupal.behaviors.bat_event = {
             type: 'timeline',
           }
         },
+        customButtons: Drupal.settings.batCalendar[0].customButtons,
         resourceAreaWidth: Drupal.settings.batCalendar[0].resourceAreaWidth,
         resourceLabelText: Drupal.settings.batCalendar[0].resourceLabelText,
         resources: Drupal.settings.basePath + '?q=bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[0].unitType + '&event_type=' + Drupal.settings.batCalendar[0].eventType,
