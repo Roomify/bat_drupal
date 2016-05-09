@@ -22,6 +22,12 @@ function bat_unit_module_implements_alter(&$implementations, $hook) {
     unset($implementations['bat_unit']);
     $implementations['bat_unit'] = $group;
   }
+
+  if ($hook == 'form_alter' && isset($implementations['bat_unit'])) {
+    $group = $implementations['bat_unit'];
+    unset($implementations['bat_unit']);
+    $implementations['bat_unit'] = $group;
+  }
 }
 
 /**
@@ -1434,6 +1440,34 @@ function bat_type_page_view($type, $view_mode = 'full') {
   drupal_set_title($type->name);
 
   return $content;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = views_form_units_page
+ */
+function bat_unit_form_views_form_units_page_alter(&$form, &$form_state) {
+  $query = drupal_get_query_parameters($_GET, array('q'));
+  $form['#action'] = url($_GET['q'], array('query' => $query));
+
+  if (isset($form['select']['submit']['#submit'])) {
+    $form['select']['submit']['#submit'][] = 'bat_unit_form_views_form_units_page_form_submit';
+  }
+  if (isset($form['actions']['submit']['#submit'])) {
+    $form['actions']['submit']['#submit'][] = 'bat_unit_form_views_form_units_page_form_submit';
+  }
+
+  $form_state['custom_redirect'] = $form['#action'];
+}
+
+/**
+ * Custom submit function for the views_form_units_page form.
+ */
+function bat_unit_form_views_form_units_page_form_submit($form, &$form_state) {
+  if ($form_state['redirect'] != '') {
+    $form_state['redirect'] = $form_state['custom_redirect'];
+  }
 }
 
 /**
