@@ -1,0 +1,122 @@
+<?php
+
+namespace Drupal\bat_event\Entity;
+
+use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\bat_event\EventTypeInterface;
+
+/**
+ * Defines the Event type configuration entity.
+ *
+ * @ConfigEntityType(
+ *   id = "event_type",
+ *   label = @Translation("Event type"),
+ *   handlers = {
+ *     "access" = "Drupal\bat_event\EventTypeAccessControlHandler",
+ *     "form" = {
+ *       "add" = "Drupal\bat_event\EventTypeForm",
+ *       "edit" = "Drupal\bat_event\EventTypeForm",
+ *       "delete" = "Drupal\bat_event\Form\EventTypeDeleteConfirm"
+ *     },
+ *     "list_builder" = "Drupal\bat_event\EventTypeListBuilder",
+ *   },
+ *   admin_permission = "administer content types",
+ *   config_prefix = "event_type",
+ *   bundle_of = "event",
+ *   entity_keys = {
+ *     "id" = "type",
+ *     "label" = "name"
+ *   },
+ *   links = {
+ *     "edit-form" = "/admin/bat/event/event-types/manage/{event_type}",
+ *     "delete-form" = "/admin/bat/event/event-types/manage/{event_type}/delete",
+ *     "collection" = "/admin/bat/event/event-types",
+ *   },
+ *   config_export = {
+ *     "name",
+ *     "type",
+ *   }
+ * )
+ */
+class EventType extends ConfigEntityBundleBase implements EventTypeInterface {
+
+	/**
+   * The machine name of this event type.
+   *
+   * @var string
+   */
+  protected $type;
+
+  /**
+   * The human-readable name of the event type.
+   *
+   * @var string
+   */
+  protected $name;
+
+  protected $event_granularity;
+
+  protected $fixed_event_states;
+
+	/**
+   * {@inheritdoc}
+   */
+  public function id() {
+    return $this->type;
+  }
+
+  public function event_granularity() {
+    return $this->event_granularity;
+  }
+
+  public function fixed_event_states() {
+    return $this->fixed_event_states;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save() {
+    if ($this->isNew()) {
+      // Create all tables necessary for this Event Type.
+      bat_event_create_event_type_schema($this->id());
+
+      // Create a field of type 'Entity Reference' to reference a Bat Unit.
+      /*bat_event_type_add_target_entity_field($entity);
+      if (isset($entity->fixed_event_states)) {
+        if ($entity->fixed_event_states) {
+          // Create a field of type 'Bat Event State Reference' to reference an Event State.
+          bat_event_type_add_event_state_reference($entity);
+        }
+      }*/
+    }
+
+    parent::save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    parent::postDelete($storage, $entities);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function delete() {
+    // Delete all tables necessary for this Event Type.
+    bat_event_delete_event_type_schema($this->id());
+
+    parent::delete();
+  }
+
+}

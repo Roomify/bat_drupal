@@ -1,0 +1,1012 @@
+<?php
+
+/**
+ * @file
+ * Manage units - Units are things that can be booked for some period of time.
+ * (e.g. rooms - but also villas bungalows, cars, drills, you-get-the-idea etc.)
+ */
+
+use Drupal\Core\Url;
+use Drupal\views\ViewExecutable;
+use Drupal\bat_unit\Entity\Unit;
+use Drupal\bat_unit\Entity\UnitType;
+use Drupal\bat_unit\Entity\TypeBundle;
+use Drupal\bat_unit\Entity\UnitBundle;
+
+/**
+ * @section Drupal Hooks
+ *
+ * Drupal Integration.
+ */
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function bat_unit_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'views_data_alter' && isset($implementations['bat_unit'])) {
+    $group = $implementations['bat_unit'];
+    unset($implementations['bat_unit']);
+    $implementations['bat_unit'] = $group;
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function bat_unit_query_bat_unit_access_alter(QueryAlterableInterface $query) {
+  // Look for an unit base table to pass to the query altering function or else
+  // assume we don't have the tables we need to establish order related altering
+  // right now.
+  foreach ($query->getTables() as $table) {
+    if ($table['table'] === 'bat_units') {
+      bat_entity_access_query_alter($query, 'bat_unit', $table['alias']);
+      break;
+    }
+  }
+
+  // Look for an type base table to pass to the query altering function or else
+  // assume we don't have the tables we need to establish order related altering
+  // right now.
+  foreach ($query->getTables() as $table) {
+    if ($table['table'] === 'bat_types') {
+      bat_entity_access_query_alter($query, 'bat_type', $table['alias']);
+      break;
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bat_unit_theme() {
+  return array(
+    'bat_type_add_list' => array(
+      'variables' => array('content' => NULL),
+    ),
+    'bat_unit_add_list' => array(
+      'variables' => array('content' => NULL),
+    ),
+  );
+}
+
+/**
+ * Prepares variables for list of available node type templates.
+ *
+ * Default template: bat-type-add-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - content: An array of content types.
+ *
+ * @see node_add_page()
+ */
+function template_preprocess_bat_type_add_list(&$variables) {
+  $variables['types'] = array();
+  if (!empty($variables['content'])) {
+    foreach ($variables['content'] as $type) {
+      $variables['types'][$type->id()] = array(
+        'type' => $type->id(),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.unit_type.add', array('type_bundle' => $type->id()))),
+      );
+    }
+  }
+}
+
+/**
+ * Prepares variables for list of available node type templates.
+ *
+ * Default template: bat-unit-add-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - content: An array of content types.
+ *
+ * @see node_add_page()
+ */
+function template_preprocess_bat_unit_add_list(&$variables) {
+  $variables['types'] = array();
+  if (!empty($variables['content'])) {
+    foreach ($variables['content'] as $type) {
+      $variables['types'][$type->id()] = array(
+        'type' => $type->id(),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.unit.add_form', array('unit_bundle' => $type->id()))),
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function bat_unit_views_pre_render(ViewExecutable $view) {
+  // Hide "Calendars" field until module "BAT Event UI" is enabled.
+  if ($view->name == 'unit_management' && !module_exists('bat_event_ui')) {
+    $view->field['calendars']->options['exclude'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function bat_unit_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+  if ($entity->getEntityTypeId() == 'bat_type') {
+    // When delete a Type remove all related Units.
+    $units = bat_unit_load_multiple(FALSE, array('type_id' => $entity->type_id));
+
+    foreach ($units as $unit) {
+      $unit->delete();
+    }
+  }
+}
+
+
+
+/**
+ * @section Bat Hooks
+ *
+ * Bat Integration.
+ */
+
+/**
+ * Implements hook_bat_event_target_entity_types().
+ *
+ * Register BAT Unit as a BAT event target entity type.
+ */
+function bat_unit_bat_event_target_entity_types() {
+  return array('unit');
+}
+
+
+/**
+ * @section Bat Unit
+ *
+ * The following code deals with Bat Units and their bundles. (entity types)
+ */
+/**
+ * Determines whether the given user has access to a unit.
+ *
+ * @param string $op
+ *   The operation being performed. One of 'view', 'update', 'create', 'delete'
+ *   or just 'edit' (being the same as 'create' or 'update').
+ * @param BatUnit $unit
+ *   Optionally a unit or a unit bundle to check access for. If nothing is
+ *   given, access for all units is determined.
+ * @param object $account
+ *   The user to check for. Leave it to NULL to check for the global user.
+ *
+ * @return boolean
+ *   Whether access is allowed or not.
+ */
+function bat_unit_access($op, $unit = NULL, $account = NULL) {
+  //return bat_entity_access($op, $unit, $account, 'bat_unit');
+}
+
+/**
+ * Filters units based on permissions for multiple values.
+ */
+function bat_unit_access_filter($op, $units = array(), $account = NULL) {
+  $filtered_units = array();
+
+  // If no user object is supplied, the access check is for the current user.
+  if (empty($account)) {
+    $account = $GLOBALS['user'];
+  }
+
+  foreach ($units as $key => $unit) {
+    if (bat_unit_access($op, $unit, $account)) {
+      $filtered_units[$key] = $unit;
+    }
+  }
+  return $filtered_units;
+}
+
+/**
+ * Access callback for the entity API.
+ */
+function bat_unit_bundle_access($op, $bundle = NULL, $account = NULL) {
+  $account->hasPermission('administer bat_unit_bundle entities');
+}
+
+/**
+ * Implements hook_bat_entity_access_OP_condition_ENTITY_TYPE_alter().
+ */
+function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, $context) {
+  $account = $context['account'];
+
+  if (user_access('view any bat_unit unpublished entity', $account)) {
+    return;
+  }
+
+  $old_conditions = $conditions;
+  $conditions = db_and();
+
+  if ($account->uid && user_access('view own bat_unit unpublished entities', $account)) {
+    $or = db_and()
+      ->condition($context['base_table'] . '.status', 0)
+      ->condition($context['base_table'] . '.uid', $account->uid);
+    $conditions->condition(db_or()
+      ->condition($or)
+      ->condition($context['base_table'] . '.status', 1)
+    );
+
+  }
+  else {
+    $conditions->condition($context['base_table'] . '.status', 1);
+  }
+
+  if ($old_conditions->count()) {
+    $conditions->condition($old_conditions);
+  }
+}
+
+/**
+ * Access callback: Checks whether the user has permission to add a unit.
+ *
+ * @return bool
+ *   TRUE if the user has add permission, otherwise FALSE.
+ */
+function bat_unit_add_access() {
+  if (user_access('administer bat_unit_bundle entities')) {
+    // There are no unit bundles defined that the user has permission to
+    // create, but the user does have the permission to administer the content
+    // types, so grant them access to the page anyway.
+    return TRUE;
+  }
+
+  $bundles = bat_unit_get_bundles();
+  foreach ($bundles as $bundle) {
+    if (bat_unit_access('create', bat_unit_create(array('type' => $bundle->type, 'uid' => 0)))) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Gets an array of all unit bundles, keyed by the bundle name.
+ *
+ * @param string $bundle_name
+ *   If set, the bundle with the given name is returned.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return BatUnitBundle[]
+ *   Depending whether $bundle isset, an array of unit bundles or a single one.
+ */
+function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
+  // entity_load() will get the Entity controller for our unit entity and call
+  // the load function of that object.
+  //$bundles = entity_load_multiple_by_name('bat_unit_bundle', isset($bundle_name) ? array($bundle_name) : FALSE);
+  //return isset($bundle_name) ? reset($bundles) : $bundles;
+}
+
+/**
+ * Helper function to easily get unit bundles in an array for use in forms, etc.
+ *
+ * @return array
+ *   An array of unit bundles keyed by bundle name and labels
+*/
+function bat_unit_bundles_ids() {
+  $unit_bundles = array();
+
+  $bundles = bat_unit_get_bundles();
+  foreach ($bundles as $bundle) {
+    $unit_bundles[$bundle->type] = $bundle->label;
+  }
+
+  return $unit_bundles;
+}
+
+/**
+ * Helper function to easily get unit types in an array for use in forms, etc.
+ *
+ * @return array
+ *   An array of unit types keyed by type id and labels
+*/
+function bat_unit_types_ids() {
+  $unit_types = array();
+
+  $types = bat_unit_get_types();
+  foreach ($types as $type) {
+    $unit_types[$type->type_id] = $type->name;
+  }
+
+  return $unit_types;
+}
+
+/**
+ * Menu argument loader; Load a unit bundle by string.
+ *
+ * @param $bundle
+ *   The machine-readable name of a unit bundle to load.
+ * @param bool $reset
+ *   A boolean indicating whether the internal cache should be reset.
+ *
+ * @return array|false
+ *   A unit bundle array or FALSE if $bundle does not exist.
+ */
+function bat_unit_bundle_load($bundle, $reset = FALSE) {
+  return bat_unit_get_bundles($bundle, $reset);
+}
+
+/**
+ * Fetches a unit object.
+ *
+ * @param int $unit_id
+ *   Integer specifying the unit id.
+ * @param bool $reset
+ *   A boolean indicating whether the internal cache should be reset.
+ * @return BatUnit|false
+ *   A fully-loaded $unit object or FALSE if it cannot be loaded.
+ *
+ * @see bat_unit_load_multiple()
+ */
+function bat_unit_load($unit_id, $reset = FALSE) {
+  $units = bat_unit_load_multiple(array($unit_id), array(), $reset);
+  return reset($units);
+}
+
+/**
+ * Loads multiple units based on certain conditions.
+ *
+ * @param array $unit_ids
+ *   An array of unit IDs.
+ * @param array $conditions
+ *   An array of conditions to match against the {bat_units} table.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return array
+ *   An array of unit objects, indexed by unit_id.
+ *
+ * @see entity_load()
+ * @see bat_unit_load()
+ */
+function bat_unit_load_multiple($unit_ids = array(), $conditions = array(), $reset = FALSE) {
+  //return entity_load('bat_unit', $unit_ids, $conditions, $reset);
+}
+
+/**
+ * Deletes a unit.
+ *
+ * @param BatUnit $unit
+ *   The BatUnit object that represents the unit to delete.
+ */
+function bat_unit_delete(Unit $unit) {
+  //$unit->delete();
+}
+
+/**
+ * Deletes multiple units.
+ *
+ * @param array $unit_ids
+ *   An array of unit IDs.
+ */
+function bat_unit_delete_multiple(array $unit_ids) {
+  //entity_get_controller('bat_unit')->delete($unit_ids);
+}
+
+/**
+ * Creates a unit object.
+ *
+ * @param array $values
+ *   The properties for the new unit bundle.
+ */
+function bat_unit_create($values = array()) {
+  //return entity_get_controller('bat_unit')->create($values);
+}
+
+/**
+ * Saves a unit to the database.
+ *
+ * @param BatUnit $unit
+ *   The Unit object.
+ */
+function bat_unit_save(BatUnit $unit) {
+  return $unit->save();
+}
+
+/**
+ * Creates a unit object.
+ *
+ * @param array $values
+ *   The properties for the new unit bundle.
+ */
+function bat_unit_bundle_create($values = array()) {
+  //return entity_get_controller('bat_unit_bundle')->create($values);
+}
+
+/**
+ * Saves a unit bundle to the db.
+ *
+ * @param BatUnitBundle $bundle
+ *   The unit bundle to save.
+ */
+function bat_unit_bundle_save(BatUnitBundle $bundle) {
+  $bundle->save();
+}
+
+/**
+ * Deletes a unit bundle from the db.
+ */
+function bat_unit_bundle_delete(UnitBundle $bundle) {
+  //$bundle->delete();
+}
+
+/**
+ * URI callback for units.
+ */
+function bat_unit_uri(BatUnit $unit) {
+  return array(
+    'path' => 'unit/' . $unit->unit_id,
+  );
+}
+
+/**
+ * Menu title callback for showing individual entities.
+ */
+function bat_unit_page_title(BatUnit $unit) {
+  return $unit->name;
+}
+
+/**
+ * Gets a list of Units keyed by id and name in value.
+ */
+function bat_unit_ids($bundle = '') {
+  $units = array();
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'bat_unit');
+
+  if ($bundle != '') {
+    $query->entityCondition('bundle', $bundle);
+  }
+
+  $result = $query->execute();
+
+  if (count($result) > 0) {
+    $entities = entity_load('bat_unit', array_keys($result['bat_unit']));
+    foreach ($entities as $unit) {
+      $wrapper = entity_metadata_wrapper('bat_unit', $unit);
+      $units[$wrapper->unit_id->value()] = $wrapper->name->value();
+    }
+  }
+
+  return $units;
+}
+
+/**
+ * Sets up content to show an individual unit.
+ */
+function bat_unit_page_view($unit, $view_mode = 'full') {
+  /*$controller = entity_get_controller('bat_unit');
+  $content = $controller->view(array($unit->unit_id => $unit), $view_mode);
+
+  drupal_set_title($unit->name);*/
+
+  return $content;
+}
+
+/**
+ * Helper function to generate a list of available unit states for select lists.
+ *
+ * @param $event_type
+ * @param $conditions
+ *
+ * @return array
+ *   Array of available unit states keyed by id.
+ */
+function bat_unit_state_options($event_type = NULL, $conditions = array()) {
+  $event_states = array();
+
+  $states = bat_event_get_states($event_type);
+
+  foreach ($states as $event_state) {
+    foreach ($conditions as $option => $value) {
+      if ($event_state[$option] != $value) {
+        break 2;
+      }
+    }
+
+    $event_states[$event_state['id']] = t($event_state['label']);
+  }
+
+  return $event_states;
+}
+
+/**
+ * Returns an initialized bat bundle array. This is here to help other modules easily and
+ * consistently add BAT unit bundles.
+ */
+function bat_unit_unit_bundle_new() {
+  return array(
+    'type' => '',
+    'label' => '',
+    'weight' => '0',
+    'data' => array(
+      'hourly_availability' => 0,
+    ),
+    'bat_opening_time' => '',
+  );
+}
+
+/**
+ * @section Bat Type
+ *
+ * The following code deals with Bat Types and their bundles. (entity types)
+ *
+ * Bat Types are entities that deal with groups of Units. In a hotel use
+ * case, a Type bundle might be called 'Room', and individual entities of
+ * type Type might be called 'Single', 'Double', 'Triple', and so on.
+ */
+
+/**
+ * Determines whether the given user has access to a type.
+ *
+ * @param string $op
+ *   The operation being performed. One of 'view', 'update', 'create', 'delete'
+ *   or just 'edit' (being the same as 'create' or 'update').
+ * @param BatType $type
+ *   Optionally a type or a type bundle to check access for. If nothing is
+ *   given, access for all types is determined.
+ * @param object $account
+ *   The user to check for. Leave it to NULL to check for the global user.
+ *
+ * @return boolean
+ *   Whether access is allowed or not.
+ */
+function bat_type_access($op, $type = NULL, $account = NULL) {
+  return bat_entity_access($op, $type, $account, 'bat_type');
+}
+
+/**
+ * Filters types based on permissions for multiple values.
+ */
+function bat_type_access_filter($op, $types = array(), $account = NULL) {
+  $filtered_types = array();
+
+  // If no user object is supplied, the access check is for the current user.
+  if (empty($account)) {
+    $account = $GLOBALS['user'];
+  }
+
+  foreach ($types as $key => $type) {
+    if (bat_type_access($op, $type, $account)) {
+      $filtered_types[$key] = $type;
+    }
+  }
+  return $filtered_types;
+}
+
+/**
+ * Access callback for the entity API.
+ */
+function bat_type_bundle_access($op, $bundle = NULL, $account = NULL) {
+  $account->hasPermission('administer bat_type_bundle entities');
+}
+
+/**
+ * Implements hook_bat_entity_access_OP_condition_ENTITY_TYPE_alter().
+ */
+function bat_type_bat_entity_access_view_condition_bat_type_alter(&$conditions, $context) {
+  $account = $context['account'];
+
+  if (user_access('view any bat_type unpublished entity', $account)) {
+    return;
+  }
+
+  $old_conditions = $conditions;
+  $conditions = db_and();
+
+  if ($account->uid && user_access('view own bat_type unpublished entities', $account)) {
+    $or = db_and()
+      ->condition($context['base_table'] . '.status', 0)
+      ->condition($context['base_table'] . '.uid', $account->uid);
+    $conditions->condition(db_or()
+      ->condition($or)
+      ->condition($context['base_table'] . '.status', 1)
+    );
+
+  }
+  else {
+    $conditions->condition($context['base_table'] . '.status', 1);
+  }
+
+  if ($old_conditions->count()) {
+    $conditions->condition($old_conditions);
+  }
+}
+
+/**
+ * Access callback: Checks whether the user has permission to add a type.
+ *
+ * @return bool
+ *   TRUE if the user has add permission, otherwise FALSE.
+ */
+function bat_type_add_access() {
+  if (user_access('administer bat_type_bundle entities')) {
+    // There are no type bundles defined that the user has permission to
+    // create, but the user does have the permission to administer the content
+    // types, so grant them access to the page anyway.
+    return TRUE;
+  }
+
+  $bundles = bat_unit_get_type_bundles();
+  foreach ($bundles as $bundle) {
+    if (bat_type_access('create', bat_type_create(array('type' => $bundle->type, 'uid' => 0)))) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Gets an array of all type bundles, keyed by the bundle name.
+ *
+ * @param string $bundle_name
+ *   If set, the bundle with the given name is returned.
+ *
+ * @return BatTypeBundle[]
+ *   Depending whether $bundle isset, an array of type bundles or a single one.
+ */
+function bat_unit_get_type_bundles($bundle_name = NULL) {
+  // entity_load() will get the Entity controller for our type entity and call
+  // the load function of that object.
+  //$bundles = entity_load_multiple_by_name('bat_type_bundle', isset($bundle_name) ? array($bundle_name) : FALSE);
+  //return isset($bundle_name) ? reset($bundles) : $bundles;
+}
+
+/**
+ * Gets an array of all type bundles, keyed by the bundle name.
+ *
+ * @param string $bundle_name
+ *   If set, the bundle with the given name is returned.
+ *
+ * @return BatType[]
+ *   Depending whether $bundle isset, an array of types or a single one.
+ */
+function bat_unit_get_types($bundle_name = NULL) {
+  // entity_load() will get the Entity controller for our type entity and call
+  // the load function of that object.
+  $bundles = entity_load_multiple_by_name('bat_type', isset($bundle_name) ? array($bundle_name) : FALSE);
+  return isset($bundle_name) ? reset($bundles) : $bundles;
+}
+
+/**
+ * Helper function to easily get Bat Type bundles in an array for use in forms, etc.
+ *
+ * @return array
+ *   An array of type bundles keyed by bundle name and labels
+*/
+function bat_type_bundles_ids() {
+  $type_bundles = array();
+  $bundles = bat_unit_get_type_bundles();
+  foreach ($bundles as $bundle) {
+    $type_bundles[$bundle->type] = $bundle->label;
+  }
+
+  return $type_bundles;
+}
+
+/**
+ * Menu argument loader; Load a Bat Type bundle by string.
+ *
+ * @param $bundle
+ *   The machine-readable name of a type bundle to load.
+ * @param bool $reset
+ *   A boolean indicating whether the internal cache should be reset.
+ *
+ * @return array|false
+ *   A type bundle array or FALSE if $bundle does not exist.
+ */
+function bat_type_bundle_load($bundle, $reset = FALSE) {
+  return bat_unit_get_type_bundles($bundle, $reset);
+}
+
+/**
+ * Fetches a Bat Type object.
+ *
+ * @param int $type_id
+ *   Integer specifying the type id.
+ * @param bool $reset
+ *   A boolean indicating whether the internal cache should be reset.
+ * @return BatType|false
+ *   A fully-loaded $type object or FALSE if it cannot be loaded.
+ *
+ * @see bat_type_load_multiple()
+ */
+function bat_type_load($type_id, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('unit_type')->resetCache(array($type_id));
+  }
+  return UnitType::load($type_id);
+}
+
+/**
+ * Loads multiple Bat Types based on certain conditions.
+ *
+ * @param array $type_ids
+ *   An array of type IDs.
+ * @param array $conditions
+ *   An array of conditions to match against the {bat_types} table.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return array
+ *   An array of type objects, indexed by type_id.
+ *
+ * @see entity_load()
+ * @see bat_type_load()
+ */
+function bat_type_load_multiple($type_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('bat_type', $type_ids, $conditions, $reset);
+}
+
+/**
+ * Deletes a Bat Type.
+ *
+ * @param BatType $type
+ *   The BatType object that represents the type to delete.
+ */
+function bat_type_delete(BatType $type) {
+  $type->delete();
+}
+
+/**
+ * Deletes multiple Bat Types.
+ *
+ * @param array $type_ids
+ *   An array of type IDs.
+ */
+function bat_type_delete_multiple(array $type_ids) {
+  entity_get_controller('bat_type')->delete($type_ids);
+}
+
+/**
+ * Creates a Bat Type object.
+ *
+ * @param array $values
+ *   The properties for the new type bundle.
+ */
+function bat_type_create($values = array()) {
+  return entity_get_controller('bat_type')->create($values);
+}
+
+/**
+ * Saves a Bat Type to the database.
+ *
+ * @param BatType $type
+ *   The type object.
+ */
+function bat_type_save(BatType $type) {
+  return $type->save();
+}
+
+/**
+ * Creates a Bat Type bundle object.
+ *
+ * @param array $values
+ *   The properties for the new type bundle.
+ */
+function bat_type_bundle_create($values = array()) {
+  //return entity_get_controller('bat_type_bundle')->create($values);
+}
+
+/**
+ * Saves a Bat Type bundle to the db.
+ *
+ * @param BatTypeBundle $bundle
+ *   The type bundle to save.
+ */
+function bat_type_bundle_save(BatTypeBundle $bundle) {
+  $bundle->save();
+}
+
+/**
+ * Deletes a Bat Type bundle from the db.
+ */
+function bat_type_bundle_delete(TypeBundle $bundle) {
+  //$bundle->delete();
+}
+
+/**
+ * URI callback for Bat Types.
+ */
+function bat_type_uri(BatType $type) {
+  return array(
+    'path' => 'type/' . $type->type_id,
+  );
+}
+
+/**
+ * Menu title callback for showing individual entities.
+ */
+function bat_type_page_title(BatType $type) {
+  return $type->name;
+}
+
+/**
+ * Gets a list of Bat Types keyed by id and name in value.
+ */
+function bat_type_ids($bundle = '') {
+  $types = array();
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'bat_type');
+
+  if ($bundle != '') {
+    $query->entityCondition('bundle', $bundle);
+  }
+
+  $result = $query->execute();
+
+  if (count($result) > 0) {
+    $entities = entity_load('bat_type', array_keys($result['bat_type']));
+    foreach ($entities as $type) {
+      $wrapper = entity_metadata_wrapper('bat_type', $type);
+      $types[$wrapper->type_id->value()] = $wrapper->name->value();
+    }
+  }
+
+  return $types;
+}
+
+/**
+ * Gets a list of Bat Type bundles keyed by id and name in value.
+ */
+function bat_type_bundle_ids() {
+  $type_bundles = array();
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'bat_type_bundle');
+
+  $result = $query->execute();
+
+  if (count($result) > 0) {
+    $entities = entity_load('bat_type_bundle', array_keys($result['bat_type_bundle']));
+    foreach ($entities as $type_bundle) {
+      $wrapper = entity_metadata_wrapper('bat_type_bundle', $type_bundle);
+      $type_bundles[$wrapper->id->value()] = $wrapper->label->value();
+    }
+  }
+
+  return $type_bundles;
+}
+
+/**
+ * Sets up content to show an individual Bat Type.
+ */
+function bat_type_page_view($type, $view_mode = 'full') {
+  $controller = entity_get_controller('bat_type');
+  $content = $controller->view(array($type->type_id => $type), $view_mode);
+
+  drupal_set_title($type->name);
+
+  return $content;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = bat_type_bundle_operation_form
+ * Prevent a Bat type bundle with associated unit bundles from being deleted.
+ */
+function bat_unit_form_bat_type_bundle_operation_form_alter(&$form, &$form_state) {
+  // Check if types of a type bundle exist before allowing deletion.
+  if ($form_state['op'] == 'delete') {
+    $type_bundle = $form_state['bat_type_bundle'];
+
+    // Load the Bat Types associated with this bundle.
+    $query = new EntityFieldQuery();
+
+    $query->entityCondition('entity_type', 'bat_type')
+          ->propertyCondition('type', $type_bundle->type);
+    $types = $query->execute();
+    if (isset($types['bat_type']) && count($types['bat_type'])) {
+
+      // This type bundle has associated types, don't allow deletion.
+      form_set_error('confirm', t('This Bat Type bundle has associated Types. Please delete all Types before attempting to delete this Bat Type bundle.'));
+
+      unset($form['description']);
+      unset($form['actions']);
+      unset($form['confirm']);
+    }
+  }
+}
+
+/**
+ * Returns an initialized bat bundle array. This is here to help other modules easily and
+ * consistently add BAT Type bundles.
+ */
+function bat_type_bundle_new() {
+  return array(
+    'type' => '',
+    'label' => '',
+    'weight' => '0',
+    'data' => array(
+      'hourly_availability' => 0,
+    ),
+    'bat_opening_time' => '',
+  );
+}
+
+/**
+ * Support for adding price fields to BAT Types - something modules such as Rooms make use of.
+ *
+ * @param $field_name
+ * @param $entity_type
+ * @param $bundle
+ * @param $label
+ * @param $description
+ * @param int $weight
+ * @param bool|FALSE $locked
+ * @param bool|FALSE $calculation
+ * @param array $display
+ * @throws \Exception
+ * @throws \FieldException
+ */
+function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = FALSE, $calculation = FALSE, $display = array()) {
+
+  $field = field_info_field($field_name);
+  $instance = field_info_instance($entity_type, $field_name, $bundle);
+
+  if (empty($field)) {
+    $field = array(
+      'field_name' => $field_name,
+      'type' => 'commerce_price',
+      'cardinality' => 1,
+      'entity_types' => array($entity_type),
+      'translatable' => FALSE,
+      'locked' => $locked,
+    );
+    $field = field_create_field($field);
+  }
+
+  if (empty($instance)) {
+    $instance = array(
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'description' => $description,
+
+      'label' => $label,
+      'required' => TRUE,
+      'settings' => array(),
+
+      // Because this widget is locked, we need it to use the full price widget
+      // since the currency option can't be adjusted at the moment.
+      'widget' => array(
+        'type' => 'commerce_price_full',
+        'weight' => $weight,
+        'settings' => array(
+          'currency_code' => 'default',
+        ),
+      ),
+
+      'display' => array(),
+    );
+
+    $entity_info = entity_get_info($entity_type);
+
+    // Spoof the default view mode and node teaser so its display type is set.
+    $entity_info['view modes'] += array(
+      'default' => array(),
+      'node_teaser' => array(),
+    );
+
+    foreach ($entity_info['view modes'] as $view_mode => $data) {
+      $instance['display'][$view_mode] = $display + array(
+        'label' => 'hidden',
+        'type' => 'commerce_price_formatted_amount',
+        'settings' => array(
+          'calculation' => $calculation,
+        ),
+        'weight' => $weight,
+      );
+    }
+
+    field_create_instance($instance);
+  }
+}

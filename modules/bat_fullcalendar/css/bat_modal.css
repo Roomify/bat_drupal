@@ -1,0 +1,114 @@
+/* When modals are enabled, add hover effect to calendar. */
+.fc-event:hover {
+  cursor: pointer;
+}
+.fc-widget-content:hover {
+  cursor: default;
+  background: rgba(230,230,230, 0.2);
+}
+
+/* Make modals responsive. */
+.page-admin-bat #modalContent,
+.page-admin-bat #modalContent .ctools-modal-content,
+.page-admin-bat #modalContent .ctools-modal-content .modal-content {
+  max-width: 100% !important;
+}
+
+/* Account for the extra div coming from ctools_modal_form_render() */
+.page-admin-bat .messages div.messages {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+.page-admin-bat .ctools-modal-content {
+  font-size: 12px;
+  border: solid 1px #ddd;
+  -webkit-border-radius: 0.5em;
+  -moz-border-radius: 0.5em;
+  border-radius: 0.5em;
+  -webkit-box-shadow: -1em 1em 1em rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: -1em 1em 1em rgba(0, 0, 0, 0.5);
+  box-shadow: -1em 1em 1em rgba(0, 0, 0, 0.5);
+  background: #FFF;
+  height: 100% !important;
+}
+.page-admin-bat .ctools-modal-content .modal-header {
+  background: #fff url('../images/bg-shade-light.png') repeat-x bottom left;
+  color: #777;
+  display: block;
+  font-weight: 700;
+  letter-spacing: normal;
+  padding: 0.25em 1em;
+  -webkit-border-radius: 0.5em 0.5em 0 0;
+  -moz-border-radius: 0.5em 0.5em 0 0;
+  border-radius: 0.5em 0.5em 0 0;
+}
+.page-admin-bat .ctools-modal-content .modal-title {
+  font-size: 120%;
+  font-weight: bold;
+  text-shadow: #fff 1px 1px 1px;
+  color: #555;
+}
+.page-admin-bat .ctools-modal-content .modal-content {
+  width: 92% !important;
+  padding: 20px 4%;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 100% !important;
+  min-height: 475px !important;
+}
+.page-admin-bat .ctools-modal-content a.close {
+  color: #666;
+  font-weight: normal;
+  padding-left: 1.6em;
+  background: url('../images/close.png') no-repeat 0 50%;
+}
+.page-admin-bat .ctools-modal-content a.close img {
+  display: none;
+}
+
+/** modal forms CSS **/
+.page-admin-bat .ctools-modal-content .form-item label {
+  width: 100%;
+  float: none;
+  clear: both;
+}
+.page-admin-bat .ctools-modal-content .resizable-textarea {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Override unit form layouts when they appear inside CTools modals. */
+.page-admin-bat .modal-content .bat-management-form fieldset,
+.page-admin-bat .modal-content .bat-management-form .form-wrapper {
+  float: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-right: 0 !important;
+}
+.page-admin-bat .modal-content .bat-management-form .form-item label {
+  float: none;
+  width: auto;
+}
+.page-admin-bat .modal-content .bat-management-form .form-type-select,
+.page-admin-bat .modal-content .bat-management-form .form-item-operation,
+.page-admin-bat .modal-content .bat-management-form .form-item-amount,
+.page-admin-bat .modal-content .bat-management-form .form-actions {
+  float: none;
+  margin: 0;
+  clear: both;
+}
+.page-admin-bat .modal-content .bat-management-form .bat-date-range {
+  float: left !important;
+  margin-right: 4% !important;
+  width: 45% !important;
+  max-width: 45% !important;
+  min-width: 125px !important;
+  clear: none;
+}

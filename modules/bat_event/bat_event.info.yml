@@ -1,0 +1,8 @@
+name: BAT Event
+type: module
+description: Create and administer events for BAT.
+core: 8.x
+package: bat
+
+dependencies:
+  - bat_unit

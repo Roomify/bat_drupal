@@ -1,0 +1,18 @@
+entity.state.add_form:
+  route_name: 'entity.state.add_form'
+  title: 'Add State'
+  appears_on:
+    - entity.state.collection
+
+entity.event.add_form:
+  route_name: entity.event.add_form
+  title: 'Add Event'
+  appears_on:
+    - entity.event.collection
+    - entity.event.canonical
+
+entity.event_type.type_add:
+  route_name: entity.event_type.type_add
+  title: 'Add event type'
+  appears_on:
+    - entity.event_type.collection

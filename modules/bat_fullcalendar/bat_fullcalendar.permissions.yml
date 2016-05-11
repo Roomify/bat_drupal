@@ -1,0 +1,7 @@
+administer calendar events:
+  title: 'Administer calendar events'
+  description: 'Allows users to manipulate events on calendar.'
+
+view past event information:
+  title: 'View past event information'
+  description: 'Allow users to view event info in the past (especially via event reference field).'

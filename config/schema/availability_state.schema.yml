@@ -1,6 +1,6 @@
-bat.availability_state.*:
+bat.state.*:
   type: config_entity
-  label: 'Availability State config'
+  label: 'State config'
   mapping:
     id:
       type: string

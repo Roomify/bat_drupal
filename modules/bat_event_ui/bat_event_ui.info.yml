@@ -1,0 +1,8 @@
+name: BAT Event UI
+type: module
+description: Interface support to the BAT Event module.
+core: 8.x
+package: bat
+
+dependencies:
+  - bat_fullcalendar

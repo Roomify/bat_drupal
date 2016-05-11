@@ -1,0 +1,26 @@
+bat.admin.events:
+  title: 'Events'
+  route_name: bat.admin.events
+  description: 'A list of all events.'
+  parent: bat.admin
+
+# State menu items definition
+entity.state.collection:
+  title: 'Event State'
+  route_name: entity.state.collection
+  description: 'List Event State'
+  parent: bat.admin.events
+
+# Event menu items definition
+entity.event.collection:
+  title: 'Event list'
+  route_name: entity.event.collection
+  description: 'List Event entities'
+  parent: bat.admin.events
+
+# Event Type menu items definition
+entity.event_type.collection:
+  title: 'Event Type list'
+  route_name: entity.event_type.collection
+  description: 'List Event Types'
+  parent: bat.admin.events

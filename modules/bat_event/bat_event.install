@@ -1,0 +1,119 @@
+<?php
+
+/**
+ * @file
+ * Sets up the base table for our entity and a table to store information about
+ * the entity types.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function bat_event_uninstall() {
+  /*$event_types = db_select('bat_event_type', 'b')
+                  ->fields('b', array('type'))
+                  ->execute()
+                  ->fetchAll();
+
+  foreach ($event_types as $event_type) {
+    bat_event_delete_event_type_schema($event_type->type);
+  }*/
+}
+
+/**
+ * Implements hook_field_schema().
+ */
+function bat_event_field_schema($field) {
+  $columns = array(
+    'state_id' => array(
+      'type'     => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+    ),
+  );
+  return array(
+    'columns' => $columns,
+    'indexes' => array('state_id' => array('state_id')),
+    'foreign keys' => array(
+      'state_id' => array(
+        'table' => 'bat_event_state',
+        'columns' => array('state_id' => 'state_id'),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_schema().
+ */
+function bat_event_schema() {
+  $schema = array();
+
+  $schema['bat_event_state'] = array(
+    'description' => 'Stores information about defined event states.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique event state identifier.',
+      ),
+      'machine_name' => array(
+        'description' => 'Machine name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'event_type' => array(
+        'description' => 'Event type machine name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'label' => array(
+        'description' => 'The human-readable name of this event state.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'color' => array(
+        'description' => 'The color hex.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'calendar_label' => array(
+        'description' => 'The calendar label.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'locked' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Lock.',
+      ),
+      'blocking' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Blocking.',
+      ),
+      'default_state' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Default state.',
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}

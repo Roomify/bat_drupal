@@ -1,0 +1,7 @@
+.fc-timeline-event {
+  height: 120%;
+}
+
+.open_event_states .fc-bgevent {
+  opacity: 0.8;
+}

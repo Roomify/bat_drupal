@@ -10,5 +10,7 @@
     "issues": "http://drupal.org/project/issues/bat",
     "source": "http://cgit.drupalcode.org/bat"
   },
-  "require": { }
+  "require": {
+    "roomify/bat": "dev-master"
+  }
 }

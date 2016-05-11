@@ -1,0 +1,25 @@
+entity.unit_type.add:
+  route_name: entity.unit_type.add
+  title: 'Add Type'
+  appears_on:
+    - entity.unit_type.collection
+    - entity.unit_type.canonical
+
+entity.unit.add_form:
+  route_name: entity.unit.add_form
+  title: 'Add Unit'
+  appears_on:
+    - entity.unit.collection
+    - entity.unit.canonical
+
+entity.type_bundle.type_add:
+  route_name: entity.type_bundle.type_add
+  title: 'Add type bundle'
+  appears_on:
+    - entity.type_bundle.collection
+
+entity.unit_bundle.type_add:
+  route_name: entity.unit_bundle.type_add
+  title: 'Add unit bundle'
+  appears_on:
+    - entity.unit_bundle.collection

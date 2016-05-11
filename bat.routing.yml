@@ -7,6 +7,14 @@ bat.admin:
   requirements:
     _permission: 'access administration pages'
 
+bat.admin.config:
+  path: '/admin/bat/config'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Configuration'
+  requirements:
+    _permission: 'access administration pages'
+
 # Property routing definition
 entity.property.canonical:
   path: '/admin/bat/property/{property}'
@@ -24,13 +32,28 @@ entity.property.collection:
   requirements:
     _permission: 'view property entities'
 
-entity.property.add_form:
+entity.property.add_page:
   path: '/admin/bat/property/add'
   defaults:
-    _entity_form: property.add
-    _title: 'Add Property'
+    _title: 'Add property'
+    _controller: '\Drupal\bat\Controller\PropertyController::addPage'
+  requirements:
+    _permission: 'add unit type entities'
+  options:
+    _admin_route: TRUE
+
+entity.property.add_form:
+  path: '/admin/bat/property/add/{property_type}'
+  defaults:
+    _controller: '\Drupal\bat\Controller\PropertyController::add'
+    _title_callback: '\Drupal\bat\Controller\PropertyController::addPageTitle'
   requirements:
     _permission: 'add property entities'
+  options:
+    _admin_route: TRUE
+    parameters:
+      property_type:
+        with_config_overrides: TRUE
 
 entity.property.edit_form:
   path: '/admin/bat/property/{property}/edit'
@@ -48,239 +71,46 @@ entity.property.delete_form:
   requirements:
     _permission: 'delete property entities'
 
-property.settings:
-  path: 'admin/bat/property/settings'
+entity.property_type.collection:
+  path: '/admin/bat/property-types'
   defaults:
-   _form: '\Drupal\bat\Entity\Form\PropertySettingsForm'
-   _title: 'Property settings'
+    _entity_list: 'property_type'
+    _title: 'Property type list'
   requirements:
-    _permission: 'administer property entities'
-
-
-# UnitType routing definition
-entity.unit_type.canonical:
-  path: '/admin/bat/unit_type/{unit_type}'
-  defaults:
-    _entity_view: 'unit_type'
-    _title: 'Unit type'
-  requirements:
-    _entity_access: 'unit_type.view'
+    _permission: 'view event entities'
   options:
     _admin_route: TRUE
 
-entity.unit_type.collection:
-  path: '/admin/bat/unit_type'
+entity.property_type.type_add:
+  path: '/admin/bat/property-types/add'
   defaults:
-    _entity_list: 'unit_type'
-    _title: 'Unit type list'
+    _entity_form: 'property_type.add'
+    _title: 'Add property type'
   requirements:
-    _permission: 'view unit type entities'
+    _permission: 'administer content types'
+
+entity.property_type.edit_form:
+  path: '/admin/bat/property-types/{property_type}/edit'
+  defaults:
+    _entity_form: property_type.edit
+    _title: 'Edit property type'
+  requirements:
+    _permission: 'edit event entities'
   options:
     _admin_route: TRUE
 
-entity.unit_type.add_form:
-  path: '/admin/bat/unit_type/add'
+entity.property_type.delete_form:
+  path: '/admin/bat/property-types/{property_type}/delete'
   defaults:
-    _entity_form: unit_type.add
-    _title: 'Add Unit type'
+    _entity_form: 'property_type.delete'
+    _title: 'Delete'
   requirements:
-    _permission: 'add unit type entities'
-  options:
-    _admin_route: TRUE
+    _entity_access: 'property_type.delete'
 
-entity.unit_type.edit_form:
-  path: '/admin/bat/unit_type/{unit_type}/edit'
+bat.admin.date_format:
+  path: '/admin/bat/config/date-format'
   defaults:
-    _entity_form: unit_type.edit
-    _title: 'Edit Unit type'
+    _form: '\Drupal\bat\Form\DateFormatForm'
+    _title: 'Date format'
   requirements:
-    _permission: 'edit unit type entities'
-  options:
-    _admin_route: TRUE
-
-entity.unit_type.delete_form:
-  path: '/admin/bat/unit_type/{unit_type}/delete'
-  defaults:
-    _entity_form: unit_type.delete
-    _title: 'Delete Unit type'
-  requirements:
-    _permission: 'delete unit type entities'
-  options:
-    _admin_route: TRUE
-
-unit_type.settings:
-  path: 'admin/bat/unit_type/settings'
-  defaults:
-   _form: '\Drupal\bat\Entity\Form\UnitTypeSettingsForm'
-   _title: 'Unit type settings'
-  requirements:
-    _permission: 'administer unit type entities'
-  options:
-    _admin_route: TRUE
-
-
-# Unit routing definition
-entity.unit.canonical:
-  path: '/admin/bat/unit/{unit}'
-  defaults:
-    _entity_view: 'unit'
-    _title: 'Unit'
-  requirements:
-    _entity_access: 'unit.view'
-  options:
-    _admin_route: TRUE
-
-entity.unit.collection:
-  path: '/admin/bat/unit'
-  defaults:
-    _entity_list: 'unit'
-    _title: 'Unit list'
-  requirements:
-    _permission: 'view unit entities'
-  options:
-    _admin_route: TRUE
-
-entity.unit.add_form:
-  path: '/admin/bat/unit/add'
-  defaults:
-    _entity_form: unit.add
-    _title: 'Add Unit'
-  requirements:
-    _permission: 'add unit entities'
-  options:
-    _admin_route: TRUE
-
-entity.unit.edit_form:
-  path: '/admin/bat/unit/{unit}/edit'
-  defaults:
-    _entity_form: unit.edit
-    _title: 'Edit Unit'
-  requirements:
-    _permission: 'edit unit entities'
-  options:
-    _admin_route: TRUE
-
-entity.unit.delete_form:
-  path: '/admin/bat/unit/{unit}/delete'
-  defaults:
-    _entity_form: unit.delete
-    _title: 'Delete Unit'
-  requirements:
-    _permission: 'delete unit entities'
-  options:
-    _admin_route: TRUE
-
-unit.settings:
-  path: 'admin/bat/unit/settings'
-  defaults:
-   _form: '\Drupal\bat\Entity\Form\UnitSettingsForm'
-   _title: 'Unit settings'
-  requirements:
-    _permission: 'administer unit entities'
-  options:
-    _admin_route: TRUE
-
-
-# AvailabilityState routing definition
-entity.availability_state.collection:
-  path: '/admin/bat/availability_state'
-  defaults:
-    _entity_list: 'availability_state'
-    _title: 'Availability State'
-  requirements:
-    _permission: 'administer site configuration'
-  options:
-    _admin_route: TRUE
-
-entity.availability_state.add_form:
-  path: '/admin/bat/availability_state/add'
-  defaults:
-    _entity_form: 'availability_state.add'
-    _title: 'Add Availability State'
-  requirements:
-    _permission: 'administer site configuration'
-  options:
-    _admin_route: TRUE
-
-entity.availability_state.edit_form:
-  path: '/admin/bat/availability_state/{availability_state}'
-  defaults:
-    _entity_form: 'availability_state.edit'
-    _title: 'Edit Availability State'
-  requirements:
-    _permission: 'administer site configuration'
-  options:
-    _admin_route: TRUE
-
-entity.availability_state.delete_form:
-  path: '/admin/bat/availability_state/{availability_state}/delete'
-  defaults:
-    _entity_form: 'availability_state.delete'
-    _title: 'Delete Availability State'
-  requirements:
-    _permission: 'administer site configuration'
-  options:
-    _admin_route: TRUE
-
-
-# AvailabilityEvent routing definition
-entity.availability_event.canonical:
-  path: '/admin/bat/availability_event/{availability_event}'
-  defaults:
-    _entity_view: 'availability_event'
-    _title: 'Availability Event'
-  requirements:
-    _entity_access: 'availability_event.view'
-  options:
-    _admin_route: TRUE
-
-entity.availability_event.collection:
-  path: '/admin/bat/availability_event'
-  defaults:
-    _entity_list: 'availability_event'
-    _title: 'Availability Event list'
-  requirements:
-    _permission: 'view availability event entities'
-  options:
-    _admin_route: TRUE
-
-entity.availability_event.add_form:
-  path: '/admin/bat/availability_event/add'
-  defaults:
-    _entity_form: availability_event.add
-    _title: 'Add Availability Event'
-  requirements:
-    _permission: 'add availability event entities'
-  options:
-    _admin_route: TRUE
-
-entity.availability_event.edit_form:
-  path: '/admin/bat/availability_event/{availability_event}/edit'
-  defaults:
-    _entity_form: availability_event.edit
-    _title: 'Edit Availability Event'
-  requirements:
-    _permission: 'edit availability event entities'
-  options:
-    _admin_route: TRUE
-
-entity.availability_event.delete_form:
-  path: '/admin/bat/availability_event/{availability_event}/delete'
-  defaults:
-    _entity_form: availability_event.delete
-    _title: 'Delete Availability Event'
-  requirements:
-    _permission: 'delete availability event entities'
-  options:
-    _admin_route: TRUE
-
-availability_event.settings:
-  path: 'admin/bat/availability_event/settings'
-  defaults:
-   _form: '\Drupal\bat\Entity\Form\AvailabilityEventSettingsForm'
-   _title: 'Availability Event settings'
-  requirements:
-    _permission: 'administer availability event entities'
-  options:
-    _admin_route: TRUE
-
+    _permission: 'access administration pages'

@@ -1,0 +1,7 @@
+bat_event_ui.calendar:
+  path: '/admin/bat/calendar'
+  defaults:
+    _controller: '\Drupal\bat_event_ui\Controller\BatEventUIController::calendarPage'
+    _title: 'Calendar'
+  requirements:
+    _permission: 'administer calendar events'

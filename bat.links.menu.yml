@@ -5,62 +5,27 @@ bat.admin:
   description: 'Administer Bat'
   parent: system.admin
 
+bat.admin.config:
+  title: 'Configuration'
+  route_name: bat.admin.config
+  description: 'Configure settings and business rules for BAT management.'
+  parent: bat.admin
+
 # Property menu items definition
 entity.property.collection:
   title: 'Property list'
   route_name: entity.property.collection
   description: 'List Properties'
-  parent: bat.admin
+  parent: bat.admin.config
 
-property.admin.structure.settings:
-  title: Property settings
-  description: 'Configure Properties'
-  route_name: property.settings
-  parent: bat.admin
+entity.property_type.collection:
+  title: 'Property type list'
+  route_name: entity.property_type.collection
+  description: 'List Property Types'
+  parent: bat.admin.config
 
-# Unit type menu items definition
-entity.unit_type.collection:
-  title: 'Unit type list'
-  route_name: entity.unit_type.collection
-  description: 'List Unit types'
-  parent: bat.admin
-
-unit_type.admin.structure.settings:
-  title: Unit type settings
-  description: 'Configure Unit types'
-  route_name: unit_type.settings
-  parent: bat.admin
-
-# Unit menu items definition
-entity.unit.collection:
-  title: 'Unit list'
-  route_name: entity.unit.collection
-  description: 'List Units'
-  parent: bat.admin
-
-unit.admin.structure.settings:
-  title: Unit settings
-  description: 'Configure Units'
-  route_name: unit.settings
-  parent: bat.admin
-
-# Availability State menu items definition
-entity.availability_state.collection:
-  title: 'Availability State'
-  route_name: entity.availability_state.collection
-  description: 'List Availability State'
-  parent: bat.admin
-
-# Availability Event menu items definition
-entity.availability_event.collection:
-  title: 'Availability Event list'
-  route_name: entity.availability_event.collection
-  description: 'List Availability Event entities'
-  parent: bat.admin
-
-availability_event.admin.structure.settings:
-  title: Availability Event settings
-  description: 'Configure Availability Event entities'
-  route_name: availability_event.settings
-  parent: bat.admin
-
+bat.admin.date_format:
+  title: 'Date format'
+  route_name: bat.admin.date_format
+  description: 'Configure date format.'
+  parent: bat.admin.config

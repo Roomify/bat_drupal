@@ -1,0 +1,25 @@
+# Unit type menu items definition
+entity.unit_type.collection:
+  title: 'Types list'
+  route_name: entity.unit_type.collection
+  description: 'List types'
+  parent: bat.admin.config
+
+# Unit menu items definition
+entity.unit.collection:
+  title: 'Units list'
+  route_name: entity.unit.collection
+  description: 'List Units'
+  parent: bat.admin.config
+
+entity.type_bundle.collection:
+  title: 'Type Bundles list'
+  route_name: entity.type_bundle.collection
+  description: 'List Type Bundles'
+  parent: bat.admin.config
+
+entity.unit_bundle.collection:
+  title: 'Unit Bundles list'
+  route_name: entity.unit_bundle.collection
+  description: 'List Unit Bundles'
+  parent: bat.admin.config

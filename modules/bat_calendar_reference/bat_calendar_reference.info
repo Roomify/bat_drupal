@@ -1,0 +1,7 @@
+name = BAT Calendar Reference
+description = Provides a field to reference and display event information on any fieldable entity.
+core = 7.x
+
+package = BAT
+
+dependencies[] = bat_fullcalendar

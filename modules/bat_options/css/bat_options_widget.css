@@ -1,0 +1,14 @@
+.field-widget-bat-options-combined .field-multiple-table .form-item {
+  float: left;
+  margin-right: 20px;
+}
+
+.field-widget-bat-options-combined .bat_options-option--remove-button {
+  clear: both;
+  float: right;
+}
+
+.field-widget-bat-options-combined .ajax-progress {
+  float: right;
+  margin: 5px 10px 0 0;
+}

@@ -1,0 +1,5 @@
+bat_fullcalendar.fullcalendar:
+  title: 'Fullcalendar'
+  route_name: bat_fullcalendar.fullcalendar
+  description: 'Configure settings for Fullcalendar.'
+  parent: bat.admin.config

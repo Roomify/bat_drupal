@@ -1,0 +1,44 @@
+/* Unit bundle edit form */
+.bat-unit-bundle-edit-form .form-wrapper {
+  margin: 0 20px 0.4em 0;
+}
+
+.bat-unit-bundle-edit-form .form-item {
+  margin-bottom: 1em;
+}
+
+.bat-unit-bundle-edit-form .form-item label,
+.bat-unit-bundle-edit-form .form-wrapper legend {
+  margin-bottom: 0.2em;
+}
+
+.bat-unit-bundle-edit-form .form-item label,
+.bat-unit-bundle-edit-form .form-wrapper .fieldset-legend {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.bat-unit-bundle-edit-form .form-checkbox + label {
+  font-weight: normal;
+}
+
+.bat-unit-bundle-edit-form .form-checkbox:checked + label {
+  font-weight: bold;
+}
+
+.bat-unit-bundle-edit-form .form-actions {
+  clear: both;
+}
+
+.bat-unit-bundle-edit-form .form-item-name {
+  float: left;
+  width: 15em;
+  margin-right: 20px;
+}
+
+.bat-unit-bundle-edit-form .bat-unit-bundle-reference,
+.bat-unit-bundle-edit-form .bat-unit-bundle-defaults {
+  float: none;
+  width: 100%;
+  max-width: 100%;
+}

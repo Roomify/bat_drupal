@@ -1,0 +1,201 @@
+# UnitType routing definition
+entity.unit_type.canonical:
+  path: '/admin/bat/unit_type/{unit_type}'
+  defaults:
+    _entity_view: 'unit_type'
+    _title: 'Unit type'
+  requirements:
+    _entity_access: 'unit_type.view'
+  options:
+    _admin_route: TRUE
+
+entity.unit_type.collection:
+  path: '/admin/bat/unit_type'
+  defaults:
+    _entity_list: 'unit_type'
+    _title: 'Unit type list'
+  requirements:
+    _permission: 'view unit type entities'
+  options:
+    _admin_route: TRUE
+
+entity.unit_type.add_page:
+  path: '/admin/bat/unit_type/add'
+  defaults:
+    _title: 'Add type'
+    _controller: '\Drupal\bat_unit\Controller\TypeController::addPage'
+  requirements:
+    _permission: 'add unit type entities'
+  options:
+    _admin_route: TRUE
+
+entity.unit_type.add:
+  path: '/admin/bat/unit_type/add/{type_bundle}'
+  defaults:
+    _controller: '\Drupal\bat_unit\Controller\TypeController::add'
+    _title_callback: '\Drupal\bat_unit\Controller\TypeController::addPageTitle'
+  requirements:
+    _permission: 'add unit type entities'
+  options:
+    _admin_route: TRUE
+    parameters:
+      type_bundle:
+        type: entity:type_bundle
+        with_config_overrides: TRUE
+
+entity.unit_type.edit_form:
+  path: '/admin/bat/unit_type/{unit_type}/edit'
+  defaults:
+    _entity_form: unit_type.edit
+    _title: 'Edit Type'
+  requirements:
+    _permission: 'edit unit type entities'
+  options:
+    _admin_route: TRUE
+
+entity.unit_type.delete_form:
+  path: '/admin/bat/unit_type/{unit_type}/delete'
+  defaults:
+    _entity_form: unit_type.delete
+    _title: 'Delete Type'
+  requirements:
+    _permission: 'delete unit type entities'
+  options:
+    _admin_route: TRUE
+
+# Unit routing definition
+entity.unit.canonical:
+  path: '/admin/bat/unit/{unit}'
+  defaults:
+    _entity_view: 'unit'
+    _title: 'Unit'
+  requirements:
+    _entity_access: 'unit.view'
+  options:
+    _admin_route: TRUE
+
+entity.unit.collection:
+  path: '/admin/bat/unit'
+  defaults:
+    _entity_list: 'unit'
+    _title: 'Unit list'
+  requirements:
+    _permission: 'view unit entities'
+  options:
+    _admin_route: TRUE
+
+entity.unit.add_page:
+  path: '/admin/bat/unit/add'
+  defaults:
+    _title: 'Add unit'
+    _controller: '\Drupal\bat_unit\Controller\UnitController::addPage'
+  requirements:
+    _permission: 'add unit entities'
+  options:
+    _admin_route: TRUE
+
+entity.unit.add_form:
+  path: '/admin/bat/unit/add/{unit_bundle}'
+  defaults:
+    _controller: '\Drupal\bat_unit\Controller\UnitController::add'
+    _title_callback: '\Drupal\bat_unit\Controller\UnitController::addPageTitle'
+  requirements:
+    _permission: 'add unit entities'
+  options:
+    _admin_route: TRUE
+    parameters:
+      unit_bundle:
+        type: entity:unit_bundle
+        with_config_overrides: TRUE
+
+entity.unit.edit_form:
+  path: '/admin/bat/unit/{unit}/edit'
+  defaults:
+    _entity_form: unit.edit
+    _title: 'Edit Unit'
+  requirements:
+    _permission: 'edit unit entities'
+  options:
+    _admin_route: TRUE
+
+entity.unit.delete_form:
+  path: '/admin/bat/unit/{unit}/delete'
+  defaults:
+    _entity_form: unit.delete
+    _title: 'Delete Unit'
+  requirements:
+    _permission: 'delete unit entities'
+  options:
+    _admin_route: TRUE
+
+entity.type_bundle.collection:
+  path: '/admin/bat/type-bundles'
+  defaults:
+    _entity_list: 'type_bundle'
+    _title: 'Type Bundle list'
+  requirements:
+    _permission: 'view event entities'
+  options:
+    _admin_route: TRUE
+
+entity.type_bundle.type_add:
+  path: '/admin/bat/type-bundles/add'
+  defaults:
+    _entity_form: 'type_bundle.add'
+    _title: 'Add type bundle'
+  requirements:
+    _permission: 'administer content types'
+
+entity.type_bundle.edit_form:
+  path: '/admin/bat/type-bundles/{type_bundle}/edit'
+  defaults:
+    _entity_form: type_bundle.edit
+    _title: 'Edit Type bundle'
+  requirements:
+    _permission: 'edit event entities'
+  options:
+    _admin_route: TRUE
+
+entity.type_bundle.delete_form:
+  path: '/admin/bat/type-bundles/{type_bundle}/delete'
+  defaults:
+    _entity_form: 'type_bundle.delete'
+    _title: 'Delete'
+  requirements:
+    _entity_access: 'type_bundle.delete'
+
+entity.unit_bundle.collection:
+  path: '/admin/bat/unit-bundles'
+  defaults:
+    _entity_list: 'unit_bundle'
+    _title: 'Unit Bundle list'
+  requirements:
+    _permission: 'view event entities'
+  options:
+    _admin_route: TRUE
+
+entity.unit_bundle.type_add:
+  path: '/admin/bat/unit-bundles/add'
+  defaults:
+    _entity_form: 'unit_bundle.add'
+    _title: 'Add unit bundle'
+  requirements:
+    _permission: 'administer content types'
+
+entity.unit_bundle.edit_form:
+  path: '/admin/bat/unit-bundles/{unit_bundle}/edit'
+  defaults:
+    _entity_form: unit_bundle.edit
+    _title: 'Edit Unit bundle'
+  requirements:
+    _permission: 'edit event entities'
+  options:
+    _admin_route: TRUE
+
+entity.unit_bundle.delete_form:
+  path: '/admin/bat/unit-bundles/{unit_bundle}/delete'
+  defaults:
+    _entity_form: 'unit_bundle.delete'
+    _title: 'Delete'
+  requirements:
+    _entity_access: 'unit_bundle.delete'

@@ -1,0 +1,15 @@
+bat_fullcalendar.event_management:
+  path: '/admin/bat/fullcalendar/%/event/%bat_event_type/%/%bat_date/%bat_date'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Event Management'
+  requirements:
+    _permission: 'administer calendar events'
+
+bat_fullcalendar.fullcalendar:
+  path: '/admin/bat/config/fullcalendar'
+  defaults:
+    _form: '\Drupal\bat_fullcalendar\Form\FullcalendarForm'
+    _title: 'Fullcalendar'
+  requirements:
+    _permission: 'administer calendar events'
