@@ -8,7 +8,9 @@
 
 namespace Drupal\bat_unit\Plugin\views\field;
 
-class BatTypeHandlerEditLinkField extends bat_type_handler_link_field {
+use Drupal\views\Plugin\views\field\FieldPluginBase;
+
+class BatTypeHandlerEditLinkField extends FieldPluginBase {
 
   function construct() {
     parent::construct();

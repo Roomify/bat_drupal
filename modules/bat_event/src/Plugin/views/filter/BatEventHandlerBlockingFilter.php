@@ -6,7 +6,9 @@
 
 namespace Drupal\bat_event\Plugin\views\field;
 
-class BatEventHandlerBlockingFilter extends views_handler_filter_boolean_operator {
+use Drupal\views\Plugin\views\filter\BooleanOperator;
+
+class BatEventHandlerBlockingFilter extends BooleanOperator {
   function construct() {
     parent::construct();
 

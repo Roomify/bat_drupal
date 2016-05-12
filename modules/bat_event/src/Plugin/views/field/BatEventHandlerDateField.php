@@ -9,7 +9,9 @@
 
 namespace Drupal\bat_event\Plugin\views\field;
 
-class BatEventHandlerDateField extends views_handler_field_date {
+use Drupal\views\Plugin\views\field\Date;
+
+class BatEventHandlerDateField extends Date {
 
   function construct() {
     parent::construct();

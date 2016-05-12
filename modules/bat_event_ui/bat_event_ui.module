@@ -71,191 +71,19 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
     $calendar_settings['class'] = array('open_event_states');
   }
 
-  //drupal_add_css(drupal_get_path('module', 'bat_event_ui') . '/css/bat_event_ui.css');
-
   $render_array = array(
-    'event_type_form' => \Drupal::formBuilder()->getForm('bat_event_ui_event_type_form', $unit_type, $event_type),
+    'event_type_form' => \Drupal::formBuilder()->getForm('Drupal\bat_event_ui\Form\BatEventUiEventTypeForm', $unit_type, $event_type),
     'bulk_update_form' => array(),
     'calendar' => array(
       '#theme' => 'bat_fullcalendar',
       '#calendar_settings' => $calendar_settings,
+      '#attached' => array('library' => array('bat_event_ui/bat_event_ui')),
     ),
   );
 
-  if ($ev_type->fixed_event_states) {
+  if ($ev_type->fixed_event_states()) {
     $render_array['bulk_update_form'] = \Drupal::formBuilder()->getForm('bat_event_ui_bulk_update_form', $unit_type, $event_type);
   }
 
   return $render_array;
-}
-
-/**
- * Bulk update form.
- */
-function bat_event_ui_bulk_update_form($form, &$form_state, $unit_type, $event_type) {
-  $form['bulk_update'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Update event state'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-
-  $form['bulk_update']['event_type'] = array(
-    '#type' => 'hidden',
-    '#value' => $event_type,
-  );
-
-  if ($unit_type == 'all') {
-    $types = bat_unit_get_types(NULL, TRUE);
-
-    $types_options = array();
-
-    foreach ($types as $type) {
-      $type_bundle = bat_type_bundle_load($type->type);
-
-      if (is_array($type_bundle->default_event_value_field_ids)) {
-        if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
-          $types_options[$type->type_id] = $type->name;
-        }
-      }
-    }
-
-    $form['bulk_update']['type'] = array(
-      '#type' => 'select',
-      '#title' => t('Type'),
-      '#options' => $types_options,
-      '#required' => TRUE,
-    );
-  }
-  else {
-    $form['bulk_update']['type'] = array(
-      '#type' => 'hidden',
-      '#value' => $unit_type,
-    );
-  }
-
-  $form['bulk_update'] += bat_date_range_fields();
-
-  $form['bulk_update']['state'] = array(
-    '#type' => 'select',
-    '#title' => t('State'),
-    '#options' => bat_unit_state_options($event_type, array('blocking' => 0)),
-    '#required' => TRUE,
-  );
-
-  $form['bulk_update']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Update'),
-  );
-
-  return $form;
-}
-
-/**
- * Submit callback for bat_event_ui_bulk_update_form form.
- */
-function bat_event_ui_bulk_update_form_submit($form, &$form_state) {
-  $values = $form_state['values'];
-
-  $start_date = new DateTime($values['bat_start_date']);
-  $end_date = new DateTime($values['bat_end_date']);
-  $end_date->sub(new DateInterval('PT1M'));
-
-  $event_type = $values['event_type'];
-  $event_state = $values['state'];
-  $type = bat_type_load($values['type']);
-
-  $units = bat_unit_load_multiple(FALSE, array('type_id' => $type->type_id));
-
-  foreach ($units as $unit) {
-    $event = bat_event_create(array(
-      'type' => $event_type,
-      'start_date' => $start_date->format('Y-m-d H:i:s'),
-      'end_date' => $end_date->format('Y-m-d H:i:s'),
-      'uid' => $type->uid,
-      'created' => REQUEST_TIME,
-    ));
-
-    $event->event_bat_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit->unit_id;
-    $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $event_state;
-
-    $event->save();
-  }
-}
-
-/**
- * "Event type" and "Unit type" to shows in the calendar view.
- */
-function bat_event_ui_event_type_form($form, &$form_state, $unit_type, $event_type) {
-  if (isset($form_state['values']['event_types'])) {
-    $event_type = $form_state['values']['event_types'];
-  }
-
-  $event_types = bat_event_get_types();
-  foreach ($event_types as $ev_type) {
-    if (user_access('view calendar data for any ' . $ev_type->type . ' event')) {
-      $event_types_options[$ev_type->type] = $ev_type->label;
-    }
-  }
-
-  $form['event_types'] = array(
-    '#type' => 'select',
-    '#title' => 'Event type',
-    '#options' => $event_types_options,
-    '#default_value' => $event_type,
-    '#ajax' => array(
-      'callback' => 'bat_event_ui_event_type_form_callback',
-      'wrapper' => 'unit-type-wrapper',
-    ),
-  );
-
-  $types = bat_unit_get_types();
-  if (!empty($types)) {
-    $types_options = array(
-      'all' => t('All'),
-    );
-
-    foreach ($types as $type) {
-      $type_bundle = bat_type_bundle_load($type->type);
-
-      if (is_array($type_bundle->default_event_value_field_ids)) {
-        if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
-          $types_options[$type->type_id] = $type->name;
-        }
-      }
-    }
-
-    $form['unit_type'] = array(
-      '#type' => 'select',
-      '#title' => 'Unit type',
-      '#options' => $types_options,
-      '#default_value' => $unit_type,
-      '#prefix' => '<div id="unit-type-wrapper">',
-      '#suffix' => '</div>',
-    );
-  }
-
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => 'Change',
-  );
-
-  return $form;
-}
-
-/**
- * Ajax callback for bat_event_ui_event_type_form form.
- */
-function bat_event_ui_event_type_form_callback($form, &$form_state) {
-  return $form['unit_type'];
-}
-
-/**
- * Submit callback for bat_event_ui_event_type_form form.
- */
-function bat_event_ui_event_type_form_submit($form, &$form_state) {
-  $type = $form_state['values']['unit_type'];
-  $event_type = $form_state['values']['event_types'];
-
-  $form_state['redirect'] = 'admin/bat/calendar/' . $type . '/' . $event_type;
 }

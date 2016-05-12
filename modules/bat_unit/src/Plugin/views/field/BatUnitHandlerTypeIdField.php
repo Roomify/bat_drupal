@@ -8,7 +8,9 @@
 
 namespace Drupal\bat_unit\Plugin\views\field;
 
-class BatUnitHandlerTypeIdField extends views_handler_field {
+use Drupal\views\Plugin\views\field\FieldPluginBase;
+
+class BatUnitHandlerTypeIdField extends FieldPluginBase {
 
   function construct() {
     parent::construct();

@@ -213,14 +213,14 @@ function bat_unit_bundle_access($op, $bundle = NULL, $account = NULL) {
 function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, $context) {
   $account = $context['account'];
 
-  if (user_access('view any bat_unit unpublished entity', $account)) {
+  if ($account->hasPermission('view any bat_unit unpublished entity')) {
     return;
   }
 
   $old_conditions = $conditions;
   $conditions = db_and();
 
-  if ($account->uid && user_access('view own bat_unit unpublished entities', $account)) {
+  if ($account->uid && $account->hasPermission('view own bat_unit unpublished entities')) {
     $or = db_and()
       ->condition($context['base_table'] . '.status', 0)
       ->condition($context['base_table'] . '.uid', $account->uid);
@@ -246,7 +246,7 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
  *   TRUE if the user has add permission, otherwise FALSE.
  */
 function bat_unit_add_access() {
-  if (user_access('administer bat_unit_bundle entities')) {
+  if (\Drupal::currentUser()->hasPermission('administer bat_unit_bundle entities')) {
     // There are no unit bundles defined that the user has permission to
     // create, but the user does have the permission to administer the content
     // types, so grant them access to the page anyway.
@@ -592,14 +592,14 @@ function bat_type_bundle_access($op, $bundle = NULL, $account = NULL) {
 function bat_type_bat_entity_access_view_condition_bat_type_alter(&$conditions, $context) {
   $account = $context['account'];
 
-  if (user_access('view any bat_type unpublished entity', $account)) {
+  if ($account->hasPermission('view any bat_type unpublished entity')) {
     return;
   }
 
   $old_conditions = $conditions;
   $conditions = db_and();
 
-  if ($account->uid && user_access('view own bat_type unpublished entities', $account)) {
+  if ($account->uid && $account->hasPermission('view own bat_type unpublished entities')) {
     $or = db_and()
       ->condition($context['base_table'] . '.status', 0)
       ->condition($context['base_table'] . '.uid', $account->uid);
@@ -625,7 +625,7 @@ function bat_type_bat_entity_access_view_condition_bat_type_alter(&$conditions, 
  *   TRUE if the user has add permission, otherwise FALSE.
  */
 function bat_type_add_access() {
-  if (user_access('administer bat_type_bundle entities')) {
+  if (\Drupal::currentUser()->hasPermission('administer bat_type_bundle entities')) {
     // There are no type bundles defined that the user has permission to
     // create, but the user does have the permission to administer the content
     // types, so grant them access to the page anyway.
@@ -652,10 +652,7 @@ function bat_type_add_access() {
  *   Depending whether $bundle isset, an array of type bundles or a single one.
  */
 function bat_unit_get_type_bundles($bundle_name = NULL) {
-  // entity_load() will get the Entity controller for our type entity and call
-  // the load function of that object.
-  //$bundles = entity_load_multiple_by_name('bat_type_bundle', isset($bundle_name) ? array($bundle_name) : FALSE);
-  //return isset($bundle_name) ? reset($bundles) : $bundles;
+  return TypeBundle::loadMultiple();
 }
 
 /**
@@ -668,10 +665,7 @@ function bat_unit_get_type_bundles($bundle_name = NULL) {
  *   Depending whether $bundle isset, an array of types or a single one.
  */
 function bat_unit_get_types($bundle_name = NULL) {
-  // entity_load() will get the Entity controller for our type entity and call
-  // the load function of that object.
-  $bundles = entity_load_multiple_by_name('bat_type', isset($bundle_name) ? array($bundle_name) : FALSE);
-  return isset($bundle_name) ? reset($bundles) : $bundles;
+  return UnitType::loadMultiple();
 }
 
 /**
@@ -702,7 +696,7 @@ function bat_type_bundles_ids() {
  *   A type bundle array or FALSE if $bundle does not exist.
  */
 function bat_type_bundle_load($bundle, $reset = FALSE) {
-  return bat_unit_get_type_bundles($bundle, $reset);
+  TypeBundle::load($bundle);
 }
 
 /**
@@ -761,7 +755,7 @@ function bat_type_delete(BatType $type) {
  *   An array of type IDs.
  */
 function bat_type_delete_multiple(array $type_ids) {
-  entity_get_controller('bat_type')->delete($type_ids);
+  //entity_get_controller('bat_type')->delete($type_ids);
 }
 
 /**
@@ -771,7 +765,7 @@ function bat_type_delete_multiple(array $type_ids) {
  *   The properties for the new type bundle.
  */
 function bat_type_create($values = array()) {
-  return entity_get_controller('bat_type')->create($values);
+  //return entity_get_controller('bat_type')->create($values);
 }
 
 /**
@@ -879,10 +873,10 @@ function bat_type_bundle_ids() {
  * Sets up content to show an individual Bat Type.
  */
 function bat_type_page_view($type, $view_mode = 'full') {
-  $controller = entity_get_controller('bat_type');
+  /*$controller = entity_get_controller('bat_type');
   $content = $controller->view(array($type->type_id => $type), $view_mode);
 
-  drupal_set_title($type->name);
+  drupal_set_title($type->name);*/
 
   return $content;
 }

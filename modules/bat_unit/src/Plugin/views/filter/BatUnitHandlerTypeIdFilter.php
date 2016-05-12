@@ -8,7 +8,9 @@
 
 namespace Drupal\bat_unit\Plugin\views\field;
 
-class BatUnitHandlerTypeIdFilter extends views_handler_filter_many_to_one {
+use Drupal\views\Plugin\views\filter\ManyToOne;
+
+class BatUnitHandlerTypeIdFilter extends ManyToOne {
 
   function construct() {
     parent::construct();

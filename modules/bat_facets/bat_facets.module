@@ -74,7 +74,7 @@ function bat_facets_availability($form, &$form_state, $elements) {
     // Limit bookings to X days in advance, depending on the
     // chosen configuration in your BAT installation, defaults
     // to the current day.
-    'minDate' => '+' . variable_get('bat_event_start_date', 0) . 'd',
+    'minDate' => '+' . $config->get('bat_event_start_date') . 'd',
   );
 
   $date_format = \Drupal::config('bat.settings')->get('date_format') ?: 'Y-m-d H:i';
@@ -103,7 +103,7 @@ function bat_facets_availability($form, &$form_state, $elements) {
         array(
           'data' => array(
             'bat' => array(
-              'batBookingStartDay' => variable_get('bat_event_start_date', 0),
+              'batBookingStartDay' => $config->get('bat_event_start_date'),
               'batDateFormat' => 'dd/mm/yy',
 
               // Here we create a listing of all datepickers registered on the
@@ -226,7 +226,7 @@ function bat_facets_search_api_query_alter($query) {
             'valid_states' => $valid_states,
           );
 
-          drupal_alter('bat_facets_search_results', $valid_type_ids, $context);
+          \Drupal::moduleHandler()->alter('bat_facets_search_results', $valid_type_ids, $context);
 
           // If no types are available, zero out results.
           if (empty($valid_type_ids)) {

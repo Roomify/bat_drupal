@@ -1,0 +1,6 @@
+id: bat
+label: 'BAT Date format'
+status: true
+langcode: en
+locked: true
+pattern: 'Y-m-d H:i'

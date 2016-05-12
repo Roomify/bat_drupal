@@ -7,7 +7,9 @@
 
 namespace Drupal\bat_event\Plugin\views\field;
 
-class BatEventHandlerDateFilter extends views_handler_filter_date {
+use Drupal\views\Plugin\views\filter\Date;
+
+class BatEventHandlerDateFilter extends Date {
 
   function op_simple($field) {
     $query_substitutions = views_views_query_substitutions($this->view);

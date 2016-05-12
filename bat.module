@@ -77,37 +77,6 @@ function template_preprocess_bat_property_add_list(&$variables) {
 }
 
 /**
- * Implements hook_date_format_types().
- */
-function bat_date_format_types() {
-  return array(
-    'bat_daily'  => t('BAT Daily Date format'),
-    'bat'  => t('BAT Date format'),
-  );
-}
-
-/**
- * Implements hook_date_formats().
- */
-function bat_date_formats() {
-  $formats = array();
-  $formats[] = array(
-    'type'    => 'bat_daily',
-    'format'  => variable_get('bat_daily_date_format', 'Y-m-d'),
-    'locales' => array(),
-  );
-  $formats[] = array(
-    'type'    => 'bat',
-    'format'  => variable_get('bat_date_format', 'Y-m-d H:i'),
-    'locales' => array(),
-  );
-  foreach ($formats as $format) {
-    variable_set('date_format_' . $format['type'], $format['format']);
-  }
-  return $formats;
-}
-
-/**
  * Generic access control for entities that BAT defines.
  *
  * @param string $op
@@ -149,7 +118,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
   }
 
   // Grant generic administrator level access.
-  if (user_access('bypass ' . $entity_type . ' entities access', $account)) {
+  if ($account->hasPermission('bypass ' . $entity_type . ' entities access')) {
     $rights[$account->uid][$cid][$op] = TRUE;
     return TRUE;
   }
@@ -177,7 +146,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
       }
     }
     else {
-      $access = user_access('view any ' . $entity_type . ' entity', $account);
+      $access = $account->hasPermission('view any ' . $entity_type . ' entity');
       $rights[$account->uid][$cid][$op] = $access;
       return $access;
     }
@@ -185,7 +154,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
   else { // Non-view operations.
     // First grant access to the entity for the specified operation if no other
     // module denies it and at least one other module says to grant access.
-    $access_results = module_invoke_all('bat_entity_access', $op, $entity, $account, $entity_type);
+    $access_results = \Drupal::moduleHandler()->invokeAll('bat_entity_access', $op, $entity, $account, $entity_type);
 
     if (in_array(FALSE, $access_results, TRUE)) {
       $rights[$account->uid][$cid][$op] = FALSE;
@@ -203,13 +172,13 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
       // Assuming an entity was passed in and we know its bundle key, perform
       // the entity type and bundle-level access checks.
       if (isset($entity) && !empty($entity_info['entity keys']['bundle'])) {
-        $access = user_access('create ' . $entity_type . ' entities', $account) || user_access('create ' . $entity_type . ' entities of bundle ' . $entity->{$entity_info['entity keys']['bundle']}, $account);
+        $access = $account->hasPermission('create ' . $entity_type . ' entities') || $account->hasPermission('create ' . $entity_type . ' entities of bundle ' . $entity->{$entity_info['entity keys']['bundle']});
         $rights[$account->uid][$cid][$op] = $access;
         return $access;
       }
       else {
         // Otherwise perform an entity type-level access check.
-        $access = user_access('create ' . $entity_type . ' entities', $account);
+        $access = $account->hasPermission('create ' . $entity_type . ' entities');
         $rights[$account->uid][$cid][$op] = $access;
         return $access;
       }
@@ -225,16 +194,16 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
 
       // For the delete and delete operations, first perform the entity type and
       // bundle-level access check for any entity.
-      if (user_access($op . ' any ' . $entity_type . ' entity', $account) ||
-          user_access($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name, $account)) {
+      if ($account->hasPermission($op . ' any ' . $entity_type . ' entity') ||
+          $account->hasPermission($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name)) {
         $rights[$account->uid][$cid][$op] = TRUE;
         return TRUE;
       }
 
       // Then check an authenticated user's access to delete his own entities.
       if ($account->uid && !empty($entity_info['access arguments']['user key']) && isset($entity->{$entity_info['access arguments']['user key']}) && $entity->{$entity_info['access arguments']['user key']} == $account->uid) {
-        if (user_access($op . ' own ' . $entity_type . ' entities', $account) ||
-            user_access($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name, $account)) {
+        if ($account->hasPermission($op . ' own ' . $entity_type . ' entities') ||
+            $account->hasPermission($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
           $rights[$account->uid][$cid][$op] = TRUE;
           return TRUE;
         }
@@ -347,8 +316,8 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   }
 
   // Do not apply any conditions for users with administrative view permissions.
-  if (user_access('bypass ' . $entity_type . ' access', $account) ||
-      user_access($op . ' any ' . $entity_type . ' entity', $account)) {
+  if ($account->hasPermission('bypass ' . $entity_type . ' access') ||
+      $account->hasPermission($op . ' any ' . $entity_type . ' entity')) {
     return;
   }
 
@@ -398,12 +367,13 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   // Loop over every possible bundle for the given entity type.
   foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
     // If the user has access to operation entities of the current bundle...
-    if (user_access($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name, $account)) {
+    if ($account->hasPermission($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name)) {
       // Add a condition granting access if the entity specified by the view
       // query is of the same bundle.
       $conditions->condition($base_table . '.' . $entity_info['entity keys']['bundle'], $bundle_name);
     }
-    elseif ($account->uid && !empty($entity_info['access arguments']['user key']) && user_access($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name, $account)) {
+    elseif ($account->uid && !empty($entity_info['access arguments']['user key']) &&
+            $account->hasPermission($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
       // Add an AND condition group that grants access if the entity specified
       // by the view query matches the same bundle and belongs to the user.
       $conditions->condition(db_and()
@@ -417,7 +387,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   if (!empty($entity_info['access arguments']['user key'])) {
     // Perform 'operation own' access control for the entity in the query if the
     // user is authenticated.
-    if ($account->uid && user_access($op . ' own ' . $entity_type . ' entities', $account)) {
+    if ($account->uid && $account->hasPermission($op . ' own ' . $entity_type . ' entities')) {
       $conditions->condition($base_table . '.' . $entity_info['access arguments']['user key'], $account->uid);
     }
   }
@@ -436,7 +406,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   );
 
   // Allow other modules to add conditions to the array as necessary.
-  drupal_alter($hooks, $conditions, $context);
+  \Drupal::moduleHandler()->alter($hooks, $conditions, $context);
 
   // If we have more than one condition based on the entity access permissions
   // and any hook implementations...
@@ -468,6 +438,8 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
 function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_hourly') {
   $date_range_fields = array();
 
+  $config = \Drupal::config('bat.settings');
+
   // Create unique ids and selectors for each datepicker.
   $start_date_id = drupal_html_id('datepicker-start-date');
   $start_date_selector = '#' . $start_date_id . ' .form-text';
@@ -477,20 +449,20 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
 
   // Specify the default datepicker parameters (see date_popup_element_info())
   $datepicker_options = array(
-    'dateFormat' => date_popup_format_to_popup(variable_get('bat_daily_date_format', 'Y-m-d')),
+    'dateFormat' => date_popup_format_to_popup($config->get('bat_daily_date_format')),
     // Limit bookings to X days in advance according to the
     // chosen configuration in your BAT installation.
     // Defaults to the current day.
-    'minDate' => '+' . variable_get('bat_event_start_date', 0) . 'd',
+    'minDate' => '+' . $config->get('bat_event_start_date') . 'd',
   );
 
   if ($year && $month) {
     // Calculate min and max dates of the specified year/month.
     $date = new DateTime();
     $date->setDate($year, $month, 01);
-    $min_date = $date->format(variable_get('bat_daily_date_format', 'Y-m-d'));
+    $min_date = $date->format($config->get('bat_daily_date_format'));
     $date->modify('last day of this month');
-    $max_date = $date->format(variable_get('bat_daily_date_format', 'Y-m-d'));
+    $max_date = $date->format($config->get('bat_daily_date_format'));
     $datepicker_options += array(
       'minDate' => $min_date,
       'maxDate' => $max_date,
@@ -500,7 +472,7 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
   }
   else {
     $datepicker_options += array(
-      'minDate' => '+' . variable_get('bat_event_start_date', 0) . 'd',
+      'minDate' => '+' . $config->get('bat_event_start_date') . 'd',
     );
   }
 
@@ -510,7 +482,7 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
     '#type' => 'date_popup',
     '#title' => t('Event Start'),
     '#date_type' => DATE_DATETIME,
-    '#date_format' => variable_get('bat_daily_date_format', 'Y-m-d'),
+    '#date_format' => $config->get('bat_daily_date_format'),
     '#date_increment' => 1,
     '#date_year_range' => '-1:+3',
     // Default parameters defined above, with an additional parameter
@@ -525,7 +497,7 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
     '#type' => 'date_popup',
     '#title' => t('Event End'),
     '#date_type' => DATE_DATETIME,
-    '#date_format' => variable_get('bat_daily_date_format', 'Y-m-d'),
+    '#date_format' => $config->get('bat_daily_date_format'),
     '#date_increment' => 1,
     '#date_year_range' => '-1:+3',
     // Default parameters defined above, with an additional parameter
@@ -543,7 +515,7 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
             'bat' => array(
               'batStartYear' => $year,
               'batStartMonth' => $month,
-              'batBookingStartDay' => variable_get('bat_event_start_date', 0),
+              'batBookingStartDay' => $config->get('bat_event_start_date'),
               'batDateFormat' => 'dd/mm/yy',
               'batDateGranularity' => $granularity,
 

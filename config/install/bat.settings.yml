@@ -1,2 +1,3 @@
 bat_date_format: 'Y-m-d H:i'
 bat_daily_date_format: 'Y-m-d'
+bat_event_start_date: 0

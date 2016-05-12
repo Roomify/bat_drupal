@@ -35,6 +35,8 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
    * {@inheritdoc}
    */
   public function format(EventInterface $event) {
+    $config = \Drupal::config('bat_fullcalendar.settings');
+
     $editable = FALSE;
 
     // Load the target entity from Drupal
@@ -64,10 +66,10 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
     );
 
     if ($event->getValue() == 0) {
-      $formatted_event['color'] = variable_get('bat_open_state_default_zero_color', '#F3C776');
+      $formatted_event['color'] = $config->get('bat_open_state_default_zero_color');
     }
     else {
-      $formatted_event['color'] = variable_get('bat_open_state_default_color', '#9DDC9D');
+      $formatted_event['color'] = $config->get('bat_open_state_default_color');
     }
 
     if ($this->background) {
@@ -77,7 +79,7 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
     $formatted_event['type'] = $this->event_type->type;
 
     // Allow other modules to alter the event data.
-    drupal_alter('bat_fullcalendar_formatted_event', $formatted_event);
+    \Drupal::moduleHandler()->alter('bat_fullcalendar_formatted_event', $formatted_event);
 
     return $formatted_event;
   }

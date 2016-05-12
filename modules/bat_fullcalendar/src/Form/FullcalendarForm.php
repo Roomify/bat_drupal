@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 
 class FullcalendarForm extends ConfigFormBase {
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -21,56 +21,56 @@ class FullcalendarForm extends ConfigFormBase {
     return ['bat_fullcalendar.settings'];
   }
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-  	$config = $this->config('bat_fullcalendar.settings');
+    $config = $this->config('bat_fullcalendar.settings');
 
-  	$form['bat_fullcalendar_scheduler'] = array(
-	    '#type' => 'container',
-	    '#prefix' => '<div id="label-settings">',
-	    '#suffix' => '</div>',
-	  );
+    $form['bat_fullcalendar_scheduler'] = array(
+      '#type' => 'container',
+      '#prefix' => '<div id="label-settings">',
+      '#suffix' => '</div>',
+    );
 
-	  $form['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_key'] = array(
-	    '#type' => 'radios',
-	    '#title' => t('FullCalendar Scheduler License'),
-	    '#default_value' => $config->get('bat_fullcalendar_scheduler_key'),
-	    '#options' => array(
-	      'commercial' => t('Commercial License'),
-	      'non-commercial' => t('Non-Commercial Creative Commons'),
-	      'gpl' => t('GPL License'),
-	      'none' => t('None'),
-	    ),
-	    '#description' => t('Please visit http://fullcalendar.io/scheduler/license/ to find out about the license terms for the Scheduler View of FullCalendar'),
-	    '#ajax' => array(
-	      'callback' => array($this, 'fullcalendarSettingsAjax'),
-	      'wrapper' => 'label-settings',
-	    ),
-	  );
+    $form['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_key'] = array(
+      '#type' => 'radios',
+      '#title' => t('FullCalendar Scheduler License'),
+      '#default_value' => $config->get('bat_fullcalendar_scheduler_key'),
+      '#options' => array(
+        'commercial' => t('Commercial License'),
+        'non-commercial' => t('Non-Commercial Creative Commons'),
+        'gpl' => t('GPL License'),
+        'none' => t('None'),
+      ),
+      '#description' => t('Please visit http://fullcalendar.io/scheduler/license/ to find out about the license terms for the Scheduler View of FullCalendar'),
+      '#ajax' => array(
+        'callback' => array($this, 'fullcalendarSettingsAjax'),
+        'wrapper' => 'label-settings',
+      ),
+    );
 
-	  if ($form_state->getValues()['bat_fullcalendar_scheduler_key'] == 'commercial' ||
-	  	  ($form_state->getValues()['bat_fullcalendar_scheduler_key'] == '' && $config->get('bat_fullcalendar_scheduler_key') == 'commercial')) {
-	    $form['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_commercial_key'] = array(
-	      '#type' => 'textfield',
-	      '#title' => t('FullCalendar Scheduler Commercial License Key'),
-	      '#required' => TRUE,
-	      '#default_value' => $config->get('bat_fullcalendar_scheduler_commercial_key'),
-	    );
-	  }
+    if ($form_state->getValues()['bat_fullcalendar_scheduler_key'] == 'commercial' ||
+        ($form_state->getValues()['bat_fullcalendar_scheduler_key'] == '' && $config->get('bat_fullcalendar_scheduler_key') == 'commercial')) {
+      $form['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_commercial_key'] = array(
+        '#type' => 'textfield',
+        '#title' => t('FullCalendar Scheduler Commercial License Key'),
+        '#required' => TRUE,
+        '#default_value' => $config->get('bat_fullcalendar_scheduler_commercial_key'),
+      );
+    }
 
-	  return parent::buildForm($form, $form_state);
-	}
+    return parent::buildForm($form, $form_state);
+  }
 
-	/**
-	 * Ajax callback.
-	 */
-	public function fullcalendarSettingsAjax(array &$form, FormStateInterface $form_state) {
-		return $form['bat_fullcalendar_scheduler'];
-	}
+  /**
+   * Ajax callback.
+   */
+  public function fullcalendarSettingsAjax(array &$form, FormStateInterface $form_state) {
+    return $form['bat_fullcalendar_scheduler'];
+  }
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
@@ -81,5 +81,5 @@ class FullcalendarForm extends ConfigFormBase {
 
     parent::submitForm($form, $form_state);
   }
-	
+  
 }

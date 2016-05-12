@@ -6,7 +6,9 @@
 
 namespace Drupal\bat_event\Plugin\views\field;
 
-class BatEventHandlerValueField extends views_handler_field {
+use Drupal\views\Plugin\views\field\FieldPluginBase;
+
+class BatEventHandlerValueField extends FieldPluginBase {
 
   function construct() {
     parent::construct();

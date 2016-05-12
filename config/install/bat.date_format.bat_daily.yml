@@ -1,0 +1,6 @@
+id: bat_daily
+label: 'BAT Daily Date format'
+status: true
+langcode: en
+locked: true
+pattern: 'Y-m-d'

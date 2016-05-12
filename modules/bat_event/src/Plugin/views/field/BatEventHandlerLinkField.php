@@ -8,7 +8,10 @@
 
 namespace Drupal\bat_event\Plugin\views\field;
 
-class BatEventHandlerLinkField extends views_handler_field {
+use Drupal\views\Plugin\views\field\FieldPluginBase;
+
+class BatEventHandlerLinkField extends FieldPluginBase {
+
   function construct() {
     parent::construct();
 
@@ -45,4 +48,5 @@ class BatEventHandlerLinkField extends views_handler_field {
 
     return l($text, 'event/' . $event_id);
   }
+
 }

@@ -5,11 +5,13 @@ namespace Drupal\bat_event_ui\Controller;
 use Drupal\Core\Controller\ControllerBase;
 
 class BatEventUIController extends ControllerBase {
-	function calendarPage() {
-		$page['p'] = array(
-			'#markup' => render(bat_event_ui_calendar_page(1, 'availability')),
+
+	function calendarPage($unit_type, $event_type) {
+		$page['calendar_page'] = array(
+			'#markup' => render(bat_event_ui_calendar_page($unit_type, $event_type)),
 		);
 
 		return $page;
 	}
+
 }

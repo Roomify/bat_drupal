@@ -11,6 +11,8 @@ use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
 
 use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\ViewExecutable;
 use Drupal\bat_event\Entity\EventType;
 
 /**
@@ -100,7 +102,7 @@ function bat_event_type_add_target_entity_field($entity) {
  *
  * FORM_ID = views_exposed_form
  */
-function bat_event_form_views_exposed_form_alter(&$form, &$form_state) {
+function bat_event_form_views_exposed_form_alter(&$form, FormStateInterface $form_state) {
   // Events admin view exposed filters.
   if ($form['#id'] == 'views-exposed-form-events-page-1') {
     $date_format = \Drupal::config('bat.settings')->get('daily_date_format') ?: 'Y-m-d';
@@ -219,181 +221,6 @@ function bat_event_states_get_default($event_type) {
 }
 
 /**
- * Implements form that handles the definition of states for fixed state events
- */
-function bat_event_states_form($form, &$form_state, $event_type) {
-  if ($event_type->fixed_event_states) {
-    $event_states = bat_event_get_states($event_type->type);
-
-    $header = array(t('ID'), t('Machine name'), t('Label'), t('Blocking'), t('Operations'));
-
-    $default_state = 0;
-
-    $rows = array();
-    foreach ($event_states as $event_state) {
-      $operations = array();
-
-      $operations[] = array(
-        'title' => t('Edit'),
-        'href' => 'admin/bat/config/events/event/' . $event_state['id'] . '/edit',
-      );
-
-      if (!$event_state['locked']) {
-        $operations[] = array(
-          'title' => t('Delete'),
-          'href' => 'admin/bat/config/events/event/' . $event_state['id'] . '/delete',
-        );
-      }
-
-      $rows[] = array(
-        $event_state['id'],
-        $event_state['machine_name'],
-        $event_state['label'],
-        $event_state['blocking'],
-        theme('links', array('links' => $operations, 'attributes' => array('class' => array('links', 'inline')))),
-      );
-
-      if ($event_state['default_state']) {
-        $default_state = count($rows) - 1;
-      }
-    }
-
-    if (!empty($rows)) {
-      $form['states'] = array(
-        '#type' => 'tableselect',
-        '#header' => $header,
-        '#options' => $rows,
-        '#multiple' => FALSE,
-        '#default_value' => $default_state,
-        '#prefix' => '<div id="event-state-wrapper">',
-        '#suffix' => '</div>',
-      );
-
-      $form['set_default'] = array(
-        '#type' => 'submit',
-        '#value' => t('Set default state'),
-        '#limit_validation_errors' => array(array('states')),
-        '#submit' => array(),
-        '#ajax' => array(
-          'callback' => 'bat_event_states_form_set_default',
-          'wrapper' => 'event-state-wrapper',
-        ),
-      );
-    }
-
-    $form['new_state'] = array(
-      '#type' => 'fieldset',
-      '#title' => 'Create new state',
-    );
-
-    $form['event_type'] = array(
-      '#type' => 'hidden',
-      '#value' => $event_type->type,
-    );
-
-    $form['new_state']['label'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Label'),
-      '#required' => TRUE,
-    );
-
-    $form['new_state']['machine_name'] = array(
-      '#type' => 'machine_name',
-      '#maxlength' => 32,
-      '#machine_name' => array(
-        'exists' => 'bat_event_get_states',
-        'source' => array('new_state', 'label'),
-      ),
-    );
-
-    $form['new_state']['color'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Color'),
-      '#size' => 12,
-      '#maxlength' => 7,
-      '#element_validate' => array('bat_event_validate_hex_color'),
-      '#dependency' => array('edit-row-options-colors-legend' => array('type')),
-      '#prefix' => '<div class="bat-colorpicker-wrapper form-wrapper">',
-      '#suffix' => '<div class="bat-colorpicker"></div></div>',
-      '#attributes' => array('class' => array('bat-edit-colorpicker')),
-      '#attached' => array(
-        // Add Farbtastic color picker.
-        'library' => array(
-          array('system', 'farbtastic'),
-        ),
-        // Add javascript to trigger the colorpicker.
-        'js' => array(drupal_get_path('module', 'bat_event') . '/js/bat_color.js'),
-      ),
-      '#required' => TRUE,
-    );
-
-    $form['new_state']['calendar_label'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Calendar label'),
-      '#size' => 10,
-      '#maxlength' => 50,
-      '#required' => TRUE,
-    );
-
-    $form['new_state']['blocking'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Blocking'),
-    );
-
-    $form['new_state']['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Add state'),
-    );
-  }
-  else {
-    $form['empty'] = array(
-      '#markup' => t('This event type cannot define fixed states!'),
-    );
-  }
-
-  return $form;
-}
-
-/**
- * Sets the default value for the event
- * @TODO - this may no longer be required
- */
-function bat_event_states_form_set_default($form, &$form_state) {
-  $state = $form_state['values']['states'];
-
-  db_update('bat_event_state')
-    ->fields(array('default_state' => 0))
-    ->condition('event_type', $form['event_type']['#value'])
-    ->execute();
-
-  db_update('bat_event_state')
-    ->fields(array('default_state' => 1))
-    ->condition('id', $form['states']['#options'][$state][0])
-    ->execute();
-
-  drupal_set_message(t('Default state setted!'));
-
-  return $form['states'];
-}
-
-/**
- * Form submit for event states management
- */
-function bat_event_states_form_submit($form, &$form_state) {
-  $event_type = $form_state['values']['event_type'];
-
-  $event_state = array(
-    'label' => $form_state['values']['label'],
-    'color' => $form_state['values']['color'],
-    'calendar_label' => $form_state['values']['calendar_label'],
-    'blocking' => $form_state['values']['blocking'],
-    'machine_name' => $form_state['values']['machine_name'],
-  );
-
-  bat_event_save_state($event_state, $event_type);
-}
-
-/**
  * @param $event_state
  */
 function bat_event_save_state($event_state, $event_type) {
@@ -417,95 +244,6 @@ function bat_event_save_state($event_state, $event_type) {
 
     drupal_write_record('bat_event_state', $event_state);
   }
-}
-
-/**
- * Form to allow user to edit a single event
- */
-function bat_event_states_edit_event_form($form, &$form_state, $event_id) {
-  $state = db_select('bat_event_state', 'n')
-                    ->fields('n', array())
-                    ->condition('id', $event_id)
-                    ->execute()
-                    ->fetchAssoc();
-
-  $form['state_id'] = array(
-    '#type' => 'hidden',
-    '#value' => $event_id,
-  );
-
-  $form['event_type'] = array(
-    '#type' => 'hidden',
-    '#value' => $state['event_type'],
-  );
-
-  $form['label'] = array(
-    '#type' => 'textfield',
-    '#title' => t('State Label'),
-    '#default_value' => $state['label'],
-    '#required' => TRUE,
-  );
-
-  $form['color'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Color'),
-    '#size' => 12,
-    '#maxlength' => 7,
-    '#default_value' => $state['color'],
-    '#element_validate' => array('bat_event_validate_hex_color'),
-    '#dependency' => array('edit-row-options-colors-legend' => array('type')),
-    '#prefix' => '<div class="bat-colorpicker-wrapper form-wrapper">',
-    '#suffix' => '<div class="bat-colorpicker"></div></div>',
-    '#attributes' => array('class' => array('bat-edit-colorpicker')),
-    '#attached' => array(
-      // Add Farbtastic color picker.
-      'library' => array(
-        array('system', 'farbtastic'),
-      ),
-      // Add javascript to trigger the colorpicker.
-      'js' => array(drupal_get_path('module', 'bat_event') . '/js/bat_color.js'),
-    ),
-    '#required' => TRUE,
-  );
-
-  $form['new_state']['calendar_label'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Calendar label'),
-    '#size' => 10,
-    '#maxlength' => 50,
-    '#default_value' => $state['calendar_label'],
-    '#required' => TRUE,
-  );
-
-  $form['new_state']['blocking'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Blocking'),
-    '#default_value' => $state['blocking'],
-  );
-
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Update State'),
-  );
-
-  return $form;
-}
-
-/**
- * Form submit for editing of a single event state
- */
-function bat_event_states_edit_event_form_submit($form, &$form_state) {
-  db_update('bat_event_state')
-    ->fields(array(
-      'label' => $form_state['values']['label'],
-      'color' => $form_state['values']['color'],
-      'calendar_label' => $form_state['values']['calendar_label'],
-      'blocking' => $form_state['values']['blocking'],
-    ))
-    ->condition('id', $form_state['values']['state_id'])
-    ->execute();
-
-  $form_state['redirect'] = 'admin/bat/events/event-types/manage/' . $form_state['values']['event_type'] . '/states';
 }
 
 /**
@@ -571,7 +309,7 @@ function bat_event_access($op, $event = NULL, $account = NULL) {
  *   TRUE if the user has add permission, otherwise FALSE.
  */
 function bat_event_add_access() {
-  if (user_access('administer bat_event_type entities')) {
+  if (\Drupal::currentUser()->hasPermission('administer bat_event_type entities')) {
     // There are no event types defined that the user has permission to create
     // but the user does have the permission to administer the content types, so
     // grant them access to the page anyway.
@@ -639,10 +377,8 @@ function bat_event_types_ids() {
  *   Depending whether $type isset, an array of event types or a single one.
  */
 function bat_event_get_types($type_name = NULL, $reset = FALSE) {
-  // entity_load will get the Entity controller for our event entity and call
-  // the load function of that object.
-  //$types = entity_load_multiple_by_properties('bat_event_type', isset($type_name) ? array('name' => $type_name) : array());
-  //return isset($type_name) ? reset($types) : $types;
+  $types = EventType::loadMultiple();
+  return isset($type_name) ? $types[$type_name] : $types;
 }
 
 /**
@@ -671,9 +407,11 @@ function bat_event_type_load($type) {
  *
  * @see bat_event_load_multiple()
  */
-function bat_event_load($event_id, $reset = FALSE) {
-  $events = bat_event_load_multiple(array($event_id), array(), $reset);
-  return reset($events);
+function bat_event_load($event_id = NULL, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('event')->resetCache(array($nid));
+  }
+  return Event::load($event_id);
 }
 
 /**
@@ -692,8 +430,11 @@ function bat_event_load($event_id, $reset = FALSE) {
  * @see entity_load()
  * @see bat_event_load()
  */
-function bat_event_load_multiple($event_ids = array(), $conditions = array(), $reset = FALSE) {
-  return entity_load('bat_event', $event_ids, $conditions, $reset);
+function bat_event_load_multiple(array $event_ids = NULL, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('event')->resetCache($event_ids);
+  }
+  return Event::loadMultiple($event_ids);
 }
 
 /**
@@ -751,7 +492,7 @@ function bat_event_type_save(BatEventType $type) {
  * Deletes a event type from the db.
  */
 function bat_event_type_delete(EventType $type) {
-  //$type->delete();
+  $type->delete();
 }
 
 /**
@@ -796,19 +537,9 @@ function bat_event_ids($conditions = array()) {
  * Sets up content to show an individual event.
  */
 function bat_event_page_view($event, $view_mode = 'full') {
-  $controller = entity_get_controller('bat_event');
-  $content = $controller->view(array($event->event_id => $event));
+  /*$controller = entity_get_controller('bat_event');
+  $content = $controller->view(array($event->event_id => $event));*/
   return $content;
-}
-
-/**
- * Implements hook_views_api().
- */
-function bat_event_views_api() {
-  return array(
-    'api' => 3,
-    'path' => drupal_get_path('module', 'bat_event') . '/views',
-  );
 }
 
 /**
@@ -1572,7 +1303,7 @@ function bat_event_form_bat_type_bundle_form_submit($form, &$form_state) {
 /**
  * Implements hook_views_pre_render().
  */
-function bat_event_views_pre_render(&$view) {
+function bat_event_views_pre_render(ViewExecutable $view) {
   // Use "BAT PHP Date Format" for event Start date and End date.
   if ($view->base_table == 'bat_events') {
     $date_format = \Drupal::config('bat.settings')->get('date_format') ?: 'Y-m-d H:i';
@@ -1733,10 +1464,10 @@ function bat_event_constraints_get_info() {
       $constraints_info = $cache->data;
     }
     else {
-      $constraints_info = module_invoke_all('bat_event_constraints_info');
+      $constraints_info = \Drupal::moduleHandler()->invokeAll('bat_event_constraints_info');
 
       // Let other modules alter the entity info.
-      drupal_alter('bat_event_constraints_info', $constraints_info);
+      \Drupal::moduleHandler()->alter('bat_event_constraints_info', $constraints_info);
       cache_set('bat_event_constraints_info', $constraints_info);
     }
   }
