@@ -8,6 +8,9 @@ namespace Drupal\bat_event\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 
+/**
+ * @ViewsField("bat_event_handler_duration_field")
+ */
 class BatEventHandlerDurationField extends FieldPluginBase {
   function construct() {
     parent::construct();

@@ -8,9 +8,14 @@
 
 namespace Drupal\bat_unit\Plugin\views\field;
 
+use Drupal\views\ResultRow;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 
+/**
+ * @ViewsField("bat_type_handler_type_calendars_field")
+ */
 class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
+
   function construct() {
     parent::construct();
 
@@ -18,14 +23,14 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
   }
 
   function query() {
-    $this->ensure_my_table();
-    $this->add_additional_fields();
+    $this->ensureMyTable();
+    $this->addAdditionalFields();
   }
 
-  function render($values) {
+  function render(ResultRow $values) {
     $links = array();
 
-    $type = bat_type_load($this->get_value($values, 'type_id'));
+    $type = bat_type_load($this->getValue($values, 'type_id'));
     $type_bundle = bat_type_bundle_load($type->type);
     if (is_array($type_bundle->default_event_value_field_ids)) {
       foreach ($type_bundle->default_event_value_field_ids as $event_type => $field) {
@@ -33,7 +38,7 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
           $event_type_path = 'admin/bat/calendar/' . $type->type_id . '/' . $event_type;
 
           // Check if user has permission to access $event_type_path.
-          if (drupal_valid_path($event_type_path)) {
+          if (\Drupal::service('path.validator')->isValid($event_type_path)) {
             $event_type_label = bat_event_get_types($event_type)->label;
             $links[$field] = array(
               'title' => 'Manage ' . $event_type_label,
@@ -61,4 +66,5 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
       $this->options['exclude'] = TRUE;
     }
   }
+
 }

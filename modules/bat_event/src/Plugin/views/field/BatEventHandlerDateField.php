@@ -11,6 +11,9 @@ namespace Drupal\bat_event\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\Date;
 
+/**
+ * @ViewsField("bat_event_handler_date_field")
+ */
 class BatEventHandlerDateField extends Date {
 
   function construct() {

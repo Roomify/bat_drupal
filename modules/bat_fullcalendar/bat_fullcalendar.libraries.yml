@@ -1,10 +1,24 @@
 fullcalendar:
-  version: 1.x
+  version: VERSION
   js:
-    js/bat_fullcalendar_timeline.js: {}
+    /libraries/fullcalendar/lib/moment.min.js: { minified: true }
+    /libraries/fullcalendar/fullcalendar.min.js: { minified: true }
   dependencies:
     - core/jquery
+  css:
+    theme:
+      css/fullcalendar.theme.css: {}
+      /libraries/fullcalendar/fullcalendar.min.css: { minified: true }
+
+fullcalendar-scheduler:
+  version: VERSION
+  js:
+    /libraries/fullcalendar-scheduler/scheduler.min.js: { minified: true }
+    js/bat_fullcalendar_timeline.js: {}
+  dependencies:
+    - bat_fullcalendar/fullcalendar
     - core/drupalSettings
   css:
     theme:
-    css/bat_fullcalendar_timeline.css: {}
+      css/bat_fullcalendar_timeline.css: {}
+      /libraries/fullcalendar-scheduler/scheduler.min.css: { minified: true }

@@ -105,10 +105,6 @@ function bat_facets_availability($form, &$form_state, $elements) {
             'bat' => array(
               'batBookingStartDay' => $config->get('bat_event_start_date'),
               'batDateFormat' => 'dd/mm/yy',
-
-              // Here we create a listing of all datepickers registered on the
-              // current page. This is available for use in your own custom
-              // jQuery scripts as Drupal.settings.bat.datepickers.
               'datepickers' => array(
                 $start_date_selector => array(
                   'endDateSelector' => $end_date_selector,

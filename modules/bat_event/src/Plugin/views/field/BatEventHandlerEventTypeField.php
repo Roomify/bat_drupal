@@ -10,6 +10,9 @@ namespace Drupal\bat_event\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 
+/**
+ * @ViewsField("bat_event_handler_event_type_field")
+ */
 class BatEventHandlerEventTypeField extends FieldPluginBase {
 
   function construct() {

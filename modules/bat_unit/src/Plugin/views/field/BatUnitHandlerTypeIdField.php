@@ -10,6 +10,9 @@ namespace Drupal\bat_unit\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 
+/**
+ * @ViewsField("bat_unit_handler_type_id_field")
+ */
 class BatUnitHandlerTypeIdField extends FieldPluginBase {
 
   function construct() {

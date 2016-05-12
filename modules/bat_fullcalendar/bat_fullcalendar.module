@@ -211,19 +211,6 @@ function bat_fullcalendar_libraries_info() {
 }
 
 /**
- * Helper function to check if a library is loaded properly or not.
- *
- * @param $name - string fullcalendar or fullcalendar-scheduler
- * @param $variant - string source or minified
- *
- * @return bool
- *   Boolean indicating if the library is properly loaded or not.
- */
-function bat_fullcalendar_library_loaded($name, $variant = 'minified') {
-  return ($library = libraries_load($name, $variant)) && !empty($library['loaded']);
-}
-
-/**
  * Fullcalendar settings.
  *
  * @param $user_settings
@@ -419,22 +406,16 @@ function template_preprocess_bat_fullcalendar(&$variables) {
   // Override default settings with ones coming form user
   $settings = bat_fullcalendar_configure($variables['calendar_settings']['user_settings']);
 
-  // Add FullCalendar JS.
-  bat_fullcalendar_library_loaded($calendar_id);
-
   bat_fullcalendar_modal_style($modal_style);
 
   $attributes = new Attribute($attributes);
 
-  $render_array =  array(
-    '#markup' => '<div' . $attributes->__toString() . '></div>',
-    '#attached' => array(
-      'library' => array('bat_fullcalendar/fullcalendar'),
-      'drupalSettings' => $settings,
-    ),
+  $variables['#attached'] = array(
+    'library' => array('bat_fullcalendar/fullcalendar-scheduler'),
+    'drupalSettings' => $settings,
   );
 
-  return render($render_array);
+  $variables['content'] = array('#markup' => '<div' . $attributes->__toString() . '></div>');
 }
 
 /**

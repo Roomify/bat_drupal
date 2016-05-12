@@ -6,4 +6,3 @@ package: bat
 
 dependencies:
   - bat
-  - libraries

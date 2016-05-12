@@ -10,6 +10,9 @@ namespace Drupal\bat_unit\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 
+/**
+ * @ViewsField("bat_unit_handler_unit_bundle_field")
+ */
 class BatUnitHandlerUnitBundleField extends FieldPluginBase {
 
   function construct() {

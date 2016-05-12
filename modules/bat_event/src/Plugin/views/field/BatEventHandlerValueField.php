@@ -8,6 +8,9 @@ namespace Drupal\bat_event\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 
+/**
+ * @ViewsField("bat_event_handler_value_field")
+ */
 class BatEventHandlerValueField extends FieldPluginBase {
 
   function construct() {

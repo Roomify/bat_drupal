@@ -18,43 +18,12 @@ function bat_unit_views_data_alter(array &$data) {
     'handler' => 'bat_unit_handler_unit_bundle_field',
   );
 
-  $data['unit']['link_unit'] = array(
-    'field' => array(
-      'title' => t('Link'),
-      'help' => t('Provide a link to the unit.'),
-      'handler' => 'bat_unit_handler_link_field',
-    ),
-  );
-  $data['unit']['edit_unit'] = array(
-    'field' => array(
-      'title' => t('Edit Link'),
-      'help' => t('Provide a link to the edit form for the unit.'),
-      'handler' => 'bat_unit_handler_edit_link_field',
-    ),
-  );
-  $data['unit']['delete_unit'] = array(
-    'field' => array(
-      'title' => t('Delete Link'),
-      'help' => t('Provide a link to delete the unit.'),
-      'handler' => 'bat_unit_handler_delete_link_field',
-    ),
-  );
-  // The content of this field is decided based on the menu structure
-  // under bat/unit/%unit_id/op
-  $data['unit']['operations'] = array(
-    'field' => array(
-      'title' => t('Operations links'),
-      'help' => t('Display all operations available for this unit.'),
-      'handler' => 'bat_unit_handler_unit_operations_field',
-    ),
-  );
-
   // Expose the uid as a relationship to users.
   $data['unit']['uid'] = array(
     'title' => t('Uid'),
     'help' => t("The owner's user ID."),
     'field' => array(
-      'handler' => 'views_handler_field_user',
+      'id' => 'views_handler_field_user',
       'click sortable' => TRUE,
     ),
     'argument' => array(
@@ -79,8 +48,8 @@ function bat_unit_views_data_alter(array &$data) {
     ),
   );
 
-  $data['unit']['type_id']['filter']['handler'] = 'bat_unit_handler_type_id_filter';
-  $data['unit']['type_id']['field']['handler'] = 'bat_unit_handler_type_id_field';
+  $data['unit']['type_id']['filter']['id'] = 'bat_unit_handler_type_id_filter';
+  $data['unit']['type_id']['field']['id'] = 'bat_unit_handler_type_id_field';
 
   $data['unit']['type_id']['relationship'] = array(
     'title' => t('Type'),
@@ -92,37 +61,11 @@ function bat_unit_views_data_alter(array &$data) {
     'label' => t('Type'),
   );
 
-  // Views alterations for Bat Types.
-  $data['unit_type']['link_type'] = array(
-    'field' => array(
-      'title' => t('Link'),
-      'help' => t('Provide a link to the Type.'),
-      'handler' => 'bat_type_handler_link_field',
-    ),
-  );
-  $data['unit_type']['edit_type'] = array(
-    'field' => array(
-      'title' => t('Edit Link'),
-      'help' => t('Provide a link to the edit form for the type.'),
-      'handler' => 'bat_type_handler_edit_link_field',
-    ),
-  );
-
   $data['unit_type']['calendars'] = array(
     'field' => array(
       'title' => t('Event Management'),
       'help' => t('Display links to manage all calendars for this Type.'),
-      'handler' => 'bat_type_handler_type_calendars_field',
-    ),
-  );
-
-  // The content of this field is decided based on the menu structure
-  // under bat/config/type/%type_id/op
-  $data['unit_type']['operations'] = array(
-    'field' => array(
-      'title' => t('Operations links'),
-      'help' => t('Display all operations available for this type.'),
-      'handler' => 'bat_type_handler_type_operations_field',
+      'id' => 'bat_type_handler_type_calendars_field',
     ),
   );
 }
