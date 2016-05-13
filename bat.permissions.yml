@@ -1,15 +1,6 @@
-add property entities:
-  title: 'Create new Property entities'
-
 administer property entities:
   title: 'Administer Property entities'
   description: 'Allow to access the administration form to configure Property entities.'
 
-delete property entities:
-  title: 'Delete Property entities'
-
-edit property entities:
-  title: 'Edit Property entities'
-
-view property entities:
-  title: 'View Property entities'
+permission_callbacks:
+  - Drupal\bat\PropertyPermissions::permissions

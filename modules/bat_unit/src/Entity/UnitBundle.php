@@ -21,7 +21,7 @@ use Drupal\bat_unit\UnitBundleInterface;
  *     },
  *     "list_builder" = "Drupal\bat_unit\UnitBundleListBuilder",
  *   },
- *   admin_permission = "administer content types",
+ *   admin_permission = "administer unit_bundle entities",
  *   config_prefix = "unit_bundle",
  *   bundle_of = "unit",
  *   entity_keys = {

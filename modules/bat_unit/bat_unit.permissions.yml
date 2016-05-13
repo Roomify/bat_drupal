@@ -1,31 +1,26 @@
-add unit type entities:
-  title: 'Create new Unit type entities'
+administer unit_bundle entities:
+  title: 'Administer unit bundles'
+  description: 'Allows users to add unit bundles and configure their fields.'
 
-administer unit type entities:
-  title: 'Administer Unit type entities'
-  description: 'Allow to access the administration form to configure Unit type entities.'
+view any bat_unit unpublished entity:
+  title: 'View any unpublished unit'
+  description: 'Allows users to view any unpublished unit.'
 
-delete unit type entities:
-  title: 'Delete Unit type entities'
+view own bat_unit unpublished entities:
+  title: 'View own unpublished units'
+  description: 'Allows users to view own unpublished units.'
 
-edit unit type entities:
-  title: 'Edit Unit type entities'
+administer type_bundle entities:
+  title: 'Administer type bundles'
+  description: 'Allows users to add type bundles and configure their fields.'
 
-view unit type entities:
-  title: 'View Unit type entities'
+view any unit_type unpublished entity:
+  title: 'View any unpublished type'
+  description: 'Allows users to view any unpublished type.'
 
-add unit entities:
-  title: 'Create new Unit entities'
+view own unit_type unpublished entities:
+  title: 'View own unpublished types'
+  description: 'Allows users to view own unpublished types.'
 
-administer unit entities:
-  title: 'Administer Unit entities'
-  description: 'Allow to access the administration form to configure Unit entities.'
-
-delete unit entities:
-  title: 'Delete Unit entities'
-
-edit unit entities:
-  title: 'Edit Unit entities'
-
-view unit entities:
-  title: 'View Unit entities'
+permission_callbacks:
+  - Drupal\bat_unit\UnitPermissions::permissions

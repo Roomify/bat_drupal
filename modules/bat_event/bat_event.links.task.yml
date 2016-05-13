@@ -1,9 +1,4 @@
 # Event routing definition
-event.settings_tab:
-  route_name: event.settings
-  title: 'Settings'
-  base_route: event.settings
-
 entity.event.canonical:
   route_name: entity.event.canonical
   base_route: entity.event.canonical

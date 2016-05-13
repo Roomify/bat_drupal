@@ -21,7 +21,7 @@ use Drupal\bat_unit\TypeBundleInterface;
  *     },
  *     "list_builder" = "Drupal\bat_unit\TypeBundleListBuilder",
  *   },
- *   admin_permission = "administer content types",
+ *   admin_permission = "administer type_bundle entities",
  *   config_prefix = "type_bundle",
  *   bundle_of = "unit_type",
  *   entity_keys = {

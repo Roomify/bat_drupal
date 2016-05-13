@@ -3,13 +3,7 @@ bat.admin:
   route_name: bat.admin
   title: 'Bat Admistration'
 
-
 # Property routing definition
-property.settings_tab:
-  route_name: property.settings
-  title: 'Settings'
-  base_route: property.settings
-
 entity.property.canonical:
   route_name: entity.property.canonical
   base_route: entity.property.canonical
@@ -25,3 +19,8 @@ entity.property.delete_form:
   base_route:  entity.property.canonical
   title: Delete
   weight: 10
+
+entity.property_type.edit_form:
+  route_name: entity.property_type.edit_form
+  base_route: entity.property_type.edit_form
+  title: Edit

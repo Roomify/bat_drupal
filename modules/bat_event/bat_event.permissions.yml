@@ -1,15 +1,6 @@
-add event entities:
-  title: 'Create new Event entities'
+administer event_type entities:
+  title: 'Administer event types'
+  description: 'Allows users to add event types and configure their fields.'
 
-administer event entities:
-  title: 'Administer Event entities'
-  description: 'Allow to access the administration form to configure Event entities.'
-
-delete event entities:
-  title: 'Delete Event entities'
-
-edit event entities:
-  title: 'Edit Event entities'
-
-view event entities:
-  title: 'View Event entities'
+permission_callbacks:
+  - Drupal\bat_event\EventPermissions::permissions

@@ -21,7 +21,7 @@ use Drupal\bat_event\EventTypeInterface;
  *     },
  *     "list_builder" = "Drupal\bat_event\EventTypeListBuilder",
  *   },
- *   admin_permission = "administer content types",
+ *   admin_permission = "administer event_type entities",
  *   config_prefix = "event_type",
  *   bundle_of = "event",
  *   entity_keys = {

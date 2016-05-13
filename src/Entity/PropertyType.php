@@ -21,7 +21,7 @@ use Drupal\bat\PropertyTypeInterface;
  *     },
  *     "list_builder" = "Drupal\bat\PropertyTypeListBuilder",
  *   },
- *   admin_permission = "administer content types",
+ *   admin_permission = "administer property entities",
  *   config_prefix = "property_type",
  *   bundle_of = "property",
  *   entity_keys = {

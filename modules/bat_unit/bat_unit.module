@@ -275,10 +275,8 @@ function bat_unit_add_access() {
  *   Depending whether $bundle isset, an array of unit bundles or a single one.
  */
 function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
-  // entity_load() will get the Entity controller for our unit entity and call
-  // the load function of that object.
-  //$bundles = entity_load_multiple_by_name('bat_unit_bundle', isset($bundle_name) ? array($bundle_name) : FALSE);
-  //return isset($bundle_name) ? reset($bundles) : $bundles;
+  $types = UnitBundle::loadMultiple();
+  return isset($bundle_name) ? $types[$bundle_name] : $types;
 }
 
 /**
@@ -327,7 +325,7 @@ function bat_unit_types_ids() {
  *   A unit bundle array or FALSE if $bundle does not exist.
  */
 function bat_unit_bundle_load($bundle, $reset = FALSE) {
-  return bat_unit_get_bundles($bundle, $reset);
+  //return bat_unit_get_bundles($bundle, $reset);
 }
 
 /**
