@@ -50,7 +50,7 @@ class EventForm extends ContentEntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     $event = $this->entity;
-    $status = $entity->save();
+    $status = $event->save();
 
     switch ($status) {
       case SAVED_NEW:

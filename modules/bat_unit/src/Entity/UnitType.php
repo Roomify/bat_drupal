@@ -14,6 +14,8 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\bat_unit\UnitTypeInterface;
 use Drupal\user\UserInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Defines the Unit type entity.
@@ -181,6 +183,63 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
       ->setSetting('target_type', 'type_bundle');
 
     return $fields;
+  }
+
+  /**
+   *
+   */
+  public function getEventDefaultValue($event_type) {
+    if ($field = $this->getEventValueDefaultField($event_type)) {
+      $field_info = FieldStorageConfig::loadByName($this, $field);
+      $values = $this->getTranslation('und')->get($field);
+
+      if (!empty($values)) {
+        if ($field_info['type'] == 'bat_event_state_reference') {
+          return $values[0]['state_id'];
+        }
+        elseif ($field_info['type'] == 'commerce_price') {
+          return $values[0]['amount'];
+        }
+        elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer') {
+          return $values[0]['value'];
+        }
+      }
+      else {
+        return FALSE;
+      }
+    }
+  }
+
+  /**
+   * @param $event_type
+   *
+   * @return string|FALSE
+   */
+  public function getEventValueFormatter($event_type) {
+    if ($field = $this->getEventValueDefaultField($event_type)) {
+      $field_info_instance = FieldConfig::loadByName('unit_type', $field, $this->type);
+
+      if (isset($field_info_instance['display']['default']['type'])) {
+        return $field_info_instance['display']['default']['type'];
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * @param $event_type
+   *
+   * @return string|FALSE
+   */
+  public function getEventValueDefaultField($event_type) {
+    $type_bundle = bat_type_bundle_load($this->type);
+
+    if (isset($type_bundle->default_event_value_field_ids)) {
+      return $type_bundle->default_event_value_field_ids;
+    }
+
+    return FALSE;
   }
 
 }

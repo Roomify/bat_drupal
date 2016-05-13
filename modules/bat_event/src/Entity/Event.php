@@ -48,7 +48,6 @@ use Roomify\Bat\Unit\Unit;
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",
- *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
  *   },
@@ -190,9 +189,9 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function save() {
-    //$entity->original = entity_load_unchanged($this->entityType, $entity->{$this->idKey});
+    $entity_original = entity_load_unchanged('event', $this->id());
 
-    /*$event_type = bat_event_type_load($entity->type);
+    $event_type = bat_event_type_load($entity_original->bundle());
 
     // Construct target entity reference field name using this event type's target entity type.
     $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
@@ -200,38 +199,40 @@ class Event extends ContentEntityBase implements EventInterface {
     // We are going to be updating the event - so the first step is to remove
     // the old event.
     if (!($this->isNew()) &&
-        ($entity->original->start_date != '') &&
-        ($entity->original->end_date != '') &&
-        (field_get_items('bat_event', $entity->original, $target_field_name) !== FALSE)) {
+        ($entity_original->getStartDate() != '') &&
+        ($entity_original->getEndDate() != '') &&
+        ($entity_original->getTranslation('und')->get($target_field_name) !== FALSE)) {
 
       // Get the referenced entity ID.
-      $event_target_entity_reference = field_get_items('bat_event', $entity->original, $target_field_name);
-      $target_entity_id = $event_target_entity_reference[0]['target_id'];
+      $event_target_entity_reference = $entity_original->getTranslation('und')->get($target_field_name);
+
+      $target_entity_id = $event_target_entity_reference->referencedEntities()[0]->id();
+
       // Load the referenced entity.
-      if ($target_entity = entity_load_single($event_type->target_entity_type, $target_entity_id)) {
-        $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->type));
+      if ($target_entity = entity_load($event_type->target_entity_type, $target_entity_id)) {
+        $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
 
         $this->batStoreSave($unit,
-          new \DateTime($entity->original->start_date),
-          new \DateTime($entity->original->end_date),
-          $event_type->type,
-          $event_type->event_granularity,
+          $entity_original->getStartDate(),
+          $entity_original->getEndDate(),
+          $event_type->id(),
+          $event_type->getEventGranularity(),
           $unit->getDefaultValue(),
-          $entity->event_id,
+          $this->get('id')->value,
           TRUE
         );
       }
-    }*/
+    }
 
     parent::save();
 
     // Now we store the new event.
-    /*if (field_get_items('bat_event', $entity, $target_field_name) !== FALSE) {
+    if ($this->getTranslation('und')->get($target_field_name) !== FALSE) {
 
-      if (isset($event_type->default_event_value_field_ids[$entity->type])) {
-        $field = $event_type->default_event_value_field_ids[$entity->type];
-        $field_info = field_info_field($field);
-        $values = field_get_items('bat_event', $entity, $field);
+      if (isset($event_type->default_event_value_field_ids)) {
+        /*$field = $event_type->default_event_value_field_ids;
+        $field_info = FieldStorageConfig::loadByName($field);
+        $values = $entity->getTranslation('und')->get($field);
 
         if (!empty($values)) {
           if ($field_info['type'] == 'bat_event_state_reference') {
@@ -243,28 +244,30 @@ class Event extends ContentEntityBase implements EventInterface {
           elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer') {
             $event_value = $values[0]['value'];
           }
-        }
+        }*/
       }
       else {
-        $event_state_reference = field_get_items('bat_event', $entity, 'event_state_reference');
-        $event_value = $event_state_reference[0]['state_id'];
+        $event_state_reference = $this->getTranslation('und')->get($target_field_name);
+        $event_value = $event_state_reference->referencedEntities()[0]->id();
       }
 
-      $event_target_entity_reference = field_get_items('bat_event', $entity, $target_field_name);
-      $target_entity_id = $event_target_entity_reference[0]['target_id'];
-      if ($target_entity = entity_load_single($event_type->target_entity_type, $target_entity_id)) {
-        $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->type));
+      $event_target_entity_reference = $this->getTranslation('und')->get($target_field_name);
+
+      $target_entity_id = $event_target_entity_reference->referencedEntities()[0]->id();
+
+      if ($target_entity = entity_load($event_type->target_entity_type, $target_entity_id)) {
+        $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
 
         $this->batStoreSave($unit,
-          new \DateTime($entity->start_date),
-          new \DateTime($entity->end_date),
-          $event_type->type,
-          $event_type->event_granularity,
+          $this->getStartDate(),
+          $this->getEndDate(),
+          $event_type->id(),
+          $event_type->getEventGranularity(),
           $event_value,
-          $entity->event_id
+          $this->get('id')->value
         );
       }
-    }*/
+    }
   }
 
   /**
@@ -341,11 +344,11 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'timestamp',
-        'weight' => 0,
+        'weight' => 1,
       ))
       ->setDisplayOptions('form', array(
         'type' => 'datetime_timestamp',
-        'weight' => 0,
+        'weight' => 1,
       ))
       ->setDisplayConfigurable('form', TRUE);
 

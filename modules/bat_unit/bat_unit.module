@@ -8,6 +8,8 @@
 
 use Drupal\Core\Url;
 use Drupal\views\ViewExecutable;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\bat_unit\Entity\Unit;
 use Drupal\bat_unit\Entity\UnitType;
 use Drupal\bat_unit\Entity\TypeBundle;
@@ -941,8 +943,8 @@ function bat_type_bundle_new() {
  */
 function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = FALSE, $calculation = FALSE, $display = array()) {
 
-  $field = field_info_field($field_name);
-  $instance = field_info_instance($entity_type, $field_name, $bundle);
+  $field = FieldStorageConfig::loadByName($entity_type, $field_name);
+  $instance = FieldConfig::loadByName($entity_type, $field_name, $bundle);
 
   if (empty($field)) {
     $field = array(

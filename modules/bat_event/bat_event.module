@@ -450,8 +450,8 @@ function bat_event_get_unit_bundles($bat_event_type_name = '') {
  * Menu callback for the autocomplete results.
  */
 function bat_event_reference_autocomplete($entity_type, $bundle, $field_name, $string = '') {
-  $field = field_info_field($field_name);
-  $instance = field_info_instance($entity_type, $field_name, $bundle);
+  $field = FieldStorageConfig::loadByName($field_name);
+  $instance = FieldConfig::loadByName($entity_type, $field_name, $bundle);
 
   $options = array(
     'string' => $string,
@@ -857,7 +857,7 @@ function bat_event_form_bat_type_bundle_form_alter(&$form, &$form_state) {
   if (!($type_bundle->isNew())) {
     $fields_options = array();
 
-    $fields = field_info_instances('bat_type', $type_bundle->type);
+    $fields = FieldConfig::loadByName('bat_type', $type_bundle->type);
 
     foreach ($fields as $field) {
       $fields_options[$field['field_name']] = $field['field_name'];

@@ -71,11 +71,11 @@ class EventType extends ConfigEntityBundleBase implements EventTypeInterface {
     return $this->type;
   }
 
-  public function event_granularity() {
+  public function getEventGranularity() {
     return $this->event_granularity;
   }
 
-  public function fixed_event_states() {
+  public function getFixedEventStates() {
     return $this->fixed_event_states;
   }
 

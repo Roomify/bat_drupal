@@ -44,7 +44,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   $calendar_settings['modal_style'] = 'default';
 
   if ($type = bat_event_type_load($event_type)) {
-    $event_granularity = $type->event_granularity();
+    $event_granularity = $type->getEventGranularity();
   }
   else {
     $event_granularity = 'both';
@@ -64,7 +64,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   $calendar_settings['user_settings'] = $fc_user_settings;
   $calendar_settings['calendar_id'] = 'fullcalendar-scheduler';
 
-  if ($ev_type->fixed_event_states()) {
+  if ($ev_type->getFixedEventStates()) {
     $calendar_settings['class'] = array('fixed_event_states');
   }
   else {
@@ -81,7 +81,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
     ),
   );
 
-  if ($ev_type->fixed_event_states()) {
+  if ($ev_type->getFixedEventStates()) {
     $render_array['bulk_update_form'] = \Drupal::formBuilder()->getForm('bat_event_ui_bulk_update_form', $unit_type, $event_type);
   }
 

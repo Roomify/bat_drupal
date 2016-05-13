@@ -315,4 +315,13 @@ class Unit extends ContentEntityBase implements UnitInterface {
     return $fields;
   }
 
+  /**
+   *
+   */
+  public function getEventDefaultValue($event_type) {
+    $unit_type = $this->getUnitType();
+
+    return $unit_type->getEventDefaultValue($event_type);
+  }
+
 }

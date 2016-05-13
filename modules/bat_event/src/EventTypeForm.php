@@ -114,7 +114,7 @@ class EventTypeForm extends BundleEntityFormBase {
       }
     }
 
-    if (!$event_type->isNew() && $event_type->fixed_event_states() == 0) {
+    if (!$event_type->isNew() && $event_type->getFixedEventStates() == 0) {
       $fields_options = array();
       $fields = $this->entityManager->getFieldDefinitions('event', $event_type->id());
       foreach ($fields as $field) {

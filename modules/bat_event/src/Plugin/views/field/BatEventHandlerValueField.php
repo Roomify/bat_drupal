@@ -33,7 +33,7 @@ class BatEventHandlerValueField extends FieldPluginBase {
     else {
       $field_name = $event_type->default_event_value_field_ids[$event->type];
 
-      $value = field_get_items('bat_event', $event, $field_name);
+      $value = $event->getTranslation('und')->get($field_name);
       $field_view_value = field_view_value('bat_event', $event, $field_name, $value[0]);
 
       return $field_view_value['#markup'];

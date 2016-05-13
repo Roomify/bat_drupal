@@ -87,8 +87,8 @@ class FullcalendarEventManagerForm extends FormBase {
           '#value' => $field_name,
         );
 
-        $field = field_info_field($field_name);
-        $instance = field_info_instance('bat_event', $field_name, $event_type->type);
+        $field = FieldStorageConfig::loadByName('event', $field_name);
+        $instance = FieldConfig::loadByName('event', $field_name, $event_type->type);
 
         $element = array('#parents' => array());
         $widget = field_default_form('bat_event', NULL, $field, $instance, LANGUAGE_NONE, NULL, $element, $form_state);
