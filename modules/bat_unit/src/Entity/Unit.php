@@ -42,6 +42,7 @@ use Drupal\user\UserInterface;
  *   admin_permission = "administer Unit entity",
  *   entity_keys = {
  *     "id" = "id",
+ *     "bundle" = "type",
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
@@ -305,6 +306,11 @@ class Unit extends ContentEntityBase implements UnitInterface {
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
+
+    $fields['type'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Type'))
+      ->setDescription(t('The unit bundle.'))
+      ->setSetting('target_type', 'unit_bundle');
 
     return $fields;
   }

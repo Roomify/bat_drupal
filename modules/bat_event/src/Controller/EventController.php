@@ -76,7 +76,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
     // Bypass the node/add listing if only one content type is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.event.add_form', array('type_bundle' => $type->id()));
+      return $this->redirect('entity.event.add_form', array('event_type' => $type->id()));
     }
 
     $build['#content'] = $content;

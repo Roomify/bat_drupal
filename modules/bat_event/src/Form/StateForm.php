@@ -37,7 +37,7 @@ class StateForm extends EntityForm {
       '#type' => 'machine_name',
       '#default_value' => $state->id(),
       '#machine_name' => array(
-        'exists' => '\Drupal\bat\Entity\State::load',
+        'exists' => '\Drupal\bat_event\Entity\State::load',
       ),
       '#disabled' => !$state->isNew(),
     );

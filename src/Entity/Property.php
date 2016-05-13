@@ -40,15 +40,18 @@ use Drupal\user\UserInterface;
  *   admin_permission = "administer Property entity",
  *   entity_keys = {
  *     "id" = "id",
+ *     "bundle" = "type",
  *     "label" = "name",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "uid" = "uid",
  *   },
+ *   bundle_entity_type = "property_type",
+ *   field_ui_base_route = "entity.property_type.edit_form",
  *   links = {
  *     "canonical" = "/admin/property/{property}",
  *     "edit-form" = "/admin/property/{property}/edit",
  *     "delete-form" = "/admin/property/{property}/delete"
  *   },
- *   field_ui_base_route = "property.settings"
  * )
  */
 class Property extends ContentEntityBase implements PropertyInterface {
@@ -171,6 +174,11 @@ class Property extends ContentEntityBase implements PropertyInterface {
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
+
+    $fields['type'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Type'))
+      ->setDescription(t('The property type.'))
+      ->setSetting('target_type', 'property_type');
 
     return $fields;
   }

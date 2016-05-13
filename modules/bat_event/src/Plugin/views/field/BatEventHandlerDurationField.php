@@ -22,7 +22,7 @@ class BatEventHandlerDurationField extends FieldPluginBase {
   }
 
   function query() {
-    $this->ensure_my_table();
+    $this->ensureMyTable();
 
     $this->field_alias = $this->table_alias . '_duration';
 
@@ -36,7 +36,7 @@ class BatEventHandlerDurationField extends FieldPluginBase {
     $params = $this->options['group_type'] != 'group' ? array('function' => $this->options['group_type']) : array();
     $this->query->add_field(NULL, 'TIMESTAMPDIFF(SECOND, ' . $this->table_alias . '.start_date, ' . $this->table_alias . '.end_date)', $this->field_alias, $params);
 
-    $this->add_additional_fields();
+    $this->addAdditionalFields();
   }
 
   function render($values) {

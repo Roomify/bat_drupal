@@ -5,22 +5,23 @@
  * Manage Events - Events store the EventValue of a Unit over a period of time.
  */
 
-use Roomify\Bat\Event\Event;
 use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
 
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Utility\SafeMarkup;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\views\ViewExecutable;
+use Drupal\bat_event\Entity\Event;
 use Drupal\bat_event\Entity\EventType;
 
 /**
  * Create a field of type 'Bat Event State Reference' to reference an Event State.
  */
 function bat_event_type_add_event_state_reference($entity) {
-  field_info_cache_clear();
-
   // "event_state_reference" field.
   if (field_read_field('event_state_reference') === FALSE) {
     $field = array(
@@ -60,40 +61,52 @@ function bat_event_type_add_event_state_reference($entity) {
  * We need to create a field/instance for each possible target entity type.
  */
 function bat_event_type_add_target_entity_field($entity) {
-  field_info_cache_clear();
-
-  $entity_info = entity_get_info($entity->target_entity_type);
+  $entity_info = \Drupal::entityManager()->getDefinition($entity->target_entity_type);
   $field_name = 'event_' . $entity->target_entity_type . '_reference';
 
-  // field for this target entity type.
-  if (field_read_field($field_name) === FALSE) {
-    $field = array(
+  $field_storage = FieldStorageConfig::loadByName('event', $field_name);
+  $field = FieldConfig::loadByName('event', $entity->id(), $field_name);
+
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create([
       'field_name' => $field_name,
-      'type' => 'entityreference',
+      'entity_type' => 'event',
+      'type' => 'entity_reference',
       'cardinality' => 1,
       'locked' => 1,
       'settings' => array(
         'target_type' => $entity->target_entity_type,
       ),
-    );
-    field_create_field($field);
+    ]);
+    $field_storage->save();
   }
 
-  field_cache_clear();
-
-  // field instance for this target entity type.
-  if (field_read_instance('bat_event', $field_name, $entity->type) === FALSE) {
-    $instance = array(
-      'field_name' => $field_name,
-      'entity_type' => 'bat_event',
-      'label' => $entity_info['label'],
-      'bundle' => $entity->type,
+  if (empty($field)) {
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'entity_type' => 'event',
+      'label' => $entity_info->getLabel()->__toString(),
+      'bundle' => $entity->id(),
       'required' => FALSE,
-      'widget' => array(
-        'type' => 'entityreference_autocomplete',
-      ),
-    );
-    field_create_instance($instance);
+      'settings' => [
+        'handler' => 'default',
+        'handler_settings' => [],
+      ],
+    ]);
+    $field->save();
+
+    $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
+    $form_display = $storage->create([
+      'targetEntityType' => 'event',
+      'bundle' => $entity->id(),
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+    $form_display->setComponent($field_name, [
+      'type' => 'entity_reference_autocomplete',
+      'weight' => 3,
+    ]);
+    $form_display->save();
   }
 }
 
@@ -299,7 +312,7 @@ function bat_event_states_delete_event_form_submit($form, &$form_state) {
  *   Boolean indicating if the defined user has access to the event or not.
  */
 function bat_event_access($op, $event = NULL, $account = NULL) {
-  return bat_entity_access($op, $event, $account, 'bat_event');
+  //return bat_entity_access($op, $event, $account, 'bat_event');
 }
 
 /**
@@ -492,7 +505,7 @@ function bat_event_type_save(BatEventType $type) {
  * Deletes a event type from the db.
  */
 function bat_event_type_delete(EventType $type) {
-  $type->delete();
+  //$type->delete();
 }
 
 /**
@@ -588,7 +601,7 @@ function bat_event_get_unit_bundles($bat_event_type_name = '') {
       ->range(0, 10)
       ->execute();
     foreach ($result as $unit_bundle) {
-      $matches[$unit_bundle->type] = check_plain($unit_bundle->type);
+      $matches[$unit_bundle->type] = SafeMarkup::checkPlain($unit_bundle->type);
     }
   }
 
@@ -787,7 +800,7 @@ function _bat_event_potential_references($field, $options) {
   foreach ($result as $event) {
     $references[$event->id] = array(
       'title'    => $event->label,
-      'rendered' => check_plain($event->label),
+      'rendered' => SafeMarkup::checkPlain($event->label),
     );
   }
   return $references;

@@ -1,1 +1,20 @@
-.
+bat_calendar_reference.unit_autocomplete:
+  path: '/bat_calendar_reference/autocomplete/units/{entity_type}/{bundle}/{field_name}'
+  defaults:
+    _controller: '\Drupal\bat_calendar_reference\Controller\BatCalendarReferenceController::unitAutocomplete'
+  requirements:
+    _permission: 'reference unit calendar events'
+
+bat_calendar_reference.unit_type_autocomplete:
+  path: '/bat_calendar_reference/autocomplete/unit_types/{entity_type}/{bundle}/{field_name}'
+  defaults:
+    _controller: '\Drupal\bat_calendar_reference\Controller\BatCalendarReferenceController::unitTypeAutocomplete'
+  requirements:
+    _permission: 'reference unit calendar events'
+
+bat_calendar_reference.event_type_autocomplete:
+  path: '/bat_calendar_reference/autocomplete/event_types/{entity_type}/{bundle}/{field_name}'
+  defaults:
+    _controller: '\Drupal\bat_calendar_reference\Controller\BatCalendarReferenceController::eventTypeAutocomplete'
+  requirements:
+    _permission: 'reference unit calendar events'

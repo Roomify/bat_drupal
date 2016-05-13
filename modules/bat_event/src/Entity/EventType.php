@@ -36,12 +36,17 @@ use Drupal\bat_event\EventTypeInterface;
  *   config_export = {
  *     "name",
  *     "type",
+ *     "event_granularity",
+ *     "fixed_event_states",
+ *     "default_event_value_field_ids",
+ *     "default_event_label_field_name",
+ *     "target_entity_type",
  *   }
  * )
  */
 class EventType extends ConfigEntityBundleBase implements EventTypeInterface {
 
-	/**
+  /**
    * The machine name of this event type.
    *
    * @var string
@@ -59,7 +64,7 @@ class EventType extends ConfigEntityBundleBase implements EventTypeInterface {
 
   protected $fixed_event_states;
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function id() {
@@ -78,21 +83,24 @@ class EventType extends ConfigEntityBundleBase implements EventTypeInterface {
    * {@inheritdoc}
    */
   public function save() {
-    if ($this->isNew()) {
+    $is_new = $this->isNew();
+
+    parent::save();
+
+    if ($is_new) {
       // Create all tables necessary for this Event Type.
       bat_event_create_event_type_schema($this->id());
 
       // Create a field of type 'Entity Reference' to reference a Bat Unit.
-      /*bat_event_type_add_target_entity_field($entity);
-      if (isset($entity->fixed_event_states)) {
+      bat_event_type_add_target_entity_field($this);
+
+      /*if (isset($entity->fixed_event_states)) {
         if ($entity->fixed_event_states) {
           // Create a field of type 'Bat Event State Reference' to reference an Event State.
           bat_event_type_add_event_state_reference($entity);
         }
       }*/
     }
-
-    parent::save();
   }
 
   /**

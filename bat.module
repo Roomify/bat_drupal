@@ -5,8 +5,11 @@
  * Contains bat.module..
  */
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\Component\Utility\SafeMarkup;
 
 /**
  * Implements hook_help().
@@ -77,25 +80,9 @@ function template_preprocess_bat_property_add_list(&$variables) {
 }
 
 /**
- * Generic access control for entities that BAT defines.
- *
- * @param string $op
- *   The operation being performed. One of 'view', 'update', 'create' or
- *   'delete'.
- * @param object $entity
- *   Optionally an entity to check access for. If no entity is given, it will be
- *   determined whether access is allowed for all entities of the given type.
- * @param object $account
- *   The user to check for. Leave it to NULL to check for the global user.
- * @param string $entity_type
- *   The entity type of the entity to check for.
- *
- * @return bool
- *   Boolean indicating whether the user is granted or not.
- *
- * @see entity_access()
+ * Implements hook_entity_access().
  */
-function bat_entity_access($op, $entity, $account, $entity_type) {
+function bat_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
   /*$rights = &drupal_static(__FUNCTION__, array());
   global $user;
   $account = isset($account) ? $account : $user;
@@ -218,7 +205,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
  * Return permission names for a given entity type.
  */
 function bat_entity_access_permissions($entity_type) {
-  $entity_info = entity_get_info($entity_type);
+  $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
   $labels = $entity_info['permission labels'];
 
   $permissions = array();
@@ -323,7 +310,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
 
   // Get the entity type info array for the current access check and prepare a
   // conditions object.
-  $entity_info = entity_get_info($entity_type);
+  $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
 
   // If a base table wasn't specified, attempt to read it from the query if
   // available, look for a table in the query's tables array that matches the
@@ -666,7 +653,7 @@ function bat_check_dates_validity(DateTime $start_date, DateTime $end_date) {
  *   Object or null if invalid
  */
 function bat_date_load($date_string) {
-  $date_string = check_plain($date_string);
+  $date_string = SafeMarkup::checkPlain($date_string);
 
   try {
     $date = new DateTime($date_string);

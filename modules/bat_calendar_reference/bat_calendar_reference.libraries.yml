@@ -1,0 +1,6 @@
+bat_calendar_reference:
+  version: VERSION
+  js:
+    js/bat_calendar_reference.js: { }
+  dependencies:
+    - core/jquery

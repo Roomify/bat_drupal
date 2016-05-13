@@ -145,7 +145,7 @@ function bat_facets_search_api_query_alter($query) {
   $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
 
   if ($query->getIndex()->getEntityType()) {
-    $info = entity_get_info($query->getIndex()->getEntityType());
+    $info = \Drupal::entityManager()->getDefinition($query->getIndex()->getEntityType());
 
     // Only modify the query if this query is against bat units.
     if ($info['base table'] = 'bat_types') {

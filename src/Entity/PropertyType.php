@@ -4,6 +4,7 @@ namespace Drupal\bat\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\bat\PropertyTypeInterface;
 
 /**
  * Defines the Unit Bundle configuration entity.
@@ -21,7 +22,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "list_builder" = "Drupal\bat\PropertyTypeListBuilder",
  *   },
  *   admin_permission = "administer content types",
- *   config_prefix = "type",
+ *   config_prefix = "property_type",
  *   bundle_of = "property",
  *   entity_keys = {
  *     "id" = "type",
@@ -38,7 +39,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *   }
  * )
  */
-class PropertyType extends ConfigEntityBundleBase {
+class PropertyType extends ConfigEntityBundleBase implements PropertyTypeInterface {
 
 	/**
    * The machine name of this event type.

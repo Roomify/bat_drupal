@@ -1,12 +1,12 @@
-entity.unit_type.add:
-  route_name: entity.unit_type.add
+entity.unit_type.add_page:
+  route_name: entity.unit_type.add_page
   title: 'Add Type'
   appears_on:
     - entity.unit_type.collection
     - entity.unit_type.canonical
 
-entity.unit.add_form:
-  route_name: entity.unit.add_form
+entity.unit.add_page:
+  route_name: entity.unit.add_page
   title: 'Add Unit'
   appears_on:
     - entity.unit.collection

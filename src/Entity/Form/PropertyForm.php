@@ -17,6 +17,7 @@ use Drupal\Core\Language\Language;
  * @ingroup bat
  */
 class PropertyForm extends ContentEntityForm {
+
   /**
    * {@inheritdoc}
    */

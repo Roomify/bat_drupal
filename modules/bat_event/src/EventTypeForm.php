@@ -2,6 +2,7 @@
 
 namespace Drupal\bat_event;
 
+use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -70,10 +71,12 @@ class EventTypeForm extends BundleEntityFormBase {
       '#description' => t('A unique machine-readable name for this event type. It must only contain lowercase letters, numbers, and underscores.'),
     );
 
-    $form['fixed_event_states'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Fixed event states'),
-    );
+    if ($event_type->isNew()) {
+      $form['fixed_event_states'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Fixed event states'),
+      );
+    }
 
     $form['event_granularity'] = array(
       '#type' => 'select',
@@ -97,7 +100,7 @@ class EventTypeForm extends BundleEntityFormBase {
         // Build option list.
         $options = array();
         foreach ($target_entity_types as $target_entity_type) {
-          $target_entity_info = entity_get_info($target_entity_type);
+          $target_entity_info = \Drupal::entityManager()->getDefinition($target_entity_type);
           $options[$target_entity_type] = $target_entity_info['label'];
         }
         $form['target_entity_type'] = array(
@@ -111,12 +114,13 @@ class EventTypeForm extends BundleEntityFormBase {
       }
     }
 
-//dpm($this->entityManager->getFieldDefinitions($event_type->getEntityTypeId(), $event_type->bundle()));
-    /*if (!$event_type->isNew() && $event_type->fixed_event_states == 0) {
+    if (!$event_type->isNew() && $event_type->fixed_event_states() == 0) {
       $fields_options = array();
-      $fields = EntityFieldManager::getFieldDefinitions('bat_event', $event_type->id());
+      $fields = $this->entityManager->getFieldDefinitions('event', $event_type->id());
       foreach ($fields as $field) {
-        $fields_options[$field['field_name']] = $field['field_name'];
+        if ($field instanceof FieldConfig) {
+          $fields_options[$field->getName()] = $field->getName();
+        }
       }
 
       $form['events'] = array(
@@ -127,20 +131,22 @@ class EventTypeForm extends BundleEntityFormBase {
         '#weight' => 80,
       );
 
-      $form['events'][$event_type->type] = array(
+      $form['events'][$event_type->id()] = array(
         '#type' => 'select',
         '#title' => t('Select your default @event field', array('@event' => $event_type->label)),
         '#options' => $fields_options,
-        '#default_value' => isset($event_type->default_event_value_field_ids[$event_type->type]) ? $event_type->default_event_value_field_ids[$event_type->type] : NULL,
+        '#default_value' => isset($event_type->default_event_value_field_ids) ? $event_type->default_event_value_field_ids : NULL,
         '#empty_option' => t('- Select a field -'),
       );
     }
 
     if (!$event_type->isNew()) {
       $fields_options = array();
-      $fields = EntityFieldManager::getFieldDefinitions('bat_event', $event_type->type);
+      $fields = $this->entityManager->getFieldDefinitions('event', $event_type->id());
       foreach ($fields as $field) {
-        $fields_options[$field['field_name']] = $field['field_name'];
+        if ($field instanceof FieldConfig) {
+          $fields_options[$field->getName()] = $field->getName();
+        }
       }
 
       $form['event_label'] = array(
@@ -159,7 +165,7 @@ class EventTypeForm extends BundleEntityFormBase {
         '#description' => t('If you select a field here, its value will be used as the label for your event. BAT will fall back to using the event state as the label if the field has no value.'),
         '#options' => $fields_options,
       );
-    }*/
+    }
 
     return $this->protectBundleIdElement($form);
   }
@@ -195,6 +201,9 @@ class EventTypeForm extends BundleEntityFormBase {
 
   	$type->set('type', trim($type->id()));
     $type->set('name', trim($type->label()));
+
+    $type->set('default_event_label_field_name', $form_state->getValues()['event_label']['default_event_label_field_name']);
+    $type->set('default_event_value_field_ids', $form_state->getValues()['events'][$type->id()]);
 
     $status = $type->save();
 

@@ -5,270 +5,7 @@
  * Defines a field type for referencing event information
  */
 
-/**
- * Implements hook_field_info().
- */
-function bat_calendar_reference_field_info() {
-  return array(
-    'bat_calendar_unit_reference' => array(
-      'label' => t('BAT Calendar Unit Reference'),
-      'description' => t('Display unit events information embedded from other fieldable content.'),
-      'settings' => array(
-        'referenceable_unit_types' => array(),
-      ),
-      'default_widget' => 'bat_calendar_reference_unit_autocomplete',
-      'default_formatter' => 'bat_calendar_reference_timeline_view',
-    ),
-    'bat_calendar_unit_type_reference' => array(
-      'label' => t('BAT Calendar Unit Type Reference'),
-      'description' => t('Display unit type events information embedded from other fieldable content.'),
-      'settings' => array(),
-      'default_widget' => 'bat_calendar_reference_unit_type_autocomplete',
-      'default_formatter' => 'bat_calendar_reference_timeline_view',
-    ),
-  );
-}
-
-/**
- * Implements hook_field_is_empty().
- */
-function bat_calendar_reference_field_is_empty($item, $field) {
-  if ($field['type'] == 'bat_calendar_unit_reference') {
-    return empty($item['unit_id']);
-  }
-  elseif ($field['type'] == 'bat_calendar_unit_type_reference') {
-    return empty($item['unit_type_id']);
-  }
-}
-
-/**
- * Implements hook_field_formatter_info().
- */
-function bat_calendar_reference_field_formatter_info() {
-  $ret = array(
-    'bat_calendar_reference_month_view' => array(
-      'label' => t('Month View'),
-      'description' => t('Displays event information on a calendar.'),
-      'field types' => array('bat_calendar_unit_reference', 'bat_calendar_unit_type_reference', 'entityreference'),
-    ),
-    'bat_calendar_reference_timeline_view' => array(
-      'label' => t('Timeline View'),
-      'description' => t('Displays event information on a calendar.'),
-      'field types' => array('bat_calendar_unit_reference', 'bat_calendar_unit_type_reference', 'entityreference'),
-    ),
-  );
-
-  return $ret;
-}
-
-/**
- * Implements hook_field_formatter_prepare_view().
- */
-function bat_calendar_reference_field_formatter_prepare_view($entity_type, $entities, $field, $instances, $langcode, &$items, $displays) {
-  if ($field['type'] == 'entityreference') {
-    entityreference_field_formatter_prepare_view($entity_type, $entities, $field, $instances, $langcode, $items, $displays);
-  }
-}
-
-/**
- * Implements hook_field_formatter_view().
- */
-function bat_calendar_reference_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-  $element = array();
-  $fc_user_settings = array();
-
-  $header = '';
-
-  $calendar_id = drupal_html_id($field['field_name'] . '-calendar-formatter');
-
-  switch ($display['type']) {
-    case 'bat_calendar_reference_timeline_view':
-    case 'bat_calendar_reference_month_view':
-      if ($field['type'] == 'bat_calendar_unit_type_reference') {
-        $unit_type_names = array();
-        $unit_type_ids = array();
-
-        foreach ($items as $delta => $item) {
-          if ($unit_type = bat_type_load($item['unit_type_id'])) {
-            $unit_type_names[] = $unit_type->name;
-            $unit_type_ids[] = $unit_type->type_id;
-          }
-
-          if ($type = bat_event_type_load($item['event_type_id'])) {
-            $event_type = $type->type;
-
-            $event_granularity = $type->event_granularity;
-          }
-        }
-
-        if (!empty($unit_type_ids)) {
-          $header = '<div class="calendar-title"><h2>' . implode(', ', $unit_type_names) . '</h2></div>';
-
-          // Inject settings in javascript that we will use.
-          $fc_user_settings[$calendar_id] = array(
-            'unitTypes' => $unit_type_ids,
-            'unitIDs' => '',
-            'eventType' => $event_type,
-            'calendar_id' => 'fullcalendar-scheduler',
-            'modal_style' => 'default',
-            'eventGranularity' => $event_granularity,
-            'editable' => FALSE,
-            'selectable' => FALSE,
-            'background' => '1',
-          );
-
-          if ($display['type'] == 'bat_calendar_reference_month_view') {
-            $fc_user_settings[$calendar_id]['defaultView'] = 'month';
-            $fc_user_settings[$calendar_id]['views'] = 'month';
-            $fc_user_settings[$calendar_id]['background'] = '0';
-            $fc_user_settings[$calendar_id]['headerLeft'] = 'today';
-            $fc_user_settings[$calendar_id]['headerCenter'] = 'title';
-            $fc_user_settings[$calendar_id]['headerRight'] = 'prev, next';
-          }
-        }
-      }
-      elseif ($field['type'] == 'bat_calendar_unit_reference') {
-        $unit_names = array();
-        $unit_ids = array();
-
-        foreach ($items as $delta => $item) {
-          if ($unit = bat_unit_load($item['unit_id'])) {
-            $unit_names[] = $unit->name;
-            $unit_ids[] = $unit->unit_id;
-          }
-
-          if ($type = bat_event_type_load($item['event_type_id'])) {
-            $event_type = $type->type;
-
-            $event_granularity = $type->event_granularity;
-          }
-        }
-
-        if (!empty($unit_ids)) {
-          $header = '<div class="calendar-title"><h2>' . implode(', ', $unit_names) . '</h2></div>';
-
-          // Inject settings in javascript that we will use.
-          $fc_user_settings[$calendar_id] = array(
-            'unitTypes' => 'all',
-            'unitIDs' => $unit_ids,
-            'eventType' => $event_type,
-            'calendar_id' => 'fullcalendar-scheduler',
-            'modal_style' => 'default',
-            'eventGranularity' => $event_granularity,
-            'editable' => FALSE,
-            'selectable' => FALSE,
-            'background' => '1',
-          );
-
-          if ($display['type'] == 'bat_calendar_reference_month_view') {
-            $fc_user_settings[$calendar_id]['defaultView'] = 'month';
-            $fc_user_settings[$calendar_id]['views'] = 'month';
-            $fc_user_settings[$calendar_id]['background'] = '0';
-            $fc_user_settings[$calendar_id]['headerLeft'] = 'today';
-            $fc_user_settings[$calendar_id]['headerCenter'] = 'title';
-            $fc_user_settings[$calendar_id]['headerRight'] = 'prev, next';
-          }
-        }
-      }
-
-      break;
-  }
-
-  if (!empty($fc_user_settings)) {
-    $calendar_settings = array(
-      'modal_style' => 'default',
-      'calendar_id' => 'fullcalendar-scheduler',
-      'user_settings' => array('batCalendar' => $fc_user_settings),
-    );
-
-    $element[] = array(
-      '#theme' => 'bat_fullcalendar',
-      '#calendar_settings' => $calendar_settings,
-      '#js_files' => array(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js'),
-      '#css_files' => array(drupal_get_path('module', 'bat_fullcalendar') . '/css/fullcalendar.theme.css'),
-      '#attributes' => array(
-        'id' => $calendar_id,
-        'class' => array(
-          'cal',
-          'clearfix',
-        ),
-      ),
-      '#prefix' => $header,
-    );
-  }
-
-  return $element;
-}
-
-/**
- * Implements hook_field_settings_form().
- */
-function bat_calendar_reference_field_settings_form($field, $instance, $has_data) {
-  $settings = $field['settings'];
-
-  $form = array();
-
-  if ($field['type'] == 'bat_calendar_unit_reference') {
-    $form['referenceable_unit_types'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('Unit types that can be referenced'),
-      '#multiple' => TRUE,
-      '#default_value' => isset($settings['referenceable_unit_types']) ? $settings['referenceable_unit_types'] : array(),
-      '#options' => array_map('check_plain', bat_unit_types_ids()),
-    );
-  }
-
-  $form['referenceable_event_types'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Event types that can be referenced'),
-    '#multiple' => TRUE,
-    '#default_value' => isset($settings['referenceable_event_types']) ? $settings['referenceable_event_types'] : array(),
-    '#options' => array_map('check_plain', bat_event_types_ids()),
-  );
-
-  return $form;
-
-}
-
-/**
- * Implements hook_field_validate().
- */
-function bat_calendar_reference_field_validate($entity_type, $entity, $field, $instance, $langcode, $items, &$errors) {
-  // Check for non-numeric values.
-  foreach ($items as $delta => $item) {
-    if (is_array($item)) {
-      if (!empty($item['unit_id'])) {
-        if (!is_numeric($item['unit_id'])) {
-          $errors[$field['field_name']][$langcode][$delta][] = array(
-            'error' => 'invalid_unit',
-            'message' => t('%name: invalid input.',
-              array('%name' => $instance['label'])),
-          );
-        }
-      }
-
-      if (!empty($item['unit_type_id'])) {
-        if (!is_numeric($item['unit_type_id'])) {
-          $errors[$field['field_name']][$langcode][$delta][] = array(
-            'error' => 'invalid_unit_type',
-            'message' => t('%name: invalid input.',
-              array('%name' => $instance['label'])),
-          );
-        }
-      }
-
-      if (!empty($item['event_type_id'])) {
-        if (!is_numeric($item['event_type_id'])) {
-          $errors[$field['field_name']][$langcode][$delta][] = array(
-            'error' => 'invalid_event_type',
-            'message' => t('%name: invalid input.',
-              array('%name' => $instance['label'])),
-          );
-        }
-      }
-    }
-  }
-}
+use Drupal\Component\Utility\SafeMarkup;
 
 /**
  * Retrieves an array of candidate referenceable booking units.
@@ -331,16 +68,16 @@ function bat_calendar_reference_units_potential_references($field, $options = ar
  */
 function _bat_calendar_reference_units_potential_references($field, $options) {
   // Avoid useless work.
-  if (!isset($field['settings']['referenceable_unit_types'])) {
+  /*if (!isset($field['settings']['referenceable_unit_types'])) {
     return array();
   }
 
   if (!count($field['settings']['referenceable_unit_types'])) {
     return array();
-  }
+  }*/
 
-  $query = db_select('bat_units', 'u');
-  $unit_unit_id_alias = $query->addField('u', 'unit_id');
+  $query = db_select('unit', 'u');
+  $unit_unit_id_alias = $query->addField('u', 'id');
   $unit_name_alias = $query->addField('u', 'name', 'name');
   $unit_type_alias = $query->addField('u', 'type', 'type');
 
@@ -370,7 +107,7 @@ function _bat_calendar_reference_units_potential_references($field, $options) {
   }
 
   if ($options['ids']) {
-    $query->condition('u.unit_id', $options['ids'], 'IN');
+    $query->condition('u.id', $options['ids'], 'IN');
   }
 
   if ($options['limit']) {
@@ -386,7 +123,7 @@ function _bat_calendar_reference_units_potential_references($field, $options) {
   foreach ($result as $unit) {
     $references[$unit->unit_id] = array(
       'title'    => $unit->name,
-      'rendered' => check_plain($unit->name),
+      'rendered' => SafeMarkup::checkPlain($unit->name),
     );
   }
 
@@ -574,172 +311,6 @@ function _bat_calendar_reference_unit_types_potential_references($field, $option
 }
 
 /**
- * Menu callback for the units autocomplete results.
- */
-function bat_calendar_reference_units_autocomplete($entity_type, $bundle, $field_name, $string = '') {
-  $field = field_info_field($field_name);
-  $instance = field_info_instance($entity_type, $field_name, $bundle);
-
-  $options = array(
-    'string' => $string,
-    'match' => $instance['widget']['settings']['autocomplete_match'],
-    'limit' => 10,
-  );
-  $references = bat_calendar_reference_units_potential_references($field, $options);
-
-  $matches = array();
-  foreach ($references as $id => $row) {
-    // Markup is fine in autocompletion results (might happen when rendered
-    // through Views) but we want to remove hyperlinks.
-    $suggestion = preg_replace('/<a href="([^<]*)">([^<]*)<\/a>/', '$2', $row['rendered']);
-    // Add a class wrapper for a few required CSS overrides.
-    $matches[$row['title'] . " [unit_id:$id]"] = '<div class="reference-autocomplete">' . $suggestion . '</div>';
-  }
-
-  drupal_json_output($matches);
-}
-
-/**
- * Menu callback for the unit types autocomplete results.
- */
-function bat_calendar_reference_unit_types_autocomplete($entity_type, $bundle, $field_name, $string = '') {
-  $field = field_info_field($field_name);
-  $instance = field_info_instance($entity_type, $field_name, $bundle);
-
-  $options = array(
-    'string' => $string,
-    'match' => $instance['widget']['settings']['autocomplete_match'],
-    'limit' => 10,
-  );
-  $references = bat_calendar_reference_unit_types_potential_references($field, $options);
-
-  $matches = array();
-  foreach ($references as $id => $row) {
-    // Markup is fine in autocompletion results (might happen when rendered
-    // through Views) but we want to remove hyperlinks.
-    $suggestion = preg_replace('/<a href="([^<]*)">([^<]*)<\/a>/', '$2', $row['rendered']);
-    // Add a class wrapper for a few required CSS overrides.
-    $matches[$row['title'] . " [type_id:$id]"] = '<div class="reference-autocomplete">' . $suggestion . '</div>';
-  }
-
-  drupal_json_output($matches);
-}
-
-/**
- * Menu callback for the event types autocomplete results.
- */
-function bat_calendar_reference_event_types_autocomplete($entity_type, $bundle, $field_name, $string = '') {
-  $field = field_info_field($field_name);
-  $instance = field_info_instance($entity_type, $field_name, $bundle);
-
-  $options = array(
-    'string' => $string,
-    'match' => $instance['widget']['settings']['autocomplete_match'],
-    'limit' => 10,
-  );
-  $references = bat_calendar_reference_event_types_potential_references($field, $options);
-
-  $matches = array();
-  foreach ($references as $id => $row) {
-    // Markup is fine in autocompletion results (might happen when rendered
-    // through Views) but we want to remove hyperlinks.
-    $suggestion = preg_replace('/<a href="([^<]*)">([^<]*)<\/a>/', '$2', $row['rendered']);
-    // Add a class wrapper for a few required CSS overrides.
-    $matches[$row['title'] . " [event_type_id:$id]"] = '<div class="reference-autocomplete">' . $suggestion . '</div>';
-  }
-
-  drupal_json_output($matches);
-}
-
-/**
- * Implements hook_field_widget_info().
- */
-function bat_calendar_reference_field_widget_info() {
-  return array(
-    'bat_calendar_reference_unit_autocomplete' => array(
-      'label'       => t('Calendar Unit reference'),
-      'description' => t('Display the list of referenceable units and event types as a textfield with autocomplete behaviour.'),
-      'field types' => array('bat_calendar_unit_reference'),
-      'settings'    => array(
-        'autocomplete_match' => 'contains',
-      ),
-    ),
-    'bat_calendar_reference_unit_type_autocomplete' => array(
-      'label'       => t('Calendar Unit type reference'),
-      'description' => t('Display the list of referenceable units and event types as a textfield with autocomplete behaviour.'),
-      'field types' => array('bat_calendar_unit_type_reference'),
-      'settings'    => array(
-        'autocomplete_match' => 'contains',
-      ),
-    ),
-  );
-}
-
-/**
- * Implements hook_field_widget_form().
- */
-function bat_calendar_reference_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-  $widget = array(
-    '#theme_wrappers' => array('container', 'form_element'),
-    '#attributes' => array('class' => array('container-inline')),
-  );
-
-  switch ($instance['widget']['type']) {
-    case 'bat_calendar_reference_unit_autocomplete':
-      $widget['unit_id'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Unit'),
-        '#default_value' => isset($items[$delta]['unit_id']) ? $items[$delta]['unit_id'] : NULL,
-        '#autocomplete_path' => 'bat_calendar_reference/autocomplete/units/' . $instance['entity_type'] . '/' . $instance['bundle'] . '/' . $field['field_name'],
-        '#size' => 60,
-        '#maxlength' => 255,
-        '#element_validate' => array('bat_calendar_reference_autocomplete_unit_validate'),
-        '#value_callback' => 'bat_calendar_reference_unit_autocomplete_value',
-      );
-
-      $widget['event_type_id'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Event type'),
-        '#default_value' => isset($items[$delta]['event_type_id']) ? $items[$delta]['event_type_id'] : NULL,
-        '#autocomplete_path' => 'bat_calendar_reference/autocomplete/event_types/' . $instance['entity_type'] . '/' . $instance['bundle'] . '/' . $field['field_name'],
-        '#size' => 60,
-        '#maxlength' => 255,
-        '#element_validate' => array('bat_calendar_reference_autocomplete_event_type_validate'),
-        '#value_callback' => 'bat_calendar_reference_event_type_autocomplete_value',
-      );
-
-      break;
-
-    case 'bat_calendar_reference_unit_type_autocomplete':
-      $widget['unit_type_id'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Unit type'),
-        '#default_value' => isset($items[$delta]['unit_type_id']) ? $items[$delta]['unit_type_id'] : NULL,
-        '#autocomplete_path' => 'bat_calendar_reference/autocomplete/unit_types/' . $instance['entity_type'] . '/' . $instance['bundle'] . '/' . $field['field_name'],
-        '#size' => 60,
-        '#maxlength' => 255,
-        '#element_validate' => array('bat_calendar_reference_autocomplete_unit_type_validate'),
-        '#value_callback' => 'bat_calendar_reference_unit_type_autocomplete_value',
-      );
-
-      $widget['event_type_id'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Event type'),
-        '#default_value' => isset($items[$delta]['event_type_id']) ? $items[$delta]['event_type_id'] : NULL,
-        '#autocomplete_path' => 'bat_calendar_reference/autocomplete/event_types/' . $instance['entity_type'] . '/' . $instance['bundle'] . '/' . $field['field_name'],
-        '#size' => 60,
-        '#maxlength' => 255,
-        '#element_validate' => array('bat_calendar_reference_autocomplete_event_type_validate'),
-        '#value_callback' => 'bat_calendar_reference_event_type_autocomplete_value',
-      );
-
-      break;
-  }
-
-  return $element + $widget;
-}
-
-/**
  * Value callback for a bat_calendar_reference autocomplete element.
  *
  * Replace the unit id with a unit name.
@@ -812,7 +383,7 @@ function bat_calendar_reference_event_type_autocomplete_value($element, $input =
  * Validate unit.
  */
 function bat_calendar_reference_autocomplete_unit_validate($element, &$form_state, $form) {
-  $parents = $element['#array_parents'];
+  /*$parents = $element['#array_parents'];
   array_pop($parents);
   $field_widget = drupal_array_get_nested_value($form, $parents);
 
@@ -851,14 +422,14 @@ function bat_calendar_reference_autocomplete_unit_validate($element, &$form_stat
     }
   }
 
-  form_set_value($element, $unit_id, $form_state);
+  form_set_value($element, $unit_id, $form_state);*/
 }
 
 /**
  * Validate unit type.
  */
 function bat_calendar_reference_autocomplete_unit_type_validate($element, &$form_state, $form) {
-  $parents = $element['#array_parents'];
+  /*$parents = $element['#array_parents'];
   array_pop($parents);
   $field_widget = drupal_array_get_nested_value($form, $parents);
 
@@ -897,14 +468,14 @@ function bat_calendar_reference_autocomplete_unit_type_validate($element, &$form
     }
   }
 
-  form_set_value($element, $type_id, $form_state);
+  form_set_value($element, $type_id, $form_state);*/
 }
 
 /**
  * Validate event type.
  */
 function bat_calendar_reference_autocomplete_event_type_validate($element, &$form_state, $form) {
-  $parents = $element['#array_parents'];
+  /*$parents = $element['#array_parents'];
   array_pop($parents);
   $field_widget = drupal_array_get_nested_value($form, $parents);
 
@@ -943,12 +514,5 @@ function bat_calendar_reference_autocomplete_event_type_validate($element, &$for
     }
   }
 
-  form_set_value($element, $type_id, $form_state);
-}
-
-/**
- * Implements hook_field_widget_error().
- */
-function bat_calendar_reference_field_widget_error($element, $error, $form, &$form_state) {
-  form_error($element['unit_id'], $error['message']);
+  form_set_value($element, $type_id, $form_state);*/
 }

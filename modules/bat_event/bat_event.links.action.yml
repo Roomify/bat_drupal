@@ -4,8 +4,8 @@ entity.state.add_form:
   appears_on:
     - entity.state.collection
 
-entity.event.add_form:
-  route_name: entity.event.add_form
+entity.event.add_page:
+  route_name: entity.event.add_page
   title: 'Add Event'
   appears_on:
     - entity.event.collection

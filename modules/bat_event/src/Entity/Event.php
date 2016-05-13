@@ -47,6 +47,7 @@ use Roomify\Bat\Unit\Unit;
  *   admin_permission = "administer event entity",
  *   entity_keys = {
  *     "id" = "id",
+ *     "bundle" = "type",
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
@@ -189,9 +190,9 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function save() {
-    $entity->original = entity_load_unchanged($this->entityType, $entity->{$this->idKey});
+    //$entity->original = entity_load_unchanged($this->entityType, $entity->{$this->idKey});
 
-    $event_type = bat_event_type_load($entity->type);
+    /*$event_type = bat_event_type_load($entity->type);
 
     // Construct target entity reference field name using this event type's target entity type.
     $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
@@ -220,12 +221,12 @@ class Event extends ContentEntityBase implements EventInterface {
           TRUE
         );
       }
-    }
+    }*/
 
     parent::save();
 
     // Now we store the new event.
-    if (field_get_items('bat_event', $entity, $target_field_name) !== FALSE) {
+    /*if (field_get_items('bat_event', $entity, $target_field_name) !== FALSE) {
 
       if (isset($event_type->default_event_value_field_ids[$entity->type])) {
         $field = $event_type->default_event_value_field_ids[$entity->type];
@@ -263,7 +264,7 @@ class Event extends ContentEntityBase implements EventInterface {
           $entity->event_id
         );
       }
-    }
+    }*/
   }
 
   /**
@@ -295,7 +296,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ))
       ->setDisplayOptions('form', array(
         'type' => 'entity_reference_autocomplete',
-        'weight' => 3,
+        'weight' => 5,
         'settings' => array(
           'match_operator' => 'CONTAINS',
           'size' => '60',
@@ -348,30 +349,6 @@ class Event extends ContentEntityBase implements EventInterface {
       ))
       ->setDisplayConfigurable('form', TRUE);
 
-    $fields['unit_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Unit'))
-      ->setDescription(t('The ID of the Unit entity this Event entity is associated with.'))
-      ->setRevisionable(TRUE)
-      ->setSetting('target_type', 'unit')
-      ->setSetting('handler', 'default')
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'property',
-        'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'weight' => 1,
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
     $fields['state_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('State'))
       ->setDescription(t('The ID of the State entity this Event entity is associated with.'))
@@ -395,6 +372,11 @@ class Event extends ContentEntityBase implements EventInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
+
+    $fields['type'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Type'))
+      ->setDescription(t('The event type.'))
+      ->setSetting('target_type', 'event_type');
 
     return $fields;
   }
