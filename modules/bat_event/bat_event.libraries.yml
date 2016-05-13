@@ -1,0 +1,6 @@
+color:
+  version: VERSION
+  js:
+    js/bat_color.js: {}
+  dependencies:
+    - core/jquery.farbtastic

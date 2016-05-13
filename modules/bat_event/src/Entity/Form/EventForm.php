@@ -17,11 +17,11 @@ use Drupal\Core\Language\Language;
  * @ingroup bat
  */
 class EventForm extends ContentEntityForm {
+
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var $entity \Drupal\bat\Entity\Event */
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
 
@@ -49,22 +49,23 @@ class EventForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    $entity = $this->entity;
+    $event = $this->entity;
     $status = $entity->save();
 
     switch ($status) {
       case SAVED_NEW:
         drupal_set_message($this->t('Created the %label Event.', [
-          '%label' => $entity->label(),
+          '%label' => $event->label(),
         ]));
         break;
 
       default:
         drupal_set_message($this->t('Saved the %label Event.', [
-          '%label' => $entity->label(),
+          '%label' => $event->label(),
         ]));
     }
-    $form_state->setRedirect('entity.event.edit_form', ['event' => $entity->id()]);
+
+    $form_state->setRedirect('entity.event.edit_form', ['event' => $event->id()]);
   }
 
 }

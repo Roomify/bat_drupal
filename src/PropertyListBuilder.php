@@ -32,7 +32,6 @@ class PropertyListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\bat\Entity\Property */
     $row['id'] = $entity->id();
     $row['name'] = $this->l(
       $this->getLabel($entity),

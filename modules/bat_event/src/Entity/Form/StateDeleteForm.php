@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Contains \Drupal\bat_event\Form\StateDeleteForm.
+ * Contains \Drupal\bat_event\Form\Entity\StateDeleteForm.
  */
 
-namespace Drupal\bat_event\Form;
+namespace Drupal\bat_event\Entity\Form;
 
-use Drupal\Core\Entity\EntityConfirmFormBase;
+use Drupal\Core\Entity\ContentEntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
  * Builds the form to delete State entities.
  */
-class StateDeleteForm extends EntityConfirmFormBase {
+class StateDeleteForm extends ContentEntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */

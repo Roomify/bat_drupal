@@ -7,12 +7,11 @@
 
 namespace Drupal\bat_event;
 
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
  * Provides an interface for defining State entities.
  */
-interface StateInterface extends ConfigEntityInterface {
-  // Add get/set methods for your configuration properties here.
+interface StateInterface extends ContentEntityInterface {
 
 }

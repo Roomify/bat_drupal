@@ -32,7 +32,6 @@ class EventListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\bat\Entity\Event */
     $row['id'] = $entity->id();
     $row['name'] = $this->l(
       $this->getLabel($entity),

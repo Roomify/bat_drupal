@@ -7,19 +7,24 @@
 
 namespace Drupal\bat_event;
 
-use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityListBuilder;
+use Drupal\Core\Routing\LinkGeneratorTrait;
+use Drupal\Core\Url;
 
 /**
  * Provides a listing of State entities.
+ *
+ * @ingroup bat
  */
-class StateListBuilder extends ConfigEntityListBuilder {
+class StateListBuilder extends EntityListBuilder {
+  use LinkGeneratorTrait;
   /**
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['label'] = $this->t('State');
-    $header['id'] = $this->t('Machine name');
+    $header['id'] = $this->t('State ID');
+    $header['name'] = $this->t('Name');
     return $header + parent::buildHeader();
   }
 
@@ -27,9 +32,15 @@ class StateListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = $this->getLabel($entity);
     $row['id'] = $entity->id();
-    // You probably want a few more properties here...
+    $row['name'] = $this->l(
+      $this->getLabel($entity),
+      new Url(
+        'entity.state.edit_form', array(
+          'state' => $entity->id(),
+        )
+      )
+    );
     return $row + parent::buildRow($entity);
   }
 
