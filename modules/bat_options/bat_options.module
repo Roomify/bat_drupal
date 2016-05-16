@@ -142,15 +142,15 @@ function bat_options_field_widget_info() {
 function bat_options_field_formatter_info() {
   return array(
     'bat_options_default' => array(
-      'label' => t('bat_options Options Default'),
-      'field types' => array('bar_options'),
+      'label' => t('BAT Options Default'),
+      'field types' => array('bat_options'),
     ),
     'bat_options_price' => array(
-      'label' => t('bat_options Options Price'),
+      'label' => t('BAT Options Price'),
       'field types' => array('bat_options'),
     ),
     'bat_options_admin' => array(
-      'label' => t('bat_options Options Administrator'),
+      'label' => t('BAT Options Administrator'),
       'field types' => array('bat_options'),
     ),
   );
