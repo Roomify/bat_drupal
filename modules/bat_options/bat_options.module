@@ -11,6 +11,7 @@ define('BAT_OPTIONS_SUB_DAILY', 'sub-daily');
 define('BAT_OPTIONS_REPLACE', 'replace');
 define('BAT_OPTIONS_INCREASE', 'increase');
 define('BAT_OPTIONS_DECREASE', 'decrease');
+define('BAT_OPTIONS_NOCHARGE', 'no_charge');
 define('BAT_OPTIONS_OPTIONAL', 'optional');
 define('BAT_OPTIONS_MANDATORY', 'mandatory');
 define('BAT_OPTIONS_ONREQUEST', 'on_request');
@@ -118,9 +119,10 @@ function bat_options_data_property_info($name = NULL) {
  * Implements hook_field_is_empty().
  */
 function bat_options_field_is_empty($item, $field) {
-  return empty($item['name']) || empty($item['quantity']) || !(is_numeric($item['quantity']) && is_integer((int) $item['quantity']))
-    || empty($item['value']) || !is_numeric($item['value'])
-    || empty($item['operation']) || !in_array($item['operation'], array_keys(bat_options_price_options()));
+  return empty($item['name']) ||
+         empty($item['quantity']) || !(is_numeric($item['quantity']) && is_integer((int) $item['quantity'])) ||
+         ((empty($item['value']) || !is_numeric($item['value'])) && $item['operation'] != 'no_charge') ||
+         empty($item['operation']) || !in_array($item['operation'], array_keys(bat_options_price_options()));
 }
 
 /**
@@ -241,10 +243,15 @@ function bat_options_field_widget_form(&$form, &$form_state, $field, $instance, 
       '#type' => 'textfield',
       '#title' => t('Value'),
       '#size' => 10,
-      '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
-      '#element_validate' => array('element_validate_integer_positive'),
+      '#default_value' => (isset($items[$delta]['value']) && $items[$delta]['value'] != 0) ? $items[$delta]['value'] : NULL,
+      '#element_validate' => array('element_validate_integer_positive', 'bat_options_element_value_validate'),
       '#attributes' => array(
         'class' => array('bat_options-option--value'),
+      ),
+      '#states' => array(
+        'disabled' => array(
+          ':input[name="field_addons[en][' . $delta . '][operation]"]' => array('value' => 'no_charge'),
+        )
       ),
     );
     $type_options = array(
@@ -282,6 +289,16 @@ function bat_options_field_widget_form(&$form, &$form_state, $field, $instance, 
     $element['#attached']['css'] = array(drupal_get_path('module', 'bat_options') . '/css/bat_options_widget.css');
 
     return $element;
+  }
+}
+
+/**
+ *
+ */
+function bat_options_element_value_validate($element, &$form_state) {
+  $value = $element['#value'];
+  if ($value == '') {
+    form_set_value($element, 0, $form_state);
   }
 }
 
@@ -407,7 +424,7 @@ function bat_options_remove_submit($form, &$form_state) {
  * Returns the available price options for booking_unit options field.
  */
 function bat_options_price_options() {
-  return array(
+  $options = array(
     BAT_OPTIONS_ADD => t('Add to price'),
     BAT_OPTIONS_ADD_DAILY => t('Add to price per night'),
     BAT_OPTIONS_SUB => t('Subtract from price'),
@@ -415,7 +432,12 @@ function bat_options_price_options() {
     BAT_OPTIONS_REPLACE => t('Replace price'),
     BAT_OPTIONS_INCREASE => t('Increase price by % amount'),
     BAT_OPTIONS_DECREASE => t('Decrease price by % amount'),
+    BAT_OPTIONS_NOCHARGE => t('No charge'),
   );
+
+  drupal_alter('bat_options_price_options', $options);
+
+  return $options;
 }
 
 /**
