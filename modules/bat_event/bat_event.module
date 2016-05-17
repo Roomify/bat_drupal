@@ -338,7 +338,7 @@ function bat_event_load_state($state_id) {
  *
  * @param $state_id
  *
- * @return array
+ * @return array|false
  */
 function bat_event_load_state_by_machine_name($state_machine_name) {
   $event_states = &drupal_static(__FUNCTION__, array());
@@ -552,7 +552,7 @@ function bat_event_states_form_submit($form, &$form_state) {
  */
 function bat_event_save_state($event_state, $event_type) {
   if (!empty($event_state['id'])) {
-    db_update('bat_event_state')
+    db_merge('bat_event_state')
       ->fields(array(
         'machine_name' => $event_state['machine_name'],
         'label' => $event_state['label'],
@@ -561,6 +561,17 @@ function bat_event_save_state($event_state, $event_type) {
         'blocking' => $event_state['blocking'],
       ))
       ->condition('id', $event_state['id'])
+      ->execute();
+  }
+  elseif (!empty($event_state['machine_name']) && bat_event_load_state_by_machine_name($event_state['machine_name'])) {
+    db_merge('bat_event_state')
+      ->fields(array(
+        'label' => $event_state['label'],
+        'color' => $event_state['color'],
+        'calendar_label' => $event_state['calendar_label'],
+        'blocking' => $event_state['blocking'],
+      ))
+      ->condition('machine_name', $event_state['machine_name'])
       ->execute();
   }
   else {
