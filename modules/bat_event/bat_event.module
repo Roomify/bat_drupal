@@ -2362,7 +2362,18 @@ function bat_event_get_calendar_response(DateTime $start_date, DateTime $end_dat
     'excluded' => array(),
   );
 
-  $calendar = bat_event_get_calendar($start_date, $end_date, $type_id, $event_type);
+  $valid_states = array();
+  foreach ($valid_name_states as $name) {
+    $state = bat_event_load_state_by_machine_name($name);
+    $valid_states[] = $state['id'];
+  }
+
+  $constraints = array();
+  foreach (bat_event_constraints_get_info() as $constraint) {
+    $constraints[] = $constraint['constraint'];
+  }
+
+  $calendar = bat_event_get_calendar($type_id, $event_type);
 
   $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints, $intersect);
 
