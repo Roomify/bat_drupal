@@ -10,6 +10,10 @@ use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
 
+if (module_exists('rules')) {
+  include_once('bat_event.rules.inc');
+}
+
 /**
  * Implements hook_menu().
  */
@@ -1561,8 +1565,29 @@ function bat_event_field_info() {
  * @see bat_event_field_info().
  */
 function bat_event_state_reference_info_callback(&$info, $entity_type, $field, $instance, $field_type) {
+  $name = $field['field_name'];
+  $property = &$info[$entity_type]['bundles'][$instance['bundle']]['properties'][$name];
+
+  $property['type'] = ($field['cardinality'] != 1) ? 'list<bat_event_state_reference>' : 'bat_event_state_reference';
   $property['getter callback'] = 'entity_metadata_field_verbatim_get';
   $property['setter callback'] = 'entity_metadata_field_verbatim_set';
+  $property['property info'] = bat_event_state_reference_field_data_property_info();
+
+  unset($property['query callback']);
+}
+
+/**
+ * Defines info for the properties of the State Reference field data structure.
+ */
+function bat_event_state_reference_field_data_property_info($name = NULL) {
+  return array(
+    'state_id' => array(
+      'label' => t('State ID'),
+      'type' => 'int',
+      'getter callback' => 'entity_property_verbatim_get',
+      'setter callback' => 'entity_property_verbatim_set',
+    ),
+  );
 }
 
 /**
