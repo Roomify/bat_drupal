@@ -24,6 +24,7 @@ class RulesDataUIEventStateReference extends RulesDataUI implements RulesDataDir
   }
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $settings += array($name => isset($info['default value']) ? $info['default value'] : array('state' => ''));
     $value = $settings[$name];
 
     $options = array();
@@ -31,14 +32,14 @@ class RulesDataUIEventStateReference extends RulesDataUI implements RulesDataDir
       $options[$state['machine_name']] = $state['label'] . ' (' . $state['id'] . ')';
     }
 
-  	$form[$name]['state'] = array(
+    $form[$name]['state'] = array(
       '#type' => 'select',
       '#options' => $options,
       '#default_value' => isset($value['state']) ? $value['state'] : '',
       '#required' => TRUE,
     );
 
-  	return $form;
+    return $form;
   }
 
   public static function render($value) {
