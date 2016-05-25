@@ -588,6 +588,7 @@ function bat_event_save_state($event_state, $event_type) {
   }
 
   drupal_static_reset('bat_event_get_states');
+  drupal_static_reset('bat_event_load_state_by_machine_name');
 }
 
 /**
@@ -1931,6 +1932,7 @@ function bat_event_delete_states_by_type($type) {
     ->execute();
 
   drupal_static_reset('bat_event_get_states');
+  drupal_static_reset('bat_event_load_state_by_machine_name');
 }
 
 /**
