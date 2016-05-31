@@ -8,7 +8,9 @@ Drupal.behaviors.bat_event = {
   attach: function(context) {
 
     var calendars = [];
-    calendars[0] = new Array('#calendar');
+    for (id in Drupal.settings.batCalendar) {
+      calendars[id] = new Array('#' + Drupal.settings.batCalendar[id]['id']);
+    }
 
     // Refresh the event once the modal is closed.
     $(document).one('CToolsDetachBehaviors', function() {
@@ -20,61 +22,61 @@ Drupal.behaviors.bat_event = {
     $.each(calendars, function(key, value) {
 
       $(value[0]).once().fullCalendar({
-        schedulerLicenseKey: Drupal.settings.batCalendar[0].schedulerLicenseKey,
-        slotWidth: Drupal.settings.batCalendar[0].slotWidth,
-        height: Drupal.settings.batCalendar[0].calendarHeight,
-        editable: Drupal.settings.batCalendar[0].editable,
-        selectable: Drupal.settings.batCalendar[0].selectable,
+        schedulerLicenseKey: Drupal.settings.batCalendar[key].schedulerLicenseKey,
+        slotWidth: Drupal.settings.batCalendar[key].slotWidth,
+        height: Drupal.settings.batCalendar[key].calendarHeight,
+        editable: Drupal.settings.batCalendar[key].editable,
+        selectable: Drupal.settings.batCalendar[key].selectable,
         displayEventTime: false,
         dayNamesShort:[Drupal.t('Sun'), Drupal.t('Mon'), Drupal.t('Tue'), Drupal.t('Wed'), Drupal.t('Thu'), Drupal.t('Fri'), Drupal.t('Sat')],
         monthNames:[Drupal.t('January'), Drupal.t('February'), Drupal.t('March'), Drupal.t('April'), Drupal.t('May'), Drupal.t('June'), Drupal.t('July'), Drupal.t('August'), Drupal.t('September'), Drupal.t('October'), Drupal.t('November'), Drupal.t('December')],
         header: {
-          left: Drupal.settings.batCalendar[0].headerLeft,
-          center: Drupal.settings.batCalendar[0].headerCenter,
-          right: Drupal.settings.batCalendar[0].headerRight,
+          left: Drupal.settings.batCalendar[key].headerLeft,
+          center: Drupal.settings.batCalendar[key].headerCenter,
+          right: Drupal.settings.batCalendar[key].headerRight,
         },
-        businessHours: Drupal.settings.batCalendar[0].businessHours,
-        defaultView: Drupal.settings.batCalendar[0].defaultView,
-        selectConstraint: Drupal.settings.batCalendar[0].selectConstraint,
-        minTime: Drupal.settings.batCalendar[0].minTime,
-        maxTime: Drupal.settings.batCalendar[0].maxTime,
-        hiddenDays: Drupal.settings.batCalendar[0].hiddenDays,
-        defaultDate: $.fullCalendar.moment(Drupal.settings.batCalendar[0].defaultDate),
+        businessHours: Drupal.settings.batCalendar[key].businessHours,
+        defaultView: Drupal.settings.batCalendar[key].defaultView,
+        selectConstraint: Drupal.settings.batCalendar[key].selectConstraint,
+        minTime: Drupal.settings.batCalendar[key].minTime,
+        maxTime: Drupal.settings.batCalendar[key].maxTime,
+        hiddenDays: Drupal.settings.batCalendar[key].hiddenDays,
+        defaultDate: $.fullCalendar.moment(Drupal.settings.batCalendar[key].defaultDate),
         views: {
           timelineDay: {
-            buttonText: Drupal.settings.batCalendar[0].viewsTimelineDayButtonText,
-            slotDuration: Drupal.settings.batCalendar[0].viewsTimelineDaySlotDuration,
+            buttonText: Drupal.settings.batCalendar[key].viewsTimelineDayButtonText,
+            slotDuration: Drupal.settings.batCalendar[key].viewsTimelineDaySlotDuration,
           },
           timelineSevenDay: {
-            buttonText: Drupal.settings.batCalendar[0].viewsTimelineSevenDayButtonText,
-            duration: Drupal.settings.batCalendar[0].viewsTimelineSevenDaySlotDuration,
+            buttonText: Drupal.settings.batCalendar[key].viewsTimelineSevenDayButtonText,
+            duration: Drupal.settings.batCalendar[key].viewsTimelineSevenDaySlotDuration,
             type: 'timeline',
           },
           timelineTenDay: {
-            buttonText: Drupal.settings.batCalendar[0].viewsTimelineTenDayButtonText,
-            duration: Drupal.settings.batCalendar[0].viewsTimelineTenDaySlotDuration,
+            buttonText: Drupal.settings.batCalendar[key].viewsTimelineTenDayButtonText,
+            duration: Drupal.settings.batCalendar[key].viewsTimelineTenDaySlotDuration,
             type: 'timeline',
           },
           timelineThirtyDay: {
-            buttonText: Drupal.settings.batCalendar[0].viewsTimelineThirtyDayButtonText,
-            duration: Drupal.settings.batCalendar[0].viewsTimelineThirtyDaySlotDuration,
+            buttonText: Drupal.settings.batCalendar[key].viewsTimelineThirtyDayButtonText,
+            duration: Drupal.settings.batCalendar[key].viewsTimelineThirtyDaySlotDuration,
             type: 'timeline',
           },
           timeline365Day: {
-            buttonText: Drupal.settings.batCalendar[0].viewsTimeline365DayButtonText,
-            duration: Drupal.settings.batCalendar[0].viewsTimeline365DaySlotDuration,
+            buttonText: Drupal.settings.batCalendar[key].viewsTimeline365DayButtonText,
+            duration: Drupal.settings.batCalendar[key].viewsTimeline365DaySlotDuration,
             type: 'timeline',
           }
         },
-        customButtons: Drupal.settings.batCalendar[0].customButtons,
-        resourceAreaWidth: Drupal.settings.batCalendar[0].resourceAreaWidth,
-        resourceLabelText: Drupal.settings.batCalendar[0].resourceLabelText,
-        resources: Drupal.settings.basePath + '?q=bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[0].unitType + '&event_type=' + Drupal.settings.batCalendar[0].eventType,
+        customButtons: Drupal.settings.batCalendar[key].customButtons,
+        resourceAreaWidth: Drupal.settings.batCalendar[key].resourceAreaWidth,
+        resourceLabelText: Drupal.settings.batCalendar[key].resourceLabelText,
+        resources: Drupal.settings.basePath + '?q=bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[key].unitType + '&event_type=' + Drupal.settings.batCalendar[key].eventType,
         selectOverlap: function(event) {
           // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';
         },
-        events: Drupal.settings.basePath + '?q=bat/v2/events-calendar&unit_types=' + Drupal.settings.batCalendar[0].unitType + '&event_types=' + Drupal.settings.batCalendar[0].eventType,
+        events: Drupal.settings.basePath + '?q=bat/v2/events-calendar&unit_types=' + Drupal.settings.batCalendar[key].unitType + '&event_types=' + Drupal.settings.batCalendar[key].eventType,
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
@@ -86,7 +88,7 @@ Drupal.behaviors.bat_event = {
             var ed = event.end.format('YYYY-MM-DD HH:mm');
 
             // Open the modal for edit
-            Drupal.batCalendar.Modal(view, event.bat_id, sd, ed, unit_id);
+            Drupal.batCalendar.Modal(view, key, event.bat_id, sd, ed, unit_id);
           }
         },
         select: function(start, end, jsEvent, view, resource) {
@@ -97,7 +99,7 @@ Drupal.behaviors.bat_event = {
             var sd = start.format('YYYY-MM-DD HH:mm');
 
             // Open the modal for edit
-            Drupal.batCalendar.Modal(this, 0, sd, ed, unit_id);
+            Drupal.batCalendar.Modal(this, key, 0, sd, ed, unit_id);
           }
 
           $(value[0]).fullCalendar('unselect');
@@ -110,7 +112,7 @@ Drupal.behaviors.bat_event = {
           if (event.editable) {
             // Prevent events from being dropped over unit types row.
             if (event.resourceId.match(/^S[0-9]+$/)) {
-              saveBatEvent(event, revertFunc, calendars);
+              saveBatEvent(event, revertFunc, calendars, key);
             }
             else {
               revertFunc();
@@ -122,7 +124,7 @@ Drupal.behaviors.bat_event = {
         },
         eventResize: function(event, delta, revertFunc) {
           if (event.editable) {
-            saveBatEvent(event, revertFunc, calendars);
+            saveBatEvent(event, revertFunc, calendars, key);
           }
           else {
             revertFunc();
@@ -131,7 +133,7 @@ Drupal.behaviors.bat_event = {
         eventAfterRender: function(event, element, view) {
           // Append event title when rendering as background.
           if (event.rendering == 'background' && event.fixed == 0) {
-            if ((view.type == 'timelineThirtyDay' || view.type == 'timelineMonth' || view.type == 'timelineYear' || view.type == 'timeline365Day') && Drupal.settings.batCalendar[0].repeatEventTitle) {
+            if ((view.type == 'timelineThirtyDay' || view.type == 'timelineMonth' || view.type == 'timelineYear' || view.type == 'timeline365Day') && Drupal.settings.batCalendar[key].repeatEventTitle) {
               var start = event.start.clone();
               start.subtract(start.hour(), 'hours').subtract(start.minute(), 'minutes');
 
@@ -184,14 +186,14 @@ Drupal.behaviors.bat_event = {
 /**
  * Initialize the modal box.
  */
-Drupal.batCalendar.Modal = function(element, eid, sd, ed, $unit_id) {
+Drupal.batCalendar.Modal = function(element, key, eid, sd, ed, $unit_id) {
   Drupal.CTools.Modal.show('bat-modal-style');
 
   // The base url (which doesn't change) is used to identify our ajax instance.
   var base = Drupal.settings.basePath + '?q=admin/bat/fullcalendar/';
   // Create a drupal ajax object that points to the event form.
   var element_settings = {
-    url : base + $unit_id + '/event/' + Drupal.settings.batCalendar[0].eventType + '/' + eid + '/' + sd + '/' + ed,
+    url : base + $unit_id + '/event/' + Drupal.settings.batCalendar[key].eventType + '/' + eid + '/' + sd + '/' + ed,
     event : 'getResponse',
     progress : { type: 'throbber' }
   };
@@ -214,7 +216,7 @@ Drupal.batCalendar.Modal = function(element, eid, sd, ed, $unit_id) {
   $(calendars_table).trigger('getResponse');
 };
 
-function saveBatEvent(event, revertFunc, calendars) {
+function saveBatEvent(event, revertFunc, calendars, key) {
   // The event has been moved - attempt to update it.
   var unit_id = event.resourceId.substring(1);
 
@@ -253,7 +255,7 @@ function saveBatEvent(event, revertFunc, calendars) {
       type: 'get',
       dataType: 'text',
       error:function (jqXHR, textStatus, errorThrown) {
-        alert(Drupal.settings.batCalendar[0].errorMessage);
+        alert(Drupal.settings.batCalendar[key].errorMessage);
       },
       success: function (token) {
         // Update event, using session token.
@@ -268,7 +270,7 @@ function saveBatEvent(event, revertFunc, calendars) {
           },
           contentType: 'application/json',
           error: function (jqXHR, textStatus, errorThrown) {
-            alert(Drupal.settings.batCalendar[0].errorMessage);
+            alert(Drupal.settings.batCalendar[key].errorMessage);
             revertFunc();
           },
           success: function (request) {

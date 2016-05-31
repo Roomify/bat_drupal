@@ -650,7 +650,7 @@ function theme_bat_fullcalendar($vars) {
   }
   else {
     $attributes = array(
-      'id' => 'calendar',
+      'id' => drupal_html_id('calendar'),
       'class' => array(
         'calendar-set',
         'clearfix',
@@ -678,6 +678,7 @@ function theme_bat_fullcalendar($vars) {
     drupal_add_css($css_file, array('type' => 'file'));
   }
 
+  $settings['batCalendar'][0]['id'] = $attributes['id'];
   drupal_add_js($settings, 'setting');
 
   $render_array =  array(
