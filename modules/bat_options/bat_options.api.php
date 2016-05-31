@@ -7,6 +7,9 @@
  * Drupal manner.
  */
 
+/**
+ * Allow other modules to alter price options.
+ */
 function hook_bat_options_price_options_alter(&$options) {
   // No example.
 }

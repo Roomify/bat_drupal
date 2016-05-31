@@ -564,17 +564,10 @@ function bat_type_set_breadcrumb() {
  * Unit add form.
  */
 function bat_type_add_units_form($form, &$form_state, $unit_model) {
-  $form['container'] = array(
-    '#type' => 'container',
-    '#attributes' => array(
-      'class' => array('container-inline'),
-    ),
-  );
-
-  $form['container']['units'] = array(
+  $form['units'] = array(
     '#type' => 'textfield',
-    '#title' => 'Units',
-    '#size' => 1,
+    '#title' => t('Units'),
+    '#size' => 3,
     '#description' => t('Number of Units to create.'),
   );
 
@@ -590,7 +583,12 @@ function bat_type_add_units_form($form, &$form_state, $unit_model) {
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => 'Add',
+    '#value' => t('Add'),
+  );
+
+  $form['#attached']['css'][] = array(
+    'data' => '.form-item-units label { display: inline-block; margin-right: 5px; }',
+    'type' => 'inline',
   );
 
   return $form;
