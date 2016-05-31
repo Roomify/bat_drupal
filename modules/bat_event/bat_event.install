@@ -10,6 +10,8 @@
  * Implements hook_uninstall().
  */
 function bat_event_uninstall() {
+  drupal_load('module', 'bat_event');
+
   $event_types = db_select('bat_event_type', 'b')
                   ->fields('b', array('type'))
                   ->execute()
