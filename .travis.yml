@@ -13,7 +13,7 @@ mysql:
   encoding: utf8
 
 addons:
-  firefox: "42.0"
+  firefox: "46.0"
 
 before_script:
   # Remove xdebug for the moment. We aren't generating code coverage, and it slows us down.
@@ -62,8 +62,8 @@ before_script:
   - sleep 3
 
   - mkdir -p $HOME/.cache
-  - wget -nc -O $HOME/.cache/selenium-server-standalone-2.48.2.jar http://selenium-release.storage.googleapis.com/2.48/selenium-server-standalone-2.48.2.jar || true
-  - java -jar $HOME/.cache/selenium-server-standalone-2.48.2.jar -p 4444 &> /tmp/selenium.log &
+  - wget -nc -O $HOME/.cache/selenium-server-standalone-2.53.0.jar http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar || true
+  - java -jar $HOME/.cache/selenium-server-standalone-2.53.0.jar -p 4444 &> /tmp/selenium.log &
   - sleep 5
 
 script:
