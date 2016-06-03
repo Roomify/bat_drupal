@@ -204,12 +204,12 @@ Drupal.batCalendar.Modal = function(element, key, eid, sd, ed, $unit_id) {
 
   // Create a new instance only once.
   // If it exists just override the url.
-  if (Drupal.ajax[base] === undefined) {
-    Drupal.ajax[base] = new Drupal.ajax(element_settings.url, calendars_table, element_settings);
+  if (Drupal.ajax[base + key] === undefined) {
+    Drupal.ajax[base + key] = new Drupal.ajax(element_settings.url, calendars_table, element_settings);
   }
   else {
-    Drupal.ajax[base].element_settings.url = element_settings.url;
-    Drupal.ajax[base].options.url = element_settings.url;
+    Drupal.ajax[base + key].element_settings.url = element_settings.url;
+    Drupal.ajax[base + key].options.url = element_settings.url;
   }
   // We need to trigger the AJAX getResponse manually because the
   // fullcalendar select event is not recognized by Drupal's AJAX.
