@@ -37,6 +37,7 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
    */
   public function format(EventInterface $event) {
     $editable = FALSE;
+    $context = array();
 
     // Load the target entity from Drupal
     $target_entity = entity_load_single($this->event_type->target_entity_type, $event->getUnitId());
@@ -53,6 +54,8 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
       if (bat_event_access('update', $bat_event)) {
         $editable = TRUE;
       }
+
+      $context['bat_event'] = $bat_event;
     }
 
     $formatted_event = array(
@@ -78,7 +81,7 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
     $formatted_event['type'] = $this->event_type->type;
 
     // Allow other modules to alter the event data.
-    drupal_alter('bat_fullcalendar_formatted_event', $formatted_event);
+    drupal_alter('bat_fullcalendar_formatted_event', $formatted_event, $context);
 
     return $formatted_event;
   }

@@ -61,7 +61,7 @@ function hook_bat_fullcalendar_modal_content($unit, $event_type, $event_id, $sta
  *
  * @param $formatted_event
  */
-function hook_bat_fullcalendar_formatted_event_alter(&$formatted_event) {
+function hook_bat_fullcalendar_formatted_event_alter(&$formatted_event, $context) {
   // Hide booking names for non-privileged users.
   if ($formatted_event['type'] == 'availability' && !user_access('create bat_event entities of bundle availability')) {
     if ($formatted_event['blocking']) {
