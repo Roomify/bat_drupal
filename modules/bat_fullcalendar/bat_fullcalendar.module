@@ -166,7 +166,7 @@ function bat_fullcalendar_bat_fullcalendar_modal_content($entity_id, $event_type
 /**
  * The Event Manager Form.
  */
-function bat_fullcalendar_event_manager_form($form, $form_state, $entity_id, $event_type, $event_id, $start_date, $end_date) {
+function bat_fullcalendar_event_manager_form($form, &$form_state, $entity_id, $event_type, $event_id, $start_date, $end_date) {
   $form = array();
   $new_event_id = $event_id;
 
@@ -270,7 +270,7 @@ function bat_fullcalendar_event_manager_form($form, $form_state, $entity_id, $ev
 /**
  * The callback for the change_event_status widget of the event manager form.
  */
-function bat_fullcalendar_ajax_event_status_change($form, $form_state) {
+function bat_fullcalendar_ajax_event_status_change($form, &$form_state) {
   global $user;
 
   $start_date = $form_state['values']['bat_start_date'];
@@ -746,7 +746,7 @@ function bat_fullcalendar_settings($form, &$form_state) {
 /**
  * Ajax callback for bat_fullcalendar_settings form.
  */
-function bat_fullcalendar_settings_ajax_callback($form, $form_state) {
+function bat_fullcalendar_settings_ajax_callback($form, &$form_state) {
   return $form['bat_fullcalendar_scheduler'];
 }
 

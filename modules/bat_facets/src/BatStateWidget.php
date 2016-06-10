@@ -94,6 +94,6 @@ class BatStateWidget extends FacetapiWidget {
 /**
  * Ajax callback when change 'Event type'.
  */
-function bat_facets_event_type_change($form, $form_state) {
+function bat_facets_event_type_change($form, &$form_state) {
   return $form['widget']['widget_settings']['bat_facets'];
 }

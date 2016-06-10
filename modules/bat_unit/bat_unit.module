@@ -933,6 +933,9 @@ class BatUnit extends Entity {
       );
       $field_view_value = field_view_value('bat_type', $bat_type, $field, $price);
     }
+    elseif ($field_info['type'] == 'number_integer') {
+      $field_view_value = field_view_value('bat_type', $bat_type, $field, array('value' => $value));
+    }
     else {
       $field_view_value = field_view_value('bat_type', $bat_type, $field, $value);
     }
