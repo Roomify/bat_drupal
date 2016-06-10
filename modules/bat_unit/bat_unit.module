@@ -1847,12 +1847,22 @@ if (module_exists('inline_entity_form')) {
       module_load_include('inc', 'bat_unit', 'bat_type.admin');
       $info = entity_get_info($this->entityType);
       $type = $form['#entity'];
-      if (!isset($type->status)) {
+
+      if (isset($type->is_new) && $type->is_new) {
+        global $user;
+
+        $type->created = REQUEST_TIME;
+        $type->author_name = isset($user->name) ? $user->name : '';
         $type->status = 0;
+      }
+      else {
+        $account = user_load($type->uid);
+        $type->author_name = isset($account->name) ? $account->name : '';
+        $type->date = format_date($type->created, 'custom', 'Y-m-d H:i:s O');
       }
 
       if (!empty($info['fieldable'])) {
-        $langcode = entity_language($this->entityType, $entity);
+        $langcode = entity_language($this->entityType, $type);
         field_attach_form($this->entityType, $type, $form, $form_state, $langcode);
       }
 
@@ -1891,7 +1901,6 @@ if (module_exists('inline_entity_form')) {
         '#title' => t('Authoring information'),
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
-        '#group' => 'additional_settings',
         '#attributes' => array(
           'class' => array('type-form-author'),
         ),
@@ -1954,14 +1963,17 @@ if (module_exists('inline_entity_form')) {
      */
     public function entityFormSubmit(&$entity_form, &$form_state) {
       parent::entityFormSubmit($entity_form, $form_state);
+
       $entity = $entity_form['#entity'];
+
+      $entity->created = !empty($entity->author['date']) ? strtotime($entity->author['date']) : REQUEST_TIME;
 
       if ($entity->type_id !== '') {
         $entity->changed = time();
       }
 
-      if (isset($entity->author_name)) {
-        if ($account = user_load_by_name($entity->author_name)) {
+      if (isset($entity->author['author_name'])) {
+        if ($account = user_load_by_name($entity->author['author_name'])) {
           $entity->uid = $account->uid;
         }
         else {
