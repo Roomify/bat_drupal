@@ -7,6 +7,7 @@
  */
 
 use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -343,8 +344,10 @@ function bat_unit_bundle_load($bundle, $reset = FALSE) {
  * @see bat_unit_load_multiple()
  */
 function bat_unit_load($unit_id, $reset = FALSE) {
-  $units = bat_unit_load_multiple(array($unit_id), array(), $reset);
-  return reset($units);
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('unit')->resetCache(array($unit_id));
+  }
+  return Unit::load($unit_id);
 }
 
 /**
@@ -384,7 +387,7 @@ function bat_unit_delete(Unit $unit) {
  *   An array of unit IDs.
  */
 function bat_unit_delete_multiple(array $unit_ids) {
-  //entity_get_controller('bat_unit')->delete($unit_ids);
+
 }
 
 /**
@@ -394,7 +397,7 @@ function bat_unit_delete_multiple(array $unit_ids) {
  *   The properties for the new unit bundle.
  */
 function bat_unit_create($values = array()) {
-  //return entity_get_controller('bat_unit')->create($values);
+
 }
 
 /**
@@ -414,7 +417,7 @@ function bat_unit_save(BatUnit $unit) {
  *   The properties for the new unit bundle.
  */
 function bat_unit_bundle_create($values = array()) {
-  //return entity_get_controller('bat_unit_bundle')->create($values);
+
 }
 
 /**
@@ -480,11 +483,6 @@ function bat_unit_ids($bundle = '') {
  * Sets up content to show an individual unit.
  */
 function bat_unit_page_view($unit, $view_mode = 'full') {
-  /*$controller = entity_get_controller('bat_unit');
-  $content = $controller->view(array($unit->unit_id => $unit), $view_mode);
-
-  drupal_set_title($unit->name);*/
-
   return $content;
 }
 
@@ -696,7 +694,7 @@ function bat_type_bundles_ids() {
  *   A type bundle array or FALSE if $bundle does not exist.
  */
 function bat_type_bundle_load($bundle, $reset = FALSE) {
-  //TypeBundle::load($bundle);
+  return TypeBundle::load($bundle);
 }
 
 /**
@@ -755,7 +753,7 @@ function bat_type_delete(BatType $type) {
  *   An array of type IDs.
  */
 function bat_type_delete_multiple(array $type_ids) {
-  //entity_get_controller('bat_type')->delete($type_ids);
+
 }
 
 /**
@@ -765,7 +763,7 @@ function bat_type_delete_multiple(array $type_ids) {
  *   The properties for the new type bundle.
  */
 function bat_type_create($values = array()) {
-  //return entity_get_controller('bat_type')->create($values);
+
 }
 
 /**
@@ -785,7 +783,7 @@ function bat_type_save(BatType $type) {
  *   The properties for the new type bundle.
  */
 function bat_type_bundle_create($values = array()) {
-  //return entity_get_controller('bat_type_bundle')->create($values);
+
 }
 
 /**
@@ -802,7 +800,7 @@ function bat_type_bundle_save(BatTypeBundle $bundle) {
  * Deletes a Bat Type bundle from the db.
  */
 function bat_type_bundle_delete(TypeBundle $bundle) {
-  //$bundle->delete();
+
 }
 
 /**
@@ -873,11 +871,6 @@ function bat_type_bundle_ids() {
  * Sets up content to show an individual Bat Type.
  */
 function bat_type_page_view($type, $view_mode = 'full') {
-  /*$controller = entity_get_controller('bat_type');
-  $content = $controller->view(array($type->type_id => $type), $view_mode);
-
-  drupal_set_title($type->name);*/
-
   return $content;
 }
 
@@ -887,7 +880,7 @@ function bat_type_page_view($type, $view_mode = 'full') {
  * FORM_ID = bat_type_bundle_operation_form
  * Prevent a Bat type bundle with associated unit bundles from being deleted.
  */
-function bat_unit_form_bat_type_bundle_operation_form_alter(&$form, &$form_state) {
+function bat_unit_form_bat_type_bundle_operation_form_alter(&$form, FormStateInterface $form_state) {
   // Check if types of a type bundle exist before allowing deletion.
   if ($form_state['op'] == 'delete') {
     $type_bundle = $form_state['bat_type_bundle'];

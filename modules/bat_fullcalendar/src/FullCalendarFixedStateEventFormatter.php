@@ -41,17 +41,18 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
     $bat_unit = bat_unit_load($event->getUnitId());
 
     // Get the unit entity default value
-    $default_value = $bat_unit->getEventDefaultValue($this->event_type->type);
+    $default_value = $bat_unit->getEventDefaultValue($this->event_type->id());
 
     // Get the default state info which will provide the default value for formatting
-    $state_info = bat_event_load_state($default_value);
+    //$state_info = bat_event_load_state($default_value);
+    $state_info = array();
 
     // However if the event is in the database, then load the actual event and get its value.
     if ($event->getValue()) {
       // Load the event from the database to get the actual state and load that info.
       $bat_event = bat_event_load($event->getValue());
-      $temp_value = $bat_event->getEventValue();
-      $state_info = bat_event_load_state($bat_event->getEventValue());
+      //$state_info = bat_event_load_state($bat_event->getEventValue());
+      $state_info = array();
 
       // Set calendar label from event.
       $state_info['calendar_label'] = $bat_event->label();
@@ -79,7 +80,7 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
       $formatted_event['blocking'] = 0;
     }
 
-    $formatted_event['type'] = $this->event_type->type;
+    $formatted_event['type'] = $this->event_type->id();
 
     // Allow other modules to alter the event data.
     \Drupal::moduleHandler()->alter('bat_fullcalendar_formatted_event', $formatted_event);

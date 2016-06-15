@@ -20,7 +20,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
 
   // Check if current type support this event type.
   if ($type = bat_type_load($unit_type)) {
-    $type_bundle = bat_type_bundle_load($type->type);
+    $type_bundle = bat_type_bundle_load($type->bundle());
 
     if (is_array($type_bundle->default_event_value_field_ids)) {
       if (!(isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type]))) {

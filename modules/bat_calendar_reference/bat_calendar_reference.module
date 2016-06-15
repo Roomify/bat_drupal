@@ -173,7 +173,7 @@ function bat_calendar_reference_event_types_potential_references($field, $option
  */
 function _bat_calendar_reference_event_types_potential_references($field, $options) {
   // Avoid useless work.
-  if (!isset($field['settings']['referenceable_event_types'])) {
+  /*if (!isset($field['settings']['referenceable_event_types'])) {
     return array();
   }
 
@@ -221,9 +221,9 @@ function _bat_calendar_reference_event_types_potential_references($field, $optio
   foreach ($result as $event_type) {
     $references[$event_type->id] = array(
       'title'    => $event_type->label,
-      'rendered' => check_plain($event_type->label),
+      'rendered' => SafeMarkup::checkPlain($event_type->label),
     );
-  }
+  }*/
 
   return $references;
 }
@@ -270,8 +270,8 @@ function bat_calendar_reference_unit_types_potential_references($field, $options
  * @return array
  */
 function _bat_calendar_reference_unit_types_potential_references($field, $options) {
-  $query = db_select('bat_types', 'u');
-  $unit_unit_id_alias = $query->addField('u', 'type_id');
+  $query = db_select('unit_type', 'u');
+  $unit_unit_id_alias = $query->addField('u', 'id');
   $type_name_alias = $query->addField('u', 'name', 'name');
 
   if ($options['string'] !== '') {
@@ -301,9 +301,9 @@ function _bat_calendar_reference_unit_types_potential_references($field, $option
   $result = $query->execute()->fetchAll();
   $references = array();
   foreach ($result as $unit_type) {
-    $references[$unit_type->type_id] = array(
+    $references[$unit_type->id] = array(
       'title'    => $unit_type->name,
-      'rendered' => check_plain($unit_type->name),
+      'rendered' => SafeMarkup::checkPlain($unit_type->name),
     );
   }
 

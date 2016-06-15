@@ -10,15 +10,6 @@ use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
 
 /**
- * Implements hook_ctools_plugin_api().
- */
-function bat_facets_ctools_plugin_api($module, $api) {
-  if ($module == 'facetapi' && $api == 'facetapi_defaults') {
-    return array('version' => '1');
-  }
-}
-
-/**
  * Implements hook_facetapi_facet_info_alter().
  */
 function bat_facets_facetapi_facet_info_alter(array &$facet_info, array $searcher_info) {

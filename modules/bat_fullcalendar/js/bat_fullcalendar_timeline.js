@@ -63,12 +63,12 @@ Drupal.behaviors.bat_event = {
         },
         resourceAreaWidth: drupalSettings.batCalendar[0].resourceAreaWidth,
         resourceLabelText: drupalSettings.batCalendar[0].resourceLabelText,
-        resources: drupalSettings.basePath + '?q=bat/v2/units-calendar&types=' + drupalSettings.batCalendar[0].unitType + '&event_type=' + drupalSettings.batCalendar[0].eventType,
+        resources: '/bat_api/calendar-units?_format=json&types=' + drupalSettings.batCalendar[0].unitType + '&event_type=' + drupalSettings.batCalendar[0].eventType,
         selectOverlap: function(event) {
           // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';
         },
-        events: drupalSettings.basePath + '?q=bat/v2/events-calendar&unit_types=' + drupalSettings.batCalendar[0].unitType + '&event_types=' + drupalSettings.batCalendar[0].eventType,
+        events: '/bat_api/calendar-events?_format=json&unit_types=' + drupalSettings.batCalendar[0].unitType + '&event_types=' + drupalSettings.batCalendar[0].eventType,
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
@@ -84,6 +84,14 @@ Drupal.behaviors.bat_event = {
           }
         },
         select: function(start, end, jsEvent, view, resource) {
+          Drupal.ajax({
+            url: '/admin/config',
+            success: function(response) {
+              var $myDialog = $('<div>' + response.data + '</div>').appendTo('body');
+              Drupal.dialog($myDialog, {title: 'Some title'}).showModal();
+            }
+          }).execute();
+
           if (resource.create_event) {
             var unit_id = resource.id.substring(1);
 

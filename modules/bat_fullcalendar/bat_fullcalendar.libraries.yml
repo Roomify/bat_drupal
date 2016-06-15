@@ -18,6 +18,7 @@ fullcalendar-scheduler:
   dependencies:
     - bat_fullcalendar/fullcalendar
     - core/drupalSettings
+    - core/drupal.dialog
   css:
     theme:
       css/bat_fullcalendar_timeline.css: {}

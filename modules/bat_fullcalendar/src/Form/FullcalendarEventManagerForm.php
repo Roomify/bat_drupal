@@ -49,7 +49,7 @@ class FullcalendarEventManagerForm extends FormBase {
       '#value' => $end_date,
     );
 
-    $unit = entity_load_single($event_type->target_entity_type, $entity_id);
+    $unit = entity_load($event_type->target_entity_type, $entity_id);
 
     $form['event_title'] = array(
       '#prefix' => '<h2>',
@@ -188,7 +188,7 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $event->save();
 
-    $unit = entity_load_single($event_type_entity->target_entity_type, $entity_id);
+    $unit = entity_load($event_type_entity->target_entity_type, $entity_id);
 
     $value = field_view_value('bat_event', $event, $field_name, $form_state['values'][$field_name][LANGUAGE_NONE][0]);
 

@@ -6,5 +6,4 @@ package: bat
 
 dependencies:
   - bat
-  - ctools
   - views

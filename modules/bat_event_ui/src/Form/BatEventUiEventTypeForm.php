@@ -48,13 +48,13 @@ class BatEventUiEventTypeForm extends FormBase {
       );
 
       foreach ($types as $type) {
-        $type_bundle = bat_type_bundle_load($type->type);
+        $type_bundle = bat_type_bundle_load($type->bundle());
 
-        if (is_array($type_bundle->default_event_value_field_ids)) {
-          if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
-            $types_options[$type->type_id] = $type->name;
-          }
-        }
+        //if (is_array($type_bundle->default_event_value_field_ids)) {
+        //  if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
+            $types_options[$type->id()] = $type->label();
+        //  }
+        //}
       }
 
       $form['unit_type'] = array(

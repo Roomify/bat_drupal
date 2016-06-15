@@ -8,8 +8,10 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\SafeMarkup;
+
 
 /**
  * Implements hook_help().
@@ -83,122 +85,125 @@ function template_preprocess_bat_property_add_list(&$variables) {
  * Implements hook_entity_access().
  */
 function bat_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
-  /*$rights = &drupal_static(__FUNCTION__, array());
-  global $user;
-  $account = isset($account) ? $account : $user;
-  $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
+  $rights = &drupal_static(__FUNCTION__, array());
 
-  // $entity may be either an object or a entity type. Since entity types cannot
-  // be an integer, use either nid or type as the static cache id.
-  $cid = is_object($entity) ? $entity->{$entity_info['entity keys']['id']} : $entity;
+  $entity_type = $entity->getEntityType()->id();
 
-  // If we are creating a new entity make sure we set the type so permissions get
-  // applied
-  if ($op == 'create' && $cid == '') {
-    $cid = $entity->type;
-  }
+  if (in_array($entity_type, array('unit_type'))) {
+    $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
 
-  // If we've already checked access for this node, user and op, return the
-  // cached result.
-  if (isset($rights[$account->uid][$cid][$op])) {
-    return $rights[$account->uid][$cid][$op];
-  }
+    // $entity may be either an object or a entity type. Since entity types cannot
+    // be an integer, use either nid or type as the static cache id.
+    $cid = is_object($entity) ? $entity->id() : $entity;
 
-  // Grant generic administrator level access.
-  if ($account->hasPermission('bypass ' . $entity_type . ' entities access')) {
-    $rights[$account->uid][$cid][$op] = TRUE;
-    return TRUE;
-  }
-
-  if ($op == 'view') {
-    if (isset($entity)) {
-      // When trying to figure out access to an entity, query the base table
-      // using our access control tag.
-      if (!empty($entity_info['access arguments']['access tag']) && module_implements('query_' . $entity_info['access arguments']['access tag'] . '_alter')) {
-        $query = db_select($entity_info['base table']);
-        $query->addExpression('1');
-        $result = (bool) $query
-          ->addTag($entity_info['access arguments']['access tag'])
-          ->addMetaData('account', $account)
-          ->condition($entity_info['entity keys']['id'], $entity->{$entity_info['entity keys']['id']})
-          ->range(0, 1)
-          ->execute()
-          ->fetchField();
-        $rights[$account->uid][$cid][$op] = $result;
-        return $result;
-      }
-      else {
-        $rights[$account->uid][$cid][$op] = TRUE;
-        return TRUE;
-      }
+    // If we are creating a new entity make sure we set the type so permissions get
+    // applied
+    if ($op == 'create' && $cid == '') {
+      $cid = $entity->type;
     }
-    else {
-      $access = $account->hasPermission('view any ' . $entity_type . ' entity');
-      $rights[$account->uid][$cid][$op] = $access;
-      return $access;
-    }
-  }
-  else { // Non-view operations.
-    // First grant access to the entity for the specified operation if no other
-    // module denies it and at least one other module says to grant access.
-    $access_results = \Drupal::moduleHandler()->invokeAll('bat_entity_access', $op, $entity, $account, $entity_type);
 
-    if (in_array(FALSE, $access_results, TRUE)) {
-      $rights[$account->uid][$cid][$op] = FALSE;
-      return FALSE;
+    // If we've already checked access for this node, user and op, return the
+    // cached result.
+    if (isset($rights[$account->uid][$cid][$op])) {
+      return $rights[$account->uid][$cid][$op];
     }
-    elseif (in_array(TRUE, $access_results, TRUE)) {
+
+    // Grant generic administrator level access.
+    if ($account->hasPermission('bypass ' . $entity_type . ' entities access')) {
       $rights[$account->uid][$cid][$op] = TRUE;
-      return TRUE;
+      return AccessResult::allowed();;
     }
 
-    // Grant access based on entity type and bundle specific permissions with
-    // special handling for the create operation since the entity passed in will
-    // be initialized without ownership.
-    if ($op == 'create') {
-      // Assuming an entity was passed in and we know its bundle key, perform
-      // the entity type and bundle-level access checks.
-      if (isset($entity) && !empty($entity_info['entity keys']['bundle'])) {
-        $access = $account->hasPermission('create ' . $entity_type . ' entities') || $account->hasPermission('create ' . $entity_type . ' entities of bundle ' . $entity->{$entity_info['entity keys']['bundle']});
-        $rights[$account->uid][$cid][$op] = $access;
-        return $access;
+    if ($op == 'view') {
+      if (isset($entity)) {
+        // When trying to figure out access to an entity, query the base table
+        // using our access control tag.
+        if (!empty($entity_info['access arguments']['access tag']) && module_implements('query_' . $entity_info['access arguments']['access tag'] . '_alter')) {
+          $query = db_select($entity_info['base table']);
+          $query->addExpression('1');
+          $result = (bool) $query
+            ->addTag($entity_info['access arguments']['access tag'])
+            ->addMetaData('account', $account)
+            ->condition($entity_info['entity keys']['id'], $entity->{$entity_info['entity keys']['id']})
+            ->range(0, 1)
+            ->execute()
+            ->fetchField();
+          $rights[$account->uid][$cid][$op] = $result;
+          return $result;
+        }
+        else {
+          $rights[$account->uid][$cid][$op] = TRUE;
+          return AccessResult::allowed();;
+        }
       }
       else {
-        // Otherwise perform an entity type-level access check.
-        $access = $account->hasPermission('create ' . $entity_type . ' entities');
+        $access = $account->hasPermission('view any ' . $entity_type . ' entity');
         $rights[$account->uid][$cid][$op] = $access;
         return $access;
       }
     }
-    else {
-      // Finally perform checks for the rest of operations. Begin by
-      // extracting the bundle name from the entity if available.
-      $bundle_name = '';
+    else { // Non-view operations.
+      // First grant access to the entity for the specified operation if no other
+      // module denies it and at least one other module says to grant access.
+      $access_results = \Drupal::moduleHandler()->invokeAll('bat_entity_access', $op, $entity, $account, $entity_type);
 
-      if (isset($entity) && !empty($entity_info['entity keys']['bundle'])) {
-        $bundle_name = $entity->{$entity_info['entity keys']['bundle']};
+      if (in_array(FALSE, $access_results, TRUE)) {
+        $rights[$account->uid][$cid][$op] = FALSE;
+        return AccessResult::forbidden();
       }
-
-      // For the delete and delete operations, first perform the entity type and
-      // bundle-level access check for any entity.
-      if ($account->hasPermission($op . ' any ' . $entity_type . ' entity') ||
-          $account->hasPermission($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name)) {
+      elseif (in_array(TRUE, $access_results, TRUE)) {
         $rights[$account->uid][$cid][$op] = TRUE;
-        return TRUE;
+        return AccessResult::allowed();;
       }
 
-      // Then check an authenticated user's access to delete his own entities.
-      if ($account->uid && !empty($entity_info['access arguments']['user key']) && isset($entity->{$entity_info['access arguments']['user key']}) && $entity->{$entity_info['access arguments']['user key']} == $account->uid) {
-        if ($account->hasPermission($op . ' own ' . $entity_type . ' entities') ||
-            $account->hasPermission($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
+      // Grant access based on entity type and bundle specific permissions with
+      // special handling for the create operation since the entity passed in will
+      // be initialized without ownership.
+      if ($op == 'create') {
+        // Assuming an entity was passed in and we know its bundle key, perform
+        // the entity type and bundle-level access checks.
+        if (isset($entity)) {
+          $access = $account->hasPermission('create ' . $entity_type . ' entities') || $account->hasPermission('create ' . $entity_type . ' entities of bundle ' . $entity->bundle());
+          $rights[$account->uid][$cid][$op] = $access;
+          return $access;
+        }
+        else {
+          // Otherwise perform an entity type-level access check.
+          $access = $account->hasPermission('create ' . $entity_type . ' entities');
+          $rights[$account->uid][$cid][$op] = $access;
+          return $access;
+        }
+      }
+      else {
+        // Finally perform checks for the rest of operations. Begin by
+        // extracting the bundle name from the entity if available.
+        $bundle_name = '';
+
+        if (isset($entity)) {
+          $bundle_name = $entity->bundle();
+        }
+
+        // For the delete and delete operations, first perform the entity type and
+        // bundle-level access check for any entity.
+        if ($account->hasPermission($op . ' any ' . $entity_type . ' entity') ||
+            $account->hasPermission($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name)) {
           $rights[$account->uid][$cid][$op] = TRUE;
-          return TRUE;
+          return AccessResult::allowed();;
+        }
+
+        // Then check an authenticated user's access to delete his own entities.
+        if ($account->uid && !empty($entity_info['access arguments']['user key']) && isset($entity->{$entity_info['access arguments']['user key']}) && $entity->{$entity_info['access arguments']['user key']} == $account->uid) {
+          if ($account->hasPermission($op . ' own ' . $entity_type . ' entities') ||
+              $account->hasPermission($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
+            $rights[$account->uid][$cid][$op] = TRUE;
+            return AccessResult::allowed();;
+          }
         }
       }
     }
-  }
 
-  return FALSE;*/
+    return AccessResult::forbidden();
+  }
 }
 
 /**
