@@ -8,6 +8,7 @@ use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Event\Event;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_facetapi_facet_info_alter().
@@ -120,7 +121,7 @@ function bat_facets_availability($form, &$form_state, $elements) {
 /**
  * submit handler.
  */
-function bat_facets_availability_submit($form, &$form_state) {
+function bat_facets_availability_submit($form, FormStateInterface $form_state) {
   $form_state['redirect'] = array($_GET['q'], array('query' => array('bat_start_date' => $form_state['values']['arrival'], 'bat_end_date' => $form_state['values']['departure'])));
 }
 

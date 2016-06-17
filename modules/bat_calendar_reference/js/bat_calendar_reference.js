@@ -38,6 +38,7 @@
               duration: { days: 10 }
             }
           },
+          customButtons: drupalSettings.batCalendar[cal_id].customButtons,
           resourceAreaWidth: drupalSettings.batCalendar[cal_id].resourceAreaWidth,
           resourceLabelText: drupalSettings.batCalendar[cal_id].resourceLabelText,
           resources: drupalSettings.basePath + '?q=bat/v2/units-calendar&types=' + drupalSettings.batCalendar[cal_id].unitTypes + '&ids=' + drupalSettings.batCalendar[cal_id].unitIDs + '&event_type=' + drupalSettings.batCalendar[cal_id].eventType,

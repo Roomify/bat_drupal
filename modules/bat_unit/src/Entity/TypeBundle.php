@@ -36,6 +36,7 @@ use Drupal\bat_unit\TypeBundleInterface;
  *   config_export = {
  *     "name",
  *     "type",
+ *     "default_event_value_field_ids",
  *   }
  * )
  */

@@ -230,7 +230,7 @@ class Event extends ContentEntityBase implements EventInterface {
     if ($this->getTranslation('und')->get($target_field_name) !== FALSE) {
 
       if (isset($event_type->default_event_value_field_ids)) {
-        /*$field = $event_type->default_event_value_field_ids;
+        $field = $event_type->default_event_value_field_ids;
         $field_info = FieldStorageConfig::loadByName($field);
         $values = $entity->getTranslation('und')->get($field);
 
@@ -244,11 +244,11 @@ class Event extends ContentEntityBase implements EventInterface {
           elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer') {
             $event_value = $values[0]['value'];
           }
-        }*/
+        }
       }
       else {
-        $event_state_reference = $this->getTranslation('und')->get($target_field_name);
-        $event_value = $event_state_reference->referencedEntities()[0]->id();
+        $state = $this->get('state_id')->entity;
+        $event_value = $state->id();
       }
 
       $event_target_entity_reference = $this->getTranslation('und')->get($target_field_name);

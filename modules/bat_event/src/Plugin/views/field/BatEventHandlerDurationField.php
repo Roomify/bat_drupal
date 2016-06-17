@@ -6,22 +6,24 @@
 
 namespace Drupal\bat_event\Plugin\views\field;
 
+use Drupal\views\ResultRow;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 
 /**
  * @ViewsField("bat_event_handler_duration_field")
  */
 class BatEventHandlerDurationField extends FieldPluginBase {
-  function construct() {
+
+  public function construct() {
     parent::construct();
   }
 
-  function click_sort($order) {
+  public function click_sort($order) {
     $params = $this->options['group_type'] != 'group' ? array('function' => $this->options['group_type']) : array();
     $this->query->add_orderby(NULL, NULL, $order, $this->field_alias, $params);
   }
 
-  function query() {
+  public function query() {
     $this->ensureMyTable();
 
     $this->field_alias = $this->table_alias . '_duration';
@@ -39,10 +41,11 @@ class BatEventHandlerDurationField extends FieldPluginBase {
     $this->addAdditionalFields();
   }
 
-  function render($values) {
+  public function render(ResultRow $values) {
     $value = $values->{$this->field_alias};
     $value += 60;
 
     return $this->sanitize_value(format_interval($value));
   }
+
 }

@@ -9,6 +9,7 @@
 
 namespace Drupal\bat_event\Plugin\views\field;
 
+use Drupal\views\ResultRow;
 use Drupal\views\Plugin\views\field\Date;
 
 /**
@@ -16,11 +17,11 @@ use Drupal\views\Plugin\views\field\Date;
  */
 class BatEventHandlerDateField extends Date {
 
-  function construct() {
+  public function construct() {
     parent::construct();
   }
 
-  function render($values) {
+  public function render(ResultRow $values) {
     $value = $this->get_value($values);
     $date = new DateTime($value);
 

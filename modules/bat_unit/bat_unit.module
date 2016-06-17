@@ -123,7 +123,7 @@ function template_preprocess_bat_unit_add_list(&$variables) {
  */
 function bat_unit_views_pre_render(ViewExecutable $view) {
   // Hide "Calendars" field until module "BAT Event UI" is enabled.
-  if ($view->name == 'unit_management' && !module_exists('bat_event_ui')) {
+  if ($view->id() == 'unit_management' && !\Drupal::moduleHandler()->moduleExists('bat_event_ui')) {
     $view->field['calendars']->options['exclude'] = TRUE;
   }
 }

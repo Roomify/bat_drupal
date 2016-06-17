@@ -8,6 +8,7 @@
 
 namespace Drupal\bat_unit\Plugin\views\field;
 
+use Drupal\views\ResultRow;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 
 /**
@@ -15,11 +16,11 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
  */
 class BatUnitHandlerUnitBundleField extends FieldPluginBase {
 
-  function construct() {
+  public function construct() {
     parent::construct();
   }
 
-  function render($values) {
+  public function render(ResultRow $values) {
     $unit_bundle = bat_unit_bundle_load($this->get_value($values));
     return $unit_bundle->label;
   }

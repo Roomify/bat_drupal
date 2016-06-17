@@ -158,7 +158,7 @@ class FullcalendarEventManagerForm extends FormBase {
   /**
    * The callback for the change_event_status widget of the event manager form.
    */
-  function bat_fullcalendar_event_manager_form_ajax_submit($form, &$form_state) {
+  function bat_fullcalendar_event_manager_form_ajax_submit($form, FormStateInterface $form_state) {
     global $user;
 
     $start_date = $form_state['values']['bat_start_date'];

@@ -11,6 +11,7 @@ define('BAT_OPTIONS_SUB_DAILY', 'sub-daily');
 define('BAT_OPTIONS_REPLACE', 'replace');
 define('BAT_OPTIONS_INCREASE', 'increase');
 define('BAT_OPTIONS_DECREASE', 'decrease');
+define('BAT_OPTIONS_NOCHARGE', 'no_charge');
 define('BAT_OPTIONS_OPTIONAL', 'optional');
 define('BAT_OPTIONS_MANDATORY', 'mandatory');
 define('BAT_OPTIONS_ONREQUEST', 'on_request');
@@ -66,7 +67,7 @@ function bat_options_remove_js() {
  * $form_state['input'], and $form_state['field'] so that user changed values
  * follow. This is a bit of a complicated process.
  */
-function bat_options_remove_submit($form, &$form_state) {
+function bat_options_remove_submit($form, FormStateInterface $form_state) {
   $button = $form_state['triggering_element'];
   $delta = $button['#delta'];
 
@@ -137,7 +138,7 @@ function bat_options_remove_submit($form, &$form_state) {
  * Returns the available price options for booking_unit options field.
  */
 function bat_options_price_options() {
-  return array(
+  $options = array(
     BAT_OPTIONS_ADD => t('Add to price'),
     BAT_OPTIONS_ADD_DAILY => t('Add to price per night'),
     BAT_OPTIONS_SUB => t('Subtract from price'),
@@ -145,7 +146,10 @@ function bat_options_price_options() {
     BAT_OPTIONS_REPLACE => t('Replace price'),
     BAT_OPTIONS_INCREASE => t('Increase price by % amount'),
     BAT_OPTIONS_DECREASE => t('Decrease price by % amount'),
+    BAT_OPTIONS_NOCHARGE => t('No charge'),
   );
+
+  return $options;
 }
 
 /**

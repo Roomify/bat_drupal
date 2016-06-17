@@ -8,6 +8,7 @@
 
 namespace Drupal\bat_unit\Plugin\views\field;
 
+use Drupal\views\ResultRow;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 
 /**
@@ -15,11 +16,11 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
  */
 class BatUnitHandlerTypeIdField extends FieldPluginBase {
 
-  function construct() {
+  public function construct() {
     parent::construct();
   }
 
-  function render($values) {
+  public function render(ResultRow $values) {
     if ($type = bat_type_load($this->get_value($values))) {
       return $type->name;
     }

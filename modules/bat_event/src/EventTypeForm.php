@@ -51,7 +51,7 @@ class EventTypeForm extends BundleEntityFormBase {
   	$event_type = $this->entity;
 
   	$form['name'] = array(
-      '#title' => t('Name'),
+      '#title' => t('Label'),
       '#type' => 'textfield',
       '#default_value' => $event_type->label(),
       '#description' => t('The human-readable name of this event type.'),
@@ -133,7 +133,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
       $form['events'][$event_type->id()] = array(
         '#type' => 'select',
-        '#title' => t('Select your default @event field', array('@event' => $event_type->label)),
+        '#title' => t('Select your default @event field', array('@event' => $event_type->label())),
         '#options' => $fields_options,
         '#default_value' => isset($event_type->default_event_value_field_ids) ? $event_type->default_event_value_field_ids : NULL,
         '#empty_option' => t('- Select a field -'),
@@ -154,7 +154,7 @@ class EventTypeForm extends BundleEntityFormBase {
         '#group' => 'additional_settings',
         '#title' => t('Label Source'),
         '#tree' => TRUE,
-        '#weight' => 80,
+        '#weight' => 70,
       );
 
       $form['event_label']['default_event_label_field_name'] = array(

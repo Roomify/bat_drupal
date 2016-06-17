@@ -3,3 +3,11 @@ drupal.bat.toolbar:
   css:
     theme:
       css/bat.icons.css: {}
+
+bat_date_range:
+  version: VERSION
+  js:
+    js/bat_date_popup.js: {}
+  css:
+    theme:
+      css/bat_date_range_fields.css: {}

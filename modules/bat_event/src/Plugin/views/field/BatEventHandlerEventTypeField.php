@@ -8,6 +8,7 @@
 
 namespace Drupal\bat_event\Plugin\views\field;
 
+use Drupal\views\ResultRow;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 
 /**
@@ -15,11 +16,11 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
  */
 class BatEventHandlerEventTypeField extends FieldPluginBase {
 
-  function construct() {
+  public function construct() {
     parent::construct();
   }
 
-  function render($values) {
+  public function render(ResultRow $values) {
     $event_type = bat_event_type_load($this->get_value($values));
     return $event_type->label;
   }

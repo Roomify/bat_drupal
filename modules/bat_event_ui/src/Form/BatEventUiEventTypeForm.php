@@ -18,11 +18,7 @@ class BatEventUiEventTypeForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    if ($form_state->getValue('event_types') != '') {
-      $event_type = $form_state->getValue('event_types');
-    }
-
+  public function buildForm(array $form, FormStateInterface $form_state, $unit_type = 'all', $event_type = 'all') {
     $event_types = bat_event_get_types();
     foreach ($event_types as $ev_type) {
       if (\Drupal::currentUser()->hasPermission('view calendar data for any ' . $ev_type->id() . ' event')) {
@@ -50,11 +46,11 @@ class BatEventUiEventTypeForm extends FormBase {
       foreach ($types as $type) {
         $type_bundle = bat_type_bundle_load($type->bundle());
 
-        //if (is_array($type_bundle->default_event_value_field_ids)) {
-        //  if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
+        if (is_array($type_bundle->default_event_value_field_ids)) {
+          if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
             $types_options[$type->id()] = $type->label();
-        //  }
-        //}
+          }
+        }
       }
 
       $form['unit_type'] = array(
@@ -95,7 +91,7 @@ class BatEventUiEventTypeForm extends FormBase {
     $type = $form_state->getValue('unit_type');
     $event_type = $form_state->getValue('event_types');
 
-    $form_state->setRedirectUrl(Url::fromUri('admin/bat/calendar/' . $type . '/' . $event_type));
+    $form_state->setRedirectUrl(Url::fromRoute('bat_event_ui.calendar', array('unit_type' => $type, 'event_type' => $event_type)));
   }
 
 }

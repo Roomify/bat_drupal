@@ -11,6 +11,8 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormStateInterface;
 
 
 /**
@@ -105,13 +107,18 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
     // If we've already checked access for this node, user and op, return the
     // cached result.
     if (isset($rights[$account->uid][$cid][$op])) {
-      return $rights[$account->uid][$cid][$op];
+      if ($rights[$account->uid][$cid][$op]) {
+        return AccessResult::allowed();
+      }
+      else {
+        return AccessResult::forbidden();
+      }
     }
 
     // Grant generic administrator level access.
     if ($account->hasPermission('bypass ' . $entity_type . ' entities access')) {
       $rights[$account->uid][$cid][$op] = TRUE;
-      return AccessResult::allowed();;
+      return AccessResult::allowed();
     }
 
     if ($op == 'view') {
@@ -133,13 +140,19 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
         }
         else {
           $rights[$account->uid][$cid][$op] = TRUE;
-          return AccessResult::allowed();;
+          return AccessResult::allowed();
         }
       }
       else {
         $access = $account->hasPermission('view any ' . $entity_type . ' entity');
         $rights[$account->uid][$cid][$op] = $access;
-        return $access;
+        
+        if ($access) {
+          return AccessResult::allowed();
+        }
+        else {
+          return AccessResult::forbidden();
+        }
       }
     }
     else { // Non-view operations.
@@ -153,7 +166,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
       }
       elseif (in_array(TRUE, $access_results, TRUE)) {
         $rights[$account->uid][$cid][$op] = TRUE;
-        return AccessResult::allowed();;
+        return AccessResult::allowed();
       }
 
       // Grant access based on entity type and bundle specific permissions with
@@ -165,13 +178,25 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
         if (isset($entity)) {
           $access = $account->hasPermission('create ' . $entity_type . ' entities') || $account->hasPermission('create ' . $entity_type . ' entities of bundle ' . $entity->bundle());
           $rights[$account->uid][$cid][$op] = $access;
-          return $access;
+
+          if ($access) {
+            return AccessResult::allowed();
+          }
+          else {
+            return AccessResult::forbidden();
+          }
         }
         else {
           // Otherwise perform an entity type-level access check.
           $access = $account->hasPermission('create ' . $entity_type . ' entities');
           $rights[$account->uid][$cid][$op] = $access;
-          return $access;
+
+          if ($access) {
+            return AccessResult::allowed();
+          }
+          else {
+            return AccessResult::forbidden();
+          }
         }
       }
       else {
@@ -188,7 +213,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
         if ($account->hasPermission($op . ' any ' . $entity_type . ' entity') ||
             $account->hasPermission($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name)) {
           $rights[$account->uid][$cid][$op] = TRUE;
-          return AccessResult::allowed();;
+          return AccessResult::allowed();
         }
 
         // Then check an authenticated user's access to delete his own entities.
@@ -196,7 +221,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
           if ($account->hasPermission($op . ' own ' . $entity_type . ' entities') ||
               $account->hasPermission($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
             $rights[$account->uid][$cid][$op] = TRUE;
-            return AccessResult::allowed();;
+            return AccessResult::allowed();
           }
         }
       }
@@ -226,69 +251,55 @@ function bat_entity_access_permissions($entity_type) {
   $permissions['create ' . $entity_type . ' entities'] = array(
     'title' => t('Create @entity_type of any type', array('@entity_type' => $label)),
   );
-  /*if (!empty($entity_info['access arguments']['user key'])) {
-    $permissions['view own ' . $entity_type . ' entities'] = array(
-      'title' => t('View own @entity_type of any type', array('@entity_type' => $label)),
-    );
-  }*/
+  $permissions['view own ' . $entity_type . ' entities'] = array(
+    'title' => t('View own @entity_type of any type', array('@entity_type' => $label)),
+  );
   $permissions['view any ' . $entity_type . ' entity'] = array(
     'title' => t('View any @entity_type of any type', array('@entity_type' => $label)),
     'restrict access' => TRUE,
   );
-  /*if (!empty($entity_info['access arguments']['user key'])) {
-    $permissions['update own ' . $entity_type . ' entities'] = array(
-      'title' => t('Edit own @entity_type of any type', array('@entity_type' => $label)),
-    );
-  }*/
+  $permissions['update own ' . $entity_type . ' entities'] = array(
+    'title' => t('Edit own @entity_type of any type', array('@entity_type' => $label)),
+  );
   $permissions['update any ' . $entity_type . ' entity'] = array(
     'title' => t('Edit any @entity_type of any type', array('@entity_type' => $label)),
     'restrict access' => TRUE,
   );
-  /*if (!empty($entity_info['access arguments']['user key'])) {
-    $permissions['delete own ' . $entity_type . ' entities'] = array(
-      'title' => t('Delete own @entity_type of any type', array('@entity_type' => $label)),
-    );
-  }*/
+  $permissions['delete own ' . $entity_type . ' entities'] = array(
+    'title' => t('Delete own @entity_type of any type', array('@entity_type' => $label)),
+  );
   $permissions['delete any ' . $entity_type . ' entity'] = array(
     'title' => t('Delete any @entity_type of any type', array('@entity_type' => $label)),
     'restrict access' => TRUE,
   );
 
   // Per-bundle create and edit permissions.
-  /*if (!empty($entity_info['entity keys']['bundle'])) {
-    foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
-      $permissions['create ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-        'title' => t('Create %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-      );
-      if (!empty($entity_info['access arguments']['user key'])) {
-        $permissions['view own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-          'title' => t('View own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-        );
-      }
-      $permissions['view any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
-        'title' => t('View any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-        'restrict access' => TRUE,
-      );
-      if (!empty($entity_info['access arguments']['user key'])) {
-        $permissions['update own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-          'title' => t('Edit own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-        );
-      }
-      $permissions['update any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
-        'title' => t('Edit any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-        'restrict access' => TRUE,
-      );
-      if (!empty($entity_info['access arguments']['user key'])) {
-        $permissions['delete own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-          'title' => t('Delete own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-        );
-      }
-      $permissions['delete any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
-        'title' => t('Delete any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-        'restrict access' => TRUE,
-      );
-    }
-  }*/
+  foreach (entity_get_bundles($entity_type) as $bundle_name => $bundle_info) {
+    $permissions['create ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+      'title' => t('Create %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+    );
+    $permissions['view own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+      'title' => t('View own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+    );
+    $permissions['view any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
+      'title' => t('View any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+      'restrict access' => TRUE,
+    );
+    $permissions['update own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+      'title' => t('Edit own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+    );
+    $permissions['update any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
+      'title' => t('Edit any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+      'restrict access' => TRUE,
+    );
+    $permissions['delete own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+      'title' => t('Delete own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+    );
+    $permissions['delete any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
+      'title' => t('Delete any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+      'restrict access' => TRUE,
+    );
+  }
 
   return $permissions;
 }
@@ -433,15 +444,15 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
   $config = \Drupal::config('bat.settings');
 
   // Create unique ids and selectors for each datepicker.
-  $start_date_id = drupal_html_id('datepicker-start-date');
+  $start_date_id = Html::getUniqueId('datepicker-start-date');
   $start_date_selector = '#' . $start_date_id . ' .form-text';
 
-  $end_date_id = drupal_html_id('datepicker-end-date');
+  $end_date_id = Html::getUniqueId('datepicker-end-date');
   $end_date_selector = '#' . $start_date_id . ' .form-text';
 
   // Specify the default datepicker parameters (see date_popup_element_info())
   $datepicker_options = array(
-    'dateFormat' => date_popup_format_to_popup($config->get('bat_daily_date_format')),
+    //'dateFormat' => date_popup_format_to_popup($config->get('bat_daily_date_format')),
     // Limit bookings to X days in advance according to the
     // chosen configuration in your BAT installation.
     // Defaults to the current day.
@@ -471,7 +482,7 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
   $date_range_fields['bat_start_date'] = array(
     '#prefix' => '<div class="form-wrapper bat-date-range"><div class="start-date" id="' . $start_date_id . '">',
     '#suffix' => '</div>',
-    '#type' => 'date_popup',
+    '#type' => 'date',
     '#title' => t('Event Start'),
     '#date_type' => DATE_DATETIME,
     '#date_format' => $config->get('bat_daily_date_format'),
@@ -486,7 +497,7 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
   $date_range_fields['bat_end_date'] = array(
     '#prefix' => '<div class="end-date" id="' . $end_date_id . '">',
     '#suffix' => '</div></div>',
-    '#type' => 'date_popup',
+    '#type' => 'date',
     '#title' => t('Event End'),
     '#date_type' => DATE_DATETIME,
     '#date_format' => $config->get('bat_daily_date_format'),
@@ -496,31 +507,7 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
     // parameter linking to the jQuery selector for the start datepicker.
     '#datepicker_options' => array_merge($datepicker_options, array('startDateSelector' => $start_date_selector)),
     '#required' => TRUE,
-    '#attached' => array(
-      'css' => array(
-        drupal_get_path('module', 'bat') . '/css/bat_date_range_fields.css',
-      ),
-      'js' => array(
-        drupal_get_path('module', 'bat') . '/js/bat_date_popup.js',
-        array(
-          'data' => array(
-            'bat' => array(
-              'batStartYear' => $year,
-              'batStartMonth' => $month,
-              'batBookingStartDay' => $config->get('bat_event_start_date'),
-              'batDateFormat' => 'dd/mm/yy',
-              'batDateGranularity' => $granularity,
-              'datepickers' => array(
-                $start_date_selector => array(
-                  'endDateSelector' => $end_date_selector,
-                ),
-              ),
-            ),
-          ),
-          'type' => 'setting',
-        ),
-      ),
-    ),
+    '#attached' => array('library' => array('bat/bat_date_range')),
   );
 
   return $date_range_fields;
@@ -530,7 +517,7 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
  * Given a form state array, locate the start/end dates in the input array
  * and instantiate and return DateTime objects.
  */
-function bat_form_input_get_start_end_dates($form_state) {
+function bat_form_input_get_start_end_dates(FormStateInterface $form_state) {
   // If form_state['values']['bat_X_date'] is not set, it is an empty array.
   // In this case, we need to check and set values so that
   // _constructor below will not fail.
@@ -593,7 +580,7 @@ function bat_form_values_get_start_end_dates($form_state) {
  *
  * The end date must be greater than start date.
  */
-function bat_form_start_end_dates_validate($form, &$form_state) {
+function bat_form_start_end_dates_validate($form, FormStateInterface $form_state) {
   list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
 
   // Fail validation if no dates are provided.

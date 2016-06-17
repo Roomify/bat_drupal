@@ -233,10 +233,10 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
    * @return string|FALSE
    */
   public function getEventValueDefaultField($event_type) {
-    $type_bundle = bat_type_bundle_load($this->type);
+    $type_bundle = bat_type_bundle_load($this->bundle());
 
-    if (isset($type_bundle->default_event_value_field_ids)) {
-      return $type_bundle->default_event_value_field_ids;
+    if (isset($type_bundle->default_event_value_field_ids['$event_type'])) {
+      return $type_bundle->default_event_value_field_ids['$event_type'];
     }
 
     return FALSE;
