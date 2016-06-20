@@ -276,6 +276,20 @@ function bat_event_edit_form($form, &$form_state, $event) {
   // The unit reference value should be mandatory.
   $form[$target_field_name][$language][0]['target_id']['#required'] = TRUE;
 
+  if ($event_type->fixed_event_states && isset($form['event_state_reference'][$language][0]['state_id'])) {
+    $form['event_state_reference'][$language][0]['state_id']['#required'] = TRUE;
+  }
+  else {
+    $field_name = $event_type->default_event_value_field_ids[$event_type->type];
+
+    if (isset($form[$field_name][$language][0]['amount']['#required'])) {
+      $form[$field_name][$language][0]['amount']['#required'] = TRUE;
+    }
+    elseif (isset($form[$field_name][$language][0]['value']['#required'])) {
+      $form[$field_name][$language][0]['value']['#required'] = TRUE;
+    }
+  }
+
   // Management vertical tabs.
   $form['additional_settings'] = array(
     '#type' => 'vertical_tabs',
