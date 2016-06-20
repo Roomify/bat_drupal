@@ -26,6 +26,14 @@ class UnitTypeViewsData extends EntityViewsData implements EntityViewsDataInterf
       'help' => $this->t('The Unit type ID.'),
     );
 
+    $data['unit_type']['calendars'] = array(
+      'field' => array(
+        'title' => t('Event Management'),
+        'help' => t('Display links to manage all calendars for this Type.'),
+        'id' => 'bat_type_handler_type_calendars_field',
+      ),
+    );
+
     return $data;
   }
 

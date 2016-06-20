@@ -26,6 +26,20 @@ class UnitViewsData extends EntityViewsData implements EntityViewsDataInterface 
       'help' => $this->t('The Unit ID.'),
     );
 
+    $data['unit']['type']['field'] = array(
+      'title' => t('Booking Unit Bundle'),
+      'help' => t('Booking Unit Bundle Label.'),
+      'id' => 'bat_unit_handler_unit_bundle_field',
+    );
+
+    $data['unit']['unit_bulk_form'] = array(
+      'title' => t('Unit operations bulk form'),
+      'help' => t('Add a form element that lets you run operations on multiple units.'),
+      'field' => array(
+        'id' => 'unit_bulk_form',
+      ),
+    );
+
     return $data;
   }
 

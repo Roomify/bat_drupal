@@ -191,7 +191,7 @@ function bat_event_add_access() {
 
   $types = bat_event_get_types();
   foreach ($types as $type) {
-    if (bat_event_access('create', bat_event_create(array('type' => $type->type, 'uid' => 0)))) {
+    if (bat_event_access('create', bat_event_create2(array('type' => $type->type, 'uid' => 0)))) {
       return TRUE;
     }
   }
@@ -337,8 +337,8 @@ function bat_event_delete_multiple(array $event_ids) {
 /**
  * Create a event object.
  */
-function bat_event_create($values = array()) {
-  
+function bat_event_create2($values = array()) {
+  return Event::create($values);
 }
 
 /**
@@ -1127,7 +1127,7 @@ function bat_event_unit_set_state(&$unit, $context) {
   $end_date->sub(new DateInterval('PT1M'));
 
   if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
-    $event = bat_event_create(array(
+    $event = bat_event_create2(array(
       'type' => $event_type,
       'start_date' => $start_date->format('Y-m-d H:i:s'),
       'end_date' => $end_date->format('Y-m-d H:i:s'),
@@ -1135,9 +1135,9 @@ function bat_event_unit_set_state(&$unit, $context) {
       'created' => REQUEST_TIME,
     ));
 
-    $event->event_bat_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit->unit_id;
+    $event->event_bat_unit_reference['und'][0]['target_id'] = $unit->unit_id;
 
-    $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $state['id'];
+    $event->event_state_reference['und'][0]['state_id'] = $state['id'];
 
     $event->save();
   }
@@ -1164,4 +1164,11 @@ function template_preprocess_bat_event_add_list(&$variables) {
       );
     }
   }
+}
+
+/**
+ * @param $event_type
+ */
+function bat_event_get_states($event_type, $options = array()) {
+  return State::loadMultiple();
 }

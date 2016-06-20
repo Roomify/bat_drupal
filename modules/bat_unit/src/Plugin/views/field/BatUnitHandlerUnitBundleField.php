@@ -21,8 +21,8 @@ class BatUnitHandlerUnitBundleField extends FieldPluginBase {
   }
 
   public function render(ResultRow $values) {
-    $unit_bundle = bat_unit_bundle_load($this->get_value($values));
-    return $unit_bundle->label;
+    $unit_bundle = bat_unit_bundle_load($this->getEntity($values)->bundle());
+    return $unit_bundle->label();
   }
 
 }

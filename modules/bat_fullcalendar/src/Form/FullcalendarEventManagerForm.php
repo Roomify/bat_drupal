@@ -91,7 +91,7 @@ class FullcalendarEventManagerForm extends FormBase {
         $instance = FieldConfig::loadByName('event', $field_name, $event_type->type);
 
         $element = array('#parents' => array());
-        $widget = field_default_form('bat_event', NULL, $field, $instance, LANGUAGE_NONE, NULL, $element, $form_state);
+        $widget = field_default_form('bat_event', NULL, $field, $instance, 'und', NULL, $element, $form_state);
 
         $form[$field_name] = $widget[$field_name];
         $form[$field_name]['#weight'] = 1;
@@ -124,7 +124,7 @@ class FullcalendarEventManagerForm extends FormBase {
     $event_type = $form_state['values']['event_type'];
     $state_id = $form_state['values']['change_event_status'];
 
-    $event = bat_event_create(array('type' => $event_type));
+    $event = bat_event_create2(array('type' => $event_type));
     $event->created = REQUEST_TIME;
     $event->uid = $user->uid;
 
@@ -138,9 +138,9 @@ class FullcalendarEventManagerForm extends FormBase {
     $event_type_entity = bat_event_type_load($event_type);
     // Construct target entity reference field name using this event type's target entity type.
     $target_field_name = 'event_' . $event_type_entity->target_entity_type . '_reference';
-    $event->{$target_field_name}[LANGUAGE_NONE][0]['target_id'] = $entity_id;
+    $event->{$target_field_name}['und'][0]['target_id'] = $entity_id;
 
-    $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $state_id;
+    $event->event_state_reference['und'][0]['state_id'] = $state_id;
 
     $event->save();
 
@@ -168,7 +168,7 @@ class FullcalendarEventManagerForm extends FormBase {
     $event_type = $form_state['values']['event_type'];
     $field_name = $form_state['values']['field_name'];
 
-    $event = bat_event_create(array('type' => $event_type));
+    $event = bat_event_create2(array('type' => $event_type));
     $event->created = REQUEST_TIME;
     $event->uid = $user->uid;
 
@@ -182,7 +182,7 @@ class FullcalendarEventManagerForm extends FormBase {
     $event_type_entity = bat_event_type_load($event_type);
     // Construct target entity reference field name using this event type's target entity type.
     $target_field_name = 'event_' . $event_type_entity->target_entity_type . '_reference';
-    $event->{$target_field_name}[LANGUAGE_NONE][0]['target_id'] = $entity_id;
+    $event->{$target_field_name}['und'][0]['target_id'] = $entity_id;
 
     $event->{$field_name} = $form_state['values'][$field_name];
 
@@ -190,7 +190,7 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $unit = entity_load($event_type_entity->target_entity_type, $entity_id);
 
-    $value = field_view_value('bat_event', $event, $field_name, $form_state['values'][$field_name][LANGUAGE_NONE][0]);
+    $value = field_view_value('bat_event', $event, $field_name, $form_state['values'][$field_name]['und'][0]);
 
     $form['form_wrapper_bottom'] = array(
       '#prefix' => '<div>',

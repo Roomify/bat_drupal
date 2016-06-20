@@ -27,7 +27,7 @@ class BatEventHandlerValueField extends FieldPluginBase {
     $event_type = bat_event_type_load($event->type);
 
     if ($event_type->fixed_event_states) {
-      $state = bat_event_load_state($event->event_state_reference[LANGUAGE_NONE][0]['state_id']);
+      $state = bat_event_load_state($event->event_state_reference['und'][0]['state_id']);
 
       return $state['label'];
     }

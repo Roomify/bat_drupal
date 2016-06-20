@@ -368,7 +368,7 @@ function bat_unit_load($unit_id, $reset = FALSE) {
  * @see bat_unit_load()
  */
 function bat_unit_load_multiple($unit_ids = array(), $conditions = array(), $reset = FALSE) {
-  //return entity_load('bat_unit', $unit_ids, $conditions, $reset);
+  return Unit::loadMultiple($unit_ids);
 }
 
 /**
@@ -499,17 +499,10 @@ function bat_unit_page_view($unit, $view_mode = 'full') {
 function bat_unit_state_options($event_type = NULL, $conditions = array()) {
   $event_states = array();
 
-  //$states = bat_event_get_states($event_type);
-  $states = array();
+  $states = bat_event_get_states($event_type);
 
   foreach ($states as $event_state) {
-    foreach ($conditions as $option => $value) {
-      if ($event_state[$option] != $value) {
-        break 2;
-      }
-    }
-
-    $event_states[$event_state['id']] = t($event_state['label']);
+    $event_states[$event_state->id()] = $event_state->label();
   }
 
   return $event_states;

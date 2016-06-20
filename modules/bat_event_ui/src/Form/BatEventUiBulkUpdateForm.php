@@ -17,7 +17,7 @@ class BatEventUiBulkUpdateForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state, $unit_type = 'all', $event_type = 'all') {
     $form['bulk_update'] = array(
       '#type' => 'fieldset',
       '#title' => t('Update event state'),
@@ -86,29 +86,29 @@ class BatEventUiBulkUpdateForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $values = $form_state['values'];
+    $values = $form_state->getValues();
 
-    $start_date = new DateTime($values['bat_start_date']);
-    $end_date = new DateTime($values['bat_end_date']);
-    $end_date->sub(new DateInterval('PT1M'));
+    $start_date = new \DateTime($values['bat_start_date']);
+    $end_date = new \DateTime($values['bat_end_date']);
+    $end_date->sub(new \DateInterval('PT1M'));
 
     $event_type = $values['event_type'];
     $event_state = $values['state'];
     $type = bat_type_load($values['type']);
 
-    $units = bat_unit_load_multiple(FALSE, array('type_id' => $type->type_id));
+    $units = bat_unit_load_multiple(NULL, array('type_id' => $type->id()));
 
     foreach ($units as $unit) {
-      $event = bat_event_create(array(
+      $event = bat_event_create2(array(
         'type' => $event_type,
         'start_date' => $start_date->format('Y-m-d H:i:s'),
         'end_date' => $end_date->format('Y-m-d H:i:s'),
-        'uid' => $type->uid,
+        'uid' => $type->user_id->entity->uid->value,
         'created' => REQUEST_TIME,
       ));
 
-      $event->event_bat_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit->unit_id;
-      $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $event_state;
+      $event->event_bat_unit_reference['und'][0]['target_id'] = $unit->id();
+      $event->event_state_reference['und'][0]['target_id'] = $event_state;
 
       $event->save();
     }

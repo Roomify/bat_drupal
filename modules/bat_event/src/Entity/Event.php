@@ -35,7 +35,6 @@ use Roomify\Bat\Unit\Unit;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\bat_event\EventListBuilder",
  *     "views_data" = "Drupal\bat_event\Entity\EventViewsData",
- *
  *     "form" = {
  *       "default" = "Drupal\bat_event\Entity\Form\EventForm",
  *       "add" = "Drupal\bat_event\Entity\Form\EventForm",

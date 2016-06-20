@@ -176,6 +176,10 @@ class State extends ContentEntityBase implements StateInterface {
       ->setLabel(t('Machine name'))
       ->setDescription(t('Machine name.'));
 
+    $fields['event_type'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Event type'))
+      ->setDescription(t('Event type.'));
+
     return $fields;
   }
 

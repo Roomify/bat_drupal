@@ -20,7 +20,7 @@ use Drupal\Core\Template\Attribute;
  */
 function bat_fullcalendar_event_management_access($entity_id, $event_type, $event_id, $start_date, $end_date) {
   if ($event_id == 0) {
-    return bat_event_access('create', bat_event_create(array('type' => $event_type->type)));
+    return bat_event_access('create', bat_event_create2(array('type' => $event_type->type)));
   }
   else {
     $event = bat_event_load($event_id);

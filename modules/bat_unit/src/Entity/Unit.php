@@ -29,7 +29,6 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\bat_unit\UnitListBuilder",
  *     "views_data" = "Drupal\bat_unit\Entity\UnitViewsData",
- *
  *     "form" = {
  *       "default" = "Drupal\bat_unit\Entity\Form\UnitForm",
  *       "add" = "Drupal\bat_unit\Entity\Form\UnitForm",
