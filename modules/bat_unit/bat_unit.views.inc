@@ -61,6 +61,14 @@ function bat_unit_views_data_alter(array &$data) {
     'label' => t('Type'),
   );
 
+  $data['unit']['unit_bulk_form'] = array(
+    'title' => t('Unit operations bulk form'),
+    'help' => t('Add a form element that lets you run operations on multiple units.'),
+    'field' => array(
+      'id' => 'unit_bulk_form',
+    ),
+  );
+
   $data['unit_type']['calendars'] = array(
     'field' => array(
       'title' => t('Event Management'),

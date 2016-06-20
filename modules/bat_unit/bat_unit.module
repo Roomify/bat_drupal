@@ -8,6 +8,7 @@
 
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -996,4 +997,22 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
 
     field_create_instance($instance);
   }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function bat_unit_entity_operation(EntityInterface $entity) {
+  $operations = array();
+  $entity_type = $entity->getEntityType();
+  if ($entity_type->id() == 'unit_type') {
+    if (\Drupal::currentUser()->hasPermission('administer type_bundle entities')) {
+      $operations['units'] = array(
+        'title' => t('Units'),
+        'weight' => 1,
+        'url' => Url::fromUserInput('/admin/bat/config/types/type/' . $entity->id() . '/units'),
+      );
+    }
+  }
+  return $operations;
 }

@@ -199,3 +199,10 @@ entity.unit_bundle.delete_form:
     _title: 'Delete'
   requirements:
     _entity_access: 'unit_bundle.delete'
+
+unit.multiple_delete_confirm:
+  path: '/admin/bat/units/delete'
+  defaults:
+    _form: '\Drupal\bat_unit\Form\UnitDeleteMultiple'
+  requirements:
+    _permission: 'administer nodes'

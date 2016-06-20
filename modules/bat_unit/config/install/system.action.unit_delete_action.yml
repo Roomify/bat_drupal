@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - bat_unit
+id: unit_delete_action
+label: 'Delete unit'
+type: unit
+plugin: unit_delete_action
+configuration: {  }

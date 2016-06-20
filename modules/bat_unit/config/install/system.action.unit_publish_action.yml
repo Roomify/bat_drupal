@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - bat_unit
+id: unit_publish_action
+label: 'Publish unit'
+type: unit
+plugin: unit_publish_action
+configuration: {  }

@@ -1,18 +1,14 @@
 langcode: en
 status: true
 dependencies:
-  config:
-    - system.menu.admin
   module:
     - bat_unit
-_core:
-  default_config_hash: 9Qz-JAWrKu8heFNAqXwLUyJSIb4CgcWmKcqg_elVWtA
-id: unit_management
-label: 'Unit Management'
+id: units
+label: Units
 module: views
 description: ''
 tag: ''
-base_table: unit_type
+base_table: unit
 base_field: id
 core: 8.x
 display:
@@ -49,7 +45,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 25
+          items_per_page: 50
           offset: 0
           id: 0
           total_pages: null
@@ -72,9 +68,62 @@ display:
       row:
         type: fields
       fields:
+        unit_bulk_form:
+          id: unit_bulk_form
+          table: unit
+          field: unit_bulk_form
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          action_title: 'With selection'
+          include_exclude: exclude
+          selected_actions: {  }
+          entity_type: unit
+          plugin_id: unit_bulk_form
         id:
           id: id
-          table: unit_type
+          table: unit
           field: id
           relationship: none
           group_type: group
@@ -135,12 +184,12 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: unit_type
+          entity_type: unit
           entity_field: id
           plugin_id: field
         name:
           id: name
-          table: unit_type
+          table: unit
           field: name
           relationship: none
           group_type: group
@@ -200,66 +249,13 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: unit_type
+          entity_type: unit
           entity_field: name
           plugin_id: field
-        calendars:
-          id: calendars
-          table: unit_type
-          field: calendars
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Event Management'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          entity_type: unit_type
-          plugin_id: bat_type_handler_type_calendars_field
         operations:
-          table: unit_type
-          field: operations
           id: operations
-          entity_type: null
-          entity_field: null
-          plugin_id: entity_operations
+          table: unit
+          field: operations
           relationship: none
           group_type: group
           admin_label: ''
@@ -305,20 +301,72 @@ display:
           empty_zero: false
           hide_alter_empty: true
           destination: true
+          entity_type: unit
+          plugin_id: entity_operations
       filters: {  }
       sorts: {  }
-      title: 'Unit Management'
+      title: Units
       header: {  }
       footer: {  }
-      empty: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content: 'There are no Units of this Type yet!'
+          plugin_id: text_custom
       relationships: {  }
-      arguments: {  }
+      arguments:
+        unit_type_id:
+          id: unit_type_id
+          table: unit
+          field: unit_type_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          default_action: default
+          exception:
+            value: all
+            title_enable: false
+            title: All
+          title_enable: false
+          title: ''
+          default_argument_type: raw
+          default_argument_options:
+            index: 5
+            use_alias: false
+          default_argument_skip_url: false
+          summary_options:
+            base_path: ''
+            count: true
+            items_per_page: 25
+            override: false
+          summary:
+            sort_order: asc
+            number_of_records: 0
+            format: default_summary
+          specify_validation: false
+          validate:
+            type: none
+            fail: 'not found'
+          validate_options: {  }
+          break_phrase: false
+          not: false
+          entity_type: unit
+          entity_field: unit_type_id
+          plugin_id: numeric
       display_extenders: {  }
     cache_metadata:
       max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
       tags: {  }
   page_1:
@@ -328,20 +376,12 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: admin/bat/unit-management
-      menu:
-        type: normal
-        title: 'Unit Management'
-        description: 'Manage Bat Types and their Units'
-        expanded: false
-        parent: bat.admin
-        weight: 0
-        context: '0'
-        menu_name: admin
+      path: admin/bat/config/types/type/%/units
     cache_metadata:
       max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
       tags: {  }
