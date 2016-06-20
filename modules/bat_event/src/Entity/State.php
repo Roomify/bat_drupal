@@ -58,6 +58,13 @@ class State extends ContentEntityBase implements StateInterface {
   /**
    * {@inheritdoc}
    */
+  public function getMachineName() {
+    return $this->get('machine_name')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getColor() {
     return $this->get('color')->value;
   }
@@ -162,7 +169,8 @@ class State extends ContentEntityBase implements StateInterface {
 
     $fields['locked'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Locked'))
-      ->setDescription(t('Locked.'));
+      ->setDescription(t('Locked.'))
+      ->setDefaultValue('0');
 
     $fields['machine_name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Machine name'))

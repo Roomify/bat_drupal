@@ -190,17 +190,17 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
    */
   public function getEventDefaultValue($event_type) {
     if ($field = $this->getEventValueDefaultField($event_type)) {
-      $field_info = FieldStorageConfig::loadByName($this, $field);
-      $values = $this->getTranslation('und')->get($field);
+      $field_info = FieldStorageConfig::loadByName('unit_type', $field);
+      $values = $this->getTranslation('und')->get($field)->getValue();
 
       if (!empty($values)) {
-        if ($field_info['type'] == 'entity_reference') {
+        if ($field_info->getType() == 'entity_reference') {
           return $values[0]['target_id'];
         }
-        elseif ($field_info['type'] == 'commerce_price') {
+        elseif ($field_info->getType() == 'commerce_price') {
           return $values[0]['amount'];
         }
-        elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer') {
+        elseif ($field_info->getType() == 'text' || $field_info->getType() == 'number_integer') {
           return $values[0]['value'];
         }
       }
@@ -235,8 +235,8 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
   public function getEventValueDefaultField($event_type) {
     $type_bundle = bat_type_bundle_load($this->bundle());
 
-    if (isset($type_bundle->default_event_value_field_ids['$event_type'])) {
-      return $type_bundle->default_event_value_field_ids['$event_type'];
+    if (isset($type_bundle->default_event_value_field_ids[$event_type])) {
+      return $type_bundle->default_event_value_field_ids[$event_type];
     }
 
     return FALSE;
