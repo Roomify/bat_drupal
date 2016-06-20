@@ -459,7 +459,7 @@ function bat_event_states_form($form, &$form_state, $event_type) {
       '#type' => 'machine_name',
       '#maxlength' => 32,
       '#machine_name' => array(
-        'exists' => 'bat_event_get_states',
+        'exists' => 'bat_event_load_state_by_machine_name',
         'source' => array('new_state', 'label'),
       ),
     );
