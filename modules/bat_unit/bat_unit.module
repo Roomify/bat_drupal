@@ -677,7 +677,7 @@ function bat_type_bundles_ids() {
   $type_bundles = array();
   $bundles = bat_unit_get_type_bundles();
   foreach ($bundles as $bundle) {
-    $type_bundles[$bundle->type] = $bundle->label;
+    $type_bundles[$bundle->bundle()] = $bundle->label();
   }
 
   return $type_bundles;

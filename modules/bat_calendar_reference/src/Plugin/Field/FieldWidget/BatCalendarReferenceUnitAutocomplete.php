@@ -24,26 +24,25 @@ class BatCalendarReferenceUnitAutocomplete extends WidgetBase {
 		$field_storage = $this->fieldDefinition->getFieldStorageDefinition();
 
     $element['unit_id'] = array(
-      '#type' => 'textfield',
       '#title' => t('Unit'),
+      '#type' => 'entity_autocomplete',
+      '#target_type' => 'unit',
+      //'#selection_settings' => ['target_bundles' => $target_bundles],
       '#default_value' => isset($items[$delta]->unit_id) ? $items[$delta]->unit_id : NULL,
-      '#autocomplete_route_name' => 'bat_calendar_reference.unit_autocomplete',
-      '#autocomplete_route_parameters' => array('entity_type' => $field_storage->getTargetEntityTypeId(), 'bundle' => $this->fieldDefinition->getTargetBundle(), 'field_name' => $field_storage->getName()),
       '#size' => 60,
       '#maxlength' => 255,
-      '#element_validate' => array('bat_calendar_reference_autocomplete_unit_validate'),
-      '#value_callback' => 'bat_calendar_reference_unit_autocomplete_value',
+      '#validate_reference' => FALSE,
     );
 
     $element['event_type_id'] = array(
-      '#type' => 'textfield',
       '#title' => t('Event type'),
+      '#type' => 'entity_autocomplete',
+      '#target_type' => 'event_type',
+      //'#selection_settings' => ['target_bundles' => $target_bundles],
       '#default_value' => isset($items[$delta]->event_type_id) ? $items[$delta]->event_type_id : NULL,
-      '#autocomplete_route_name' => 'bat_calendar_reference.event_type_autocomplete',
-      '#autocomplete_route_parameters' => array('entity_type' => $field_storage->getTargetEntityTypeId(), 'bundle' => $this->fieldDefinition->getTargetBundle(), 'field_name' => $field_storage->getName()),
+      '#size' => 60,
       '#maxlength' => 255,
-      '#element_validate' => array('bat_calendar_reference_autocomplete_event_type_validate'),
-      '#value_callback' => 'bat_calendar_reference_event_type_autocomplete_value',
+      '#validate_reference' => FALSE,
     );
 
     return $element;

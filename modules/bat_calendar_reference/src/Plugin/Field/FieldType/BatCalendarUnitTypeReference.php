@@ -20,7 +20,7 @@ class BatCalendarUnitTypeReference extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public static function schema(FieldStorageDefinitionInterface $field) {
+  public static function schema(FieldStorageDefinitionInterface $field_definition) {
     return array(
       'columns' => array(
         'unit_type_id' => array(
