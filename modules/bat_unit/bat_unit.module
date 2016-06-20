@@ -329,7 +329,7 @@ function bat_unit_types_ids() {
  *   A unit bundle array or FALSE if $bundle does not exist.
  */
 function bat_unit_bundle_load($bundle, $reset = FALSE) {
-  //return bat_unit_get_bundles($bundle, $reset);
+  return UnitBundle::load($bundle);
 }
 
 /**
@@ -499,7 +499,8 @@ function bat_unit_page_view($unit, $view_mode = 'full') {
 function bat_unit_state_options($event_type = NULL, $conditions = array()) {
   $event_states = array();
 
-  $states = bat_event_get_states($event_type);
+  //$states = bat_event_get_states($event_type);
+  $states = array();
 
   foreach ($states as $event_state) {
     foreach ($conditions as $option => $value) {

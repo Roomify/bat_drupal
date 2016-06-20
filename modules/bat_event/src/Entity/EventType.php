@@ -94,12 +94,10 @@ class EventType extends ConfigEntityBundleBase implements EventTypeInterface {
       // Create a field of type 'Entity Reference' to reference a Bat Unit.
       bat_event_type_add_target_entity_field($this);
 
-      /*if (isset($entity->fixed_event_states)) {
-        if ($entity->fixed_event_states) {
-          // Create a field of type 'Bat Event State Reference' to reference an Event State.
-          bat_event_type_add_event_state_reference($entity);
-        }
-      }*/
+      if ($this->fixed_event_states) {
+        // Create a field of type 'Bat Event State Reference' to reference an Event State.
+        bat_event_type_add_event_state_reference($this);
+      }
     }
   }
 

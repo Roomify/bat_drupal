@@ -44,18 +44,19 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
     $default_value = $bat_unit->getEventDefaultValue($this->event_type->id());
 
     // Get the default state info which will provide the default value for formatting
-    //$state_info = bat_event_load_state($default_value);
-    $state_info = array();
+    $state_info = bat_event_load_state($default_value);
+
+    $calendar_label = $state_info->calendar_label->value;
 
     // However if the event is in the database, then load the actual event and get its value.
     if ($event->getValue()) {
       // Load the event from the database to get the actual state and load that info.
       $bat_event = bat_event_load($event->getValue());
-      //$state_info = bat_event_load_state($bat_event->getEventValue());
-      $state_info = array();
+
+      $state_info = bat_event_load_state($bat_event->getEventValue());
 
       // Set calendar label from event.
-      $state_info['calendar_label'] = $bat_event->label();
+      //$calendar_label = $bat_event->label();
 
       if (bat_event_access('update', $bat_event)) {
         $editable = TRUE;
@@ -65,15 +66,15 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
     $formatted_event = array(
       'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00',
       'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00',
-      'title' => $state_info['calendar_label'],
-      'color' => $state_info['color'],
+      'title' => $calendar_label,
+      'color' => $state_info->color->value,
       'blocking' => 1,
       'fixed' => 1,
       'editable' => $editable,
     );
 
     // Render non blocking events in the background.
-    if ($state_info['blocking'] == 0) {
+    if ($state_info->blocking->value == 0) {
       if ($this->background) {
         $formatted_event['rendering'] = 'background';
       }

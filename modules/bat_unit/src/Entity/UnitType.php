@@ -194,8 +194,8 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
       $values = $this->getTranslation('und')->get($field);
 
       if (!empty($values)) {
-        if ($field_info['type'] == 'bat_event_state_reference') {
-          return $values[0]['state_id'];
+        if ($field_info['type'] == 'entity_reference') {
+          return $values[0]['target_id'];
         }
         elseif ($field_info['type'] == 'commerce_price') {
           return $values[0]['amount'];

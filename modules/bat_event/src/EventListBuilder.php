@@ -24,7 +24,8 @@ class EventListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     $header['id'] = $this->t('Event ID');
-    $header['name'] = $this->t('Name');
+    $header['start_date'] = $this->t('Start Date');
+    $header['end_date'] = $this->t('End Date');
     return $header + parent::buildHeader();
   }
 
@@ -32,15 +33,11 @@ class EventListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
+    $date_format = \Drupal::config('bat.settings')->get('bat_date_format') ?: 'Y-m-d H:i';
+
     $row['id'] = $entity->id();
-    $row['name'] = $this->l(
-      $this->getLabel($entity),
-      new Url(
-        'entity.event.edit_form', array(
-          'event' => $entity->id(),
-        )
-      )
-    );
+    $row['start_date'] = $entity->getStartDate()->format($date_format);
+    $row['end_date'] = $entity->getEndDate()->format($date_format);
     return $row + parent::buildRow($entity);
   }
 

@@ -13,6 +13,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Database\Database;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\bat_event\EventInterface;
 use Drupal\bat_event\StateInterface;
 use Drupal\bat_unit\UnitInterface;
@@ -142,36 +143,6 @@ class Event extends ContentEntityBase implements EventInterface {
   /**
    * {@inheritdoc}
    */
-  public function getState() {
-    return $this->get('state_id')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getStateId() {
-    return $this->get('state_id')->target_id;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setStateId($state_id) {
-    $this->set('state_id', $state_id);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setState(StateInterface $state) {
-    $this->set('state_id', $state->id());
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getStartDate() {
     $date = new \DateTime();
     return $date->setTimestamp($this->get('start')->value);
@@ -191,7 +162,7 @@ class Event extends ContentEntityBase implements EventInterface {
   public function save() {
     $entity_original = entity_load_unchanged('event', $this->id());
 
-    $event_type = bat_event_type_load($entity_original->bundle());
+    $event_type = bat_event_type_load($this->bundle());
 
     // Construct target entity reference field name using this event type's target entity type.
     $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
@@ -232,11 +203,11 @@ class Event extends ContentEntityBase implements EventInterface {
       if (isset($event_type->default_event_value_field_ids)) {
         $field = $event_type->default_event_value_field_ids;
         $field_info = FieldStorageConfig::loadByName($field);
-        $values = $entity->getTranslation('und')->get($field);
+        $values = $this->getTranslation('und')->get($field)->getValue();
 
         if (!empty($values)) {
-          if ($field_info['type'] == 'bat_event_state_reference') {
-            $event_value = $values[0]['state_id'];
+          if ($field_info['type'] == 'entity_reference') {
+            $event_value = $values[0]['target_id'];
           }
           elseif ($field_info['type'] == 'commerce_price') {
             $event_value = $values[0]['amount'];
@@ -247,8 +218,8 @@ class Event extends ContentEntityBase implements EventInterface {
         }
       }
       else {
-        $state = $this->get('state_id')->entity;
-        $event_value = $state->id();
+        $event_state_reference = $this->getTranslation('und')->get('event_state_reference')->getValue();
+        $event_value = $event_state_reference[0]['target_id'];
       }
 
       $event_target_entity_reference = $this->getTranslation('und')->get($target_field_name);
@@ -352,30 +323,6 @@ class Event extends ContentEntityBase implements EventInterface {
       ))
       ->setDisplayConfigurable('form', TRUE);
 
-    $fields['state_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('State'))
-      ->setDescription(t('The ID of the State entity this Event entity is associated with.'))
-      ->setRevisionable(TRUE)
-      ->setSetting('target_type', 'state')
-      ->setSetting('handler', 'default')
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'property',
-        'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'weight' => 2,
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
       ->setDescription(t('The event type.'))
@@ -418,6 +365,64 @@ class Event extends ContentEntityBase implements EventInterface {
 
     $state_calendar->addEvents(array($state_event), $granularity);
     $event_calendar->addEvents(array($event_id_event), $granularity);
+  }
+
+  public function getEventValue() {
+    if ($field = $this->getEventValueField()) {
+      $field_info = FieldStorageConfig::loadByName('event', $field);
+      $values = $this->getTranslation('und')->get($field)->getValue();
+
+      if (!empty($values)) {
+        if ($field_info->getType() == 'entity_reference') {
+          return $values[0]['target_id'];
+        }
+        elseif ($field_info->getType() == 'commerce_price') {
+          return $values[0]['amount'];
+        }
+        elseif ($field_info->getType() == 'text' || $field_info->getType() == 'number_integer') {
+          return $values[0]['value'];
+        }
+      }
+      else {
+        return FALSE;
+      }
+    }
+  }
+
+  /**
+   * Returns the formatter that can format the event value
+   *
+   * @return string|FALSE
+   */
+  public function getEventValueFormatter() {
+    if ($field = $this->getEventValueDefaultField()) {
+      $field_info_instance = field_info_instance('bat_event_type', $field, $this->type);
+
+      if (isset($field_info_instance['display']['default']['type'])) {
+        return $field_info_instance['display']['default']['type'];
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Determines which field holds the event value
+   *
+   * @return string|FALSE
+   */
+  public function getEventValueField() {
+    $type_bundle = bat_event_type_load($this->bundle());
+
+    if (isset($type_bundle->default_event_value_field_ids[$this->bundle()])) {
+      return $type_bundle->default_event_value_field_ids[$this->bundle()];
+    }
+
+    if ($type_bundle->getFixedEventStates() == 1) {
+      return 'event_state_reference';
+    }
+
+    return FALSE;
   }
 
 }

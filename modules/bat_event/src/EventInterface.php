@@ -10,8 +10,6 @@ namespace Drupal\bat_event;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-//use Drupal\bat_unit\EntityUnitInterface;
-use Drupal\bat_event\EntityStateInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
@@ -19,7 +17,7 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup bat
  */
-interface EventInterface extends ContentEntityInterface, EntityChangedInterface, EntityStateInterface, EntityOwnerInterface {
+interface EventInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
   // Add get/set methods for your configuration properties here.
 
 	public function getStartDate();

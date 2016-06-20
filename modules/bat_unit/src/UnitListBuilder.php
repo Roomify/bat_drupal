@@ -25,6 +25,7 @@ class UnitListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header['id'] = $this->t('Unit ID');
     $header['name'] = $this->t('Name');
+    $header['type'] = $this->t('Type');
     return $header + parent::buildHeader();
   }
 
@@ -42,6 +43,7 @@ class UnitListBuilder extends EntityListBuilder {
         )
       )
     );
+    $row['bundle'] = bat_unit_bundle_load($entity->bundle())->label();
     return $row + parent::buildRow($entity);
   }
 

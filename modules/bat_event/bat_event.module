@@ -10,6 +10,7 @@ use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
 
 use Drupal\Core\Url;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\field\Entity\FieldConfig;
@@ -18,41 +19,59 @@ use Drupal\views\ViewExecutable;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\bat_event\Entity\Event;
 use Drupal\bat_event\Entity\EventType;
+use Drupal\bat_event\Entity\State;
 
 /**
  * Create a field of type 'Bat Event State Reference' to reference an Event State.
  */
 function bat_event_type_add_event_state_reference($entity) {
-  // "event_state_reference" field.
-  if (field_read_field('event_state_reference') === FALSE) {
-    $field = array(
-      'field_name' => 'event_state_reference',
-      'type' => 'bat_event_state_reference',
+  $field_name = 'event_state_reference';
+
+  $field_storage = FieldStorageConfig::loadByName('event', $field_name);
+  $field = FieldConfig::loadByName('event', $entity->id(), $field_name);
+
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'event',
+      'type' => 'entity_reference',
       'cardinality' => 1,
       'locked' => 1,
-      'settings' => array(),
-    );
-    field_create_field($field);
+      'settings' => array(
+        'target_type' => 'state',
+      ),
+    ]);
+    $field_storage->save();
   }
 
-  field_cache_clear();
-
-  // "event_state_reference" field instance.
-  if (field_read_instance('bat_event', 'event_state_reference', $entity->type) === FALSE) {
-    $instance = array(
-      'field_name' => 'event_state_reference',
-      'entity_type' => 'bat_event',
+  if (empty($field)) {
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'entity_type' => 'event',
       'label' => 'State',
-      'bundle' => $entity->type,
+      'bundle' => $entity->id(),
       'required' => FALSE,
-      'widget' => array(
-        'type' => 'bat_event_reference_autocomplete',
-      ),
-      'settings' => array(
-        'event_type' => $entity->type,
-      ),
-    );
-    field_create_instance($instance);
+      'settings' => [
+        'handler' => 'default',
+        'handler_settings' => [],
+      ],
+    ]);
+    $field->save();
+
+    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('event.' . $entity->id() . '.default');
+    if (!$form_display) {
+      $form_display = EntityFormDisplay::create([
+        'targetEntityType' => 'event',
+        'bundle' => $entity->id(),
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
+    }
+    $form_display->setComponent($field_name, [
+      'type' => 'entity_reference_autocomplete',
+      'weight' => 3,
+    ]);
+    $form_display->save();
   }
 }
 
@@ -96,13 +115,15 @@ function bat_event_type_add_target_entity_field($entity) {
     ]);
     $field->save();
 
-    $storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
-    $form_display = $storage->create([
-      'targetEntityType' => 'event',
-      'bundle' => $entity->id(),
-      'mode' => 'default',
-      'status' => TRUE,
-    ]);
+    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('event.' . $entity->id() . '.default');
+    if (!$form_display) {
+      $form_display = EntityFormDisplay::create([
+        'targetEntityType' => 'event',
+        'bundle' => $entity->id(),
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
+    }
     $form_display->setComponent($field_name, [
       'type' => 'entity_reference_autocomplete',
       'weight' => 3,
@@ -200,6 +221,10 @@ function bat_event_query_bat_event_access_alter(QueryAlterableInterface $query) 
   }
 }
 
+function bat_event_load_state($state_id) {
+  return State::load($state_id);
+}
+
 /**
  * Helper function to easily get event types in an array for use in forms, etc.
  *
@@ -295,7 +320,7 @@ function bat_event_load_multiple(array $event_ids = NULL, $reset = FALSE) {
  * @param BatEvent $event
  *   The BatEvent object that represents the event to delete
  */
-function bat_event_delete(BatEvent $event) {
+function bat_event_delete(Event $event) {
   bat_event_delete_multiple(array($event->event_id));
 }
 
@@ -322,7 +347,7 @@ function bat_event_create($values = array()) {
  * @param BatEvent $event
  *   The Event object.
  */
-function bat_event_save(BatEvent $event) {
+function bat_event_save(Event $event) {
   return $event->save();
 }
 
@@ -336,7 +361,7 @@ function bat_event_type_create($values = array()) {
 /**
  * Saves a event type to the db.
  */
-function bat_event_type_save(BatEventType $type) {
+function bat_event_type_save(EventType $type) {
   $type->save();
 }
 
@@ -350,7 +375,7 @@ function bat_event_type_delete(EventType $type) {
 /**
  * URI callback for events.
  */
-function bat_event_uri(BatEvent $event) {
+function bat_event_uri(Event $event) {
   return array(
     'path' => 'event/' . $event->event_id,
   );
@@ -359,7 +384,7 @@ function bat_event_uri(BatEvent $event) {
 /**
  * Menu title callback for showing individual entities.
  */
-function bat_event_page_title(BatEvent $event) {
+function bat_event_page_title(Event $event) {
   return '';
 }
 

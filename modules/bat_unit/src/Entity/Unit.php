@@ -168,28 +168,6 @@ class Unit extends ContentEntityBase implements UnitInterface {
   /**
    * {@inheritdoc}
    */
-  public function getState() {
-    return $this->get('state_id')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getStateId() {
-    return $this->get('state_id')->target_id;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setStateId($state_id) {
-    $this->set('state_id', $state_id);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))

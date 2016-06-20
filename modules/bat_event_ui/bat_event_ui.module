@@ -82,7 +82,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   );
 
   if ($ev_type->getFixedEventStates()) {
-    $render_array['bulk_update_form'] = \Drupal::formBuilder()->getForm('bat_event_ui_bulk_update_form', $unit_type, $event_type);
+    $render_array['bulk_update_form'] = \Drupal::formBuilder()->getForm('Drupal\bat_event_ui\Form\BatEventUiBulkUpdateForm', $unit_type, $event_type);
   }
 
   return $render_array;

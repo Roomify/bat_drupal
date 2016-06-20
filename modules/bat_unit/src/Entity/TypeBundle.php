@@ -70,6 +70,13 @@ class TypeBundle extends ConfigEntityBundleBase implements TypeBundleInterface {
   /**
    * {@inheritdoc}
    */
+  public function getFixedEventStates() {
+    return $this->get('fixed_event_states')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
     parent::postSave($storage, $update);
   }

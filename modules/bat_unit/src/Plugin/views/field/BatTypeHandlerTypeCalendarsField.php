@@ -39,11 +39,13 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
           if ($url_object = \Drupal::service('path.validator')->getUrlIfValid($event_type_path)) {
             $route_name = $url_object->getRouteName();
 
-            $event_type_label = bat_event_get_types($event_type)->label();
-            $links[$field] = array(
-              'title' => t('Manage ' . $event_type_label),
-              'url' => Url::fromRoute($route_name, array('unit_type' => $type->id(), 'event_type' => $event_type)),
-            );
+            if (bat_event_get_types($event_type)) {
+              $event_type_label = bat_event_get_types($event_type)->label();
+              $links[$field] = array(
+                'title' => t('Manage ' . $event_type_label),
+                'url' => Url::fromRoute($route_name, array('unit_type' => $type->id(), 'event_type' => $event_type)),
+              );
+            }
           }
         }
       }
