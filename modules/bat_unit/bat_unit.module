@@ -90,7 +90,7 @@ function template_preprocess_bat_type_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = array(
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.unit_type.add', array('type_bundle' => $type->id()))),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_unit_type.add', array('type_bundle' => $type->id()))),
       );
     }
   }
@@ -113,7 +113,7 @@ function template_preprocess_bat_unit_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = array(
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.unit.add_form', array('unit_bundle' => $type->id()))),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_unit.add_form', array('unit_bundle' => $type->id()))),
       );
     }
   }
@@ -157,7 +157,7 @@ function bat_unit_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
  * Register BAT Unit as a BAT event target entity type.
  */
 function bat_unit_bat_event_target_entity_types() {
-  return array('unit');
+  return array('bat_unit');
 }
 
 
@@ -346,7 +346,7 @@ function bat_unit_bundle_load($bundle, $reset = FALSE) {
  */
 function bat_unit_load($unit_id, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('unit')->resetCache(array($unit_id));
+    \Drupal::entityManager()->getStorage('bat_unit')->resetCache(array($unit_id));
   }
   return Unit::load($unit_id);
 }
@@ -706,7 +706,7 @@ function bat_type_bundle_load($bundle, $reset = FALSE) {
  */
 function bat_type_load($type_id, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('unit_type')->resetCache(array($type_id));
+    \Drupal::entityManager()->getStorage('bat_unit_type')->resetCache(array($type_id));
   }
   return UnitType::load($type_id);
 }
@@ -999,7 +999,7 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
 function bat_unit_entity_operation(EntityInterface $entity) {
   $operations = array();
   $entity_type = $entity->getEntityType();
-  if ($entity_type->id() == 'unit_type') {
+  if ($entity_type->id() == 'bat_unit_type') {
     if (\Drupal::currentUser()->hasPermission('administer type_bundle entities')) {
       $operations['units'] = array(
         'title' => t('Units'),

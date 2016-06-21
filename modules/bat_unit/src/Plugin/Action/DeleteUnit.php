@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Action(
  *   id = "unit_delete_action",
  *   label = @Translation("Delete unit"),
- *   type = "unit",
+ *   type = "bat_unit",
  *   confirm_form_route_name = "unit.multiple_delete_confirm"
  * )
  */

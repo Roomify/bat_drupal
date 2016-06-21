@@ -23,7 +23,7 @@ use Drupal\user\UserInterface;
  * @ingroup bat
  *
  * @ContentEntityType(
- *   id = "unit",
+ *   id = "bat_unit",
  *   label = @Translation("Unit"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
@@ -49,9 +49,9 @@ use Drupal\user\UserInterface;
  *   bundle_entity_type = "unit_bundle",
  *   field_ui_base_route = "entity.unit_bundle.edit_form",
  *   links = {
- *     "canonical" = "/admin/unit/{unit}",
- *     "edit-form" = "/admin/unit/{unit}/edit",
- *     "delete-form" = "/admin/unit/{unit}/delete"
+ *     "canonical" = "/admin/unit/{bat_unit}",
+ *     "edit-form" = "/admin/unit/{bat_unit}/edit",
+ *     "delete-form" = "/admin/unit/{bat_unit}/delete"
  *   }
  * )
  */
@@ -208,7 +208,7 @@ class Unit extends ContentEntityBase implements UnitInterface {
       ->setLabel(t('Unit Type'))
       ->setDescription(t('The ID of the Unit Type entity this Unit entity belongs to.'))
       ->setRevisionable(TRUE)
-      ->setSetting('target_type', 'unit_type')
+      ->setSetting('target_type', 'bat_unit_type')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
         'label' => 'hidden',

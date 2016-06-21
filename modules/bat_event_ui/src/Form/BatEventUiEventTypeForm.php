@@ -91,7 +91,7 @@ class BatEventUiEventTypeForm extends FormBase {
     $type = $form_state->getValue('unit_type');
     $event_type = $form_state->getValue('event_types');
 
-    $form_state->setRedirectUrl(Url::fromRoute('bat_event_ui.calendar', array('unit_type' => $type, 'event_type' => $event_type)));
+    $form_state->setRedirectUrl(Url::fromRoute('bat_event_ui.calendar', array('bat_unit_type' => $type, 'event_type' => $event_type)));
   }
 
 }

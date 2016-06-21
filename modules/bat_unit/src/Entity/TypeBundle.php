@@ -23,7 +23,7 @@ use Drupal\bat_unit\TypeBundleInterface;
  *   },
  *   admin_permission = "administer type_bundle entities",
  *   config_prefix = "type_bundle",
- *   bundle_of = "unit_type",
+ *   bundle_of = "bat_unit_type",
  *   entity_keys = {
  *     "id" = "type",
  *     "label" = "name"

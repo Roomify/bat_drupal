@@ -26,7 +26,7 @@ class BatCalendarReferenceUnitAutocomplete extends WidgetBase {
     $element['unit_id'] = array(
       '#title' => t('Unit'),
       '#type' => 'entity_autocomplete',
-      '#target_type' => 'unit',
+      '#target_type' => 'bat_unit',
       //'#selection_settings' => ['target_bundles' => $target_bundles],
       '#default_value' => isset($items[$delta]->unit_id) ? bat_unit_load($items[$delta]->unit_id) : NULL,
       '#size' => 60,

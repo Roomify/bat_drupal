@@ -119,7 +119,7 @@ display:
           action_title: 'With selection'
           include_exclude: exclude
           selected_actions: {  }
-          entity_type: unit
+          entity_type: bat_unit
           plugin_id: unit_bulk_form
         id:
           id: id
@@ -184,7 +184,7 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: unit
+          entity_type: bat_unit
           entity_field: id
           plugin_id: field
         name:
@@ -249,7 +249,7 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: unit
+          entity_type: bat_unit
           entity_field: name
           plugin_id: field
         status:
@@ -316,7 +316,7 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: unit
+          entity_type: bat_unit
           entity_field: status
           plugin_id: field
         operations:
@@ -368,7 +368,7 @@ display:
           empty_zero: false
           hide_alter_empty: true
           destination: true
-          entity_type: unit
+          entity_type: bat_unit
           plugin_id: entity_operations
       filters: {  }
       sorts: {  }
@@ -424,7 +424,7 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
-          entity_type: unit
+          entity_type: bat_unit
           entity_field: unit_type_id
           plugin_id: numeric
       display_extenders: {  }

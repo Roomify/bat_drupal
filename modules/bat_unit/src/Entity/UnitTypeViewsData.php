@@ -20,13 +20,13 @@ class UnitTypeViewsData extends EntityViewsData implements EntityViewsDataInterf
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    $data['unit_type']['table']['base'] = array(
+    $data['bat_unit_type']['table']['base'] = array(
       'field' => 'id',
       'title' => $this->t('Unit type'),
       'help' => $this->t('The Unit type ID.'),
     );
 
-    $data['unit_type']['calendars'] = array(
+    $data['bat_unit_type']['calendars'] = array(
       'field' => array(
         'title' => t('Event Management'),
         'help' => t('Display links to manage all calendars for this Type.'),

@@ -67,7 +67,7 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
 
     // Only use node types the user has access to.
     foreach ($this->entityManager()->getStorage('unit_bundle')->loadMultiple() as $type) {
-      $access = $this->entityManager()->getAccessControlHandler('unit')->createAccess($type->id(), NULL, [], TRUE);
+      $access = $this->entityManager()->getAccessControlHandler('bat_unit')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
         $content[$type->id()] = $type;
       }
@@ -77,7 +77,7 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
     // Bypass the node/add listing if only one content type is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.unit.add_form', array('unit_bundle' => $type->id()));
+      return $this->redirect('entity.bat_unit.add_form', array('unit_bundle' => $type->id()));
     }
 
     $build['#content'] = $content;
@@ -95,7 +95,7 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
    *   A node submission form.
    */
   public function add(UnitBundleInterface $unit_bundle) {
-    $unit = $this->entityManager()->getStorage('unit')->create(array(
+    $unit = $this->entityManager()->getStorage('bat_unit')->create(array(
       'type' => $unit_bundle->id(),
     ));
 

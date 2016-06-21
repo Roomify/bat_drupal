@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @Action(
  *   id = "unit_set_state_action",
  *   label = @Translation("Assign fixed-state event to units"),
- *   type = "unit"
+ *   type = "bat_unit"
  * )
  */
 class SetUnitState extends ConfigurableActionBase {

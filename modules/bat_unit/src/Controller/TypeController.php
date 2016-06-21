@@ -67,7 +67,7 @@ class TypeController extends ControllerBase implements ContainerInjectionInterfa
 
     // Only use node types the user has access to.
     foreach ($this->entityManager()->getStorage('type_bundle')->loadMultiple() as $type) {
-      $access = $this->entityManager()->getAccessControlHandler('unit_type')->createAccess($type->id(), NULL, [], TRUE);
+      $access = $this->entityManager()->getAccessControlHandler('bat_unit_type')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
         $content[$type->id()] = $type;
       }
@@ -76,7 +76,7 @@ class TypeController extends ControllerBase implements ContainerInjectionInterfa
     // Bypass the node/add listing if only one content type is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.unit_type.add', array('type_bundle' => $type->id()));
+      return $this->redirect('entity.bat_unit_type.add', array('type_bundle' => $type->id()));
     }
 
     $build['#content'] = $content;
@@ -94,7 +94,7 @@ class TypeController extends ControllerBase implements ContainerInjectionInterfa
    *   A node submission form.
    */
   public function add(TypeBundleInterface $type_bundle) {
-    $type = $this->entityManager()->getStorage('unit_type')->create(array(
+    $type = $this->entityManager()->getStorage('bat_unit_type')->create(array(
       'type' => $type_bundle->id(),
     ));
 

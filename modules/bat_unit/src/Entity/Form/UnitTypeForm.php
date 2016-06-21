@@ -64,7 +64,7 @@ class UnitTypeForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
     }
-    $form_state->setRedirect('entity.unit_type.edit_form', ['unit_type' => $entity->id()]);
+    $form_state->setRedirect('entity.bat_unit_type.edit_form', ['bat_unit_type' => $entity->id()]);
   }
 
 }

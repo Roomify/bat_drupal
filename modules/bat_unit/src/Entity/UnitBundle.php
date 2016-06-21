@@ -23,7 +23,7 @@ use Drupal\bat_unit\UnitBundleInterface;
  *   },
  *   admin_permission = "administer unit_bundle entities",
  *   config_prefix = "unit_bundle",
- *   bundle_of = "unit",
+ *   bundle_of = "bat_unit",
  *   entity_keys = {
  *     "id" = "type",
  *     "label" = "name"

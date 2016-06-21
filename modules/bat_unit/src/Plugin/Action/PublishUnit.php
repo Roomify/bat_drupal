@@ -11,7 +11,7 @@ use Drupal\Core\Session\AccountInterface;
  * @Action(
  *   id = "unit_publish_action",
  *   label = @Translation("Publish selected unit"),
- *   type = "unit"
+ *   type = "bat_unit"
  * )
  */
 class PublishUnit extends ActionBase {

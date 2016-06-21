@@ -43,8 +43,8 @@ class UnitPermissions implements ContainerInjectionInterface {
   public function permissions() {
     $permissions = [];
 
-    $permissions += bat_entity_access_permissions('unit');
-    $permissions += bat_entity_access_permissions('unit_type');
+    $permissions += bat_entity_access_permissions('bat_unit');
+    $permissions += bat_entity_access_permissions('bat_unit_type');
 
     foreach (bat_unit_get_bundles() as $bundle_name => $bundle_info) {
       $permissions['view own unit entities of bundle ' . $bundle_name] = array(

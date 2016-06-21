@@ -5,6 +5,6 @@ dependencies:
     - bat_unit
 id: unit_unpublish_action
 label: 'Unpublish unit'
-type: unit
+type: bat_unit
 plugin: unit_unpublish_action
 configuration: {  }

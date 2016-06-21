@@ -38,8 +38,8 @@ class UnitListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $this->getLabel($entity),
       new Url(
-        'entity.unit.edit_form', array(
-          'unit' => $entity->id(),
+        'entity.bat_unit.edit_form', array(
+          'bat_unit' => $entity->id(),
         )
       )
     );

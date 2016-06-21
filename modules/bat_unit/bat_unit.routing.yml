@@ -1,25 +1,25 @@
 # UnitType routing definition
-entity.unit_type.canonical:
-  path: '/admin/bat/unit_type/{unit_type}'
+entity.bat_unit_type.canonical:
+  path: '/admin/bat/unit_type/{bat_unit_type}'
   defaults:
-    _entity_view: 'unit_type'
+    _entity_view: 'bat_unit_type'
     _title: 'Unit type'
   requirements:
     _entity_access: 'unit_type.view'
   options:
     _admin_route: TRUE
 
-entity.unit_type.collection:
+entity.bat_unit_type.collection:
   path: '/admin/bat/unit_type'
   defaults:
-    _entity_list: 'unit_type'
+    _entity_list: 'bat_unit_type'
     _title: 'Unit type list'
   requirements:
     _permission: 'view unit type entities'
   options:
     _admin_route: TRUE
 
-entity.unit_type.add_page:
+entity.bat_unit_type.add_page:
   path: '/admin/bat/unit_type/add'
   defaults:
     _title: 'Add type'
@@ -29,7 +29,7 @@ entity.unit_type.add_page:
   options:
     _admin_route: TRUE
 
-entity.unit_type.add:
+entity.bat_unit_type.add:
   path: '/admin/bat/unit_type/add/{type_bundle}'
   defaults:
     _controller: '\Drupal\bat_unit\Controller\TypeController::add'
@@ -43,20 +43,20 @@ entity.unit_type.add:
         type: entity:type_bundle
         with_config_overrides: TRUE
 
-entity.unit_type.edit_form:
-  path: '/admin/bat/unit_type/{unit_type}/edit'
+entity.bat_unit_type.edit_form:
+  path: '/admin/bat/unit_type/{bat_unit_type}/edit'
   defaults:
-    _entity_form: unit_type.edit
+    _entity_form: bat_unit_type.edit
     _title: 'Edit Type'
   requirements:
     _permission: 'edit unit type entities'
   options:
     _admin_route: TRUE
 
-entity.unit_type.delete_form:
-  path: '/admin/bat/unit_type/{unit_type}/delete'
+entity.bat_unit_type.delete_form:
+  path: '/admin/bat/unit_type/{bat_unit_type}/delete'
   defaults:
-    _entity_form: unit_type.delete
+    _entity_form: bat_unit_type.delete
     _title: 'Delete Type'
   requirements:
     _permission: 'delete unit type entities'
@@ -64,27 +64,27 @@ entity.unit_type.delete_form:
     _admin_route: TRUE
 
 # Unit routing definition
-entity.unit.canonical:
-  path: '/admin/bat/unit/{unit}'
+entity.bat_unit.canonical:
+  path: '/admin/bat/unit/{bat_unit}'
   defaults:
-    _entity_view: 'unit'
+    _entity_view: 'bat_unit'
     _title: 'Unit'
   requirements:
     _entity_access: 'unit.view'
   options:
     _admin_route: TRUE
 
-entity.unit.collection:
+entity.bat_unit.collection:
   path: '/admin/bat/unit'
   defaults:
-    _entity_list: 'unit'
+    _entity_list: 'bat_unit'
     _title: 'Unit list'
   requirements:
     _permission: 'view unit entities'
   options:
     _admin_route: TRUE
 
-entity.unit.add_page:
+entity.bat_unit.add_page:
   path: '/admin/bat/unit/add'
   defaults:
     _title: 'Add unit'
@@ -94,7 +94,7 @@ entity.unit.add_page:
   options:
     _admin_route: TRUE
 
-entity.unit.add_form:
+entity.bat_unit.add_form:
   path: '/admin/bat/unit/add/{unit_bundle}'
   defaults:
     _controller: '\Drupal\bat_unit\Controller\UnitController::add'
@@ -108,20 +108,20 @@ entity.unit.add_form:
         type: entity:unit_bundle
         with_config_overrides: TRUE
 
-entity.unit.edit_form:
-  path: '/admin/bat/unit/{unit}/edit'
+entity.bat_unit.edit_form:
+  path: '/admin/bat/unit/{bat_unit}/edit'
   defaults:
-    _entity_form: unit.edit
+    _entity_form: bat_unit.edit
     _title: 'Edit Unit'
   requirements:
     _permission: 'edit unit entities'
   options:
     _admin_route: TRUE
 
-entity.unit.delete_form:
-  path: '/admin/bat/unit/{unit}/delete'
+entity.bat_unit.delete_form:
+  path: '/admin/bat/unit/{bat_unit}/delete'
   defaults:
-    _entity_form: unit.delete
+    _entity_form: bat_unit.delete
     _title: 'Delete Unit'
   requirements:
     _permission: 'delete unit entities'

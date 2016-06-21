@@ -1,5 +1,5 @@
 bat_event_ui.calendar:
-  path: '/admin/bat/calendar/{unit_type}/{event_type}'
+  path: '/admin/bat/calendar/{bat_unit_type}/{event_type}'
   defaults:
     _controller: '\Drupal\bat_event_ui\Controller\BatEventUIController::calendarPage'
     _title: 'Calendar'

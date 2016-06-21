@@ -91,7 +91,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
 
   $entity_type = $entity->getEntityType()->id();
 
-  if (in_array($entity_type, array('unit_type'))) {
+  if (in_array($entity_type, array('bat_unit_type'))) {
     $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
 
     // $entity may be either an object or a entity type. Since entity types cannot

@@ -1,16 +1,16 @@
-entity.unit_type.add_page:
-  route_name: entity.unit_type.add_page
+entity.bat_unit_type.add_page:
+  route_name: entity.bat_unit_type.add_page
   title: 'Add Type'
   appears_on:
-    - entity.unit_type.collection
-    - entity.unit_type.canonical
+    - entity.bat_unit_type.collection
+    - entity.bat_unit_type.canonical
 
-entity.unit.add_page:
-  route_name: entity.unit.add_page
+entity.bat_unit.add_page:
+  route_name: entity.bat_unit.add_page
   title: 'Add Unit'
   appears_on:
-    - entity.unit.collection
-    - entity.unit.canonical
+    - entity.bat_unit.collection
+    - entity.bat_unit.canonical
 
 entity.type_bundle.type_add:
   route_name: entity.type_bundle.type_add

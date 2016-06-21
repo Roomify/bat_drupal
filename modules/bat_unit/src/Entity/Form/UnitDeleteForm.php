@@ -28,7 +28,7 @@ class UnitDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.unit.collection');
+    return new Url('entity.bat_unit.collection');
   }
 
   /**

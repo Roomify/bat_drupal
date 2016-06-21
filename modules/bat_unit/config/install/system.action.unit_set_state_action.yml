@@ -5,6 +5,6 @@ dependencies:
     - bat_unit
 id: unit_set_state_action
 label: 'Assign fixed-state event to units'
-type: unit
+type: bat_unit
 plugin: unit_set_state_action
 configuration: {  }

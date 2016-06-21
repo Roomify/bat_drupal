@@ -1,17 +1,17 @@
 # Unit type routing definition
-entity.unit_type.canonical:
-  route_name: entity.unit_type.canonical
-  base_route: entity.unit_type.canonical
+entity.bat_unit_type.canonical:
+  route_name: entity.bat_unit_type.canonical
+  base_route: entity.bat_unit_type.canonical
   title: 'View'
 
-entity.unit_type.edit_form:
-  route_name: entity.unit_type.edit_form
-  base_route: entity.unit_type.canonical
+entity.bat_unit_type.edit_form:
+  route_name: entity.bat_unit_type.edit_form
+  base_route: entity.bat_unit_type.canonical
   title: Edit
 
-entity.unit_type.delete_form:
-  route_name:  entity.unit_type.delete_form
-  base_route:  entity.unit_type.canonical
+entity.bat_unit_type.delete_form:
+  route_name:  entity.bat_unit_type.delete_form
+  base_route:  entity.bat_unit_type.canonical
   title: Delete
   weight: 10
 
@@ -21,19 +21,19 @@ entity.type_bundle.edit_form:
   title: Edit
 
 # Unit routing definition
-entity.unit.canonical:
-  route_name: entity.unit.canonical
-  base_route: entity.unit.canonical
+entity.bat_unit.canonical:
+  route_name: entity.bat_unit.canonical
+  base_route: entity.bat_unit.canonical
   title: 'View'
 
-entity.unit.edit_form:
-  route_name: entity.unit.edit_form
-  base_route: entity.unit.canonical
+entity.bat_unit.edit_form:
+  route_name: entity.bat_unit.edit_form
+  base_route: entity.bat_unit.canonical
   title: Edit
 
-entity.unit.delete_form:
-  route_name:  entity.unit.delete_form
-  base_route:  entity.unit.canonical
+entity.bat_unit.delete_form:
+  route_name:  entity.bat_unit.delete_form
+  base_route:  entity.bat_unit.canonical
   title: Delete
   weight: 10
 

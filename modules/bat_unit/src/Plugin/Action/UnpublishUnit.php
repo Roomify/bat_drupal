@@ -11,7 +11,7 @@ use Drupal\Core\Session\AccountInterface;
  * @Action(
  *   id = "unit_unpublish_action",
  *   label = @Translation("Unpublish selected unit"),
- *   type = "unit"
+ *   type = "bat_unit"
  * )
  */
 class UnpublishUnit extends ActionBase {

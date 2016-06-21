@@ -23,7 +23,7 @@ use Drupal\field\Entity\FieldStorageConfig;
  * @ingroup bat
  *
  * @ContentEntityType(
- *   id = "unit_type",
+ *   id = "bat_unit_type",
  *   label = @Translation("Unit type"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
@@ -50,9 +50,9 @@ use Drupal\field\Entity\FieldStorageConfig;
  *   bundle_entity_type = "type_bundle",
  *   field_ui_base_route = "entity.type_bundle.edit_form",
  *   links = {
- *     "canonical" = "/admin/unit_type/{unit_type}",
- *     "edit-form" = "/admin/unit_type/{unit_type}/edit",
- *     "delete-form" = "/admin/unit_type/{unit_type}/delete"
+ *     "canonical" = "/admin/unit_type/{bat_unit_type}",
+ *     "edit-form" = "/admin/unit_type/{bat_unit_type}/edit",
+ *     "delete-form" = "/admin/unit_type/{bat_unit_type}/delete"
  *   },
  * )
  */
@@ -190,7 +190,7 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
    */
   public function getEventDefaultValue($event_type) {
     if ($field = $this->getEventValueDefaultField($event_type)) {
-      $field_info = FieldStorageConfig::loadByName('unit_type', $field);
+      $field_info = FieldStorageConfig::loadByName('bat_unit_type', $field);
       $values = $this->getTranslation('und')->get($field)->getValue();
 
       if (!empty($values)) {
@@ -217,7 +217,7 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
    */
   public function getEventValueFormatter($event_type) {
     if ($field = $this->getEventValueDefaultField($event_type)) {
-      $field_info_instance = FieldConfig::loadByName('unit_type', $field, $this->type);
+      $field_info_instance = FieldConfig::loadByName('bat_unit_type', $field, $this->type);
 
       if (isset($field_info_instance['display']['default']['type'])) {
         return $field_info_instance['display']['default']['type'];
