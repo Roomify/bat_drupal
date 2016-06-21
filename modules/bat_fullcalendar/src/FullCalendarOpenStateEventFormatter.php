@@ -51,7 +51,7 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
       // Change the default value to the one that the event actually stores in the entity
       $default_value = $bat_event->getEventValue();
 
-      if (bat_event_access('update', $bat_event)) {
+      if (bat_event_access($bat_event, 'update', \Drupal::currentUser())) {
         $editable = TRUE;
       }
     }

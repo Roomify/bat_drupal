@@ -9,6 +9,8 @@ use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormStateInterface;
@@ -171,8 +173,8 @@ function bat_event_form_views_exposed_form_alter(&$form, FormStateInterface $for
  * @return bool
  *   Boolean indicating if the defined user has access to the event or not.
  */
-function bat_event_access($op, $event = NULL, $account = NULL) {
-  return bat_entity_access($op, $event, $account, 'bat_event');
+function bat_event_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  return bat_entity_access($entity, $operation, $account);
 }
 
 /**

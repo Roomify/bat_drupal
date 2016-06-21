@@ -92,7 +92,7 @@ class BatEventUiBulkUpdateForm extends FormBase {
     $end_date = new \DateTime($values['bat_end_date']);
     $end_date->sub(new \DateInterval('PT1M'));
 
-    $event_type = $values['event_type'];
+    $event_type = bat_event_type_load($values['event_type']);
     $event_state = $values['state'];
     $type = bat_type_load($values['type']);
 
@@ -100,15 +100,17 @@ class BatEventUiBulkUpdateForm extends FormBase {
 
     foreach ($units as $unit) {
       $event = bat_event_create2(array(
-        'type' => $event_type,
-        'start_date' => $start_date->format('Y-m-d H:i:s'),
-        'end_date' => $end_date->format('Y-m-d H:i:s'),
+        'type' => $event_type->id(),
+        'start' => $start_date->getTimestamp(),
+        'end' => $end_date->getTimestamp(),
         'uid' => $type->user_id->entity->uid->value,
         'created' => REQUEST_TIME,
       ));
 
-      $event->event_bat_unit_reference['und'][0]['target_id'] = $unit->id();
-      $event->event_state_reference['und'][0]['target_id'] = $event_state;
+      $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+      $event->set($target_field_name, $unit->id());
+
+      $event->set('event_state_reference', $event_state);
 
       $event->save();
     }

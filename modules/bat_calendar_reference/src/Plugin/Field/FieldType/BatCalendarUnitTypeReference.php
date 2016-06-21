@@ -29,9 +29,8 @@ class BatCalendarUnitTypeReference extends FieldItemBase {
           'not null' => FALSE,
         ),
         'event_type_id' => array(
-          'type'     => 'int',
-          'unsigned' => TRUE,
-          'not null' => FALSE,
+          'type' => 'varchar_ascii',
+          'length' => 255,
         ),
       ),
     );
@@ -53,9 +52,8 @@ class BatCalendarUnitTypeReference extends FieldItemBase {
       ->setLabel(t('Uni type id'))
       ->setSetting('unsigned', TRUE);
 
-    $properties['event_type_id'] = DataReferenceTargetDefinition::create('integer')
-      ->setLabel(t('Event type id'))
-      ->setSetting('unsigned', TRUE);
+    $properties['event_type_id'] = DataReferenceTargetDefinition::create('string')
+      ->setLabel(t('Event type id'));
 
     return $properties;
   }
