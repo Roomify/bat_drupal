@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\Html;
@@ -234,7 +235,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
  * Return permission names for a given entity type.
  */
 function bat_entity_access_permissions($entity_type) {
-  $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
+  $entity_info = \Drupal::entityTypeManager()->getDefinition($entity_type);
   $label = $entity_info->getLabel()->__toString();
 
   $permissions = array();
@@ -325,7 +326,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
 
   // Get the entity type info array for the current access check and prepare a
   // conditions object.
-  $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
+  $entity_info = \Drupal::entityTypeManager()->getDefinition($entity_type);
 
   // If a base table wasn't specified, attempt to read it from the query if
   // available, look for a table in the query's tables array that matches the
@@ -356,7 +357,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   // access even if none of the others apply. At the end of this function, if no
   // conditions have been added to the array, a condition will be added that
   // always returns FALSE (1 = 0).
-  $conditions = db_or();
+  $conditions = new Condition('OR');
 
   // Perform bundle specific permission checks for the specified entity type.
   // In the event that the user has permission to view every bundle of the given
@@ -378,7 +379,8 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
             $account->hasPermission($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
       // Add an AND condition group that grants access if the entity specified
       // by the view query matches the same bundle and belongs to the user.
-      $conditions->condition(db_and()
+      $c_and = new Condition('AND');
+      $conditions->condition(c_and()
         ->condition($base_table . '.' . $entity_info['entity keys']['bundle'], $bundle_name)
         ->condition($base_table . '.' . $entity_info['access arguments']['user key'], $account->uid)
       );
