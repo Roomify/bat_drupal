@@ -10,7 +10,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -633,26 +632,4 @@ function bat_check_dates_validity(DateTime $start_date, DateTime $end_date) {
   }
 
   return $errors;
-}
-
-/**
- * Loads a DateTime object from a string.
- *
- * @param string $date_string
- *   Expects to see a date in the form Y-m-d H:i:s
- *
- * @return DateTime
- *   Object or null if invalid
- */
-function bat_date_load($date_string) {
-  $date_string = SafeMarkup::checkPlain($date_string);
-
-  try {
-    $date = new DateTime($date_string);
-  }
-  catch (Exception $e) {
-    $date = 0;
-  }
-
-  return $date;
 }

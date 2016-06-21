@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - bat_unit
+id: unit_set_state_action
+label: 'Assign fixed-state event to units'
+type: unit
+plugin: unit_set_state_action
+configuration: {  }

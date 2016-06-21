@@ -265,6 +265,10 @@ class Unit extends ContentEntityBase implements UnitInterface {
       ->setDescription(t('The unit bundle.'))
       ->setSetting('target_type', 'unit_bundle');
 
+    $fields['status'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Status'))
+      ->setDescription(t('The unit status.'));
+
     return $fields;
   }
 

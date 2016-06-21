@@ -73,7 +73,7 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
     );
 
     // Render non blocking events in the background.
-    if ($state_info->blocking->value == 0) {
+    if ($state_info->getBlocking() == 0) {
       if ($this->background) {
         $formatted_event['rendering'] = 'background';
       }

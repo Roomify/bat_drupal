@@ -29,35 +29,6 @@ function bat_fullcalendar_event_management_access($entity_id, $event_type, $even
 }
 
 /**
- * The EventManager page shows when clicking on an event in the
- * calendar - will allow a user to manipulate that event.
- *
- * @param $entity_id
- * @param $event_type
- * @param $event_id
- * @param $start_date
- * @param $end_date
- */
-function bat_fullcalendar_event_management($entity_id, $event_type, $event_id, $start_date, $end_date) {
-  // If any info missing we cannot load the event.
-  if ($event_id == NULL || $start_date === 0 || $end_date === 0) {
-    $output[] = ctools_modal_command_dismiss();
-    drupal_set_message(t('Unable to load event.'), 'error');
-  }
-
-  $modal_content = \Drupal::moduleHandler()->invokeAll('bat_fullcalendar_modal_content', $entity_id, $event_type, $event_id, $start_date, $end_date);
-  $modal_content = array_pop($modal_content);
-
-  if (isset($modal_content['title']) && isset($modal_content['content'])) {
-    ctools_modal_render($modal_content['title'], $modal_content['content']);
-  }
-  elseif (isset($modal_content['commands'])) {
-    print ajax_render($modal_content['commands']);
-    exit();
-  }
-}
-
-/**
  * Implements hook_bat_fullcalendar_modal_content();
  */
 function bat_fullcalendar_bat_fullcalendar_modal_content($entity_id, $event_type, $event_id, $start_date, $end_date) {
@@ -108,7 +79,7 @@ function bat_fullcalendar_bat_fullcalendar_modal_content($entity_id, $event_type
   return array(
     'bat_fullcalendar' => array(
       'title' => t('Event Management'),
-      'content' => drupal_get_form('bat_fullcalendar_event_manager_form', $entity_id, $event_type, $event_id, $start_date, $end_date),
+      'content' => \Drupal::formBuilder()->getForm('Drupal\bat_fullcalendar\Form\FullcalendarEventManagerForm', $entity_id, $event_type, $event_id, $start_date, $end_date),
     ),
   );
 }

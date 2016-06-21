@@ -1,0 +1,5 @@
+services:
+  bat_date:
+    class: Drupal\bat\ParamConverter\DateParamConverter
+    tags:
+      - { name: paramconverter }

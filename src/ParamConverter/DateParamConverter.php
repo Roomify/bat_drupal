@@ -1,0 +1,30 @@
+<?php
+
+namespace Drupal\bat\ParamConverter;
+ 
+use Drupal\Core\ParamConverter\ParamConverterInterface;
+use Drupal\node\Entity\Node;
+use Symfony\Component\Routing\Route;
+use Drupal\Component\Utility\SafeMarkup;
+
+
+class DateParamConverter implements ParamConverterInterface {
+
+  public function convert($value, $definition, $name, array $defaults) {
+    $date_string = SafeMarkup::checkPlain($value);
+
+    try {
+      $date = new \DateTime($date_string);
+    }
+    catch (Exception $e) {
+      $date = 0;
+    }
+
+    return $date;
+  }
+
+  public function applies($definition, $name, Route $route) {
+    return (!empty($definition['type']) && $definition['type'] == 'bat_date');
+  }
+
+}

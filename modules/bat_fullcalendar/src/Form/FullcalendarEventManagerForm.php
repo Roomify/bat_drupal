@@ -10,12 +10,19 @@ class FullcalendarEventManagerForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function getFormId() {
+    return 'bat_fullcalendar_event_manager_form';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state, $entity_id = 0, $event_type = 0, $event_id = 0, $start_date = 0, $end_date = 0) {
     $form = array();
     $new_event_id = $event_id;
 
-    if (isset($form_state['values']['change_event_status'])) {
-      $new_event_id = $form_state['values']['change_event_status'];
+    if ($form_state->getValue('change_event_status')) {
+      $new_event_id = $form_state->getValue('change_event_status');
     }
 
     $form['#attributes']['class'][] = 'bat-management-form bat-event-form';
@@ -31,7 +38,7 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $form['event_type'] = array(
       '#type' => 'hidden',
-      '#value' => $event_type->type,
+      '#value' => $event_type->id(),
     );
 
     $form['event_id'] = array(
@@ -41,12 +48,12 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $form['bat_start_date'] = array(
       '#type' => 'hidden',
-      '#value' => $start_date,
+      '#value' => $start_date->format('Y-m-d H:i:s'),
     );
 
     $form['bat_end_date'] = array(
       '#type' => 'hidden',
-      '#value' => $end_date,
+      '#value' => $end_date->format('Y-m-d H:i:s'),
     );
 
     $unit = entity_load($event_type->target_entity_type, $entity_id);
@@ -64,23 +71,23 @@ class FullcalendarEventManagerForm extends FormBase {
       '#suffix' => '</div>',
     );
 
-    if ($event_type->fixed_event_states) {
-      $state_options = bat_unit_state_options($event_type->type);
+    if ($event_type->getFixedEventStates()) {
+      $state_options = bat_unit_state_options($event_type->id());
 
       $form['change_event_status'] = array(
         '#title' => t('Change the state for this event to') . ': ',
         '#type' => 'select',
         '#options' => $state_options,
         '#ajax' => array(
-          'callback' => 'bat_fullcalendar_ajax_event_status_change',
+          'callback' => '::bat_fullcalendar_ajax_event_status_change',
           'wrapper' => 'replace_textfield_div',
         ),
         '#empty_option' => t('- Select -'),
       );
     }
     else {
-      if (isset($event_type->default_event_value_field_ids[$event_type->type])) {
-        $field_name = $event_type->default_event_value_field_ids[$event_type->type];
+      if (isset($event_type->default_event_value_field_ids[$event_type->id()])) {
+        $field_name = $event_type->default_event_value_field_ids[$event_type->id()];
 
         $form['field_name'] = array(
           '#type' => 'hidden',
@@ -88,7 +95,7 @@ class FullcalendarEventManagerForm extends FormBase {
         );
 
         $field = FieldStorageConfig::loadByName('event', $field_name);
-        $instance = FieldConfig::loadByName('event', $field_name, $event_type->type);
+        $instance = FieldConfig::loadByName('event', $field_name, $event_type->id());
 
         $element = array('#parents' => array());
         $widget = field_default_form('bat_event', NULL, $field, $instance, 'und', NULL, $element, $form_state);
@@ -114,33 +121,33 @@ class FullcalendarEventManagerForm extends FormBase {
   /**
    * The callback for the change_event_status widget of the event manager form.
    */
-  function bat_fullcalendar_ajax_event_status_change($form, $form_state) {
-    global $user;
+  function bat_fullcalendar_ajax_event_status_change($form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
 
-    $start_date = $form_state['values']['bat_start_date'];
-    $end_date = $form_state['values']['bat_end_date'];
-    $entity_id = $form_state['values']['entity_id'];
-    $event_id = $form_state['values']['event_id'];
-    $event_type = $form_state['values']['event_type'];
-    $state_id = $form_state['values']['change_event_status'];
+    $start_date = new \DateTime($values['bat_start_date']);
+    $end_date = new \DateTime($values['bat_end_date']);
+    $entity_id = $values['entity_id'];
+    $event_id = $values['event_id'];
+    $event_type = $values['event_type'];
+    $state_id = $values['change_event_status'];
 
     $event = bat_event_create2(array('type' => $event_type));
     $event->created = REQUEST_TIME;
-    $event->uid = $user->uid;
+    $event->uid = \Drupal::currentUser()->id();
 
-    $event->start_date = $start_date->format('Y-m-d H:i');
+    $event->start = $start_date->getTimestamp();
     // Always subtract one minute from the end time. FullCalendar provides
     // start and end time with the assumption that the last minute is *excluded*
     // while BAT deals with times assuming that the last minute is included.
-    $end_date->sub(new DateInterval('PT1M'));
-    $event->end_date = $end_date->format('Y-m-d H:i');
+    $end_date->sub(new \DateInterval('PT1M'));
+    $event->end = $end_date->getTimestamp();
 
     $event_type_entity = bat_event_type_load($event_type);
     // Construct target entity reference field name using this event type's target entity type.
     $target_field_name = 'event_' . $event_type_entity->target_entity_type . '_reference';
-    $event->{$target_field_name}['und'][0]['target_id'] = $entity_id;
+    $event->set($target_field_name, $entity_id);
 
-    $event->event_state_reference['und'][0]['state_id'] = $state_id;
+    $event->set('event_state_reference', $state_id);
 
     $event->save();
 
@@ -159,32 +166,32 @@ class FullcalendarEventManagerForm extends FormBase {
    * The callback for the change_event_status widget of the event manager form.
    */
   function bat_fullcalendar_event_manager_form_ajax_submit($form, FormStateInterface $form_state) {
-    global $user;
+    $values = $form_state->getValues();
 
-    $start_date = $form_state['values']['bat_start_date'];
-    $end_date = $form_state['values']['bat_end_date'];
-    $entity_id = $form_state['values']['entity_id'];
-    $event_id = $form_state['values']['event_id'];
-    $event_type = $form_state['values']['event_type'];
-    $field_name = $form_state['values']['field_name'];
+    $start_date = new \DateTime($values['bat_start_date']);
+    $end_date = new \DateTime($values['bat_end_date']);
+    $entity_id = $values['entity_id'];
+    $event_id = $values['event_id'];
+    $event_type = $values['event_type'];
+    $field_name = $values['field_name'];
 
     $event = bat_event_create2(array('type' => $event_type));
     $event->created = REQUEST_TIME;
-    $event->uid = $user->uid;
+    $event->uid = \Drupal::currentUser()->id();
 
-    $event->start_date = $start_date->format('Y-m-d H:i');
+    $event->start = $start_date->getTimestamp();
     // Always subtract one minute from the end time. FullCalendar provides
     // start and end time with the assumption that the last minute is *excluded*
     // while BAT deals with times assuming that the last minute is included.
     $end_date->sub(new DateInterval('PT1M'));
-    $event->end_date = $end_date->format('Y-m-d H:i');
+    $event->end = $end_date->getTimestamp();
 
     $event_type_entity = bat_event_type_load($event_type);
     // Construct target entity reference field name using this event type's target entity type.
     $target_field_name = 'event_' . $event_type_entity->target_entity_type . '_reference';
-    $event->{$target_field_name}['und'][0]['target_id'] = $entity_id;
+    $event->set($target_field_name, $entity_id);
 
-    $event->{$field_name} = $form_state['values'][$field_name];
+    $event->set($field_name, $values[$field_name]);
 
     $event->save();
 

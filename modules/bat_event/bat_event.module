@@ -172,7 +172,7 @@ function bat_event_form_views_exposed_form_alter(&$form, FormStateInterface $for
  *   Boolean indicating if the defined user has access to the event or not.
  */
 function bat_event_access($op, $event = NULL, $account = NULL) {
-  //return bat_entity_access($op, $event, $account, 'bat_event');
+  return bat_entity_access($op, $event, $account, 'bat_event');
 }
 
 /**

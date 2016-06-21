@@ -174,9 +174,12 @@ class Event extends ContentEntityBase implements EventInterface {
         ($entity_original->getTranslation('und')->get($target_field_name) !== FALSE)) {
 
       // Get the referenced entity ID.
-      $event_target_entity_reference = $entity_original->getTranslation('und')->get($target_field_name);
+      $event_target_entity_reference = $entity_original->getTranslation('und')->get($target_field_name)->getValue();
 
-      $target_entity_id = $event_target_entity_reference->referencedEntities()[0]->id();
+      $target_entity_id = 0;
+      if (isset($event_target_entity_reference[0]['target_id'])) {
+        $target_entity_id = $event_target_entity_reference[0]['target_id'];
+      }
 
       // Load the referenced entity.
       if ($target_entity = entity_load($event_type->target_entity_type, $target_entity_id)) {

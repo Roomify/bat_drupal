@@ -68,7 +68,7 @@ Drupal.behaviors.bat_event = {
           // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';
         },
-        events: '/bat_api/calendar-events?_format=json&unit_types=' + drupalSettings.batCalendar[0].unitType + '&event_types=' + drupalSettings.batCalendar[0].eventType,
+        events: '/bat_api/calendar-events?_format=json&unit_types=' + drupalSettings.batCalendar[0].unitType + '&event_types=' + drupalSettings.batCalendar[0].eventType + '&background=' + drupalSettings.batCalendar[0].background,
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
@@ -84,14 +84,6 @@ Drupal.behaviors.bat_event = {
           }
         },
         select: function(start, end, jsEvent, view, resource) {
-          Drupal.ajax({
-            url: '/admin/config',
-            success: function(response) {
-              var $myDialog = $('<div>' + response.data + '</div>').appendTo('body');
-              Drupal.dialog($myDialog, {title: 'Some title'}).showModal();
-            }
-          }).execute();
-
           if (resource.create_event) {
             var unit_id = resource.id.substring(1);
 
@@ -181,30 +173,28 @@ Drupal.behaviors.bat_event = {
  * Initialize the modal box.
  */
 Drupal.batCalendar.Modal = function(element, eid, sd, ed, $unit_id) {
-  Drupal.CTools.Modal.show('bat-modal-style');
-
-  // The base url (which doesn't change) is used to identify our ajax instance.
-  var base = drupalSettings.basePath + '?q=admin/bat/fullcalendar/';
-  // Create a drupal ajax object that points to the event form.
-  var element_settings = {
-    url : base + $unit_id + '/event/' + drupalSettings.batCalendar[0].eventType + '/' + eid + '/' + sd + '/' + ed,
-    event : 'getResponse',
-    progress : { type: 'throbber' }
-  };
-
   // To make all calendars trigger correctly the getResponse event we need to
   // initialize the ajax instance with the global calendar table element.
   var calendars_table = $(element.el).closest('.calendar-set');
 
-  // Create a new instance only once.
-  // If it exists just override the url.
-  if (Drupal.ajax[base] === undefined) {
-    Drupal.ajax[base] = new Drupal.ajax(element_settings.url, calendars_table, element_settings);
-  }
-  else {
-    Drupal.ajax[base].element_settings.url = element_settings.url;
-    Drupal.ajax[base].options.url = element_settings.url;
-  }
+  var base = '/admin/bat/fullcalendar/';
+  // Create a drupal ajax object that points to the event form.
+  var url = base + $unit_id + '/event/' + drupalSettings.batCalendar[0].eventType + '/' + eid + '/' + sd + '/' + ed;
+
+  var element_settings = {
+    url : url,
+    event : 'getResponse',
+    progress : { type: 'throbber' },
+    selector: '#drupal-modal'
+  };
+
+  var response = {
+    selector: '#drupal-modal',
+    dialogOptions: { buttons: false, modal: true },
+  };
+  var ajax = new Drupal.Ajax(element_settings.url, calendars_table, element_settings);
+  Drupal.AjaxCommands.prototype.openDialog(ajax, response, 0);
+
   // We need to trigger the AJAX getResponse manually because the
   // fullcalendar select event is not recognized by Drupal's AJAX.
   $(calendars_table).trigger('getResponse');

@@ -1,0 +1,79 @@
+/* Some BAT admin pages use tables for layout, override the default top border.. */
+tbody {
+  border-top: none;
+}
+
+/* General styles for all BAT management forms. */
+.bat-management-form:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.bat-management-form .form-item {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.bat-management-form .form-item label {
+  margin: 0;
+  display: block;
+}
+
+.bat-management-form .form-type-item label {
+  display: inline;
+}
+
+.bat-management-form .form-type-radio label,
+.bat-management-form .form-type-checkbox label {
+  display: inline;
+}
+
+.bat-management-form .form-item-name .form-text {
+  width: 100%;
+}
+
+.bat-management-form .form-type-select,
+.bat-management-form .form-item-operation,
+.bat-management-form .form-item-amount,
+.bat-management-form .bat-date-range,
+.bat-management-form .form-actions {
+  float: left;
+  margin: 0 20px 0 0;
+  clear: none;
+}
+
+.bat-management-form .form-actions {
+  padding-top: 1.6em;
+  clear: both;
+  float: none;
+}
+
+.bat-management-form fieldset {
+  padding: 0;
+  margin: 0;
+  border: none;
+  width: auto;
+}
+
+.bat-management-form fieldset.collapsible {
+  float: none;
+  clear: both;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.bat-management-form .fieldset-legend,
+.bat-management-form .fieldset-wrapper {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  text-transform: none;
+}
+
+.bat-management-form .fieldset-description {
+  padding: 15px 0;
+}
