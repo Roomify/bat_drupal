@@ -9,6 +9,7 @@ use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
 
+use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -211,7 +212,7 @@ function bat_event_type_access($op, $type = NULL, $account = NULL) {
 /**
  * Implements hook_query_TAG_alter().
  */
-function bat_event_query_bat_event_access_alter(QueryAlterableInterface $query) {
+function bat_event_query_bat_event_access_alter(AlterableInterface $query) {
   // Look for an event base table to pass to the query altering function or
   // else assume we don't have the tables we need to establish order related
   // altering right now.

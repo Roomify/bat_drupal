@@ -6,6 +6,7 @@
  * (e.g. rooms - but also villas bungalows, cars, drills, you-get-the-idea etc.)
  */
 
+use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -37,7 +38,7 @@ function bat_unit_module_implements_alter(&$implementations, $hook) {
 /**
  * Implements hook_query_TAG_alter().
  */
-function bat_unit_query_bat_unit_access_alter(QueryAlterableInterface $query) {
+function bat_unit_query_bat_unit_access_alter(AlterableInterface $query) {
   // Look for an unit base table to pass to the query altering function or else
   // assume we don't have the tables we need to establish order related altering
   // right now.
