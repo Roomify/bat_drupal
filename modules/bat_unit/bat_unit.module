@@ -933,7 +933,7 @@ function bat_type_bundle_new() {
 function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = FALSE, $calculation = FALSE, $display = array()) {
 
   $field = FieldStorageConfig::loadByName($entity_type, $field_name);
-  $instance = FieldConfig::loadByName($entity_type, $field_name, $bundle);
+  $instance = FieldConfig::loadByName($entity_type, $bundle, $field_name);
 
   if (empty($field)) {
     $field = array(

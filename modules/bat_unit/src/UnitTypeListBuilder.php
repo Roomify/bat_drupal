@@ -26,6 +26,7 @@ class UnitTypeListBuilder extends EntityListBuilder {
     $header['id'] = $this->t('Unit type ID');
     $header['name'] = $this->t('Name');
     $header['type'] = $this->t('Type');
+    $header['status'] = $this->t('Status');
     return $header + parent::buildHeader();
   }
 
@@ -44,6 +45,7 @@ class UnitTypeListBuilder extends EntityListBuilder {
       )
     );
     $row['bundle'] = bat_type_bundle_load($entity->bundle())->label();
+    $row['status'] = ($entity->getStatus()) ? t('Published') : t('Unpublished');
     return $row + parent::buildRow($entity);
   }
 

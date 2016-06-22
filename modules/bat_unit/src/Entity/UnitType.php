@@ -92,6 +92,13 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
   /**
    * {@inheritdoc}
    */
+  public function getStatus() {
+    return $this->get('status')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setOwnerId($uid) {
     $this->set('user_id', $uid);
     return $this;
@@ -102,6 +109,14 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
    */
   public function setOwner(UserInterface $account) {
     $this->set('user_id', $account->id());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setStatus($status) {
+    $this->set('status', $status);
     return $this;
   }
 
@@ -182,11 +197,15 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
       ->setDescription(t('The type bundle.'))
       ->setSetting('target_type', 'type_bundle');
 
+    $fields['status'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Status'))
+      ->setDescription(t('The unit status.'));
+
     return $fields;
   }
 
   /**
-   *
+   * @param $event_type
    */
   public function getEventDefaultValue($event_type) {
     if ($field = $this->getEventValueDefaultField($event_type)) {
@@ -217,7 +236,7 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
    */
   public function getEventValueFormatter($event_type) {
     if ($field = $this->getEventValueDefaultField($event_type)) {
-      $field_info_instance = FieldConfig::loadByName('bat_unit_type', $field, $this->type);
+      $field_info_instance = FieldConfig::loadByName('bat_unit_type', $this->type, $field);
 
       if (isset($field_info_instance['display']['default']['type'])) {
         return $field_info_instance['display']['default']['type'];

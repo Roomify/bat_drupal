@@ -24,6 +24,7 @@ class StateForm extends ContentEntityForm {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
+
     $state = $this->entity;
 
     $form['machine_name'] = array(

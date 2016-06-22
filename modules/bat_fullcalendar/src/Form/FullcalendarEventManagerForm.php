@@ -2,8 +2,12 @@
 
 namespace Drupal\bat_fullcalendar\Form;
 
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
 
 class FullcalendarEventManagerForm extends FormBase {
 
@@ -79,28 +83,30 @@ class FullcalendarEventManagerForm extends FormBase {
         '#type' => 'select',
         '#options' => $state_options,
         '#ajax' => array(
-          'callback' => '::bat_fullcalendar_ajax_event_status_change',
+          'callback' => '::ajaxEventStatusChange',
           'wrapper' => 'replace_textfield_div',
         ),
         '#empty_option' => t('- Select -'),
       );
     }
     else {
-      if (isset($event_type->default_event_value_field_ids[$event_type->id()])) {
-        $field_name = $event_type->default_event_value_field_ids[$event_type->id()];
+      if (isset($event_type->default_event_value_field_ids) && !empty($event_type->default_event_value_field_ids)) {
+        $field_name = $event_type->default_event_value_field_ids;
 
         $form['field_name'] = array(
           '#type' => 'hidden',
           '#value' => $field_name,
         );
 
-        $field = FieldStorageConfig::loadByName('event', $field_name);
-        $instance = FieldConfig::loadByName('event', $field_name, $event_type->id());
+        $field_definition = \Drupal::entityManager()->getFieldDefinitions('event', 'pricing')[$field_name];
+        $items = new FieldItemList($field_definition, NULL, EntityAdapter::createFromEntity(bat_event_create2(array('type' => $event_type->id()))));
 
-        $element = array('#parents' => array());
-        $widget = field_default_form('bat_event', NULL, $field, $instance, 'und', NULL, $element, $form_state);
+        $form_display = entity_get_form_display('event', $event_type->id(), 'default');
+        $widget = $form_display->getRenderer($field_name);
 
-        $form[$field_name] = $widget[$field_name];
+        $form['#parents'] = array();
+
+        $form[$field_name] = $widget->form($items, $form, $form_state);
         $form[$field_name]['#weight'] = 1;
 
         $form['submit'] = array(
@@ -108,7 +114,7 @@ class FullcalendarEventManagerForm extends FormBase {
           '#value' => t('Update value'),
           '#weight' => 2,
           '#ajax' => array(
-            'callback' => 'bat_fullcalendar_event_manager_form_ajax_submit',
+            'callback' => '::eventManagerAjaxSubmit',
             'wrapper' => 'replace_textfield_div',
           ),
         );
@@ -121,7 +127,7 @@ class FullcalendarEventManagerForm extends FormBase {
   /**
    * The callback for the change_event_status widget of the event manager form.
    */
-  function bat_fullcalendar_ajax_event_status_change($form, FormStateInterface $form_state) {
+  function ajaxEventStatusChange($form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
 
     $start_date = new \DateTime($values['bat_start_date']);
@@ -165,7 +171,7 @@ class FullcalendarEventManagerForm extends FormBase {
   /**
    * The callback for the change_event_status widget of the event manager form.
    */
-  function bat_fullcalendar_event_manager_form_ajax_submit($form, FormStateInterface $form_state) {
+  function eventManagerAjaxSubmit($form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
 
     $start_date = new \DateTime($values['bat_start_date']);
@@ -183,7 +189,7 @@ class FullcalendarEventManagerForm extends FormBase {
     // Always subtract one minute from the end time. FullCalendar provides
     // start and end time with the assumption that the last minute is *excluded*
     // while BAT deals with times assuming that the last minute is included.
-    $end_date->sub(new DateInterval('PT1M'));
+    $end_date->sub(new \DateInterval('PT1M'));
     $event->end = $end_date->getTimestamp();
 
     $event_type_entity = bat_event_type_load($event_type);
@@ -197,11 +203,11 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $unit = entity_load($event_type_entity->target_entity_type, $entity_id);
 
-    $value = field_view_value('bat_event', $event, $field_name, $form_state['values'][$field_name]['und'][0]);
+    $value = drupal_render($event->{$field_name}->view(array('label' => 'hidden')));
 
     $form['form_wrapper_bottom'] = array(
       '#prefix' => '<div>',
-      '#markup' => t('Value for @name changed to @value', array('@name' => $unit->name, '@value' => $value['#markup'])),
+      '#markup' => t('Value for <b>@name</b> changed to <b>@value</b>', array('@name' => $unit->label(), '@value' => trim(strip_tags($value->__toString())))),
       '#suffix' => '</div>',
       '#weight' => 9,
     );

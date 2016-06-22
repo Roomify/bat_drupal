@@ -478,7 +478,7 @@ function bat_event_get_unit_bundles($bat_event_type_name = '') {
  */
 function bat_event_reference_autocomplete($entity_type, $bundle, $field_name, $string = '') {
   $field = FieldStorageConfig::loadByName($field_name);
-  $instance = FieldConfig::loadByName($entity_type, $field_name, $bundle);
+  $instance = FieldConfig::loadByName($entity_type, $bundle, $field_name);
 
   $options = array(
     'string' => $string,

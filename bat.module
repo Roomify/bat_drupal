@@ -91,7 +91,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
 
   $entity_type = $entity->getEntityType()->id();
 
-  if (in_array($entity_type, array('bat_unit_type'))) {
+  if (in_array($entity_type, array('bat_unit', 'bat_unit_type', 'event'))) {
     $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
 
     // $entity may be either an object or a entity type. Since entity types cannot
@@ -460,23 +460,24 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
     'minDate' => '+' . $config->get('bat_event_start_date') . 'd',
   );
 
+  $date = new DateTime();
+
   if ($year && $month) {
     // Calculate min and max dates of the specified year/month.
-    $date = new DateTime();
     $date->setDate($year, $month, 01);
     $min_date = $date->format($config->get('bat_daily_date_format'));
     $date->modify('last day of this month');
     $max_date = $date->format($config->get('bat_daily_date_format'));
     $datepicker_options += array(
-      'minDate' => $min_date,
-      'maxDate' => $max_date,
-      'defaultDate' => $min_date,
-      'numberOfMonths' => 1,
+      'min' => $min_date,
+      'max' => $max_date,
     );
   }
   else {
-    $datepicker_options += array(
-      'minDate' => '+' . $config->get('bat_event_start_date') . 'd',
+    $date->modify('+' . $config->get('bat_event_start_date') . ' days');
+
+    $extra_attributes = array(
+      'min' => $date->format($config->get('bat_daily_date_format')),
     );
   }
 
@@ -485,13 +486,8 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
     '#suffix' => '</div>',
     '#type' => 'date',
     '#title' => t('Event Start'),
-    '#date_type' => DATE_DATETIME,
-    '#date_format' => $config->get('bat_daily_date_format'),
-    '#date_increment' => 1,
-    '#date_year_range' => '-1:+3',
-    // Default parameters defined above, with an additional parameter
-    // linking to the jQuery selector for the end datepicker.
-    '#datepicker_options' => array_merge($datepicker_options, array('endDateSelector' => $end_date_selector)),
+    '#date_date_format' => $config->get('bat_daily_date_format'),
+    '#attributes' => $extra_attributes,
     '#required' => TRUE,
   );
 
@@ -500,13 +496,8 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
     '#suffix' => '</div></div>',
     '#type' => 'date',
     '#title' => t('Event End'),
-    '#date_type' => DATE_DATETIME,
     '#date_format' => $config->get('bat_daily_date_format'),
-    '#date_increment' => 1,
-    '#date_year_range' => '-1:+3',
-    // Default parameters defined above, with an additional parameter
-    // parameter linking to the jQuery selector for the start datepicker.
-    '#datepicker_options' => array_merge($datepicker_options, array('startDateSelector' => $start_date_selector)),
+    '#attributes' => $extra_attributes,
     '#required' => TRUE,
     '#attached' => array('library' => array('bat/bat_date_range')),
   );

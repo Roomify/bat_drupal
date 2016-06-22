@@ -26,6 +26,7 @@ class EventListBuilder extends EntityListBuilder {
     $header['id'] = $this->t('Event ID');
     $header['start_date'] = $this->t('Start Date');
     $header['end_date'] = $this->t('End Date');
+    $header['type'] = $this->t('Type');
     return $header + parent::buildHeader();
   }
 
@@ -38,6 +39,7 @@ class EventListBuilder extends EntityListBuilder {
     $row['id'] = $entity->id();
     $row['start_date'] = $entity->getStartDate()->format($date_format);
     $row['end_date'] = $entity->getEndDate()->format($date_format);
+    $row['type'] = bat_event_type_load($entity->bundle())->label();
     return $row + parent::buildRow($entity);
   }
 

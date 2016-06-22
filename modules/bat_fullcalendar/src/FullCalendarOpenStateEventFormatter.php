@@ -7,6 +7,7 @@
 
 namespace Drupal\bat_fullcalendar;
 
+use Drupal\field\Entity\FieldStorageConfig;
 use Roomify\Bat\Event\Event;
 use Roomify\Bat\Event\EventInterface;
 use Roomify\Bat\EventFormatter\AbstractEventFormatter;
@@ -59,7 +60,7 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
     $formatted_event = array(
       'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00',
       'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00',
-      'title' => $target_entity->formatEventValue($this->event_type->type, $default_value),
+      'title' => $target_entity->formatEventValue($this->event_type->id(), $default_value),
       'blocking' => 0,
       'fixed' => 0,
       'editable' => $editable,
@@ -76,7 +77,7 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
       $formatted_event['rendering'] = 'background';
     }
 
-    $formatted_event['type'] = $this->event_type->type;
+    $formatted_event['type'] = $this->event_type->id();
 
     // Allow other modules to alter the event data.
     \Drupal::moduleHandler()->alter('bat_fullcalendar_formatted_event', $formatted_event);

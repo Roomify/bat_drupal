@@ -11,7 +11,7 @@ Drupal.behaviors.bat_event = {
     calendars[0] = new Array('#calendar');
 
     // Refresh the event once the modal is closed.
-    $(document).one('CToolsDetachBehaviors', function() {
+    $(window).on('dialog:beforeclose', function (e, dialog, $element) {
       $.each(calendars, function(key, value) {
         $(value[0]).fullCalendar('refetchEvents');
       });

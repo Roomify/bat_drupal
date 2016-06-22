@@ -18,6 +18,8 @@ class EventTypeListBuilder extends ConfigEntityListBuilder {
    */
   public function buildHeader() {
     $header['title'] = t('Name');
+    $header['fixed_event_states'] = t('States');
+    $header['event_granularity'] = t('Granularity');
     return $header + parent::buildHeader();
   }
 
@@ -29,6 +31,8 @@ class EventTypeListBuilder extends ConfigEntityListBuilder {
       'data' => $entity->label(),
       'class' => array('menu-label'),
     );
+    $row['fixed_event_states'] = ($entity->getFixedEventStates()) ? t('Fixed states') : t('Open states');
+    $row['event_granularity'] = ($entity->getEventGranularity() == 'bat_daily') ? t('Daily') : t('Hourly');
     return $row + parent::buildRow($entity);
   }
 

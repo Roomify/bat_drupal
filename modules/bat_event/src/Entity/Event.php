@@ -204,14 +204,14 @@ class Event extends ContentEntityBase implements EventInterface {
 
       if (isset($event_type->default_event_value_field_ids)) {
         $field = $event_type->default_event_value_field_ids;
-        $field_info = FieldStorageConfig::loadByName($field);
+        $field_info = FieldStorageConfig::loadByName('event', $field);
         $values = $this->getTranslation('und')->get($field)->getValue();
 
         if (!empty($values)) {
-          if ($field_info['type'] == 'entity_reference') {
+          if ($field_info->getType() == 'entity_reference') {
             $event_value = $values[0]['target_id'];
           }
-          elseif ($field_info['type'] == 'commerce_price') {
+          elseif ($field_info->getType() == 'commerce_price') {
             $event_value = $values[0]['amount'];
           }
           elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer') {
