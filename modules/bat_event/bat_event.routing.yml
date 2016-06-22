@@ -49,27 +49,27 @@ entity.state.delete_form:
 
 
 # Event routing definition
-entity.event.canonical:
+entity.bat_event.canonical:
   path: '/admin/bat/event/{event}'
   defaults:
-    _entity_view: 'event'
+    _entity_view: 'bat_event'
     _title: 'Event'
   requirements:
-    _entity_access: 'event.view'
+    _entity_access: 'bat_event.view'
   options:
     _admin_route: TRUE
 
-entity.event.collection:
+entity.bat_event.collection:
   path: '/admin/bat/event'
   defaults:
-    _entity_list: 'event'
+    _entity_list: 'bat_event'
     _title: 'Event list'
   requirements:
     _permission: 'view event entities'
   options:
     _admin_route: TRUE
 
-entity.event.add_page:
+entity.bat_event.add_page:
   path: '/admin/bat/event/add'
   defaults:
     _title: 'Add event'
@@ -79,7 +79,7 @@ entity.event.add_page:
   options:
     _admin_route: TRUE
 
-entity.event.add_form:
+entity.bat_event.add_form:
   path: '/admin/bat/event/add/{event_type}'
   defaults:
     _controller: '\Drupal\bat_event\Controller\EventController::add'
@@ -90,61 +90,61 @@ entity.event.add_form:
     _admin_route: TRUE
     parameters:
       event_type:
-        type: entity:event_type
+        type: entity:bat_event_type
         with_config_overrides: TRUE
 
-entity.event.edit_form:
+entity.bat_event.edit_form:
   path: '/admin/bat/event/{event}/edit'
   defaults:
-    _entity_form: event.edit
+    _entity_form: 'bat_event.edit'
     _title: 'Edit Event'
   requirements:
     _permission: 'edit event entities'
   options:
     _admin_route: TRUE
 
-entity.event.delete_form:
+entity.bat_event.delete_form:
   path: '/admin/bat/event/{event}/delete'
   defaults:
-    _entity_form: event.delete
+    _entity_form: 'bat_event.delete'
     _title: 'Delete Event'
   requirements:
     _permission: 'delete event entities'
   options:
     _admin_route: TRUE
 
-entity.event_type.collection:
+entity.bat_event_type.collection:
   path: '/admin/bat/event/event-types'
   defaults:
-    _entity_list: 'event_type'
+    _entity_list: 'bat_event_type'
     _title: 'Event Type list'
   requirements:
     _permission: 'view event entities'
   options:
     _admin_route: TRUE
 
-entity.event_type.type_add:
+entity.bat_event_type.type_add:
   path: '/admin/bat/event/event-types/add'
   defaults:
-    _entity_form: 'event_type.add'
+    _entity_form: 'bat_event_type.add'
     _title: 'Add event type'
   requirements:
     _permission: 'administer content types'
 
-entity.event_type.edit_form:
+entity.bat_event_type.edit_form:
   path: '/admin/bat/event/event-types/{event_type}/edit'
   defaults:
-    _entity_form: event_type.edit
+    _entity_form: 'bat_event_type.edit'
     _title: 'Edit Event type'
   requirements:
     _permission: 'edit event entities'
   options:
     _admin_route: TRUE
 
-entity.event_type.delete_form:
+entity.bat_event_type.delete_form:
   path: '/admin/bat/event/event-types/{event_type}/delete'
   defaults:
-    _entity_form: 'event_type.delete'
+    _entity_form: 'bat_event_type.delete'
     _title: 'Delete'
   requirements:
     _entity_access: 'event_type.delete'

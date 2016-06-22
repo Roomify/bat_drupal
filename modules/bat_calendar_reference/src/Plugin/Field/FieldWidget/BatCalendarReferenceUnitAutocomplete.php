@@ -37,7 +37,7 @@ class BatCalendarReferenceUnitAutocomplete extends WidgetBase {
     $element['event_type_id'] = array(
       '#title' => t('Event type'),
       '#type' => 'entity_autocomplete',
-      '#target_type' => 'event_type',
+      '#target_type' => 'bat_event_type',
       //'#selection_settings' => ['target_bundles' => $target_bundles],
       '#default_value' => isset($items[$delta]->event_type_id) ? bat_event_type_load($items[$delta]->event_type_id) : NULL,
       '#size' => 60,

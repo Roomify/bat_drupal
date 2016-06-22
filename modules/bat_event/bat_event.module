@@ -30,13 +30,13 @@ use Drupal\bat_event\Entity\State;
 function bat_event_type_add_event_state_reference($entity) {
   $field_name = 'event_state_reference';
 
-  $field_storage = FieldStorageConfig::loadByName('event', $field_name);
-  $field = FieldConfig::loadByName('event', $entity->id(), $field_name);
+  $field_storage = FieldStorageConfig::loadByName('bat_event', $field_name);
+  $field = FieldConfig::loadByName('bat_event', $entity->id(), $field_name);
 
   if (empty($field_storage)) {
     $field_storage = FieldStorageConfig::create([
       'field_name' => $field_name,
-      'entity_type' => 'event',
+      'entity_type' => 'bat_event',
       'type' => 'entity_reference',
       'cardinality' => 1,
       'locked' => 1,
@@ -50,7 +50,7 @@ function bat_event_type_add_event_state_reference($entity) {
   if (empty($field)) {
     $field = FieldConfig::create([
       'field_storage' => $field_storage,
-      'entity_type' => 'event',
+      'entity_type' => 'bat_event',
       'label' => 'State',
       'bundle' => $entity->id(),
       'required' => FALSE,
@@ -61,10 +61,10 @@ function bat_event_type_add_event_state_reference($entity) {
     ]);
     $field->save();
 
-    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('event.' . $entity->id() . '.default');
+    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('bat_event.' . $entity->id() . '.default');
     if (!$form_display) {
       $form_display = EntityFormDisplay::create([
-        'targetEntityType' => 'event',
+        'targetEntityType' => 'bat_event',
         'bundle' => $entity->id(),
         'mode' => 'default',
         'status' => TRUE,
@@ -87,13 +87,13 @@ function bat_event_type_add_target_entity_field($entity) {
   $entity_info = \Drupal::entityManager()->getDefinition($entity->target_entity_type);
   $field_name = 'event_' . $entity->target_entity_type . '_reference';
 
-  $field_storage = FieldStorageConfig::loadByName('event', $field_name);
-  $field = FieldConfig::loadByName('event', $entity->id(), $field_name);
+  $field_storage = FieldStorageConfig::loadByName('bat_event', $field_name);
+  $field = FieldConfig::loadByName('bat_event', $entity->id(), $field_name);
 
   if (empty($field_storage)) {
     $field_storage = FieldStorageConfig::create([
       'field_name' => $field_name,
-      'entity_type' => 'event',
+      'entity_type' => 'bat_event',
       'type' => 'entity_reference',
       'cardinality' => 1,
       'locked' => 1,
@@ -107,7 +107,7 @@ function bat_event_type_add_target_entity_field($entity) {
   if (empty($field)) {
     $field = FieldConfig::create([
       'field_storage' => $field_storage,
-      'entity_type' => 'event',
+      'entity_type' => 'bat_event',
       'label' => $entity_info->getLabel()->__toString(),
       'bundle' => $entity->id(),
       'required' => FALSE,
@@ -118,10 +118,10 @@ function bat_event_type_add_target_entity_field($entity) {
     ]);
     $field->save();
 
-    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('event.' . $entity->id() . '.default');
+    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('bat_event.' . $entity->id() . '.default');
     if (!$form_display) {
       $form_display = EntityFormDisplay::create([
-        'targetEntityType' => 'event',
+        'targetEntityType' => 'bat_event',
         'bundle' => $entity->id(),
         'mode' => 'default',
         'status' => TRUE,
@@ -289,7 +289,7 @@ function bat_event_type_load($type) {
  */
 function bat_event_load($event_id = NULL, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('event')->resetCache(array($nid));
+    \Drupal::entityManager()->getStorage('bat_event')->resetCache(array($nid));
   }
   return Event::load($event_id);
 }
@@ -312,7 +312,7 @@ function bat_event_load($event_id = NULL, $reset = FALSE) {
  */
 function bat_event_load_multiple(array $event_ids = NULL, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('event')->resetCache($event_ids);
+    \Drupal::entityManager()->getStorage('bat_event')->resetCache($event_ids);
   }
   return Event::loadMultiple($event_ids);
 }
@@ -1163,7 +1163,7 @@ function template_preprocess_bat_event_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = array(
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.event.add_form', array('event_type' => $type->id()))),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_event.add_form', array('event_type' => $type->id()))),
       );
     }
   }

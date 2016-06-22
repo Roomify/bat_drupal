@@ -28,7 +28,7 @@ class EventDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.event.collection');
+    return new Url('entity.bat_event.collection');
   }
 
   /**

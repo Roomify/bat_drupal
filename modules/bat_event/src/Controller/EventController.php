@@ -67,7 +67,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
 
     // Only use node types the user has access to.
     foreach ($this->entityManager()->getStorage('event_type')->loadMultiple() as $type) {
-      $access = $this->entityManager()->getAccessControlHandler('event')->createAccess($type->id(), NULL, [], TRUE);
+      $access = $this->entityManager()->getAccessControlHandler('bat_event')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
         $content[$type->id()] = $type;
       }
@@ -76,7 +76,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
     // Bypass the node/add listing if only one content type is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.event.add_form', array('event_type' => $type->id()));
+      return $this->redirect('entity.bat_event.add_form', array('event_type' => $type->id()));
     }
 
     $build['#content'] = $content;
@@ -94,7 +94,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
    *   A node submission form.
    */
   public function add(EventTypeInterface $event_type) {
-    $type = $this->entityManager()->getStorage('event')->create(array(
+    $type = $this->entityManager()->getStorage('bat_event')->create(array(
       'type' => $event_type->id(),
     ));
 

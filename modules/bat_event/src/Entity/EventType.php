@@ -10,7 +10,7 @@ use Drupal\bat_event\EventTypeInterface;
  * Defines the Event type configuration entity.
  *
  * @ConfigEntityType(
- *   id = "event_type",
+ *   id = "bat_event_type",
  *   label = @Translation("Event type"),
  *   handlers = {
  *     "access" = "Drupal\bat_event\EventTypeAccessControlHandler",
@@ -23,7 +23,7 @@ use Drupal\bat_event\EventTypeInterface;
  *   },
  *   admin_permission = "administer event_type entities",
  *   config_prefix = "event_type",
- *   bundle_of = "event",
+ *   bundle_of = "bat_event",
  *   entity_keys = {
  *     "id" = "type",
  *     "label" = "name"

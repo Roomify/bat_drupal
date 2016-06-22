@@ -1,21 +1,21 @@
 # Event routing definition
-entity.event.canonical:
-  route_name: entity.event.canonical
-  base_route: entity.event.canonical
+entity.bat_event.canonical:
+  route_name: entity.bat_event.canonical
+  base_route: entity.bat_event.canonical
   title: 'View'
 
-entity.event.edit_form:
-  route_name: entity.event.edit_form
-  base_route: entity.event.canonical
+entity.bat_event.edit_form:
+  route_name: entity.bat_event.edit_form
+  base_route: entity.bat_event.canonical
   title: Edit
 
-entity.event.delete_form:
-  route_name:  entity.event.delete_form
-  base_route:  entity.event.canonical
+entity.bat_event.delete_form:
+  route_name:  entity.bat_event.delete_form
+  base_route:  entity.bat_event.canonical
   title: Delete
   weight: 10
 
-entity.event_type.edit_form:
-  route_name: entity.event_type.edit_form
-  base_route: entity.event_type.edit_form
+entity.bat_event_type.edit_form:
+  route_name: entity.bat_event_type.edit_form
+  base_route: entity.bat_event_type.edit_form
   title: Edit

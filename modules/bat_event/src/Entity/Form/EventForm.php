@@ -65,7 +65,7 @@ class EventForm extends ContentEntityForm {
         ]));
     }
 
-    $form_state->setRedirect('entity.event.edit_form', ['event' => $event->id()]);
+    $form_state->setRedirect('entity.bat_event.edit_form', ['event' => $event->id()]);
   }
 
 }

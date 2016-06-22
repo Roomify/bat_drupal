@@ -49,7 +49,7 @@ class EventPermissions implements ContainerInjectionInterface {
       ];
     }
 
-    return $permissions + bat_entity_access_permissions('event');
+    return $permissions + bat_entity_access_permissions('bat_event');
   }
 
 }

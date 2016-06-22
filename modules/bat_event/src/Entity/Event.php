@@ -29,7 +29,7 @@ use Roomify\Bat\Unit\Unit;
  * @ingroup bat
  *
  * @ContentEntityType(
- *   id = "event",
+ *   id = "bat_event",
  *   label = @Translation("Event"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
@@ -51,8 +51,8 @@ use Roomify\Bat\Unit\Unit;
  *     "uuid" = "uuid",
  *     "uid" = "uid",
  *   },
- *   bundle_entity_type = "event_type",
- *   field_ui_base_route = "entity.event_type.edit_form",
+ *   bundle_entity_type = "bat_event_type",
+ *   field_ui_base_route = "entity.bat_event_type.edit_form",
  *   links = {
  *     "canonical" = "/admin/event/{event}",
  *     "edit-form" = "/admin/event/{event}/edit",
@@ -159,7 +159,7 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function save() {
-    $entity_original = entity_load_unchanged('event', $this->id());
+    $entity_original = entity_load_unchanged('bat_event', $this->id());
 
     $event_type = bat_event_type_load($this->bundle());
 
@@ -204,7 +204,7 @@ class Event extends ContentEntityBase implements EventInterface {
 
       if (isset($event_type->default_event_value_field_ids)) {
         $field = $event_type->default_event_value_field_ids;
-        $field_info = FieldStorageConfig::loadByName('event', $field);
+        $field_info = FieldStorageConfig::loadByName('bat_event', $field);
         $values = $this->getTranslation('und')->get($field)->getValue();
 
         if (!empty($values)) {
@@ -330,7 +330,7 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
       ->setDescription(t('The event type.'))
-      ->setSetting('target_type', 'event_type');
+      ->setSetting('target_type', 'bat_event_type');
 
     return $fields;
   }
@@ -373,7 +373,7 @@ class Event extends ContentEntityBase implements EventInterface {
 
   public function getEventValue() {
     if ($field = $this->getEventValueField()) {
-      $field_info = FieldStorageConfig::loadByName('event', $field);
+      $field_info = FieldStorageConfig::loadByName('bat_event', $field);
       $values = $this->getTranslation('und')->get($field)->getValue();
 
       if (!empty($values)) {

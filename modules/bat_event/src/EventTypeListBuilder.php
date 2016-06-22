@@ -55,7 +55,7 @@ class EventTypeListBuilder extends ConfigEntityListBuilder {
   public function render() {
     $build = parent::render();
     $build['table']['#empty'] = $this->t('No event types available. <a href=":link">Add event type</a>.', [
-        ':link' => Url::fromRoute('entity.event_type.type_add')->toString()
+        ':link' => Url::fromRoute('entity.bat_event_type.type_add')->toString()
       ]);
     return $build;
   }
