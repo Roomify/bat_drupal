@@ -36,11 +36,11 @@ class BatEventUiBulkUpdateForm extends FormBase {
       $types_options = array();
 
       foreach ($types as $type) {
-        $type_bundle = bat_type_bundle_load($type->type);
+        $type_bundle = bat_type_bundle_load($type->bundle());
 
         if (is_array($type_bundle->default_event_value_field_ids)) {
           if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
-            $types_options[$type->type_id] = $type->name;
+            $types_options[$type->id()] = $type->label();
           }
         }
       }
@@ -96,7 +96,7 @@ class BatEventUiBulkUpdateForm extends FormBase {
     $event_state = $values['state'];
     $type = bat_type_load($values['type']);
 
-    $units = bat_unit_load_multiple(NULL, array('type_id' => $type->id()));
+    $units = bat_unit_load_multiple(NULL, array('unit_type_id' => $type->id()));
 
     foreach ($units as $unit) {
       $event = bat_event_create2(array(

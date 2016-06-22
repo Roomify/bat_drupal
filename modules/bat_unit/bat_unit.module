@@ -134,9 +134,9 @@ function bat_unit_views_pre_render(ViewExecutable $view) {
  * Implements hook_entity_delete().
  */
 function bat_unit_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
-  if ($entity->getEntityTypeId() == 'bat_type') {
+  if ($entity->getEntityTypeId() == 'bat_unit_type') {
     // When delete a Type remove all related Units.
-    $units = bat_unit_load_multiple(FALSE, array('type_id' => $entity->type_id));
+    $units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $entity->id()));
 
     foreach ($units as $unit) {
       $unit->delete();
@@ -312,7 +312,7 @@ function bat_unit_types_ids() {
 
   $types = bat_unit_get_types();
   foreach ($types as $type) {
-    $unit_types[$type->type_id] = $type->name;
+    $unit_types[$type->id()] = $type->label();
   }
 
   return $unit_types;
@@ -369,6 +369,22 @@ function bat_unit_load($unit_id, $reset = FALSE) {
  * @see bat_unit_load()
  */
 function bat_unit_load_multiple($unit_ids = array(), $conditions = array(), $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('bat_unit')->resetCache();
+  }
+
+  if (!empty($conditions)) {
+    $query = \Drupal::entityQuery('bat_unit');
+    if (!empty($unit_ids)) {
+      $query->condition('id', $unit_ids, 'IN');
+    }
+    foreach ($conditions as $key => $value) {
+      $query->condition($key, $value);
+    }
+
+    $unit_ids = $query->execute();
+  }
+
   return Unit::loadMultiple($unit_ids);
 }
 
@@ -379,7 +395,7 @@ function bat_unit_load_multiple($unit_ids = array(), $conditions = array(), $res
  *   The BatUnit object that represents the unit to delete.
  */
 function bat_unit_delete(Unit $unit) {
-  //$unit->delete();
+  $unit->delete();
 }
 
 /**
@@ -436,23 +452,23 @@ function bat_unit_bundle_save(BatUnitBundle $bundle) {
  * Deletes a unit bundle from the db.
  */
 function bat_unit_bundle_delete(UnitBundle $bundle) {
-  //$bundle->delete();
+  $bundle->delete();
 }
 
 /**
  * URI callback for units.
  */
-function bat_unit_uri(BatUnit $unit) {
+function bat_unit_uri(Unit $unit) {
   return array(
-    'path' => 'unit/' . $unit->unit_id,
+    'path' => 'unit/' . $unit->id(),
   );
 }
 
 /**
  * Menu title callback for showing individual entities.
  */
-function bat_unit_page_title(BatUnit $unit) {
-  return $unit->name;
+function bat_unit_page_title(Unit $unit) {
+  return $unit->label();
 }
 
 /**
@@ -541,7 +557,7 @@ function bat_unit_unit_bundle_new() {
  * @param string $op
  *   The operation being performed. One of 'view', 'update', 'create', 'delete'
  *   or just 'edit' (being the same as 'create' or 'update').
- * @param BatType $type
+ * @param UnitType $type
  *   Optionally a type or a type bundle to check access for. If nothing is
  *   given, access for all types is determined.
  * @param object $account
@@ -642,7 +658,7 @@ function bat_type_add_access() {
  * @param string $bundle_name
  *   If set, the bundle with the given name is returned.
  *
- * @return BatTypeBundle[]
+ * @return TypeBundle[]
  *   Depending whether $bundle isset, an array of type bundles or a single one.
  */
 function bat_unit_get_type_bundles($bundle_name = NULL) {
@@ -655,7 +671,7 @@ function bat_unit_get_type_bundles($bundle_name = NULL) {
  * @param string $bundle_name
  *   If set, the bundle with the given name is returned.
  *
- * @return BatType[]
+ * @return UnitType[]
  *   Depending whether $bundle isset, an array of types or a single one.
  */
 function bat_unit_get_types($bundle_name = NULL) {
@@ -700,7 +716,7 @@ function bat_type_bundle_load($bundle, $reset = FALSE) {
  *   Integer specifying the type id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
- * @return BatType|false
+ * @return UnitType|false
  *   A fully-loaded $type object or FALSE if it cannot be loaded.
  *
  * @see bat_type_load_multiple()
@@ -735,10 +751,10 @@ function bat_type_load_multiple($type_ids = array(), $conditions = array(), $res
 /**
  * Deletes a Bat Type.
  *
- * @param BatType $type
- *   The BatType object that represents the type to delete.
+ * @param UnitType $type
+ *   The UnitType object that represents the type to delete.
  */
-function bat_type_delete(BatType $type) {
+function bat_type_delete(UnitType $type) {
   $type->delete();
 }
 
@@ -765,10 +781,10 @@ function bat_type_create($values = array()) {
 /**
  * Saves a Bat Type to the database.
  *
- * @param BatType $type
+ * @param UnitType $type
  *   The type object.
  */
-function bat_type_save(BatType $type) {
+function bat_type_save(UnitType $type) {
   return $type->save();
 }
 
@@ -785,10 +801,10 @@ function bat_type_bundle_create($values = array()) {
 /**
  * Saves a Bat Type bundle to the db.
  *
- * @param BatTypeBundle $bundle
+ * @param TypeBundle $bundle
  *   The type bundle to save.
  */
-function bat_type_bundle_save(BatTypeBundle $bundle) {
+function bat_type_bundle_save(TypeBundle $bundle) {
   $bundle->save();
 }
 
@@ -802,17 +818,17 @@ function bat_type_bundle_delete(TypeBundle $bundle) {
 /**
  * URI callback for Bat Types.
  */
-function bat_type_uri(BatType $type) {
+function bat_type_uri(UnitType $type) {
   return array(
-    'path' => 'type/' . $type->type_id,
+    'path' => 'type/' . $type->id(),
   );
 }
 
 /**
  * Menu title callback for showing individual entities.
  */
-function bat_type_page_title(BatType $type) {
-  return $type->name;
+function bat_type_page_title(UnitType $type) {
+  return $type->label();
 }
 
 /**

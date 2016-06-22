@@ -21,20 +21,64 @@ class BatTypeOptions extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field) {
-
+    return array(
+      'columns' => array(
+       'name' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+        ),
+        'quantity' => array(
+          'type' => 'int',
+          'not null' => FALSE,
+        ),
+        'operation' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+        'value' => array(
+          'type' => 'float',
+          'not null' => FALSE,
+        ),
+        'type' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      ),
+    );
   }
 
   /**
    * {@inheritdoc}
    */
   public function isEmpty() {
-
+    return empty($this->get('name')->getValue()) ||
+         empty($this->get('quantity')->getValue()) ||
+         !(is_numeric($this->get('quantity')->getValue()) && is_integer((int) $this->get('quantity')->getValue())) ||
+         ((empty($this->get('value')->getValue()) || !is_numeric($this->get('value')->getValue())) && $this->get('operation')->getValue() != 'no_charge') ||
+         empty($this->get('operation')->getValue()) || !in_array($this->get('operation')->getValue(), array_keys(bat_options_price_options()));
   }
 
   /**
    * {@inheritdoc}
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
+    $properties['name'] = DataReferenceTargetDefinition::create('string')
+      ->setLabel(t('Name'));
+
+    $properties['quantity'] = DataReferenceTargetDefinition::create('integer')
+      ->setLabel(t('Quantity'));
+
+    $properties['operation'] = DataReferenceTargetDefinition::create('string')
+      ->setLabel(t('Operation'));
+
+    $properties['value'] = DataReferenceTargetDefinition::create('float')
+      ->setLabel(t('Value'));
+
+    $properties['type'] = DataReferenceTargetDefinition::create('string')
+      ->setLabel(t('Type'));
 
     return $properties;
   }

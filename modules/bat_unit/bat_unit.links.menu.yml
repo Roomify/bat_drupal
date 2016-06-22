@@ -2,7 +2,7 @@
 entity.bat_unit_type.collection:
   title: 'Types list'
   route_name: entity.bat_unit_type.collection
-  description: 'List types'
+  description: 'List Types'
   parent: bat.admin.config
 
 # Unit menu items definition

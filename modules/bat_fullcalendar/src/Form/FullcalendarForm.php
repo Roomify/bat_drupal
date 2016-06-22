@@ -50,8 +50,10 @@ class FullcalendarForm extends ConfigFormBase {
       ),
     );
 
-    if ($form_state->getValues()['bat_fullcalendar_scheduler_key'] == 'commercial' ||
-        ($form_state->getValues()['bat_fullcalendar_scheduler_key'] == '' && $config->get('bat_fullcalendar_scheduler_key') == 'commercial')) {
+    $values = $form_state->getValues();
+
+    if ( (isset($values['bat_fullcalendar_scheduler_key']) && $values['bat_fullcalendar_scheduler_key'] == 'commercial') ||
+         (!isset($values['bat_fullcalendar_scheduler_key']) && $config->get('bat_fullcalendar_scheduler_key') == 'commercial') ) {
       $form['bat_fullcalendar_scheduler']['bat_fullcalendar_scheduler_commercial_key'] = array(
         '#type' => 'textfield',
         '#title' => t('FullCalendar Scheduler Commercial License Key'),

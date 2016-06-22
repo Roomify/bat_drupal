@@ -28,7 +28,7 @@ entity.property.collection:
   path: '/admin/bat/property'
   defaults:
     _entity_list: 'property'
-    _title: 'Property list'
+    _title: 'Type Group list'
   requirements:
     _permission: 'view property entities'
 
@@ -72,17 +72,17 @@ entity.property.delete_form:
     _permission: 'delete property entities'
 
 entity.property_type.collection:
-  path: '/admin/bat/property-types'
+  path: '/admin/bat/group-types'
   defaults:
     _entity_list: 'property_type'
-    _title: 'Property type list'
+    _title: 'Type Group Bundles list'
   requirements:
     _permission: 'view event entities'
   options:
     _admin_route: TRUE
 
 entity.property_type.type_add:
-  path: '/admin/bat/property-types/add'
+  path: '/admin/bat/group-types/add'
   defaults:
     _entity_form: 'property_type.add'
     _title: 'Add property type'
@@ -90,7 +90,7 @@ entity.property_type.type_add:
     _permission: 'administer content types'
 
 entity.property_type.edit_form:
-  path: '/admin/bat/property-types/{property_type}/edit'
+  path: '/admin/bat/group-types/{property_type}/edit'
   defaults:
     _entity_form: property_type.edit
     _title: 'Edit property type'
@@ -100,7 +100,7 @@ entity.property_type.edit_form:
     _admin_route: TRUE
 
 entity.property_type.delete_form:
-  path: '/admin/bat/property-types/{property_type}/delete'
+  path: '/admin/bat/group-types/{property_type}/delete'
   defaults:
     _entity_form: 'property_type.delete'
     _title: 'Delete'

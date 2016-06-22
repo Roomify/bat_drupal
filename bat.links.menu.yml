@@ -8,24 +8,24 @@ bat.admin:
 bat.admin.config:
   title: 'Configuration'
   route_name: bat.admin.config
-  description: 'Configure settings and business rules for BAT management.'
+  description: 'Configure settings and business rules for BAT management'
   parent: bat.admin
 
 # Property menu items definition
 entity.property.collection:
-  title: 'Property list'
+  title: 'Type Group list'
   route_name: entity.property.collection
-  description: 'List Properties'
+  description: 'List Type Groups'
   parent: bat.admin.config
 
 entity.property_type.collection:
-  title: 'Property type list'
+  title: 'Type Group Bundles list'
   route_name: entity.property_type.collection
-  description: 'List Property Types'
+  description: 'List Type Group Bundles'
   parent: bat.admin.config
 
 bat.admin.date_format:
   title: 'Date format'
   route_name: bat.admin.date_format
-  description: 'Configure date format.'
+  description: 'Configure date format'
   parent: bat.admin.config

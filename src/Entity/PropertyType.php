@@ -29,9 +29,9 @@ use Drupal\bat\PropertyTypeInterface;
  *     "label" = "name"
  *   },
  *   links = {
- *     "edit-form" = "/admin/bat/property-types/manage/{unit_bundle}",
- *     "delete-form" = "/admin/bat/property-types/manage/{unit_bundle}/delete",
- *     "collection" = "/admin/bat/property-types",
+ *     "edit-form" = "/admin/bat/group-types/manage/{unit_bundle}",
+ *     "delete-form" = "/admin/bat/group-types/manage/{unit_bundle}/delete",
+ *     "collection" = "/admin/bat/group-types",
  *   },
  *   config_export = {
  *     "name",

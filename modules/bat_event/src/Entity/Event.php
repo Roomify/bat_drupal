@@ -308,7 +308,8 @@ class Event extends ContentEntityBase implements EventInterface {
         'type' => 'datetime_timestamp',
         'weight' => 0,
       ))
-      ->setDisplayConfigurable('form', TRUE);
+      ->setDisplayConfigurable('form', TRUE)
+      ->setRequired(TRUE);
 
     $fields['end'] = BaseFieldDefinition::create('created')
       ->setLabel(t('End Date'))
@@ -323,7 +324,8 @@ class Event extends ContentEntityBase implements EventInterface {
         'type' => 'datetime_timestamp',
         'weight' => 1,
       ))
-      ->setDisplayConfigurable('form', TRUE);
+      ->setDisplayConfigurable('form', TRUE)
+      ->setRequired(TRUE);
 
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
