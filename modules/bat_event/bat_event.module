@@ -1209,7 +1209,7 @@ class BatEventMetadataController extends EntityDefaultMetadataController {
       'description' => t('The start date for the event.'),
       'type' => 'date',
       'getter callback' => 'entity_property_verbatim_get',
-      'setter callback' => 'entity_property_verbatim_set',
+      'setter callback' => 'bat_event_date_property_verbatim_set',
       'schema field' => 'start_date',
     );
 
@@ -1218,13 +1218,29 @@ class BatEventMetadataController extends EntityDefaultMetadataController {
       'description' => t('The end date for the event.'),
       'type' => 'date',
       'getter callback' => 'entity_property_verbatim_get',
-      'setter callback' => 'entity_property_verbatim_set',
+      'setter callback' => 'bat_event_date_property_verbatim_set',
       'schema field' => 'end_date',
     );
 
     return $info;
   }
 
+}
+
+/**
+ * Convert timestamp to string.
+ */
+function bat_event_date_property_verbatim_set(&$data, $name, $value, $langcode, $type, $info) {
+  $date = new DateTime();
+  $date->setTimestamp($value);
+
+  $name = isset($info['schema field']) ? $info['schema field'] : $name;
+  if (is_array($data) || (is_object($data) && $data instanceof ArrayAccess)) {
+    $data[$name] = $date->format('Y-m-d H:i:s');
+  }
+  elseif (is_object($data)) {
+    $data->$name = $date->format('Y-m-d H:i:s');
+  }
 }
 
 /**
