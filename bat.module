@@ -77,7 +77,7 @@ function template_preprocess_bat_property_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = array(
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.property.add_form', array('property_type' => $type->id()))),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_type_group.add_form', array('property_type' => $type->id()))),
       );
     }
   }

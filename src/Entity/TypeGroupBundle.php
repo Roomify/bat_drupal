@@ -7,30 +7,30 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\bat\PropertyTypeInterface;
 
 /**
- * Defines the Unit Bundle configuration entity.
+ * Defines the Type Group Bundle configuration entity.
  *
  * @ConfigEntityType(
- *   id = "property_type",
- *   label = @Translation("Property Type"),
+ *   id = "bat_type_group_bundle",
+ *   label = @Translation("Type Group Bundle"),
  *   handlers = {
  *     "access" = "Drupal\bat\PropertyTypeAccessControlHandler",
  *     "form" = {
  *       "add" = "Drupal\bat\PropertyTypeForm",
  *       "edit" = "Drupal\bat\PropertyTypeForm",
- *       "delete" = "Drupal\bat\Form\PropertyTypeDeleteConfirm"
+ *       "delete" = "Drupal\bat\Form\TypeGroupBundleDeleteConfirm"
  *     },
  *     "list_builder" = "Drupal\bat\PropertyTypeListBuilder",
  *   },
  *   admin_permission = "administer property entities",
- *   config_prefix = "property_type",
- *   bundle_of = "property",
+ *   config_prefix = "type_group_bundle",
+ *   bundle_of = "bat_type_group",
  *   entity_keys = {
  *     "id" = "type",
  *     "label" = "name"
  *   },
  *   links = {
- *     "edit-form" = "/admin/bat/group-types/manage/{unit_bundle}",
- *     "delete-form" = "/admin/bat/group-types/manage/{unit_bundle}/delete",
+ *     "edit-form" = "/admin/bat/group-types/manage/{bat_type_group_bundle}",
+ *     "delete-form" = "/admin/bat/group-types/manage/{bat_type_group_bundle}/delete",
  *     "collection" = "/admin/bat/group-types",
  *   },
  *   config_export = {
@@ -39,7 +39,7 @@ use Drupal\bat\PropertyTypeInterface;
  *   }
  * )
  */
-class PropertyType extends ConfigEntityBundleBase implements PropertyTypeInterface {
+class TypeGroupBundle extends ConfigEntityBundleBase implements PropertyTypeInterface {
 
 	/**
    * The machine name of this event type.

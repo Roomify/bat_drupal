@@ -105,7 +105,7 @@ entity.bat_unit.add_form:
     _admin_route: TRUE
     parameters:
       unit_bundle:
-        type: entity:unit_bundle
+        type: entity:bat_unit_bundle
         with_config_overrides: TRUE
 
 entity.bat_unit.edit_form:
@@ -128,77 +128,77 @@ entity.bat_unit.delete_form:
   options:
     _admin_route: TRUE
 
-entity.type_bundle.collection:
+entity.bat_type_bundle.collection:
   path: '/admin/bat/type-bundles'
   defaults:
-    _entity_list: 'type_bundle'
+    _entity_list: 'bat_type_bundle'
     _title: 'Type Bundle list'
   requirements:
     _permission: 'view event entities'
   options:
     _admin_route: TRUE
 
-entity.type_bundle.type_add:
+entity.bat_type_bundle.type_add:
   path: '/admin/bat/type-bundles/add'
   defaults:
-    _entity_form: 'type_bundle.add'
+    _entity_form: 'bat_type_bundle.add'
     _title: 'Add type bundle'
   requirements:
     _permission: 'administer content types'
 
-entity.type_bundle.edit_form:
+entity.bat_type_bundle.edit_form:
   path: '/admin/bat/type-bundles/{type_bundle}/edit'
   defaults:
-    _entity_form: type_bundle.edit
+    _entity_form: 'bat_type_bundle.edit'
     _title: 'Edit Type bundle'
   requirements:
     _permission: 'edit event entities'
   options:
     _admin_route: TRUE
 
-entity.type_bundle.delete_form:
+entity.bat_type_bundle.delete_form:
   path: '/admin/bat/type-bundles/{type_bundle}/delete'
   defaults:
-    _entity_form: 'type_bundle.delete'
+    _entity_form: 'bat_type_bundle.delete'
     _title: 'Delete'
   requirements:
-    _entity_access: 'type_bundle.delete'
+    _entity_access: 'bat_type_bundle.delete'
 
-entity.unit_bundle.collection:
+entity.bat_unit_bundle.collection:
   path: '/admin/bat/unit-bundles'
   defaults:
-    _entity_list: 'unit_bundle'
+    _entity_list: 'bat_unit_bundle'
     _title: 'Unit Bundle list'
   requirements:
     _permission: 'view event entities'
   options:
     _admin_route: TRUE
 
-entity.unit_bundle.type_add:
+entity.bat_unit_bundle.type_add:
   path: '/admin/bat/unit-bundles/add'
   defaults:
-    _entity_form: 'unit_bundle.add'
+    _entity_form: 'bat_unit_bundle.add'
     _title: 'Add unit bundle'
   requirements:
     _permission: 'administer content types'
 
-entity.unit_bundle.edit_form:
+entity.bat_unit_bundle.edit_form:
   path: '/admin/bat/unit-bundles/{unit_bundle}/edit'
   defaults:
-    _entity_form: unit_bundle.edit
+    _entity_form: bat_unit_bundle.edit
     _title: 'Edit Unit bundle'
   requirements:
     _permission: 'edit event entities'
   options:
     _admin_route: TRUE
 
-entity.unit_bundle.delete_form:
+entity.bat_unit_bundle.delete_form:
   path: '/admin/bat/unit-bundles/{unit_bundle}/delete'
   defaults:
-    _entity_form: 'unit_bundle.delete'
+    _entity_form: 'bat_unit_bundle.delete'
     _title: 'Delete'
   requirements:
-    _entity_access: 'unit_bundle.delete'
+    _entity_access: 'bat_unit_bundle.delete'
 
 unit.multiple_delete_confirm:
   path: '/admin/bat/units/delete'

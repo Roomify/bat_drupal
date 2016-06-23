@@ -10,7 +10,7 @@ use Drupal\bat_unit\UnitBundleInterface;
  * Defines the Unit Bundle configuration entity.
  *
  * @ConfigEntityType(
- *   id = "unit_bundle",
+ *   id = "bat_unit_bundle",
  *   label = @Translation("Unit bundle"),
  *   handlers = {
  *     "access" = "Drupal\bat_unit\UnitBundleAccessControlHandler",
@@ -29,8 +29,8 @@ use Drupal\bat_unit\UnitBundleInterface;
  *     "label" = "name"
  *   },
  *   links = {
- *     "edit-form" = "/admin/bat/unit-bundles/manage/{unit_bundle}",
- *     "delete-form" = "/admin/bat/unit-bundles/manage/{unit_bundle}/delete",
+ *     "edit-form" = "/admin/bat/unit-bundles/manage/{bat_unit_bundle}",
+ *     "delete-form" = "/admin/bat/unit-bundles/manage/{bat_unit_bundle}/delete",
  *     "collection" = "/admin/bat/unit-bundles",
  *   },
  *   config_export = {

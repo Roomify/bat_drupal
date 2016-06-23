@@ -4,23 +4,23 @@ bat.admin:
   title: 'Bat Admistration'
 
 # Property routing definition
-entity.property.canonical:
-  route_name: entity.property.canonical
-  base_route: entity.property.canonical
+entity.bat_type_group.canonical:
+  route_name: entity.bat_type_group.canonical
+  base_route: entity.bat_type_group.canonical
   title: 'View'
 
-entity.property.edit_form:
-  route_name: entity.property.edit_form
-  base_route: entity.property.canonical
+entity.bat_type_group.edit_form:
+  route_name: entity.bat_type_group.edit_form
+  base_route: entity.bat_type_group.canonical
   title: Edit
 
-entity.property.delete_form:
-  route_name:  entity.property.delete_form
-  base_route:  entity.property.canonical
+entity.bat_type_group.delete_form:
+  route_name:  entity.bat_type_group.delete_form
+  base_route:  entity.bat_type_group.canonical
   title: Delete
   weight: 10
 
-entity.property_type.edit_form:
-  route_name: entity.property_type.edit_form
-  base_route: entity.property_type.edit_form
+entity.bat_type_group_bundle.edit_form:
+  route_name: entity.bat_type_group_bundle.edit_form
+  base_route: entity.bat_type_group_bundle.edit_form
   title: Edit

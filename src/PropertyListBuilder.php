@@ -36,7 +36,7 @@ class PropertyListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $this->getLabel($entity),
       new Url(
-        'entity.property.edit_form', array(
+        'entity.bat_type_group.edit_form', array(
           'property' => $entity->id(),
         )
       )

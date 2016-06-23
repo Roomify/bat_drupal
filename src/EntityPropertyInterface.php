@@ -10,7 +10,7 @@ namespace Drupal\bat;
 /**
  * Defines a common interface for entities that have a Property.
  *
- * A Property is an entity that groups other entities. (Usually Units)
+ * A Property is an entity that groups other entities.
  */
 interface EntityPropertyInterface {
 

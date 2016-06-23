@@ -29,8 +29,8 @@ use Drupal\bat_event\EventTypeInterface;
  *     "label" = "name"
  *   },
  *   links = {
- *     "edit-form" = "/admin/bat/event/event-types/manage/{event_type}",
- *     "delete-form" = "/admin/bat/event/event-types/manage/{event_type}/delete",
+ *     "edit-form" = "/admin/bat/event/event-types/manage/{bat_event_type}",
+ *     "delete-form" = "/admin/bat/event/event-types/manage/{bat_event_type}/delete",
  *     "collection" = "/admin/bat/event/event-types",
  *   },
  *   config_export = {

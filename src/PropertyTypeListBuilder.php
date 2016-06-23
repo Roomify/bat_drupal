@@ -51,7 +51,7 @@ class PropertyTypeListBuilder extends ConfigEntityListBuilder {
   public function render() {
     $build = parent::render();
     $build['table']['#empty'] = $this->t('No property types available. <a href=":link">Add property type</a>.', [
-        ':link' => Url::fromRoute('entity.property_type.type_add')->toString()
+        ':link' => Url::fromRoute('entity.bat_type_group_bundle.type_add')->toString()
       ]);
     return $build;
   }

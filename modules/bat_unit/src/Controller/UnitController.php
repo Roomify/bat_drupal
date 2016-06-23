@@ -59,14 +59,14 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
     $build = [
       '#theme' => 'bat_unit_add_list',
       '#cache' => [
-        'tags' => $this->entityManager()->getDefinition('unit_bundle')->getListCacheTags(),
+        'tags' => $this->entityManager()->getDefinition('bat_unit_bundle')->getListCacheTags(),
       ],
     ];
 
     $content = array();
 
     // Only use node types the user has access to.
-    foreach ($this->entityManager()->getStorage('unit_bundle')->loadMultiple() as $type) {
+    foreach ($this->entityManager()->getStorage('bat_unit_bundle')->loadMultiple() as $type) {
       $access = $this->entityManager()->getAccessControlHandler('bat_unit')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
         $content[$type->id()] = $type;

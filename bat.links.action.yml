@@ -1,12 +1,12 @@
-entity.property.add_page:
-  route_name: entity.property.add_page
+entity.bat_type_group.add_page:
+  route_name: entity.bat_type_group.add_page
   title: 'Add Property'
   appears_on:
-    - entity.property.collection
-    - entity.property.canonical
+    - entity.bat_type_group.collection
+    - entity.bat_type_group.canonical
 
-entity.property_type.type_add:
-  route_name: entity.property_type.type_add
+entity.bat_type_group_bundle.type_add:
+  route_name: entity.bat_type_group_bundle.type_add
   title: 'Add property type'
   appears_on:
-    - entity.property_type.collection
+    - entity.bat_type_group_bundle.collection

@@ -48,8 +48,8 @@ use Drupal\user\UserInterface;
  *     "uuid" = "uuid",
  *     "uid" = "uid",
  *   },
- *   bundle_entity_type = "unit_bundle",
- *   field_ui_base_route = "entity.unit_bundle.edit_form",
+ *   bundle_entity_type = "bat_unit_bundle",
+ *   field_ui_base_route = "entity.bat_unit_bundle.edit_form",
  *   links = {
  *     "canonical" = "/admin/unit/{bat_unit}",
  *     "edit-form" = "/admin/unit/{bat_unit}/edit",
@@ -280,7 +280,7 @@ class Unit extends ContentEntityBase implements UnitInterface {
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
       ->setDescription(t('The unit bundle.'))
-      ->setSetting('target_type', 'unit_bundle');
+      ->setSetting('target_type', 'bat_unit_bundle');
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Status'))

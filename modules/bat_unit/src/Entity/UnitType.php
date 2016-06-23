@@ -47,8 +47,8 @@ use Drupal\field\Entity\FieldStorageConfig;
  *     "uuid" = "uuid",
  *     "uid" = "uid",
  *   },
- *   bundle_entity_type = "type_bundle",
- *   field_ui_base_route = "entity.type_bundle.edit_form",
+ *   bundle_entity_type = "bat_type_bundle",
+ *   field_ui_base_route = "entity.bat_type_bundle.edit_form",
  *   links = {
  *     "canonical" = "/admin/unit_type/{bat_unit_type}",
  *     "edit-form" = "/admin/unit_type/{bat_unit_type}/edit",
@@ -195,7 +195,7 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
       ->setDescription(t('The type bundle.'))
-      ->setSetting('target_type', 'type_bundle');
+      ->setSetting('target_type', 'bat_type_bundle');
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Status'))

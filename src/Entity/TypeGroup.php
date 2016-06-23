@@ -16,18 +16,17 @@ use Drupal\bat\PropertyInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Defines the Property entity.
+ * Defines the Type Group entity.
  *
  * @ingroup bat
  *
  * @ContentEntityType(
- *   id = "property",
- *   label = @Translation("Property"),
+ *   id = "bat_type_group",
+ *   label = @Translation("Type Group"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\bat\PropertyListBuilder",
- *     "views_data" = "Drupal\bat\Entity\PropertyViewsData",
- *
+ *     "views_data" = "Drupal\bat\Entity\TypeGroupViewsData",
  *     "form" = {
  *       "default" = "Drupal\bat\Entity\Form\PropertyForm",
  *       "add" = "Drupal\bat\Entity\Form\PropertyForm",
@@ -36,7 +35,7 @@ use Drupal\user\UserInterface;
  *     },
  *     "access" = "Drupal\bat\PropertyAccessControlHandler",
  *   },
- *   base_table = "property",
+ *   base_table = "type_group",
  *   admin_permission = "administer Property entity",
  *   entity_keys = {
  *     "id" = "id",
@@ -45,16 +44,16 @@ use Drupal\user\UserInterface;
  *     "uuid" = "uuid",
  *     "uid" = "uid",
  *   },
- *   bundle_entity_type = "property_type",
- *   field_ui_base_route = "entity.property_type.edit_form",
+ *   bundle_entity_type = "bat_type_group_bundle",
+ *   field_ui_base_route = "entity.bat_type_group_bundle.edit_form",
  *   links = {
- *     "canonical" = "/admin/property/{property}",
- *     "edit-form" = "/admin/property/{property}/edit",
- *     "delete-form" = "/admin/property/{property}/delete"
+ *     "canonical" = "/admin/type_group/{bat_type_group}",
+ *     "edit-form" = "/admin/type_group/{bat_type_group}/edit",
+ *     "delete-form" = "/admin/type_group/{bat_type_group}/delete"
  *   },
  * )
  */
-class Property extends ContentEntityBase implements PropertyInterface {
+class TypeGroup extends ContentEntityBase implements PropertyInterface {
   use EntityChangedTrait;
   /**
    * {@inheritdoc}
@@ -178,7 +177,7 @@ class Property extends ContentEntityBase implements PropertyInterface {
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
       ->setDescription(t('The property type.'))
-      ->setSetting('target_type', 'property_type');
+      ->setSetting('target_type', 'bat_type_group_bundle');
 
     return $fields;
   }

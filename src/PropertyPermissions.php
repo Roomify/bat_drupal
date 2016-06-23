@@ -43,7 +43,7 @@ class PropertyPermissions implements ContainerInjectionInterface {
   public function permissions() {
     $permissions = [];
 
-    return $permissions + bat_entity_access_permissions('property');
+    return $permissions + bat_entity_access_permissions('bat_type_group');
   }
 
 }

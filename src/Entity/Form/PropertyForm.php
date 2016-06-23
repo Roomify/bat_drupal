@@ -65,7 +65,7 @@ class PropertyForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
     }
-    $form_state->setRedirect('entity.property.edit_form', ['property' => $entity->id()]);
+    $form_state->setRedirect('entity.bat_type_group.edit_form', ['property' => $entity->id()]);
   }
 
 }

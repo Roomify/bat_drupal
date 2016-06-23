@@ -12,14 +12,14 @@ entity.bat_unit.collection:
   description: 'List Units'
   parent: bat.admin.config
 
-entity.type_bundle.collection:
+entity.bat_type_bundle.collection:
   title: 'Type Bundles list'
-  route_name: entity.type_bundle.collection
+  route_name: entity.bat_type_bundle.collection
   description: 'List Type Bundles'
   parent: bat.admin.config
 
-entity.unit_bundle.collection:
+entity.bat_unit_bundle.collection:
   title: 'Unit Bundles list'
-  route_name: entity.unit_bundle.collection
+  route_name: entity.bat_unit_bundle.collection
   description: 'List Unit Bundles'
   parent: bat.admin.config

@@ -28,7 +28,7 @@ class PropertyDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.property.collection');
+    return new Url('entity.bat_type_group.collection');
   }
 
   /**

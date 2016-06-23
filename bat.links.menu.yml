@@ -12,15 +12,15 @@ bat.admin.config:
   parent: bat.admin
 
 # Property menu items definition
-entity.property.collection:
+entity.bat_type_group.collection:
   title: 'Type Group list'
-  route_name: entity.property.collection
+  route_name: entity.bat_type_group.collection
   description: 'List Type Groups'
   parent: bat.admin.config
 
-entity.property_type.collection:
+entity.bat_type_group_bundle.collection:
   title: 'Type Group Bundles list'
-  route_name: entity.property_type.collection
+  route_name: entity.bat_type_group_bundle.collection
   description: 'List Type Group Bundles'
   parent: bat.admin.config
 

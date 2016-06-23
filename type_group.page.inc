@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains property.page.inc..
+ * Contains type_group.page.inc..
  *
  * Page callback for Property entities.
  */
@@ -12,7 +12,7 @@ use Drupal\Core\Render\Element;
 /**
  * Prepares variables for Property templates.
  *
- * Default template: property.html.twig.
+ * Default template: type_group.html.twig.
  *
  * @param array $variables
  *   An associative array containing:

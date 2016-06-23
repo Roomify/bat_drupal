@@ -13,9 +13,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\bat\PropertyTypeInterface;
 
 /**
- * Returns responses for Type routes.
+ * Returns responses for Type Group routes.
  */
-class PropertyController extends ControllerBase implements ContainerInjectionInterface {
+class TypeGroupController extends ControllerBase implements ContainerInjectionInterface {
 
   /**
    * The date formatter service.
@@ -32,7 +32,7 @@ class PropertyController extends ControllerBase implements ContainerInjectionInt
   protected $renderer;
 
   /**
-   * Constructs a TypeController object.
+   * Constructs a TypeGroupController object.
    *
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
@@ -59,15 +59,15 @@ class PropertyController extends ControllerBase implements ContainerInjectionInt
     $build = [
       '#theme' => 'bat_property_add_list',
       '#cache' => [
-        'tags' => $this->entityManager()->getDefinition('property_type')->getListCacheTags(),
+        'tags' => $this->entityManager()->getDefinition('bat_type_group_bundle')->getListCacheTags(),
       ],
     ];
 
     $content = array();
 
     // Only use node types the user has access to.
-    foreach ($this->entityManager()->getStorage('property_type')->loadMultiple() as $type) {
-      $access = $this->entityManager()->getAccessControlHandler('property')->createAccess($type->id(), NULL, [], TRUE);
+    foreach ($this->entityManager()->getStorage('bat_type_group_bundle')->loadMultiple() as $type) {
+      $access = $this->entityManager()->getAccessControlHandler('bat_type_group')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
         $content[$type->id()] = $type;
       }
@@ -76,7 +76,7 @@ class PropertyController extends ControllerBase implements ContainerInjectionInt
     // Bypass the node/add listing if only one content type is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.property.add_form', array('property_type' => $type->id()));
+      return $this->redirect('entity.bat_type_group.add_form', array('property_type' => $type->id()));
     }
 
     $build['#content'] = $content;
@@ -94,7 +94,7 @@ class PropertyController extends ControllerBase implements ContainerInjectionInt
    *   A node submission form.
    */
   public function add(PropertyTypeInterface $property_type) {
-    $type = $this->entityManager()->getStorage('property')->create(array(
+    $type = $this->entityManager()->getStorage('bat_type_group')->create(array(
       'type' => $property_type->id(),
     ));
 

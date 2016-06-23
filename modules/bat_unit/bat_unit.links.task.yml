@@ -15,9 +15,9 @@ entity.bat_unit_type.delete_form:
   title: Delete
   weight: 10
 
-entity.type_bundle.edit_form:
-  route_name: entity.type_bundle.edit_form
-  base_route: entity.type_bundle.edit_form
+entity.bat_type_bundle.edit_form:
+  route_name: entity.bat_type_bundle.edit_form
+  base_route: entity.bat_type_bundle.edit_form
   title: Edit
 
 # Unit routing definition
@@ -37,7 +37,7 @@ entity.bat_unit.delete_form:
   title: Delete
   weight: 10
 
-entity.unit_bundle.edit_form:
-  route_name: entity.unit_bundle.edit_form
-  base_route: entity.unit_bundle.edit_form
+entity.bat_unit_bundle.edit_form:
+  route_name: entity.bat_unit_bundle.edit_form
+  base_route: entity.bat_unit_bundle.edit_form
   title: Edit

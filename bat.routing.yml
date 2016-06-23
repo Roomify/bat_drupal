@@ -16,37 +16,37 @@ bat.admin.config:
     _permission: 'access administration pages'
 
 # Property routing definition
-entity.property.canonical:
+entity.bat_type_group.canonical:
   path: '/admin/bat/property/{property}'
   defaults:
-    _entity_view: 'property'
+    _entity_view: 'bat_type_group'
     _title: 'Property'
   requirements:
-    _entity_access: 'property.view'
+    _entity_access: 'bat_type_group.view'
 
-entity.property.collection:
+entity.bat_type_group.collection:
   path: '/admin/bat/property'
   defaults:
-    _entity_list: 'property'
+    _entity_list: 'bat_type_group'
     _title: 'Type Group list'
   requirements:
     _permission: 'view property entities'
 
-entity.property.add_page:
+entity.bat_type_group.add_page:
   path: '/admin/bat/property/add'
   defaults:
     _title: 'Add property'
-    _controller: '\Drupal\bat\Controller\PropertyController::addPage'
+    _controller: '\Drupal\bat\Controller\TypeGroupController::addPage'
   requirements:
     _permission: 'add unit type entities'
   options:
     _admin_route: TRUE
 
-entity.property.add_form:
+entity.bat_type_group.add_form:
   path: '/admin/bat/property/add/{property_type}'
   defaults:
-    _controller: '\Drupal\bat\Controller\PropertyController::add'
-    _title_callback: '\Drupal\bat\Controller\PropertyController::addPageTitle'
+    _controller: '\Drupal\bat\Controller\TypeGroupController::add'
+    _title_callback: '\Drupal\bat\Controller\TypeGroupController::addPageTitle'
   requirements:
     _permission: 'add property entities'
   options:
@@ -55,57 +55,57 @@ entity.property.add_form:
       property_type:
         with_config_overrides: TRUE
 
-entity.property.edit_form:
+entity.bat_type_group.edit_form:
   path: '/admin/bat/property/{property}/edit'
   defaults:
-    _entity_form: property.edit
+    _entity_form: bat_type_group.edit
     _title: 'Edit Property'
   requirements:
     _permission: 'edit property entities'
 
-entity.property.delete_form:
+entity.bat_type_group.delete_form:
   path: '/admin/bat/property/{property}/delete'
   defaults:
-    _entity_form: property.delete
+    _entity_form: bat_type_group.delete
     _title: 'Delete Property'
   requirements:
     _permission: 'delete property entities'
 
-entity.property_type.collection:
+entity.bat_type_group_bundle.collection:
   path: '/admin/bat/group-types'
   defaults:
-    _entity_list: 'property_type'
+    _entity_list: 'bat_type_group_bundle'
     _title: 'Type Group Bundles list'
   requirements:
     _permission: 'view event entities'
   options:
     _admin_route: TRUE
 
-entity.property_type.type_add:
+entity.bat_type_group_bundle.type_add:
   path: '/admin/bat/group-types/add'
   defaults:
-    _entity_form: 'property_type.add'
+    _entity_form: 'bat_type_group_bundle.add'
     _title: 'Add property type'
   requirements:
     _permission: 'administer content types'
 
-entity.property_type.edit_form:
+entity.bat_type_group_bundle.edit_form:
   path: '/admin/bat/group-types/{property_type}/edit'
   defaults:
-    _entity_form: property_type.edit
+    _entity_form: bat_type_group_bundle.edit
     _title: 'Edit property type'
   requirements:
     _permission: 'edit event entities'
   options:
     _admin_route: TRUE
 
-entity.property_type.delete_form:
+entity.bat_type_group_bundle.delete_form:
   path: '/admin/bat/group-types/{property_type}/delete'
   defaults:
-    _entity_form: 'property_type.delete'
+    _entity_form: 'bat_type_group_bundle.delete'
     _title: 'Delete'
   requirements:
-    _entity_access: 'property_type.delete'
+    _entity_access: 'bat_type_group_bundle.delete'
 
 bat.admin.date_format:
   path: '/admin/bat/config/date-format'

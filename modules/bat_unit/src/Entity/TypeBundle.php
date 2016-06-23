@@ -10,7 +10,7 @@ use Drupal\bat_unit\TypeBundleInterface;
  * Defines the Type Bundle configuration entity.
  *
  * @ConfigEntityType(
- *   id = "type_bundle",
+ *   id = "bat_type_bundle",
  *   label = @Translation("Type bundle"),
  *   handlers = {
  *     "access" = "Drupal\bat_unit\TypeBundleAccessControlHandler",
@@ -29,8 +29,8 @@ use Drupal\bat_unit\TypeBundleInterface;
  *     "label" = "name"
  *   },
  *   links = {
- *     "edit-form" = "/admin/bat/type-bundles/manage/{type_bundle}",
- *     "delete-form" = "/admin/bat/type-bundles/manage/{type_bundle}/delete",
+ *     "edit-form" = "/admin/bat/type-bundles/manage/{bat_type_bundle}",
+ *     "delete-form" = "/admin/bat/type-bundles/manage/{bat_type_bundle}/delete",
  *     "collection" = "/admin/bat/type-bundles",
  *   },
  *   config_export = {

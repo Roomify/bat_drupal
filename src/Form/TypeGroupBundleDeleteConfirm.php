@@ -10,5 +10,5 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides a form for content type deletion.
  */
-class PropertyTypeDeleteConfirm extends EntityDeleteForm {
+class TypeGroupBundleDeleteConfirm extends EntityDeleteForm {
 }
