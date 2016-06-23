@@ -13,7 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_facetapi_facet_info_alter().
  */
-function bat_facets_facetapi_facet_info_alter(array &$facet_info, array $searcher_info) {
+/*function bat_facets_facetapi_facet_info_alter(array &$facet_info, array $searcher_info) {
   switch ($searcher_info['adapter']) {
     case 'search_api':
       foreach ($facet_info as $name => $info) {
@@ -23,12 +23,12 @@ function bat_facets_facetapi_facet_info_alter(array &$facet_info, array $searche
       }
       break;
   }
-}
+}*/
 
 /**
  * Callback for facet availability form.
  */
-function bat_facets_availability($form, &$form_state, $elements) {
+/*function bat_facets_availability($form, &$form_state, $elements) {
   $params = drupal_get_query_parameters();
   $now = date_create();
 
@@ -116,41 +116,36 @@ function bat_facets_availability($form, &$form_state, $elements) {
   );
 
   return $form;
-}
+}*/
 
 /**
  * submit handler.
  */
-function bat_facets_availability_submit($form, FormStateInterface $form_state) {
+/*function bat_facets_availability_submit($form, FormStateInterface $form_state) {
   $form_state['redirect'] = array($_GET['q'], array('query' => array('bat_start_date' => $form_state['values']['arrival'], 'bat_end_date' => $form_state['values']['departure'])));
-}
+}*/
+
 
 /**
  * Implements hook_search_api_query_alter().
- *
- * @param SearchApiQueryInterface $query
- *   The search query being executed.
  */
-function bat_facets_search_api_query_alter($query) {
-  global $databases;
+function bat_facets_search_api_query_alter(\Drupal\search_api\Query\QueryInterface &$query) {
+  //global $databases;
 
-  $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
+  //$prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
 
-  if ($query->getIndex()->getEntityType()) {
-    $info = \Drupal::entityManager()->getDefinition($query->getIndex()->getEntityType());
-
-    // Only modify the query if this query is against bat units.
-    if ($info['base table'] = 'bat_types') {
+  foreach ($query->getIndex()->getDatasources() as $datasource_id => $datasource) {
+    if ($datasource->getEntityTypeId() == 'bat_unit_type') {
       // Get this widget's settings.
-      $index = $query->getIndex();
+      /*$index = $query->getIndex();
       $facets = facetapi_get_enabled_facets('search_api@' . $index->machine_name);
       $adapter = facetapi_adapter_load('search_api@' . $index->machine_name);
       $realm = facetapi_realm_load('block');
       if (isset($facets['type_id'])) {
-        $settings = $adapter->getFacetSettings($facets['type_id'], $realm);
+        $settings = $adapter->getFacetSettings($facets['type_id'], $realm);*/
 
         // Get URL parameters.
-        $params = drupal_get_query_parameters();
+        $params = \Drupal::request()->query->all();
 
         // See if we have dates to search.
         if (isset($params['bat_start_date']) &&
@@ -173,13 +168,12 @@ function bat_facets_search_api_query_alter($query) {
           // We need to narrow the query to all Types with Units that have the
           // requested state over the requested dates.
           // First, we retrieve all types.
-          // TODO: narrow this to only the types already being searched for.
           $type_ids = bat_type_ids();
 
           $units = array();
           foreach ($type_ids as $type_id => $name) {
             // Get the units of this type.
-            $drupal_units = bat_unit_load_multiple(FALSE, array('type_id' => $type_id));
+            $drupal_units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $type_id));
             $bat_units = array();
             foreach ($drupal_units as $unit_id => $unit) {
               $bat_units[] = new Unit($unit_id, $unit->getEventDefaultValue($event_type));
@@ -218,14 +212,14 @@ function bat_facets_search_api_query_alter($query) {
 
           // If no types are available, zero out results.
           if (empty($valid_type_ids)) {
-            $query->condition($info['entity keys']['id'], 1, '<');
+            $query->addCondition($info['entity keys']['id'], 1, '<');
           }
           else {
             // Limit the search API query to entity ids with availability.
-            $query->condition($info['entity keys']['id'], $valid_type_ids, 'IN');
+            $query->addCondition('id', $valid_type_ids, 'IN');
           }
         }
-      }
+      //}
     }
   }
 }

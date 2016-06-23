@@ -1084,7 +1084,7 @@ function bat_event_constraints_get_info() {
   $constraints_info = &$drupal_static_fast['bat_event_constraints_info'];
 
   if (empty($constraints_info)) {
-    if ($cache = cache_get('bat_event_constraints_info')) {
+    if ($cache = \Drupal::cache()->get('bat_event_constraints_info')) {
       $constraints_info = $cache->data;
     }
     else {
@@ -1092,7 +1092,7 @@ function bat_event_constraints_get_info() {
 
       // Let other modules alter the entity info.
       \Drupal::moduleHandler()->alter('bat_event_constraints_info', $constraints_info);
-      cache_set('bat_event_constraints_info', $constraints_info);
+      \Drupal::cache()->get('bat_event_constraints_info', $constraints_info);
     }
   }
 

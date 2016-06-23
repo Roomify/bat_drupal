@@ -10,6 +10,7 @@ use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -23,17 +24,6 @@ use Drupal\bat_unit\Entity\UnitBundle;
  *
  * Drupal Integration.
  */
-
-/**
- * Implements hook_module_implements_alter().
- */
-function bat_unit_module_implements_alter(&$implementations, $hook) {
-  if ($hook == 'views_data_alter' && isset($implementations['bat_unit'])) {
-    $group = $implementations['bat_unit'];
-    unset($implementations['bat_unit']);
-    $implementations['bat_unit'] = $group;
-  }
-}
 
 /**
  * Implements hook_query_TAG_alter().
@@ -182,8 +172,8 @@ function bat_unit_bat_event_target_entity_types() {
  * @return boolean
  *   Whether access is allowed or not.
  */
-function bat_unit_access($op, $unit = NULL, $account = NULL) {
-  //return bat_entity_access($op, $unit, $account, 'bat_unit');
+function bat_unit_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  return bat_entity_access($entity, $operation, $account);
 }
 
 /**
@@ -405,7 +395,11 @@ function bat_unit_delete(Unit $unit) {
  *   An array of unit IDs.
  */
 function bat_unit_delete_multiple(array $unit_ids) {
+  $units = Unit::loadMultiple($unit_ids);
 
+  foreach ($units as $unit) {
+    $unit->delete();
+  }
 }
 
 /**
@@ -424,7 +418,7 @@ function bat_unit_create($values = array()) {
  * @param BatUnit $unit
  *   The Unit object.
  */
-function bat_unit_save(BatUnit $unit) {
+function bat_unit_save(Unit $unit) {
   return $unit->save();
 }
 
@@ -444,7 +438,7 @@ function bat_unit_bundle_create($values = array()) {
  * @param BatUnitBundle $bundle
  *   The unit bundle to save.
  */
-function bat_unit_bundle_save(BatUnitBundle $bundle) {
+function bat_unit_bundle_save(UnitBundle $bundle) {
   $bundle->save();
 }
 
@@ -477,20 +471,18 @@ function bat_unit_page_title(Unit $unit) {
 function bat_unit_ids($bundle = '') {
   $units = array();
 
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'bat_unit');
+  $query = \Drupal::entityQuery('bat_unit');
 
   if ($bundle != '') {
-    $query->entityCondition('bundle', $bundle);
+    $query->condition('type', $bundle);
   }
 
   $result = $query->execute();
 
   if (count($result) > 0) {
-    $entities = entity_load('bat_unit', array_keys($result['bat_unit']));
+    $entities = Unit::loadMultiple(array_keys($result['bat_unit']));
     foreach ($entities as $unit) {
-      $wrapper = entity_metadata_wrapper('bat_unit', $unit);
-      $units[$wrapper->unit_id->value()] = $wrapper->name->value();
+      $units[$unit->id()] = $unit->label();
     }
   }
 
@@ -566,8 +558,8 @@ function bat_unit_unit_bundle_new() {
  * @return boolean
  *   Whether access is allowed or not.
  */
-function bat_type_access($op, $type = NULL, $account = NULL) {
-  //return bat_entity_access($op, $type, $account, 'bat_type');
+function bat_type_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  return bat_entity_access($entity, $operation, $account);
 }
 
 /**
@@ -765,7 +757,11 @@ function bat_type_delete(UnitType $type) {
  *   An array of type IDs.
  */
 function bat_type_delete_multiple(array $type_ids) {
+  $types = UnitType::loadMultiple($type_ids);
 
+  foreach ($types as $type) {
+    $type->delete();
+  }
 }
 
 /**
@@ -812,7 +808,7 @@ function bat_type_bundle_save(TypeBundle $bundle) {
  * Deletes a Bat Type bundle from the db.
  */
 function bat_type_bundle_delete(TypeBundle $bundle) {
-
+  $bundle->delete();
 }
 
 /**
@@ -837,20 +833,18 @@ function bat_type_page_title(UnitType $type) {
 function bat_type_ids($bundle = '') {
   $types = array();
 
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'bat_type');
+  $query = \Drupal::entityQuery('bat_unit_type');
 
   if ($bundle != '') {
-    $query->entityCondition('bundle', $bundle);
+    $query->condition('type', $bundle);
   }
 
   $result = $query->execute();
 
   if (count($result) > 0) {
-    $entities = entity_load('bat_type', array_keys($result['bat_type']));
+    $entities = UnitType::loadMultiple(array_keys($result));
     foreach ($entities as $type) {
-      $wrapper = entity_metadata_wrapper('bat_type', $type);
-      $types[$wrapper->type_id->value()] = $wrapper->name->value();
+      $types[$type->id()] = $type->label();
     }
   }
 
@@ -863,16 +857,14 @@ function bat_type_ids($bundle = '') {
 function bat_type_bundle_ids() {
   $type_bundles = array();
 
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'bat_type_bundle');
+  $query = \Drupal::entityQuery('bat_type_bundle');
 
   $result = $query->execute();
 
   if (count($result) > 0) {
-    $entities = entity_load('bat_type_bundle', array_keys($result['bat_type_bundle']));
+    $entities = TypeBundle::loadMultiple(array_keys($result['bat_type_bundle']));
     foreach ($entities as $type_bundle) {
-      $wrapper = entity_metadata_wrapper('bat_type_bundle', $type_bundle);
-      $type_bundles[$wrapper->id->value()] = $wrapper->label->value();
+      $type_bundles[$type_bundle->id()] = $type_bundle->label();
     }
   }
 
