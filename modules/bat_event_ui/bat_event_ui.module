@@ -77,7 +77,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
     'calendar' => array(
       '#theme' => 'bat_fullcalendar',
       '#calendar_settings' => $calendar_settings,
-      '#attached' => array('library' => array('bat_event_ui/bat_event_ui')),
+      '#attached' => array('library' => array('bat_event_ui/bat_event_ui', 'bat_fullcalendar/bat-fullcalendar-scheduler')),
     ),
   );
 

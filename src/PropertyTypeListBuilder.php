@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 /**
  * Defines a class to build a listing of event type entities.
  *
- * @see \Drupal\bat\Entity\PropertyType
+ * @see \Drupal\bat\Entity\TypeGroupBundle
  */
 class PropertyTypeListBuilder extends ConfigEntityListBuilder {
 
@@ -50,7 +50,7 @@ class PropertyTypeListBuilder extends ConfigEntityListBuilder {
    */
   public function render() {
     $build = parent::render();
-    $build['table']['#empty'] = $this->t('No property types available. <a href=":link">Add property type</a>.', [
+    $build['table']['#empty'] = $this->t('No property types available. <a href=":link">Add type group bundle</a>.', [
         ':link' => Url::fromRoute('entity.bat_type_group_bundle.type_add')->toString()
       ]);
     return $build;

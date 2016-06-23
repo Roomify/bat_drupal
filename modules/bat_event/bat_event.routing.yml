@@ -132,7 +132,7 @@ entity.bat_event_type.type_add:
     _permission: 'administer content types'
 
 entity.bat_event_type.edit_form:
-  path: '/admin/bat/event/event-types/{event_type}/edit'
+  path: '/admin/bat/event/event-types/{bat_event_type}/edit'
   defaults:
     _entity_form: 'bat_event_type.edit'
     _title: 'Edit Event type'
@@ -142,7 +142,7 @@ entity.bat_event_type.edit_form:
     _admin_route: TRUE
 
 entity.bat_event_type.delete_form:
-  path: '/admin/bat/event/event-types/{event_type}/delete'
+  path: '/admin/bat/event/event-types/{bat_event_type}/delete'
   defaults:
     _entity_form: 'bat_event_type.delete'
     _title: 'Delete'

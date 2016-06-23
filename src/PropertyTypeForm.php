@@ -63,7 +63,7 @@ class PropertyTypeForm extends BundleEntityFormBase {
       '#maxlength' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
       '#disabled' => FALSE,
       '#machine_name' => array(
-        'exists' => ['Drupal\bat\Entity\PropertyType', 'load'],
+        'exists' => ['Drupal\bat\Entity\TypeGroupBundle', 'load'],
         'source' => array('name'),
       ),
       '#description' => t('A unique machine-readable name for this type. It must only contain lowercase letters, numbers, and underscores.'),
@@ -77,8 +77,8 @@ class PropertyTypeForm extends BundleEntityFormBase {
    */
   protected function actions(array $form, FormStateInterface $form_state) {
     $actions = parent::actions($form, $form_state);
-    $actions['submit']['#value'] = t('Save property type');
-    $actions['delete']['#value'] = t('Delete property type');
+    $actions['submit']['#value'] = t('Save type group bundle');
+    $actions['delete']['#value'] = t('Delete type group bundle');
     return $actions;
   }
 

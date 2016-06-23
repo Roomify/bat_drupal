@@ -35,7 +35,7 @@ entity.bat_type_group.collection:
 entity.bat_type_group.add_page:
   path: '/admin/bat/property/add'
   defaults:
-    _title: 'Add property'
+    _title: 'Add Type Group'
     _controller: '\Drupal\bat\Controller\TypeGroupController::addPage'
   requirements:
     _permission: 'add unit type entities'
@@ -53,6 +53,7 @@ entity.bat_type_group.add_form:
     _admin_route: TRUE
     parameters:
       property_type:
+        type: entity:bat_type_group_bundle
         with_config_overrides: TRUE
 
 entity.bat_type_group.edit_form:
@@ -85,12 +86,12 @@ entity.bat_type_group_bundle.type_add:
   path: '/admin/bat/group-types/add'
   defaults:
     _entity_form: 'bat_type_group_bundle.add'
-    _title: 'Add property type'
+    _title: 'Add type group bundle'
   requirements:
     _permission: 'administer content types'
 
 entity.bat_type_group_bundle.edit_form:
-  path: '/admin/bat/group-types/{property_type}/edit'
+  path: '/admin/bat/group-types/{bat_type_group_bundle}/edit'
   defaults:
     _entity_form: bat_type_group_bundle.edit
     _title: 'Edit property type'
@@ -100,7 +101,7 @@ entity.bat_type_group_bundle.edit_form:
     _admin_route: TRUE
 
 entity.bat_type_group_bundle.delete_form:
-  path: '/admin/bat/group-types/{property_type}/delete'
+  path: '/admin/bat/group-types/{bat_type_group_bundle}/delete'
   defaults:
     _entity_form: 'bat_type_group_bundle.delete'
     _title: 'Delete'

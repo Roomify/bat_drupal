@@ -13,7 +13,7 @@ use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\Url;
 
 /**
- * Defines a class to build a listing of Property entities.
+ * Defines a class to build a listing of Type Group entities.
  *
  * @ingroup bat
  */
@@ -23,7 +23,7 @@ class PropertyListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['id'] = $this->t('Property ID');
+    $header['id'] = $this->t('Type Group ID');
     $header['name'] = $this->t('Name');
     return $header + parent::buildHeader();
   }

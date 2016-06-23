@@ -10,7 +10,7 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Defines the access control handler for the node type entity type.
  *
- * @see \Drupal\bat\Entity\PropertyType
+ * @see \Drupal\bat\Entity\TypeGroupBundle
  */
 class PropertyTypeAccessControlHandler extends EntityAccessControlHandler {
 

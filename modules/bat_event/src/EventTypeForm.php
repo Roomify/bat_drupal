@@ -119,7 +119,7 @@ class EventTypeForm extends BundleEntityFormBase {
       $fields = $this->entityManager->getFieldDefinitions('bat_event', $event_type->id());
       foreach ($fields as $field) {
         if ($field instanceof FieldConfig) {
-          $fields_options[$field->getName()] = $field->getName();
+          $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';
         }
       }
 
@@ -145,7 +145,7 @@ class EventTypeForm extends BundleEntityFormBase {
       $fields = $this->entityManager->getFieldDefinitions('bat_event', $event_type->id());
       foreach ($fields as $field) {
         if ($field instanceof FieldConfig) {
-          $fields_options[$field->getName()] = $field->getName();
+          $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';
         }
       }
 

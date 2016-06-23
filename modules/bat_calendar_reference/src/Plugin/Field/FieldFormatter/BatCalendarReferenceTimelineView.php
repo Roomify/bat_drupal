@@ -4,6 +4,7 @@ namespace Drupal\bat_calendar_reference\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Component\Utility\Html;
 
 /**
  * @FieldFormatter(
@@ -23,6 +24,8 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
 	public function viewElements(FieldItemListInterface $items, $langcode) {
 		$field_type = $this->fieldDefinition->getFieldStorageDefinition()->getType();
 
+    $calendar_id = Html::getUniqueId($this->fieldDefinition->getFieldStorageDefinition()->getName() . '-calendar-formatter');
+
 		if ($field_type == 'bat_calendar_unit_type_reference') {
       $unit_type_names = array();
       $unit_type_ids = array();
@@ -30,7 +33,7 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
       foreach ($items as $delta => $item) {
         if ($unit_type = bat_type_load($item->unit_type_id)) {
           $unit_type_names[] = $unit_type->label();
-          $unit_type_ids[] = $unit_type->type_id;
+          $unit_type_ids[] = $unit_type->id();
         }
 
         if ($type = bat_event_type_load($item->event_type_id)) {
@@ -73,7 +76,7 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
       foreach ($items as $delta => $item) {
         if ($unit = bat_unit_load($item->unit_id)) {
           $unit_names[] = $unit->label();
-          $unit_ids[] = $unit->unit_id;
+          $unit_ids[] = $unit->id();
         }
 
         if ($type = bat_event_type_load($item->event_type_id)) {
@@ -120,8 +123,7 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
 	    $element[] = array(
 	      '#theme' => 'bat_fullcalendar',
 	      '#calendar_settings' => $calendar_settings,
-	      '#js_files' => array(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js'),
-	      '#css_files' => array(drupal_get_path('module', 'bat_fullcalendar') . '/css/fullcalendar.theme.css'),
+	      '#attached' => array('library' => array('bat_calendar_reference/bat_calendar_reference')),
 	      '#attributes' => array(
 	        'id' => $calendar_id,
 	        'class' => array(

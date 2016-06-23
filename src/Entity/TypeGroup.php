@@ -108,17 +108,17 @@ class TypeGroup extends ContentEntityBase implements PropertyInterface {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
-      ->setDescription(t('The ID of the Property entity.'))
+      ->setDescription(t('The ID of the Type Group entity.'))
       ->setReadOnly(TRUE);
 
     $fields['uuid'] = BaseFieldDefinition::create('uuid')
       ->setLabel(t('UUID'))
-      ->setDescription(t('The UUID of the Property entity.'))
+      ->setDescription(t('The UUID of the Type Group entity.'))
       ->setReadOnly(TRUE);
 
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
-      ->setDescription(t('The user ID of author of the Property entity.'))
+      ->setDescription(t('The user ID of author of the Type Group entity.'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
@@ -144,7 +144,7 @@ class TypeGroup extends ContentEntityBase implements PropertyInterface {
 
     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Name'))
-      ->setDescription(t('The name of the Property entity.'))
+      ->setDescription(t('The name of the Type Group entity.'))
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -160,7 +160,8 @@ class TypeGroup extends ContentEntityBase implements PropertyInterface {
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ->setDisplayConfigurable('view', TRUE)
+      ->setRequired(TRUE);
 
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))

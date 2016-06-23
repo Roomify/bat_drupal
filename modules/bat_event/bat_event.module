@@ -878,7 +878,7 @@ function bat_event_validate_hex_color($element, FormStateInterface $form_state) 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function bat_event_form_type_bundle_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function bat_event_form_bat_type_bundle_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $type_bundle = $form_state->getFormObject()->getEntity();
 
   $fields_options = array();
@@ -886,7 +886,7 @@ function bat_event_form_type_bundle_edit_form_alter(&$form, FormStateInterface $
   $fields = \Drupal::entityManager()->getFieldDefinitions('bat_unit_type', $type_bundle->id());
   foreach ($fields as $field) {
     if ($field instanceof FieldConfig) {
-      $fields_options[$field->getName()] = $field->getName();
+      $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';
     }
   }
 

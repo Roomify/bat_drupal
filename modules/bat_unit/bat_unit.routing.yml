@@ -40,7 +40,7 @@ entity.bat_unit_type.add:
     _admin_route: TRUE
     parameters:
       type_bundle:
-        type: entity:type_bundle
+        type: entity:bat_type_bundle
         with_config_overrides: TRUE
 
 entity.bat_unit_type.edit_form:
@@ -147,7 +147,7 @@ entity.bat_type_bundle.type_add:
     _permission: 'administer content types'
 
 entity.bat_type_bundle.edit_form:
-  path: '/admin/bat/type-bundles/{type_bundle}/edit'
+  path: '/admin/bat/type-bundles/{bat_type_bundle}/edit'
   defaults:
     _entity_form: 'bat_type_bundle.edit'
     _title: 'Edit Type bundle'
@@ -157,7 +157,7 @@ entity.bat_type_bundle.edit_form:
     _admin_route: TRUE
 
 entity.bat_type_bundle.delete_form:
-  path: '/admin/bat/type-bundles/{type_bundle}/delete'
+  path: '/admin/bat/type-bundles/{bat_type_bundle}/delete'
   defaults:
     _entity_form: 'bat_type_bundle.delete'
     _title: 'Delete'
@@ -183,7 +183,7 @@ entity.bat_unit_bundle.type_add:
     _permission: 'administer content types'
 
 entity.bat_unit_bundle.edit_form:
-  path: '/admin/bat/unit-bundles/{unit_bundle}/edit'
+  path: '/admin/bat/unit-bundles/{bat_unit_bundle}/edit'
   defaults:
     _entity_form: bat_unit_bundle.edit
     _title: 'Edit Unit bundle'
@@ -193,7 +193,7 @@ entity.bat_unit_bundle.edit_form:
     _admin_route: TRUE
 
 entity.bat_unit_bundle.delete_form:
-  path: '/admin/bat/unit-bundles/{unit_bundle}/delete'
+  path: '/admin/bat/unit-bundles/{bat_unit_bundle}/delete'
   defaults:
     _entity_form: 'bat_unit_bundle.delete'
     _title: 'Delete'

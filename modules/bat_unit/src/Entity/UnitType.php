@@ -178,7 +178,8 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ->setDisplayConfigurable('view', TRUE)
+      ->setRequired(TRUE);
 
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
@@ -198,8 +199,15 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
       ->setSetting('target_type', 'bat_type_bundle');
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Status'))
-      ->setDescription(t('The unit status.'));
+      ->setLabel(t('Published'))
+      ->setDefaultValue(TRUE)
+      ->setDisplayOptions('form', array(
+        'type' => 'boolean_checkbox',
+        'weight' => 10,
+        'settings' => array(
+          'display_label' => TRUE,
+        ),
+      ));
 
     return $fields;
   }

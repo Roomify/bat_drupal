@@ -25,6 +25,9 @@ class StateListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header['id'] = $this->t('State ID');
     $header['name'] = $this->t('Name');
+    $header['color'] = $this->t('Color');
+    $header['calendar_label'] = $this->t('Calendar label');
+    $header['blocking'] = $this->t('Blocking');
     return $header + parent::buildHeader();
   }
 
@@ -41,6 +44,9 @@ class StateListBuilder extends EntityListBuilder {
         )
       )
     );
+    $row['color'] = $entity->getColor();
+    $row['calendar_label'] = $entity->getCalendarLabel();
+    $row['blocking'] = ($entity->getBlocking()) ? t('Blocking') : t('Not blocking');
     return $row + parent::buildRow($entity);
   }
 
