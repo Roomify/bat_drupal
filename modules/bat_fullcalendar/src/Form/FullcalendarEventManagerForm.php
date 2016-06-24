@@ -99,7 +99,7 @@ class FullcalendarEventManagerForm extends FormBase {
         );
 
         $field_definition = \Drupal::entityManager()->getFieldDefinitions('bat_event', 'pricing')[$field_name];
-        $items = new FieldItemList($field_definition, NULL, EntityAdapter::createFromEntity(bat_event_create2(array('type' => $event_type->id()))));
+        $items = new FieldItemList($field_definition, NULL, EntityAdapter::createFromEntity(bat_event_create(array('type' => $event_type->id()))));
 
         $form_display = entity_get_form_display('bat_event', $event_type->id(), 'default');
         $widget = $form_display->getRenderer($field_name);
@@ -137,7 +137,7 @@ class FullcalendarEventManagerForm extends FormBase {
     $event_type = $values['event_type'];
     $state_id = $values['change_event_status'];
 
-    $event = bat_event_create2(array('type' => $event_type));
+    $event = bat_event_create(array('type' => $event_type));
     $event->created = REQUEST_TIME;
     $event->uid = \Drupal::currentUser()->id();
 
@@ -181,7 +181,7 @@ class FullcalendarEventManagerForm extends FormBase {
     $event_type = $values['event_type'];
     $field_name = $values['field_name'];
 
-    $event = bat_event_create2(array('type' => $event_type));
+    $event = bat_event_create(array('type' => $event_type));
     $event->created = REQUEST_TIME;
     $event->uid = \Drupal::currentUser()->id();
 

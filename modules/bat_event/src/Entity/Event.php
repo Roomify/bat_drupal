@@ -418,8 +418,8 @@ class Event extends ContentEntityBase implements EventInterface {
   public function getEventValueField() {
     $type_bundle = bat_event_type_load($this->bundle());
 
-    if (isset($type_bundle->default_event_value_field_ids[$this->bundle()])) {
-      return $type_bundle->default_event_value_field_ids[$this->bundle()];
+    if (isset($type_bundle->default_event_value_field_ids)) {
+      return $type_bundle->default_event_value_field_ids;
     }
 
     if ($type_bundle->getFixedEventStates() == 1) {

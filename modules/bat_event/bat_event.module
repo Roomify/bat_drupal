@@ -13,6 +13,7 @@ use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\SafeMarkup;
@@ -179,33 +180,9 @@ function bat_event_access(EntityInterface $entity, $operation, AccountInterface 
 }
 
 /**
- * Access callback: Checks whether the user has permission to add an event.
- *
- * @return bool
- *   TRUE if the user has add permission, otherwise FALSE.
- */
-function bat_event_add_access() {
-  if (\Drupal::currentUser()->hasPermission('administer bat_event_type entities')) {
-    // There are no event types defined that the user has permission to create
-    // but the user does have the permission to administer the content types, so
-    // grant them access to the page anyway.
-    return TRUE;
-  }
-
-  $types = bat_event_get_types();
-  foreach ($types as $type) {
-    if (bat_event_access('create', bat_event_create2(array('type' => $type->type, 'uid' => 0)))) {
-      return TRUE;
-    }
-  }
-
-  return FALSE;
-}
-
-/**
  * Access callback for the entity API.
  */
-function bat_event_type_access($op, $type = NULL, $account = NULL) {
+function bat_event_type_access(EntityInterface $entity, $operation, AccountInterface $account) {
   $account->hasPermission('administer bat_event_type entities');
 }
 
@@ -340,7 +317,7 @@ function bat_event_delete_multiple(array $event_ids) {
 /**
  * Create a event object.
  */
-function bat_event_create2($values = array()) {
+function bat_event_create($values = array()) {
   return Event::create($values);
 }
 
@@ -519,59 +496,6 @@ function bat_event_autocomplete_value($element, $input = FALSE, $form_state) {
       }
     }
   }
-}
-
-/**
- * Validation callback for a event state autocomplete element.
- */
-function bat_event_autocomplete_validate($element, &$form_state, $form) {
-  $field = field_widget_field($element, $form_state);
-  $instance = field_widget_instance($element, $form_state);
-
-  $value = $element['#value'];
-  $state_id = NULL;
-
-  if (!empty($value)) {
-    // Check whether we have an explicit "[state_id:n]" input.
-    preg_match('/^(?:\s*|(.*) )?\[\s*state_id\s*:\s*(\d+)\s*\]$/', $value, $matches);
-    if (!empty($matches)) {
-      // Explicit state_id. Check that the 'title' part matches the actual title for
-      // the state_id.
-      list(, $title, $state_id) = $matches;
-      if (!empty($title)) {
-        $state = bat_event_load_state($state_id);
-        $real_title = $state['label'];
-        if (trim($title) != trim($real_title)) {
-          form_error($element, t('%name: title mismatch. Please check your selection.', array('%name' => $instance['label'])));
-        }
-      }
-    }
-    else {
-      // No explicit state_id (the submitted value was not populated by
-      // autocomplete selection). Get the state_id of a referenceable node from
-      // the entered title.
-      $options = array(
-        'string' => $value,
-        'match' => 'equals',
-        'limit' => 1,
-      );
-      $references = bat_event_potential_references($field, $options);
-      if ($references) {
-        // @todo The best thing would be to present the user with an
-        // additional form, allowing the user to choose between valid
-        // candidates with the same title. ATM, we pick the first
-        // matching candidate...
-        $state_id = key($references);
-      }
-      else {
-        form_error($element, t('%name: unable to find an event state with that title.', array('%name' => $instance['label'])));
-      }
-    }
-  }
-
-  // Set the element's value as the state id that was extracted from the entered
-  // input.
-  form_set_value($element, $state_id, $form_state);
 }
 
 /**
@@ -891,8 +815,8 @@ function bat_event_form_bat_type_bundle_edit_form_alter(&$form, FormStateInterfa
   }
 
   $form['events'] = array(
-    '#type' => 'fieldset',
-    '#group' => 'additional_settings',
+    '#type' => 'details',
+    '#group' => 'advanced',
     '#title' => t('Events'),
     '#tree' => TRUE,
     '#weight' => 80,
@@ -1130,7 +1054,7 @@ function bat_event_unit_set_state(&$unit, $context) {
   $end_date->sub(new DateInterval('PT1M'));
 
   if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
-    $event = bat_event_create2(array(
+    $event = bat_event_create(array(
       'type' => $event_type,
       'start_date' => $start_date->format('Y-m-d H:i:s'),
       'end_date' => $end_date->format('Y-m-d H:i:s'),
@@ -1154,8 +1078,6 @@ function bat_event_unit_set_state(&$unit, $context) {
  * @param array $variables
  *   An associative array containing:
  *   - content: An array of content types.
- *
- * @see node_add_page()
  */
 function template_preprocess_bat_event_add_list(&$variables) {
   $variables['types'] = array();
@@ -1174,4 +1096,31 @@ function template_preprocess_bat_event_add_list(&$variables) {
  */
 function bat_event_get_states($event_type, $options = array()) {
   return State::loadMultiple();
+}
+
+/**
+ * Prepares variables for Event templates.
+ *
+ * Default template: bat-event.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the user information and any
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_bat_event(array &$variables) {
+  // Fetch Event Entity Object.
+  $event = $variables['elements']['#bat_event'];
+
+  // Helpful $content variable for templates.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * @param $machine_name
+ */
+function bat_event_load_state_by_machine_name($machine_name) {
+  return State::loadbyMachineName($machine_name);
 }

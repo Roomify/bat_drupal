@@ -41,7 +41,7 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
 
             if (bat_event_get_types($event_type)) {
               $event_type_label = bat_event_get_types($event_type)->label();
-              $links[$field] = array(
+              $links[$event_type] = array(
                 'title' => t('Manage ' . $event_type_label),
                 'url' => Url::fromRoute($route_name, array('unit_type' => $type->id(), 'event_type' => $event_type)),
               );

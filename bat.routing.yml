@@ -17,7 +17,7 @@ bat.admin.config:
 
 # Property routing definition
 entity.bat_type_group.canonical:
-  path: '/admin/bat/property/{property}'
+  path: '/admin/bat/type-group/{bat_type_group}'
   defaults:
     _entity_view: 'bat_type_group'
     _title: 'Property'
@@ -25,7 +25,7 @@ entity.bat_type_group.canonical:
     _entity_access: 'bat_type_group.view'
 
 entity.bat_type_group.collection:
-  path: '/admin/bat/property'
+  path: '/admin/bat/type-group'
   defaults:
     _entity_list: 'bat_type_group'
     _title: 'Type Group list'
@@ -33,7 +33,7 @@ entity.bat_type_group.collection:
     _permission: 'view property entities'
 
 entity.bat_type_group.add_page:
-  path: '/admin/bat/property/add'
+  path: '/admin/bat/type-group/add'
   defaults:
     _title: 'Add Type Group'
     _controller: '\Drupal\bat\Controller\TypeGroupController::addPage'
@@ -43,7 +43,7 @@ entity.bat_type_group.add_page:
     _admin_route: TRUE
 
 entity.bat_type_group.add_form:
-  path: '/admin/bat/property/add/{property_type}'
+  path: '/admin/bat/type-group/add/{property_type}'
   defaults:
     _controller: '\Drupal\bat\Controller\TypeGroupController::add'
     _title_callback: '\Drupal\bat\Controller\TypeGroupController::addPageTitle'
@@ -57,7 +57,7 @@ entity.bat_type_group.add_form:
         with_config_overrides: TRUE
 
 entity.bat_type_group.edit_form:
-  path: '/admin/bat/property/{property}/edit'
+  path: '/admin/bat/type-group/{bat_type_group}/edit'
   defaults:
     _entity_form: bat_type_group.edit
     _title: 'Edit Property'
@@ -65,7 +65,7 @@ entity.bat_type_group.edit_form:
     _permission: 'edit property entities'
 
 entity.bat_type_group.delete_form:
-  path: '/admin/bat/property/{property}/delete'
+  path: '/admin/bat/type-group/{bat_type_group}/delete'
   defaults:
     _entity_form: bat_type_group.delete
     _title: 'Delete Property'

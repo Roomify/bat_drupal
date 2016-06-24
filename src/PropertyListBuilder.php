@@ -37,7 +37,7 @@ class PropertyListBuilder extends EntityListBuilder {
       $this->getLabel($entity),
       new Url(
         'entity.bat_type_group.edit_form', array(
-          'property' => $entity->id(),
+          'bat_type_group' => $entity->id(),
         )
       )
     );

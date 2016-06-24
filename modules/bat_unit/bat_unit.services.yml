@@ -1,0 +1,11 @@
+services:
+  access_check.bat_unit.add:
+    class: Drupal\bat_unit\Access\UnitAddAccessCheck
+    arguments: ['@entity.manager']
+    tags:
+      - { name: access_check, applies_to: _unit_add_access }
+  access_check.bat_unit_type.add:
+    class: Drupal\bat_unit\Access\UnitTypeAddAccessCheck
+    arguments: ['@entity.manager']
+    tags:
+      - { name: access_check, applies_to: _unit_type_add_access }

@@ -5,7 +5,7 @@ entity.bat_unit_type.canonical:
     _entity_view: 'bat_unit_type'
     _title: 'Unit type'
   requirements:
-    _entity_access: 'unit_type.view'
+    _entity_access: 'bat_unit_type.view'
   options:
     _admin_route: TRUE
 
@@ -70,7 +70,7 @@ entity.bat_unit.canonical:
     _entity_view: 'bat_unit'
     _title: 'Unit'
   requirements:
-    _entity_access: 'unit.view'
+    _entity_access: 'bat_unit.view'
   options:
     _admin_route: TRUE
 
@@ -144,7 +144,7 @@ entity.bat_type_bundle.type_add:
     _entity_form: 'bat_type_bundle.add'
     _title: 'Add type bundle'
   requirements:
-    _permission: 'administer content types'
+    _unit_type_add_access: 'bat_unit_type:{bat_type_bundle}'
 
 entity.bat_type_bundle.edit_form:
   path: '/admin/bat/type-bundles/{bat_type_bundle}/edit'
@@ -180,7 +180,7 @@ entity.bat_unit_bundle.type_add:
     _entity_form: 'bat_unit_bundle.add'
     _title: 'Add unit bundle'
   requirements:
-    _permission: 'administer content types'
+    _unit_add_access: 'bat_unit:{bat_unit_bundle}'
 
 entity.bat_unit_bundle.edit_form:
   path: '/admin/bat/unit-bundles/{bat_unit_bundle}/edit'
@@ -205,4 +205,4 @@ unit.multiple_delete_confirm:
   defaults:
     _form: '\Drupal\bat_unit\Form\UnitDeleteMultiple'
   requirements:
-    _permission: 'administer nodes'
+    _permission: 'bypass bat_unit entities access'

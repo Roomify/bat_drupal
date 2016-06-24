@@ -16,11 +16,17 @@ use Drupal\Core\Field\FieldItemListInterface;
  */
 class BatOptionsDefault extends FormatterBase {
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function viewElements(FieldItemListInterface $items, $langcode) {
-		return array();
-	}
+  /**
+   * {@inheritdoc}
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $element = array();
+
+    foreach ($items as $delta => $item) {
+      $element[$delta] = array('#markup' => "{$item->quantity} x {$item->name}");
+    }
+
+    return $element;
+  }
 
 }

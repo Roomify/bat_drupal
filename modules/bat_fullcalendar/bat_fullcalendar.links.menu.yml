@@ -3,3 +3,4 @@ bat_fullcalendar.fullcalendar:
   route_name: bat_fullcalendar.fullcalendar
   description: 'Configure settings for Fullcalendar.'
   parent: bat.admin.config
+  weight: 10

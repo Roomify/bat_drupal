@@ -4,6 +4,7 @@ entity.bat_unit_type.collection:
   route_name: entity.bat_unit_type.collection
   description: 'List Types'
   parent: bat.admin.config
+  weight: 6
 
 # Unit menu items definition
 entity.bat_unit.collection:
@@ -11,15 +12,18 @@ entity.bat_unit.collection:
   route_name: entity.bat_unit.collection
   description: 'List Units'
   parent: bat.admin.config
+  weight: 8
 
 entity.bat_type_bundle.collection:
   title: 'Type Bundles list'
   route_name: entity.bat_type_bundle.collection
   description: 'List Type Bundles'
   parent: bat.admin.config
+  weight: 5
 
 entity.bat_unit_bundle.collection:
   title: 'Unit Bundles list'
   route_name: entity.bat_unit_bundle.collection
   description: 'List Unit Bundles'
   parent: bat.admin.config
+  weight: 7

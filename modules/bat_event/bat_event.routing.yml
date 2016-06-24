@@ -7,6 +7,16 @@ bat.admin.events:
     _permission: 'access administration pages'
 
 # State routing definition
+entity.state.canonical:
+  path: '/admin/bat/state/{state}'
+  defaults:
+    _entity_view: 'state'
+    _title: 'State'
+  requirements:
+    _entity_access: 'state.view'
+  options:
+    _admin_route: TRUE
+
 entity.state.collection:
   path: '/admin/bat/state'
   defaults:
@@ -28,7 +38,7 @@ entity.state.add_form:
     _admin_route: TRUE
 
 entity.state.edit_form:
-  path: '/admin/bat/state/{state}'
+  path: '/admin/bat/state/{state}/edit'
   defaults:
     _entity_form: 'state.edit'
     _title: 'Edit State'
@@ -50,7 +60,7 @@ entity.state.delete_form:
 
 # Event routing definition
 entity.bat_event.canonical:
-  path: '/admin/bat/event/{event}'
+  path: '/admin/bat/event/{bat_event}'
   defaults:
     _entity_view: 'bat_event'
     _title: 'Event'
@@ -94,7 +104,7 @@ entity.bat_event.add_form:
         with_config_overrides: TRUE
 
 entity.bat_event.edit_form:
-  path: '/admin/bat/event/{event}/edit'
+  path: '/admin/bat/event/{bat_event}/edit'
   defaults:
     _entity_form: 'bat_event.edit'
     _title: 'Edit Event'
@@ -104,7 +114,7 @@ entity.bat_event.edit_form:
     _admin_route: TRUE
 
 entity.bat_event.delete_form:
-  path: '/admin/bat/event/{event}/delete'
+  path: '/admin/bat/event/{bat_event}/delete'
   defaults:
     _entity_form: 'bat_event.delete'
     _title: 'Delete Event'
@@ -129,7 +139,7 @@ entity.bat_event_type.type_add:
     _entity_form: 'bat_event_type.add'
     _title: 'Add event type'
   requirements:
-    _permission: 'administer content types'
+    _unit_type_add_access: 'bat_event:{bat_event_type}'
 
 entity.bat_event_type.edit_form:
   path: '/admin/bat/event/event-types/{bat_event_type}/edit'

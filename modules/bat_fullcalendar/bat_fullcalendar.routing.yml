@@ -11,7 +11,7 @@ bat_fullcalendar.event_management:
       entity_id:
         with_config_overrides: TRUE
       event_type:
-        type: entity:event_type
+        type: entity:bat_event_type
         with_config_overrides: TRUE
       event_id:
         with_config_overrides: TRUE

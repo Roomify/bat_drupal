@@ -17,13 +17,13 @@ use Drupal\Core\Field\FieldItemListInterface;
  */
 class BatCalendarReferenceMonthView extends FormatterBase {
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function viewElements(FieldItemListInterface $items, $langcode) {
+  /**
+   * {@inheritdoc}
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
     $field_type = $this->fieldDefinition->getFieldStorageDefinition()->getType();
 
-		if ($field_type == 'bat_calendar_unit_type_reference') {
+    if ($field_type == 'bat_calendar_unit_type_reference') {
       $unit_type_names = array();
       $unit_type_ids = array();
 
@@ -111,30 +111,29 @@ class BatCalendarReferenceMonthView extends FormatterBase {
     }
 
     if (!empty($fc_user_settings)) {
-        $calendar_settings = array(
-          'modal_style' => 'default',
-          'calendar_id' => 'fullcalendar-scheduler',
-          'user_settings' => array('batCalendar' => $fc_user_settings),
-        );
+      $calendar_settings = array(
+        'modal_style' => 'default',
+        'calendar_id' => 'fullcalendar-scheduler',
+        'user_settings' => array('batCalendar' => $fc_user_settings),
+      );
 
-        $element[] = array(
-          '#theme' => 'bat_fullcalendar',
-          '#calendar_settings' => $calendar_settings,
-          '#js_files' => array(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js'),
-          '#css_files' => array(drupal_get_path('module', 'bat_fullcalendar') . '/css/fullcalendar.theme.css'),
-          '#attributes' => array(
-            'id' => $calendar_id,
-            'class' => array(
-              'cal',
-              'clearfix',
-            ),
+      $element[] = array(
+        '#theme' => 'bat_fullcalendar',
+        '#calendar_settings' => $calendar_settings,
+        '#js_files' => array(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js'),
+        '#css_files' => array(drupal_get_path('module', 'bat_fullcalendar') . '/css/fullcalendar.theme.css'),
+        '#attributes' => array(
+          'id' => $calendar_id,
+          'class' => array(
+            'cal',
+            'clearfix',
           ),
-          '#prefix' => $header,
-        );
-      }
-
-      return $element;
+        ),
+        '#prefix' => $header,
+      );
     }
-	}
+
+    return $element;
+  }
 
 }

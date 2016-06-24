@@ -33,8 +33,8 @@ class StateForm extends ContentEntityForm {
       '#maxlength' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
       '#disabled' => FALSE,
       '#machine_name' => array(
-        'exists' => ['Drupal\bat_event\Entity\State', 'load'],
-        'source' => array('name'),
+        'exists' => ['Drupal\bat_event\Entity\State', 'loadByMachineName'],
+        'source' => array('name', 'widget', '0', 'value'),
       ),
       '#description' => t('A unique machine-readable name for this state. It must only contain lowercase letters, numbers, and underscores.'),
     );
@@ -74,16 +74,6 @@ class StateForm extends ContentEntityForm {
     );
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submit(array $form, FormStateInterface $form_state) {
-    // Build the entity object from the submitted values.
-    $entity = parent::submit($form, $form_state);
-
-    return $entity;
   }
 
   /**

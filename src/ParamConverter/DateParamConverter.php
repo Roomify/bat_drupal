@@ -3,7 +3,6 @@
 namespace Drupal\bat\ParamConverter;
  
 use Drupal\Core\ParamConverter\ParamConverterInterface;
-use Drupal\node\Entity\Node;
 use Symfony\Component\Routing\Route;
 use Drupal\Component\Utility\SafeMarkup;
 

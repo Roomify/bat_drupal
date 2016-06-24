@@ -38,16 +38,6 @@ class UnitForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, FormStateInterface $form_state) {
-    // Build the entity object from the submitted values.
-    $entity = parent::submit($form, $form_state);
-
-    return $entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
     $status = $entity->save();

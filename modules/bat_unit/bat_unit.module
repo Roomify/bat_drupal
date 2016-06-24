@@ -11,6 +11,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Render\Element;
 use Drupal\views\ViewExecutable;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -72,8 +73,6 @@ function bat_unit_theme() {
  * @param array $variables
  *   An associative array containing:
  *   - content: An array of content types.
- *
- * @see node_add_page()
  */
 function template_preprocess_bat_type_add_list(&$variables) {
   $variables['types'] = array();
@@ -95,8 +94,6 @@ function template_preprocess_bat_type_add_list(&$variables) {
  * @param array $variables
  *   An associative array containing:
  *   - content: An array of content types.
- *
- * @see node_add_page()
  */
 function template_preprocess_bat_unit_add_list(&$variables) {
   $variables['types'] = array();
@@ -198,8 +195,8 @@ function bat_unit_access_filter($op, $units = array(), $account = NULL) {
 /**
  * Access callback for the entity API.
  */
-function bat_unit_bundle_access($op, $bundle = NULL, $account = NULL) {
-  $account->hasPermission('administer bat_unit_bundle entities');
+function bat_unit_bundle_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  return $account->hasPermission('administer bat_unit_bundle entities');
 }
 
 /**
@@ -232,30 +229,6 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
   if ($old_conditions->count()) {
     $conditions->condition($old_conditions);
   }
-}
-
-/**
- * Access callback: Checks whether the user has permission to add a unit.
- *
- * @return bool
- *   TRUE if the user has add permission, otherwise FALSE.
- */
-function bat_unit_add_access() {
-  if (\Drupal::currentUser()->hasPermission('administer bat_unit_bundle entities')) {
-    // There are no unit bundles defined that the user has permission to
-    // create, but the user does have the permission to administer the content
-    // types, so grant them access to the page anyway.
-    return TRUE;
-  }
-
-  $bundles = bat_unit_get_bundles();
-  foreach ($bundles as $bundle) {
-    if (bat_unit_access('create', bat_unit_create(array('type' => $bundle->type, 'uid' => 0)))) {
-      return TRUE;
-    }
-  }
-
-  return FALSE;
 }
 
 /**
@@ -584,8 +557,8 @@ function bat_type_access_filter($op, $types = array(), $account = NULL) {
 /**
  * Access callback for the entity API.
  */
-function bat_type_bundle_access($op, $bundle = NULL, $account = NULL) {
-  $account->hasPermission('administer bat_type_bundle entities');
+function bat_type_bundle_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  return $account->hasPermission('administer bat_type_bundle entities');
 }
 
 /**
@@ -618,30 +591,6 @@ function bat_type_bat_entity_access_view_condition_bat_type_alter(&$conditions, 
   if ($old_conditions->count()) {
     $conditions->condition($old_conditions);
   }
-}
-
-/**
- * Access callback: Checks whether the user has permission to add a type.
- *
- * @return bool
- *   TRUE if the user has add permission, otherwise FALSE.
- */
-function bat_type_add_access() {
-  if (\Drupal::currentUser()->hasPermission('administer bat_type_bundle entities')) {
-    // There are no type bundles defined that the user has permission to
-    // create, but the user does have the permission to administer the content
-    // types, so grant them access to the page anyway.
-    return TRUE;
-  }
-
-  $bundles = bat_unit_get_type_bundles();
-  foreach ($bundles as $bundle) {
-    if (bat_type_access('create', bat_type_create(array('type' => $bundle->type, 'uid' => 0)))) {
-      return TRUE;
-    }
-  }
-
-  return FALSE;
 }
 
 /**
@@ -1018,4 +967,44 @@ function bat_unit_entity_operation(EntityInterface $entity) {
     }
   }
   return $operations;
+}
+
+/**
+ * Prepares variables for Unit templates.
+ *
+ * Default template: bat-unit.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the user information and any
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_bat_unit(array &$variables) {
+  // Fetch Unit Entity Object.
+  $unit = $variables['elements']['#bat_unit'];
+
+  // Helpful $content variable for templates.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Prepares variables for Unit Type templates.
+ *
+ * Default template: bat-unit-type.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the user information and any
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_bat_unit_type(array &$variables) {
+  // Fetch Unit Entity Object.
+  $unit = $variables['elements']['#bat_unit_type'];
+
+  // Helpful $content variable for templates.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
 }

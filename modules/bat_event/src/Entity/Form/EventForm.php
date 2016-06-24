@@ -10,6 +10,9 @@ namespace Drupal\bat_event\Entity\Form;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
+use Roomify\Bat\Calendar\Calendar;
+use Roomify\Bat\Store\DrupalDBStore;
+use Roomify\Bat\Unit\Unit;
 
 /**
  * Form controller for Event edit forms.
@@ -38,11 +41,51 @@ class EventForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, FormStateInterface $form_state) {
-    // Build the entity object from the submitted values.
-    $entity = parent::submit($form, $form_state);
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
 
-    return $entity;
+    $values = $form_state->getValues();
+
+    $start_date = new \DateTime($values['start'][0]['value']->format('Y-m-d H:i:s'));
+    $end_date = new \DateTime($values['end'][0]['value']->format('Y-m-d H:i:s'));
+
+    // The end date must be greater or equal than start date.
+    if ($end_date < $start_date) {
+      $form_state->setErrorByName('end', t('End date must be on or after the start date.'));
+    }
+
+    $event_type = bat_event_type_load($this->entity->bundle());
+    $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+
+    if ($event_type->getFixedEventStates()) {
+      if ($values[$target_field_name][0]['target_id'] != '') {
+        $event_store = new DrupalDBStore($this->entity->bundle(), DrupalDBStore::BAT_EVENT, $prefix);
+
+        $end_date->sub(new \DateInterval('PT1M'));
+
+        $bat_units = array(
+          new Unit($values[$target_field_name][0]['target_id'], 0),
+        );
+
+        $calendar = new Calendar($bat_units, $event_store);
+
+        $events = $calendar->getEvents($start_date, $end_date);
+        foreach ($events[$values[$target_field_name][0]['target_id']] as $event) {
+          $event_id = $event->getValue();
+
+          if ($event_id != $this->entity->id()) {
+            if ($event = bat_event_load($event_id)) {
+              $state = $event->get('event_state_reference')->entity;
+
+              if ($state->getBlocking()) {
+                $form_state->setErrorByName('', t('Cannot save this event as an event in a blocking state exists within the same timeframe.'));
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -65,7 +108,7 @@ class EventForm extends ContentEntityForm {
         ]));
     }
 
-    $form_state->setRedirect('entity.bat_event.edit_form', ['event' => $event->id()]);
+    $form_state->setRedirect('entity.bat_event.edit_form', ['bat_event' => $event->id()]);
   }
 
 }

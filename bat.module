@@ -11,6 +11,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
+use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -68,8 +69,6 @@ function bat_toolbar() {
  * @param array $variables
  *   An associative array containing:
  *   - content: An array of content types.
- *
- * @see node_add_page()
  */
 function template_preprocess_bat_property_add_list(&$variables) {
   $variables['types'] = array();
@@ -444,22 +443,6 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
 
   $config = \Drupal::config('bat.settings');
 
-  // Create unique ids and selectors for each datepicker.
-  $start_date_id = Html::getUniqueId('datepicker-start-date');
-  $start_date_selector = '#' . $start_date_id . ' .form-text';
-
-  $end_date_id = Html::getUniqueId('datepicker-end-date');
-  $end_date_selector = '#' . $start_date_id . ' .form-text';
-
-  // Specify the default datepicker parameters (see date_popup_element_info())
-  $datepicker_options = array(
-    //'dateFormat' => date_popup_format_to_popup($config->get('bat_daily_date_format')),
-    // Limit bookings to X days in advance according to the
-    // chosen configuration in your BAT installation.
-    // Defaults to the current day.
-    'minDate' => '+' . $config->get('bat_event_start_date') . 'd',
-  );
-
   $date = new DateTime();
 
   if ($year && $month) {
@@ -468,9 +451,11 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
     $min_date = $date->format($config->get('bat_daily_date_format'));
     $date->modify('last day of this month');
     $max_date = $date->format($config->get('bat_daily_date_format'));
-    $datepicker_options += array(
+    $extra_attributes = array(
       'min' => $min_date,
       'max' => $max_date,
+      'bat-min' => $min_date,
+      'bat-max' => $max_date,
     );
   }
   else {
@@ -478,26 +463,27 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
 
     $extra_attributes = array(
       'min' => $date->format($config->get('bat_daily_date_format')),
+      'bat-min' => $date->format($config->get('bat_daily_date_format')),
     );
   }
 
   $date_range_fields['bat_start_date'] = array(
-    '#prefix' => '<div class="form-wrapper bat-date-range"><div class="start-date" id="' . $start_date_id . '">',
+    '#prefix' => '<div class="form-wrapper bat-date-range"><div class="start-date">',
     '#suffix' => '</div>',
     '#type' => 'date',
     '#title' => t('Event Start'),
     '#date_date_format' => $config->get('bat_daily_date_format'),
-    '#attributes' => $extra_attributes,
+    '#attributes' => $extra_attributes + array('type' => 'date', 'class' => array('bat_start_date')),
     '#required' => TRUE,
   );
 
   $date_range_fields['bat_end_date'] = array(
-    '#prefix' => '<div class="end-date" id="' . $end_date_id . '">',
+    '#prefix' => '<div class="end-date">',
     '#suffix' => '</div></div>',
     '#type' => 'date',
     '#title' => t('Event End'),
-    '#date_format' => $config->get('bat_daily_date_format'),
-    '#attributes' => $extra_attributes,
+    '#date_date_format' => $config->get('bat_daily_date_format'),
+    '#attributes' => $extra_attributes + array('type' => 'date', 'class' => array('bat_end_date')),
     '#required' => TRUE,
     '#attached' => array('library' => array('bat/bat_date_range')),
   );
@@ -506,123 +492,21 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
 }
 
 /**
- * Given a form state array, locate the start/end dates in the input array
- * and instantiate and return DateTime objects.
- */
-function bat_form_input_get_start_end_dates(FormStateInterface $form_state) {
-  // If form_state['values']['bat_X_date'] is not set, it is an empty array.
-  // In this case, we need to check and set values so that
-  // _constructor below will not fail.
-  if (is_array($form_state['values']['bat_start_date'])) {
-    if ($form_state['values']['bat_start_date']['date'] == '') {
-      $start = new DateTime();
-    }
-    else {
-      $start = new DateTime($form_state['values']['bat_start_date']['date'] . ' ' . $form_state['values']['bat_start_date']['time']);
-    }
-  }
-  else {
-    $start = new DateTime($form_state['values']['bat_start_date']);
-  }
-
-  if (is_array($form_state['values']['bat_end_date'])) {
-    if ($form_state['values']['bat_end_date']['date'] == '') {
-      $end = new DateTime();
-    }
-    else {
-      $end = new DateTime($form_state['values']['bat_end_date']['date'] . ' ' . $form_state['values']['bat_end_date']['time']);
-    }
-  }
-  else {
-    $end = new DateTime($form_state['values']['bat_end_date']);
-  }
-
-  return array($start, $end);
-}
-
-/**
- * Given a form state array, locate the start/end dates in the
- * values array and instantiate and return DateTime objects.
- */
-function bat_form_values_get_start_end_dates($form_state) {
-  // Date values have a format of year-month-day.
-  // This is one of the default expected formats, so there
-  // is no need to explicitly define the format.
-  // (see http://www.php.net/manual/en/datetime.formats.date.php)
-  $start_date = $form_state['values']['bat_start_date'];
-  $end_date = $form_state['values']['bat_end_date'];
-
-  // If the input format is numeric we assume that is a Unix timestamp.
-  if (is_numeric($start_date) && is_numeric($end_date)) {
-    // The @ lets the DateTime class know that the date is
-    // formatted as a Unix timestamp.
-    $start_date = '@' . $start_date;
-    $end_date = '@' . $end_date;
-  }
-
-  $start = new DateTime($start_date);
-  $end = new DateTime($end_date);
-
-  return array($start, $end);
-}
-
-/**
- * Validation callback that can be reused in all forms that need to
- * validate dates.
+ * Prepares variables for Property templates.
  *
- * The end date must be greater than start date.
- */
-function bat_form_start_end_dates_validate($form, FormStateInterface $form_state) {
-  list($start_date, $end_date) = bat_form_input_get_start_end_dates($form_state);
-
-  // Fail validation if no dates are provided.
-  if (empty($start_date) || empty($end_date)) {
-    form_set_error('date_range', t('Please choose dates.'));
-    return;
-  }
-
-  // Check date validity.
-  $errors = bat_check_dates_validity($start_date, $end_date);
-
-  // For some forms we need to ensure that the selected date matches with current values.
-  if (isset($form_state['values']['curr_month']) && isset($form_state['values']['curr_year'])) {
-    $curr_month = $form_state['values']['curr_month'];
-    $curr_year = $form_state['values']['curr_year'];
-    if ($start_date->format('n') != $curr_month ||
-        $end_date->format('n') != $curr_month   ||
-        $start_date->format('Y') != $curr_year  ||
-        $end_date->format('Y') != $curr_year) {
-      $errors[] = t('Both the start and end date must be within the current month.');
-    }
-  }
-
-  // When there are multiple errors for the same form element, Drupal only
-  // displays the first. Here we concatenate all errors so that they will all
-  // be displayed.
-  if ($errors) {
-    $error_msg = implode(' ', $errors);
-    form_set_error('date_range', $error_msg);
-  }
-}
-
-/**
- * Checks the logical validity of date values.
+ * Default template: bat-type-group.html.twig.
  *
- * @param DateTime $start_date
- *   The start date
- * @param DateTime $end_date
- *   The end date
- *
- * @return array
- *   An array with error messages.
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the user information and any
+ *   - attributes: HTML attributes for the containing element.
  */
-function bat_check_dates_validity(DateTime $start_date, DateTime $end_date) {
-  $errors = array();
+function template_preprocess_bat_type_group(array &$variables) {
+  // Fetch Type Group Entity Object.
+  $type_group = $variables['elements']['#bat_type_group'];
 
-  // The end date must be greater or equal than start date.
-  if ($end_date < $start_date) {
-    $errors[] = t('End date must be on or after the start date.');
+  // Helpful $content variable for templates.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
   }
-
-  return $errors;
 }

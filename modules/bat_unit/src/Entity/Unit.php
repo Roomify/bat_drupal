@@ -18,6 +18,7 @@ use Drupal\bat_unit\UnitInterface;
 use Drupal\bat\PropertyInterface;
 use Drupal\bat_unit\UnitTypeInterface;
 use Drupal\user\UserInterface;
+use Drupal\commerce_price\Price;
 
 /**
  * Defines the Unit entity.
@@ -321,6 +322,8 @@ class Unit extends ContentEntityBase implements UnitInterface {
     $field_info = FieldStorageConfig::loadByName('bat_unit_type', $field);
     $field_info_instance = FieldConfig::loadByName('bat_unit_type', $bat_type->id(), $field);
 
+    $temp_bat_type = clone($bat_type);
+
     if ($field_info->getType() == 'commerce_price') {
       if (empty($field_info_instance['widget']['settings']['currency_code']) ||
           $field_info_instance['widget']['settings']['currency_code'] == 'default') {
@@ -330,17 +333,19 @@ class Unit extends ContentEntityBase implements UnitInterface {
         $currency_code = $field_info_instance['widget']['settings']['currency_code'];
       }
 
-      $price = array(
+      $currency_code = 'USD';
+      $price = [
         'amount' => $value,
         'currency_code' => $currency_code,
-      );
-      $field_view_value = \Drupal::service('renderer')->renderPlain($bat_type->{$field}->view(array('label' => 'hidden')));
-    }
-    elseif ($field_info->getType() == 'number_integer') {
-      $field_view_value = \Drupal::service('renderer')->renderPlain($bat_type->{$field}->view(array('label' => 'hidden')));
+      ];
+
+      $temp_bat_type->set($field, $price);
+      $field_view_value = \Drupal::service('renderer')->renderPlain($temp_bat_type->{$field}->view(array('label' => 'hidden')));
     }
     else {
-      $field_view_value = \Drupal::service('renderer')->renderPlain($bat_type->{$field}->view(array('label' => 'hidden')));
+      $temp_bat_type->set($field, $value);
+
+      $field_view_value = \Drupal::service('renderer')->renderPlain($temp_bat_type->{$field}->view(array('label' => 'hidden')));
     }
 
     return trim(strip_tags($field_view_value->__toString()));

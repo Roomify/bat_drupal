@@ -114,6 +114,12 @@ class EventTypeForm extends BundleEntityFormBase {
       }
     }
 
+    $form['advanced'] = array(
+      '#type' => 'vertical_tabs',
+      '#attributes' => array('class' => array('entity-meta')),
+      '#weight' => 99,
+    );
+
     if (!$event_type->isNew() && $event_type->getFixedEventStates() == 0) {
       $fields_options = array();
       $fields = $this->entityManager->getFieldDefinitions('bat_event', $event_type->id());
@@ -124,8 +130,8 @@ class EventTypeForm extends BundleEntityFormBase {
       }
 
       $form['events'] = array(
-        '#type' => 'fieldset',
-        '#group' => 'additional_settings',
+        '#type' => 'details',
+        '#group' => 'advanced',
         '#title' => t('Events'),
         '#tree' => TRUE,
         '#weight' => 80,
@@ -150,8 +156,8 @@ class EventTypeForm extends BundleEntityFormBase {
       }
 
       $form['event_label'] = array(
-        '#type' => 'fieldset',
-        '#group' => 'additional_settings',
+        '#type' => 'details',
+        '#group' => 'advanced',
         '#title' => t('Label Source'),
         '#tree' => TRUE,
         '#weight' => 70,

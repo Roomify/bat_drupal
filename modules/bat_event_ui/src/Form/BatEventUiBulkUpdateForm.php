@@ -99,7 +99,7 @@ class BatEventUiBulkUpdateForm extends FormBase {
     $units = bat_unit_load_multiple(NULL, array('unit_type_id' => $type->id()));
 
     foreach ($units as $unit) {
-      $event = bat_event_create2(array(
+      $event = bat_event_create(array(
         'type' => $event_type->id(),
         'start' => $start_date->getTimestamp(),
         'end' => $end_date->getTimestamp(),

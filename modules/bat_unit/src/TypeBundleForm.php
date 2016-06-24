@@ -69,6 +69,12 @@ class TypeBundleForm extends BundleEntityFormBase {
       '#description' => t('A unique machine-readable name for this type. It must only contain lowercase letters, numbers, and underscores.'),
     );
 
+    $form['advanced'] = array(
+      '#type' => 'vertical_tabs',
+      '#attributes' => array('class' => array('entity-meta')),
+      '#weight' => 99,
+    );
+
     return $this->protectBundleIdElement($form);
   }
 

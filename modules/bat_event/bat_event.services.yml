@@ -1,0 +1,6 @@
+services:
+  access_check.bat_event.add:
+    class: Drupal\bat_event\Access\EventAddAccessCheck
+    arguments: ['@entity.manager']
+    tags:
+      - { name: access_check, applies_to: _event_add_access }

@@ -66,7 +66,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
     $content = array();
 
     // Only use node types the user has access to.
-    foreach ($this->entityManager()->getStorage('event_type')->loadMultiple() as $type) {
+    foreach ($this->entityManager()->getStorage('bat_event_type')->loadMultiple() as $type) {
       $access = $this->entityManager()->getAccessControlHandler('bat_event')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
         $content[$type->id()] = $type;
@@ -85,10 +85,10 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
   }
 
   /**
-   * Provides the node submission form.
+   * Provides the event submission form.
    *
    * @param \Drupal\bat_event\EventTypeInterface $event_type
-   *   The node type entity for the node.
+   *   The event type entity for the event.
    *
    * @return array
    *   A node submission form.
@@ -104,10 +104,10 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
   }
 
   /**
-   * The _title_callback for the node.add route.
+   * The _title_callback for the event.add route.
    *
    * @param \Drupal\bat_event\EventTypeInterface $event_type
-   *   The current node.
+   *   The current event type.
    *
    * @return string
    *   The page title.

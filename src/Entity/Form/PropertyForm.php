@@ -39,16 +39,6 @@ class PropertyForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function submit(array $form, FormStateInterface $form_state) {
-    // Build the entity object from the submitted values.
-    $entity = parent::submit($form, $form_state);
-
-    return $entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
     $status = $entity->save();
@@ -65,7 +55,7 @@ class PropertyForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
     }
-    $form_state->setRedirect('entity.bat_type_group.edit_form', ['property' => $entity->id()]);
+    $form_state->setRedirect('entity.bat_type_group.edit_form', ['bat_type_group' => $entity->id()]);
   }
 
 }

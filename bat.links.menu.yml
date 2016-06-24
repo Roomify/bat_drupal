@@ -10,6 +10,7 @@ bat.admin.config:
   route_name: bat.admin.config
   description: 'Configure settings and business rules for BAT management'
   parent: bat.admin
+  weight: 100
 
 # Property menu items definition
 entity.bat_type_group.collection:
@@ -17,15 +18,18 @@ entity.bat_type_group.collection:
   route_name: entity.bat_type_group.collection
   description: 'List Type Groups'
   parent: bat.admin.config
+  weight: 2
 
 entity.bat_type_group_bundle.collection:
   title: 'Type Group Bundles list'
   route_name: entity.bat_type_group_bundle.collection
   description: 'List Type Group Bundles'
   parent: bat.admin.config
+  weight: 1
 
 bat.admin.date_format:
   title: 'Date format'
   route_name: bat.admin.date_format
   description: 'Configure date format'
   parent: bat.admin.config
+  weight: 9
