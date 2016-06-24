@@ -1280,8 +1280,6 @@ class BatEventController extends EntityAPIController {
    * {@inheritdoc}
    */
   public function save($entity) {
-    $entity->original = entity_load_unchanged($this->entityType, $entity->{$this->idKey});
-
     $event_type = bat_event_type_load($entity->type);
 
     // Construct target entity reference field name using this event type's target entity type.
@@ -1289,27 +1287,30 @@ class BatEventController extends EntityAPIController {
 
     // We are going to be updating the event - so the first step is to remove
     // the old event.
-    if ((!isset($entity->is_new)) &&
-        ($entity->original->start_date != '') &&
+    if (!isset($entity->is_new)) {
+      $entity->original = entity_load_unchanged($this->entityType, $entity->{$this->idKey});
+
+      if (($entity->original->start_date != '') &&
         ($entity->original->end_date != '') &&
         (field_get_items('bat_event', $entity->original, $target_field_name) !== FALSE)) {
 
-      // Get the referenced entity ID.
-      $event_target_entity_reference = field_get_items('bat_event', $entity->original, $target_field_name);
-      $target_entity_id = $event_target_entity_reference[0]['target_id'];
-      // Load the referenced entity.
-      if ($target_entity = entity_load_single($event_type->target_entity_type, $target_entity_id)) {
-        $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->type));
+        // Get the referenced entity ID.
+        $event_target_entity_reference = field_get_items('bat_event', $entity->original, $target_field_name);
+        $target_entity_id = $event_target_entity_reference[0]['target_id'];
+        // Load the referenced entity.
+        if ($target_entity = entity_load_single($event_type->target_entity_type, $target_entity_id)) {
+          $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->type));
 
-        $this->batStoreSave($unit,
-          new \DateTime($entity->original->start_date),
-          new \DateTime($entity->original->end_date),
-          $event_type->type,
-          $event_type->event_granularity,
-          $unit->getDefaultValue(),
-          $entity->event_id,
-          TRUE
-        );
+          $this->batStoreSave($unit,
+            new \DateTime($entity->original->start_date),
+            new \DateTime($entity->original->end_date),
+            $event_type->type,
+            $event_type->event_granularity,
+            $unit->getDefaultValue(),
+            $entity->event_id,
+            TRUE
+          );
+        }
       }
     }
 
