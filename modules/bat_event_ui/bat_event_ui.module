@@ -107,6 +107,19 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
     $render_array['bulk_update_form'] = drupal_get_form('bat_event_ui_bulk_update_form', $unit_type, $event_type);
   }
 
+  $jquery_version = variable_get('jquery_update_jquery_version', '1.10');
+
+  $admin_theme = variable_get('admin_theme', FALSE);
+  if (theme_get_setting('jquery_update_jquery_version', $admin_theme) != '') {
+    $jquery_version = theme_get_setting('jquery_update_jquery_version', $admin_theme);
+  }
+
+  $jquery_versions = array_keys(jquery_update_get_versions());
+
+  if ($jquery_version == 'default' || array_search($jquery_version, $jquery_versions) < array_search('1.8', $jquery_versions)) {
+    drupal_set_message(t('Please set the required jQuery library >= 1.8 (<a href="@link">configure</a>)', array('@link' => url('admin/config/development/jquery_update'))), 'error');
+  }
+
   return $render_array;
 }
 
