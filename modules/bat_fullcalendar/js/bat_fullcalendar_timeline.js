@@ -4,6 +4,8 @@
 Drupal.batCalendar = Drupal.batCalendar || {};
 Drupal.batCalendar.Modal = Drupal.batCalendar.Modal || {};
 
+var ajax = undefined;
+
 Drupal.behaviors.bat_event = {
   attach: function(context) {
 
@@ -39,7 +41,7 @@ Drupal.behaviors.bat_event = {
         minTime: drupalSettings.batCalendar[0].minTime,
         maxTime: drupalSettings.batCalendar[0].maxTime,
         hiddenDays: drupalSettings.batCalendar[0].hiddenDays,
-        //defaultDate: $.fullCalendar.moment(drupalSettings.batCalendar[0].defaultDate),
+        defaultDate: $.fullCalendar.moment(drupalSettings.batCalendar[0].defaultDate),
         views: {
           timelineDay: {
             buttonText: drupalSettings.batCalendar[0].viewsTimelineDayButtonText,
@@ -190,10 +192,21 @@ Drupal.batCalendar.Modal = function(element, eid, sd, ed, $unit_id) {
 
   var response = {
     selector: '#drupal-modal',
-    dialogOptions: { buttons: false, modal: true },
+    dialogOptions: drupalSettings.batCalendar[0].dialogOptions,
   };
-  var ajax = new Drupal.Ajax(element_settings.url, calendars_table, element_settings);
+
+  if (ajax == undefined) {
+    ajax = new Drupal.Ajax(element_settings.url, calendars_table, element_settings);
+  }
+  else {
+    ajax.url = url;
+    ajax.options.url = url;
+    ajax.element_settings.url = url;
+  }
+
   Drupal.AjaxCommands.prototype.openDialog(ajax, response, 0);
+
+  $('#drupal-modal').html(drupalSettings.batCalendar[0].dialogOptions.loading);
 
   // We need to trigger the AJAX getResponse manually because the
   // fullcalendar select event is not recognized by Drupal's AJAX.

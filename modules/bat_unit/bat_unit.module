@@ -34,7 +34,7 @@ function bat_unit_query_bat_unit_access_alter(AlterableInterface $query) {
   // assume we don't have the tables we need to establish order related altering
   // right now.
   foreach ($query->getTables() as $table) {
-    if ($table['table'] === 'bat_units') {
+    if ($table['table'] === 'unit') {
       bat_entity_access_query_alter($query, 'bat_unit', $table['alias']);
       break;
     }
@@ -44,8 +44,8 @@ function bat_unit_query_bat_unit_access_alter(AlterableInterface $query) {
   // assume we don't have the tables we need to establish order related altering
   // right now.
   foreach ($query->getTables() as $table) {
-    if ($table['table'] === 'bat_types') {
-      bat_entity_access_query_alter($query, 'bat_type', $table['alias']);
+    if ($table['table'] === 'unit_type') {
+      bat_entity_access_query_alter($query, 'bat_unit_type', $table['alias']);
       break;
     }
   }
@@ -176,16 +176,16 @@ function bat_unit_access(EntityInterface $entity, $operation, AccountInterface $
 /**
  * Filters units based on permissions for multiple values.
  */
-function bat_unit_access_filter($op, $units = array(), $account = NULL) {
+function bat_unit_access_filter($operation, $units = array(), $account = NULL) {
   $filtered_units = array();
 
   // If no user object is supplied, the access check is for the current user.
   if (empty($account)) {
-    $account = $GLOBALS['user'];
+    $account = \Drupal::currentUser();
   }
 
   foreach ($units as $key => $unit) {
-    if (bat_unit_access($op, $unit, $account)) {
+    if (bat_unit_access($unit, $operation, $account)) {
       $filtered_units[$key] = $unit;
     }
   }
@@ -538,16 +538,16 @@ function bat_type_access(EntityInterface $entity, $operation, AccountInterface $
 /**
  * Filters types based on permissions for multiple values.
  */
-function bat_type_access_filter($op, $types = array(), $account = NULL) {
+function bat_type_access_filter($operation, $types = array(), $account = NULL) {
   $filtered_types = array();
 
   // If no user object is supplied, the access check is for the current user.
   if (empty($account)) {
-    $account = $GLOBALS['user'];
+    $account = \Drupal::currentUser();
   }
 
   foreach ($types as $key => $type) {
-    if (bat_type_access($op, $type, $account)) {
+    if (bat_type_access($type, $op, $account)) {
       $filtered_types[$key] = $type;
     }
   }

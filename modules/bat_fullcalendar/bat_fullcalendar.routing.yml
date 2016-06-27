@@ -4,7 +4,7 @@ bat_fullcalendar.event_management:
     _controller: '\Drupal\bat_fullcalendar\Controller\BatFullcalendarController::fullcalendarEventManagement'
     _title: 'Event Management'
   requirements:
-    _permission: 'administer calendar events'
+    _event_management_access: '{entity_id},{event_type},{event_id},{start_date},{end_date}'
   options:
     _admin_route: TRUE
     parameters:

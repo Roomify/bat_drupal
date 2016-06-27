@@ -59,6 +59,10 @@ class EventForm extends ContentEntityForm {
 
     if ($event_type->getFixedEventStates()) {
       if ($values[$target_field_name][0]['target_id'] != '') {
+        $database = Database::getConnectionInfo('default');
+
+        $prefix = (isset($database['default']['prefix']['default'])) ? $database['default']['prefix']['default'] : '';
+
         $event_store = new DrupalDBStore($this->entity->bundle(), DrupalDBStore::BAT_EVENT, $prefix);
 
         $end_date->sub(new \DateInterval('PT1M'));

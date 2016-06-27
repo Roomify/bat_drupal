@@ -1,0 +1,6 @@
+services:
+  access_check.bat_fullcalendar.event_management_access:
+    class: Drupal\bat_fullcalendar\Access\EventManagementAccessCheck
+    arguments: ['@entity.manager']
+    tags:
+      - { name: access_check, applies_to: _event_management_access }

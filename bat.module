@@ -309,12 +309,10 @@ function bat_entity_access_permissions($entity_type) {
  * Enforces access control for bat units during database queries.
  */
 function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL, $account = NULL, $op = 'view') {
-  global $user;
-
   // Get the Drupal user account from the query if available, or
   // default to the logged in user if not.
   if (!isset($account) && !$account = $query->getMetaData('account')) {
-    $account = $user;
+    $account = \Drupal::currentUser();
   }
 
   // Do not apply any conditions for users with administrative view permissions.
@@ -367,7 +365,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   $really_restricted = FALSE;
 
   // Loop over every possible bundle for the given entity type.
-  foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
+  foreach (entity_get_bundles($entity_type) as $bundle_name => $bundle_info) {
     // If the user has access to operation entities of the current bundle...
     if ($account->hasPermission($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name)) {
       // Add a condition granting access if the entity specified by the view
@@ -386,13 +384,10 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
     }
   }
 
-  // If the given entity type has a user ownership key...
-  if (!empty($entity_info['access arguments']['user key'])) {
-    // Perform 'operation own' access control for the entity in the query if the
-    // user is authenticated.
-    if ($account->uid && $account->hasPermission($op . ' own ' . $entity_type . ' entities')) {
-      $conditions->condition($base_table . '.' . $entity_info['access arguments']['user key'], $account->uid);
-    }
+  // Perform 'operation own' access control for the entity in the query if the
+  // user is authenticated.
+  if ($account->uid && $account->hasPermission($op . ' own ' . $entity_type . ' entities')) {
+    //$conditions->condition($base_table . '.' . $entity_info['access arguments']['user key'], $account->uid);
   }
 
   // Prepare an array of condition alter hooks to invoke and an array of context

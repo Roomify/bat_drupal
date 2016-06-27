@@ -194,7 +194,7 @@ function bat_event_query_bat_event_access_alter(AlterableInterface $query) {
   // else assume we don't have the tables we need to establish order related
   // altering right now.
   foreach ($query->getTables() as $table) {
-    if ($table['table'] === 'bat_events') {
+    if ($table['table'] === 'event') {
       bat_entity_access_query_alter($query, 'bat_event', $table['alias']);
       break;
     }
@@ -545,8 +545,8 @@ function bat_event_create_event_type_schema($machine_name) {
     ),
     'foreign keys' => array(
       'unit_id' => array(
-        'table' => 'bat_units',
-        'columns' => array('unit_id' => 'unit_id'),
+        'table' => 'unit',
+        'columns' => array('unit_id' => 'id'),
       ),
     ),
   );
@@ -564,8 +564,8 @@ function bat_event_create_event_type_schema($machine_name) {
     ),
     'foreign keys' => array(
       'unit_id' => array(
-        'table' => 'bat_units',
-        'columns' => array('unit_id' => 'unit_id'),
+        'table' => 'unit',
+        'columns' => array('unit_id' => 'id'),
       ),
     ),
   );
@@ -583,8 +583,8 @@ function bat_event_create_event_type_schema($machine_name) {
     ),
     'foreign keys' => array(
       'unit_id' => array(
-        'table' => 'bat_units',
-        'columns' => array('unit_id' => 'unit_id'),
+        'table' => 'unit',
+        'columns' => array('unit_id' => 'id'),
       ),
     ),
   );
@@ -602,8 +602,8 @@ function bat_event_create_event_type_schema($machine_name) {
     ),
     'foreign keys' => array(
       'unit_id' => array(
-        'table' => 'bat_units',
-        'columns' => array('unit_id' => 'unit_id'),
+        'table' => 'unit',
+        'columns' => array('unit_id' => 'id'),
       ),
     ),
   );
@@ -621,8 +621,8 @@ function bat_event_create_event_type_schema($machine_name) {
     ),
     'foreign keys' => array(
       'unit_id' => array(
-        'table' => 'bat_units',
-        'columns' => array('unit_id' => 'unit_id'),
+        'table' => 'unit',
+        'columns' => array('unit_id' => 'id'),
       ),
     ),
   );
@@ -640,8 +640,8 @@ function bat_event_create_event_type_schema($machine_name) {
     ),
     'foreign keys' => array(
       'unit_id' => array(
-        'table' => 'bat_units',
-        'columns' => array('unit_id' => 'unit_id'),
+        'table' => 'unit',
+        'columns' => array('unit_id' => 'id'),
       ),
     ),
   );
@@ -896,9 +896,9 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
  * @return Calendar
  */
 function bat_event_get_calendar($type_id, $event_type) {
-  global $databases;
+  $database = Database::getConnectionInfo('default');
 
-  $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
+  $prefix = (isset($database['default']['prefix']['default'])) ? $database['default']['prefix']['default'] : '';
 
   $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
 

@@ -1,6 +1,10 @@
-administer property entities:
-  title: 'Administer Property entities'
-  description: 'Allow to access the administration form to configure Property entities.'
+administer bat_type_group entities:
+  title: 'Administer Type Group entities'
+  description: 'Allow to access the administration form to configure Type Group entities.'
+
+configure bat settings:
+  title: 'Configure BAT'
+  description: 'Allows users to manage site-wide BAT configuration settings.'
 
 permission_callbacks:
   - Drupal\bat\TypeGroupPermissions::permissions

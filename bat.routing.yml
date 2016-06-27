@@ -114,4 +114,4 @@ bat.admin.date_format:
     _form: '\Drupal\bat\Form\DateFormatForm'
     _title: 'Date format'
   requirements:
-    _permission: 'access administration pages'
+    _permission: 'configure bat settings'

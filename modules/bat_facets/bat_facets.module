@@ -15,9 +15,9 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements hook_search_api_query_alter().
  */
 function bat_facets_search_api_query_alter(\Drupal\search_api\Query\QueryInterface &$query) {
-  //global $databases;
+  $database = Database::getConnectionInfo('default');
 
-  //$prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
+  $prefix = (isset($database['default']['prefix']['default'])) ? $database['default']['prefix']['default'] : '';
 
   foreach ($query->getIndex()->getDatasources() as $datasource_id => $datasource) {
     if ($datasource->getEntityTypeId() == 'bat_unit_type') {

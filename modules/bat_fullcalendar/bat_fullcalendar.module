@@ -9,24 +9,6 @@
 
 use Drupal\Core\Template\Attribute;
 
-/**
- * The EventManager page access callback.
- *
- * @param $entity_id
- * @param $event_type
- * @param $event_id
- * @param $start_date
- * @param $end_date
- */
-function bat_fullcalendar_event_management_access($entity_id, $event_type, $event_id, $start_date, $end_date) {
-  if ($event_id == 0) {
-    return bat_event_access('create', bat_event_create(array('type' => $event_type->type)));
-  }
-  else {
-    $event = bat_event_load($event_id);
-    return bat_event_access('update', $event);
-  }
-}
 
 /**
  * Implements hook_bat_fullcalendar_modal_content();
@@ -178,6 +160,7 @@ function bat_fullcalendar_configure($user_settings) {
       'defaultDate' => $default_date,
       'repeatEventTitle' => TRUE,
       'customButtons' => array(),
+      'dialogOptions' => bat_fullcalendar_modal_style('default'),
     );
 
     $settings['batCalendar'][$id] = array_replace_recursive($config, $user_setting);
@@ -241,7 +224,6 @@ function bat_fullcalendar_set_css_files($user_css_files = array()) {
  */
 function template_preprocess_bat_fullcalendar(&$variables) {
   $calendar_id = $variables['calendar_settings']['calendar_id'];
-  $modal_style = $variables['calendar_settings']['modal_style'];
   $user_settings = $variables['calendar_settings']['user_settings'];
 
   // Check if user has defined js files and swap those in
@@ -281,8 +263,6 @@ function template_preprocess_bat_fullcalendar(&$variables) {
   // Override default settings with ones coming form user
   $settings = bat_fullcalendar_configure($variables['calendar_settings']['user_settings']);
 
-  bat_fullcalendar_modal_style($modal_style);
-
   $attributes = new Attribute($attributes);
 
   $variables['#attached'] = array(
@@ -315,24 +295,20 @@ function bat_fullcalendar_theme($existing, $type, $theme, $path) {
  * @param $style
  */
 function bat_fullcalendar_modal_style($style = 'default') {
+  global $base_path;
+
   // Styles to use for the modal.
   $modal_style = array(
-    'bat-modal-style' => array(
-      'modalSize' => array(
-        'type' => 'fixed',
-        'width' => 520,
-        'height' => 520,
-        'addWidth' => 0,
-        'addHeight' => 0,
-      ),
-      'modalOptions' => array(
-        'opacity' => .0,
-        'background-color' => '#000',
-      ),
-      'animation' => 'fadeIn',
-    ),
+    'buttons' => FALSE,
+    'modal' => TRUE,
+    'width' => 520,
+    'height' => 520,
+    'title' => t('Loading...'),
+    'loading' => '<img class="loading" src="' . $base_path . drupal_get_path('module', 'bat_fullcalendar') . '/images/throbber.gif">',
   );
 
   // Allow other modules to change the modal style
   \Drupal::moduleHandler()->alter('bat_fullcalendar_modal_style', $modal_style);
+
+  return $modal_style;
 }

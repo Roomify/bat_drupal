@@ -51,7 +51,7 @@ class State extends ContentEntityBase implements StateInterface {
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
     $values += array(
-      'user_id' => \Drupal::currentUser()->id(),
+      'uid' => \Drupal::currentUser()->id(),
     );
   }
 
@@ -116,7 +116,7 @@ class State extends ContentEntityBase implements StateInterface {
       ->setDescription(t('The UUID of the Event entity.'))
       ->setReadOnly(TRUE);
 
-    $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
+    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Event entity.'))
       ->setRevisionable(TRUE)
