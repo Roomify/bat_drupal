@@ -51,7 +51,7 @@ function bat_fullcalendar_requirements($phase) {
       if ($jquery_version == 'default' || array_search($jquery_version, $jquery_versions) < array_search('1.8', $jquery_versions)) {
         $requirements['bat_jquery'] = array(
           'title' => $t('BAT jQuery Requirements'),
-          'description' => $t('Please set the required jQuery library >= 1.8 (<a href="@link">configure</a>)', array('@link' => url('admin/config/development/jquery_update'))),
+          'description' => $t('Please ensure that you are using version 1.8 or greater of the jQuery library (<a href="@link">configure</a>)', array('@link' => url('admin/config/development/jquery_update'))),
           'value' => ($jquery_version == 'default') ? '1.4' : $jquery_version,
           'severity' => REQUIREMENT_ERROR,
         );

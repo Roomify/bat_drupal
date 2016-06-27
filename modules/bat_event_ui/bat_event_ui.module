@@ -117,7 +117,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   $jquery_versions = array_keys(jquery_update_get_versions());
 
   if ($jquery_version == 'default' || array_search($jquery_version, $jquery_versions) < array_search('1.8', $jquery_versions)) {
-    drupal_set_message(t('Please set the required jQuery library >= 1.8 (<a href="@link">configure</a>)', array('@link' => url('admin/config/development/jquery_update'))), 'error');
+    drupal_set_message(t('Please ensure that you are using version 1.8 or greater of the jQuery library (<a href="@link">configure</a>)', array('@link' => url('admin/config/development/jquery_update'))), 'error');
   }
 
   return $render_array;
