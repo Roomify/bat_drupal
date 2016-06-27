@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
  *
  * @see \Drupal\bat\Entity\TypeGroupBundle
  */
-class PropertyTypeListBuilder extends ConfigEntityListBuilder {
+class TypeGroupBundleListBuilder extends ConfigEntityListBuilder {
 
 	/**
    * {@inheritdoc}

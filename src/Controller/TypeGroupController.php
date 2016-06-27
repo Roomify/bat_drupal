@@ -10,7 +10,7 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\bat\PropertyTypeInterface;
+use Drupal\bat\TypeGroupBundleInterface;
 
 /**
  * Returns responses for Type Group routes.
@@ -57,7 +57,7 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
    */
   public function addPage() {
     $build = [
-      '#theme' => 'bat_property_add_list',
+      '#theme' => 'bat_type_group_add_list',
       '#cache' => [
         'tags' => $this->entityManager()->getDefinition('bat_type_group_bundle')->getListCacheTags(),
       ],
@@ -87,13 +87,13 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
   /**
    * Provides the node submission form.
    *
-   * @param \Drupal\bat\PropertyTypeInterface $property_type
+   * @param \Drupal\bat\TypeGroupBundleInterface $property_type
    *   The node type entity for the node.
    *
    * @return array
    *   A node submission form.
    */
-  public function add(PropertyTypeInterface $property_type) {
+  public function add(TypeGroupBundleInterface $property_type) {
     $type = $this->entityManager()->getStorage('bat_type_group')->create(array(
       'type' => $property_type->id(),
     ));
@@ -106,13 +106,13 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
   /**
    * The _title_callback for the node.add route.
    *
-   * @param \Drupal\bat\PropertyTypeInterface $property_type
+   * @param \Drupal\bat\TypeGroupBundleInterface $property_type
    *   The current node.
    *
    * @return string
    *   The page title.
    */
-  public function addPageTitle(PropertyTypeInterface $property_type) {
+  public function addPageTitle(TypeGroupBundleInterface $property_type) {
     return $this->t('Create @name', array('@name' => $property_type->label()));
   }
 

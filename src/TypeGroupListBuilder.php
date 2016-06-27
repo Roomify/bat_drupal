@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat\PropertyListBuilder.
+ * Contains \Drupal\bat\TypeGroupListBuilder.
  */
 
 namespace Drupal\bat;
@@ -17,7 +17,7 @@ use Drupal\Core\Url;
  *
  * @ingroup bat
  */
-class PropertyListBuilder extends EntityListBuilder {
+class TypeGroupListBuilder extends EntityListBuilder {
   use LinkGeneratorTrait;
   /**
    * {@inheritdoc}

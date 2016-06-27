@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat\EntityPropertyInterface.
+ * Contains \Drupal\bat\EntityTypeGroupInterface.
  */
 
 namespace Drupal\bat;
@@ -12,12 +12,12 @@ namespace Drupal\bat;
  *
  * A Property is an entity that groups other entities.
  */
-interface EntityPropertyInterface {
+interface EntityTypeGroupInterface {
 
   /**
    * Returns the entity's Property entity.
    *
-   * @return \Drupal\bat\PropertyInterface
+   * @return \Drupal\bat\TypeGroupInterface
    *   The Property entity.
    */
   public function getProperty();
@@ -25,12 +25,12 @@ interface EntityPropertyInterface {
   /**
    * Sets the entity's Property entity.
    *
-   * @param \Drupal\bat\PropertyInterface $property
+   * @param \Drupal\bat\TypeGroupInterface $property
    *   The Property entity.
    *
    * @return $this
    */
-  public function setProperty(PropertyInterface $property);
+  public function setProperty(TypeGroupInterface $property);
 
   /**
    * Returns the entity's Property ID.

@@ -37,7 +37,7 @@ function bat_help($route_name, RouteMatchInterface $route_match) {
  */
 function bat_theme() {
   return array(
-    'bat_property_add_list' => array(
+    'bat_type_group_add_list' => array(
       'variables' => array('content' => NULL),
     ),
   );
@@ -64,13 +64,13 @@ function bat_toolbar() {
 /**
  * Prepares variables for list of available node type templates.
  *
- * Default template: bat-property-add-list.html.twig.
+ * Default template: bat-type-group-add-list.html.twig.
  *
  * @param array $variables
  *   An associative array containing:
  *   - content: An array of content types.
  */
-function template_preprocess_bat_property_add_list(&$variables) {
+function template_preprocess_bat_type_group_add_list(&$variables) {
   $variables['types'] = array();
   if (!empty($variables['content'])) {
     foreach ($variables['content'] as $type) {
@@ -492,7 +492,7 @@ function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_
 }
 
 /**
- * Prepares variables for Property templates.
+ * Prepares variables for Type Group templates.
  *
  * Default template: bat-type-group.html.twig.
  *

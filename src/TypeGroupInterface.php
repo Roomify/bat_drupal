@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat\PropertyInterface.
+ * Contains \Drupal\bat\TypeGroupInterface.
  */
 
 namespace Drupal\bat;
@@ -17,7 +17,7 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup bat
  */
-interface PropertyInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
+interface TypeGroupInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
   // Add get/set methods for your configuration properties here.
 
 }

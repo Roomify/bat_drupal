@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat\Entity\Form\PropertyDeleteForm.
+ * Contains \Drupal\bat\Entity\Form\TypeGroupDeleteForm.
  */
 
 namespace Drupal\bat\Entity\Form;
@@ -12,11 +12,11 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Provides a form for deleting Property entities.
+ * Provides a form for deleting Type Group entities.
  *
  * @ingroup bat
  */
-class PropertyDeleteForm extends ContentEntityConfirmFormBase {
+class TypeGroupDeleteForm extends ContentEntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */

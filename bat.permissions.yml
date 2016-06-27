@@ -3,4 +3,4 @@ administer property entities:
   description: 'Allow to access the administration form to configure Property entities.'
 
 permission_callbacks:
-  - Drupal\bat\PropertyPermissions::permissions
+  - Drupal\bat\TypeGroupPermissions::permissions

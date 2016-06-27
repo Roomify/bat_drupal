@@ -4,7 +4,7 @@ namespace Drupal\bat\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\bat\PropertyTypeInterface;
+use Drupal\bat\TypeGroupBundleInterface;
 
 /**
  * Defines the Type Group Bundle configuration entity.
@@ -13,13 +13,13 @@ use Drupal\bat\PropertyTypeInterface;
  *   id = "bat_type_group_bundle",
  *   label = @Translation("Type Group Bundle"),
  *   handlers = {
- *     "access" = "Drupal\bat\PropertyTypeAccessControlHandler",
+ *     "access" = "Drupal\bat\TypeGroupBundleAccessControlHandler",
  *     "form" = {
- *       "add" = "Drupal\bat\PropertyTypeForm",
- *       "edit" = "Drupal\bat\PropertyTypeForm",
+ *       "add" = "Drupal\bat\TypeGroupBundleForm",
+ *       "edit" = "Drupal\bat\TypeGroupBundleForm",
  *       "delete" = "Drupal\bat\Form\TypeGroupBundleDeleteConfirm"
  *     },
- *     "list_builder" = "Drupal\bat\PropertyTypeListBuilder",
+ *     "list_builder" = "Drupal\bat\TypeGroupBundleListBuilder",
  *   },
  *   admin_permission = "administer property entities",
  *   config_prefix = "type_group_bundle",
@@ -39,7 +39,7 @@ use Drupal\bat\PropertyTypeInterface;
  *   }
  * )
  */
-class TypeGroupBundle extends ConfigEntityBundleBase implements PropertyTypeInterface {
+class TypeGroupBundle extends ConfigEntityBundleBase implements TypeGroupBundleInterface {
 
 	/**
    * The machine name of this event type.

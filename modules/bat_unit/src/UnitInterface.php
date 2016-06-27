@@ -11,7 +11,6 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\EntityOwnerInterface;
-use Drupal\bat\EntityPropertyInterface;
 use Drupal\bat_unit\EntityUnitTypeInterface;
 
 /**
@@ -19,8 +18,7 @@ use Drupal\bat_unit\EntityUnitTypeInterface;
  *
  * @ingroup bat
  */
-interface UnitInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface,
-                                EntityPropertyInterface, EntityUnitTypeInterface {
+interface UnitInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface, EntityUnitTypeInterface {
   // Add get/set methods for your configuration properties here.
 
 }

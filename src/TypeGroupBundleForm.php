@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Form handler for node type forms.
  */
-class PropertyTypeForm extends BundleEntityFormBase {
+class TypeGroupBundleForm extends BundleEntityFormBase {
 
 	/**
    * The entity manager.

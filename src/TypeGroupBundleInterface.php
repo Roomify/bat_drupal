@@ -7,5 +7,5 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 /**
  * Provides an interface defining a event type entity.
  */
-interface PropertyTypeInterface extends ConfigEntityInterface {
+interface TypeGroupBundleInterface extends ConfigEntityInterface {
 }

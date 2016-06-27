@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat\PropertyAccessControlHandler.
+ * Contains \Drupal\bat\TypeGroupAccessControlHandler.
  */
 
 namespace Drupal\bat;
@@ -15,9 +15,9 @@ use Drupal\Core\Access\AccessResult;
 /**
  * Access controller for the Property entity.
  *
- * @see \Drupal\bat\Entity\Property.
+ * @see \Drupal\bat\Entity\TypeGroup.
  */
-class PropertyAccessControlHandler extends EntityAccessControlHandler {
+class TypeGroupAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    */

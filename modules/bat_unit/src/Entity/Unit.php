@@ -15,7 +15,6 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\bat_unit\UnitInterface;
-use Drupal\bat\PropertyInterface;
 use Drupal\bat_unit\UnitTypeInterface;
 use Drupal\user\UserInterface;
 use Drupal\commerce_price\Price;
@@ -112,29 +111,6 @@ class Unit extends ContentEntityBase implements UnitInterface {
    */
   public function getProperty() {
     return $this->get('property_id')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPropertyId() {
-    return $this->get('property_id')->target_id;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPropertyId($pid) {
-    $this->set('property_id', $pid);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setProperty(PropertyInterface $property) {
-    $this->set('property_id', $property->id());
-    return $this;
   }
 
   /**

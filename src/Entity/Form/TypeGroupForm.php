@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat\Entity\Form\PropertyForm.
+ * Contains \Drupal\bat\Entity\Form\TypeGroupForm.
  */
 
 namespace Drupal\bat\Entity\Form;
@@ -12,17 +12,17 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
 
 /**
- * Form controller for Property edit forms.
+ * Form controller for Type Group edit forms.
  *
  * @ingroup bat
  */
-class PropertyForm extends ContentEntityForm {
+class TypeGroupForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var $entity \Drupal\bat\Entity\Property */
+    /* @var $entity \Drupal\bat\Entity\TypeGroup */
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
 

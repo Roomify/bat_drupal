@@ -12,7 +12,7 @@ use Drupal\Core\Session\AccountInterface;
  *
  * @see \Drupal\bat\Entity\TypeGroupBundle
  */
-class PropertyTypeAccessControlHandler extends EntityAccessControlHandler {
+class TypeGroupBundleAccessControlHandler extends EntityAccessControlHandler {
 
   /**
    * {@inheritdoc}

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat\Entity\Property.
+ * Contains \Drupal\bat\Entity\TypeGroup.
  */
 
 namespace Drupal\bat\Entity;
@@ -12,7 +12,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\bat\PropertyInterface;
+use Drupal\bat\TypeGroupInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -25,15 +25,15 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Type Group"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\bat\PropertyListBuilder",
+ *     "list_builder" = "Drupal\bat\TypeGroupListBuilder",
  *     "views_data" = "Drupal\bat\Entity\TypeGroupViewsData",
  *     "form" = {
- *       "default" = "Drupal\bat\Entity\Form\PropertyForm",
- *       "add" = "Drupal\bat\Entity\Form\PropertyForm",
- *       "edit" = "Drupal\bat\Entity\Form\PropertyForm",
- *       "delete" = "Drupal\bat\Entity\Form\PropertyDeleteForm",
+ *       "default" = "Drupal\bat\Entity\Form\TypeGroupForm",
+ *       "add" = "Drupal\bat\Entity\Form\TypeGroupForm",
+ *       "edit" = "Drupal\bat\Entity\Form\TypeGroupForm",
+ *       "delete" = "Drupal\bat\Entity\Form\TypeGroupDeleteForm",
  *     },
- *     "access" = "Drupal\bat\PropertyAccessControlHandler",
+ *     "access" = "Drupal\bat\TypeGroupAccessControlHandler",
  *   },
  *   base_table = "type_group",
  *   admin_permission = "administer Property entity",
@@ -53,7 +53,7 @@ use Drupal\user\UserInterface;
  *   },
  * )
  */
-class TypeGroup extends ContentEntityBase implements PropertyInterface {
+class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
   use EntityChangedTrait;
   /**
    * {@inheritdoc}

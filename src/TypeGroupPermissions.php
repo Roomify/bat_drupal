@@ -7,7 +7,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class PropertyPermissions implements ContainerInjectionInterface {
+class TypeGroupPermissions implements ContainerInjectionInterface {
 
   use StringTranslationTrait;
 
