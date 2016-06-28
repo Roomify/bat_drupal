@@ -1,10 +1,18 @@
-administer bat_type_group entities:
-  title: 'Administer Type Group entities'
-  description: 'Allow to access the administration form to configure Type Group entities.'
-
 configure bat settings:
   title: 'Configure BAT'
   description: 'Allows users to manage site-wide BAT configuration settings.'
+
+administer bat_type_group_bundle entities:
+  title: 'Administer type group bundles'
+  description: 'Allows users to add type group bundles and configure their fields.'
+
+view any bat_type_group unpublished entity:
+  title: 'View any unpublished type group'
+  description: 'Allows users to view any unpublished type group.'
+
+view own bat_type_group unpublished entities:
+  title: 'View own unpublished type groups'
+  description: 'Allows users to view own unpublished type groups.'
 
 permission_callbacks:
   - Drupal\bat\TypeGroupPermissions::permissions

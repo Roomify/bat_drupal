@@ -1,4 +1,4 @@
-administer unit_bundle entities:
+administer bat_unit_bundle entities:
   title: 'Administer unit bundles'
   description: 'Allows users to add unit bundles and configure their fields.'
 
@@ -10,15 +10,15 @@ view own bat_unit unpublished entities:
   title: 'View own unpublished units'
   description: 'Allows users to view own unpublished units.'
 
-administer type_bundle entities:
+administer bat_type_bundle entities:
   title: 'Administer type bundles'
   description: 'Allows users to add type bundles and configure their fields.'
 
-view any unit_type unpublished entity:
+view any bat_unit_type unpublished entity:
   title: 'View any unpublished type'
   description: 'Allows users to view any unpublished type.'
 
-view own unit_type unpublished entities:
+view own bat_unit_type unpublished entities:
   title: 'View own unpublished types'
   description: 'Allows users to view own unpublished types.'
 

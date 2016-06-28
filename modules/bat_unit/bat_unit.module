@@ -39,7 +39,12 @@ function bat_unit_query_bat_unit_access_alter(AlterableInterface $query) {
       break;
     }
   }
+}
 
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function bat_unit_query_bat_unit_type_alter(AlterableInterface $query) {
   // Look for an type base table to pass to the query altering function or else
   // assume we don't have the tables we need to establish order related altering
   // right now.
@@ -243,6 +248,10 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
  *   Depending whether $bundle isset, an array of unit bundles or a single one.
  */
 function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('bat_unit_bundle')->resetCache();
+  }
+
   $types = UnitBundle::loadMultiple();
   return isset($bundle_name) ? $types[$bundle_name] : $types;
 }
@@ -312,6 +321,7 @@ function bat_unit_load($unit_id, $reset = FALSE) {
   if ($reset) {
     \Drupal::entityManager()->getStorage('bat_unit')->resetCache(array($unit_id));
   }
+
   return Unit::load($unit_id);
 }
 
@@ -402,7 +412,7 @@ function bat_unit_save(Unit $unit) {
  *   The properties for the new unit bundle.
  */
 function bat_unit_bundle_create($values = array()) {
-
+  return UnitBundle::create($values);
 }
 
 /**
@@ -755,7 +765,7 @@ function bat_type_save(UnitType $type) {
  *   The properties for the new type bundle.
  */
 function bat_type_bundle_create($values = array()) {
-
+  return TypeBundle::create($values);
 }
 
 /**

@@ -180,6 +180,17 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
       ->setDescription(t('The type group bundle.'))
       ->setSetting('target_type', 'bat_type_group_bundle');
 
+    $fields['status'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Published'))
+      ->setDefaultValue(TRUE)
+      ->setDisplayOptions('form', array(
+        'type' => 'boolean_checkbox',
+        'weight' => 10,
+        'settings' => array(
+          'display_label' => TRUE,
+        ),
+      ));
+
     return $fields;
   }
 

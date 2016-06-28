@@ -76,7 +76,7 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
     // Bypass the node/add listing if only one content type is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.bat_type_group.add_form', array('property_type' => $type->id()));
+      return $this->redirect('entity.bat_type_group.add_form', array('type_group_bundle' => $type->id()));
     }
 
     $build['#content'] = $content;
@@ -87,15 +87,15 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
   /**
    * Provides the node submission form.
    *
-   * @param \Drupal\bat\TypeGroupBundleInterface $property_type
+   * @param \Drupal\bat\TypeGroupBundleInterface $type_group_bundle
    *   The node type entity for the node.
    *
    * @return array
    *   A node submission form.
    */
-  public function add(TypeGroupBundleInterface $property_type) {
+  public function add(TypeGroupBundleInterface $type_group_bundle) {
     $type = $this->entityManager()->getStorage('bat_type_group')->create(array(
-      'type' => $property_type->id(),
+      'type' => $type_group_bundle->id(),
     ));
 
     $form = $this->entityFormBuilder()->getForm($type);
@@ -106,14 +106,14 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
   /**
    * The _title_callback for the node.add route.
    *
-   * @param \Drupal\bat\TypeGroupBundleInterface $property_type
+   * @param \Drupal\bat\TypeGroupBundleInterface $type_group_bundle
    *   The current node.
    *
    * @return string
    *   The page title.
    */
-  public function addPageTitle(TypeGroupBundleInterface $property_type) {
-    return $this->t('Create @name', array('@name' => $property_type->label()));
+  public function addPageTitle(TypeGroupBundleInterface $type_group_bundle) {
+    return $this->t('Create @name', array('@name' => $type_group_bundle->label()));
   }
 
 }

@@ -14,6 +14,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\bat\Entity\TypeGroup;
 
 
 /**
@@ -90,7 +91,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
 
   $entity_type = $entity->getEntityType()->id();
 
-  if (in_array($entity_type, array('bat_unit', 'bat_unit_type', 'bat_event'))) {
+  if (in_array($entity_type, array('bat_type_group', 'bat_unit', 'bat_unit_type', 'bat_event'))) {
     $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
 
     // $entity may be either an object or a entity type. Since entity types cannot
@@ -121,37 +122,30 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
     }
 
     if ($operation == 'view') {
-      if (isset($entity)) {
-        // When trying to figure out access to an entity, query the base table
-        // using our access control tag.
-        if (!empty($entity_info['access arguments']['access tag']) && module_implements('query_' . $entity_info['access arguments']['access tag'] . '_alter')) {
-          $query = db_select($entity_info['base table']);
-          $query->addExpression('1');
-          $result = (bool) $query
-            ->addTag($entity_info['access arguments']['access tag'])
-            ->addMetaData('account', $account)
-            ->condition($entity_info['entity keys']['id'], $entity->{$entity_info['entity keys']['id']})
-            ->range(0, 1)
-            ->execute()
-            ->fetchField();
-          $rights[$account->id()][$cid][$operation] = $result;
-          return $result;
-        }
-        else {
-          $rights[$account->id()][$cid][$operation] = TRUE;
-          return AccessResult::allowed();
-        }
-      }
-      else {
-        $access = $account->hasPermission('view any ' . $entity_type . ' entity');
-        $rights[$account->id()][$cid][$operation] = $access;
-        
-        if ($access) {
+      // When trying to figure out access to an entity, query the base table
+      // using our access control tag.
+      if (Drupal::moduleHandler()->getImplementations('query_' . $entity_type . '_alter')) {
+        $query = db_select($entity_info->getBaseTable());
+        $query->addExpression('1');
+        $result = (bool) $query
+          ->addTag($entity_type)
+          ->addMetaData('account', $account)
+          ->condition($entity_info->getKey('id'), $entity->id())
+          ->range(0, 1)
+          ->execute()
+          ->fetchField();
+        $rights[$account->id()][$cid][$operation] = $result;
+
+        if ($result) {
           return AccessResult::allowed();
         }
         else {
           return AccessResult::forbidden();
         }
+      }
+      else {
+        $rights[$account->id()][$cid][$operation] = TRUE;
+        return AccessResult::allowed();
       }
     }
     else { // Non-view operations.
@@ -172,30 +166,14 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
       // special handling for the create operation since the entity passed in will
       // be initialized without ownership.
       if ($operation == 'create') {
-        // Assuming an entity was passed in and we know its bundle key, perform
-        // the entity type and bundle-level access checks.
-        if (isset($entity)) {
-          $access = $account->hasPermission('create ' . $entity_type . ' entities') || $account->hasPermission('create ' . $entity_type . ' entities of bundle ' . $entity->bundle());
-          $rights[$account->id()][$cid][$operation] = $access;
+        $access = $account->hasPermission('create ' . $entity_type . ' entities') || $account->hasPermission('create ' . $entity_type . ' entities of bundle ' . $entity->bundle());
+        $rights[$account->id()][$cid][$operation] = $access;
 
-          if ($access) {
-            return AccessResult::allowed();
-          }
-          else {
-            return AccessResult::forbidden();
-          }
+        if ($access) {
+          return AccessResult::allowed();
         }
         else {
-          // Otherwise perform an entity type-level access check.
-          $access = $account->hasPermission('create ' . $entity_type . ' entities');
-          $rights[$account->id()][$cid][$operation] = $access;
-
-          if ($access) {
-            return AccessResult::allowed();
-          }
-          else {
-            return AccessResult::forbidden();
-          }
+          return AccessResult::forbidden();
         }
       }
       else {
@@ -328,7 +306,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   }
 
   // Do not apply any conditions for users with administrative view permissions.
-  if ($account->hasPermission('bypass ' . $entity_type . ' access') ||
+  if ($account->hasPermission('bypass ' . $entity_type . ' entities access') ||
       $account->hasPermission($op . ' any ' . $entity_type . ' entity')) {
     return;
   }
@@ -354,7 +332,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
         // If this table matches the entity type's base table, use its table
         // alias as the base table for the purposes of bundle and ownership
         // access checks.
-        if ($table_info['table'] == $entity_info['base table']) {
+        if ($table_info['table'] == $entity_info->getBaseTable()) {
           $base_table = $table_info['alias'];
         }
       }
@@ -382,7 +360,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
     if ($account->hasPermission($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name)) {
       // Add a condition granting access if the entity specified by the view
       // query is of the same bundle.
-      $conditions->condition($base_table . '.' . $entity_info['entity keys']['bundle'], $bundle_name);
+      $conditions->condition($base_table . '.' . $entity_info->getKey('bundle'), $bundle_name);
     }
     elseif ($account->id() && $entity_info->getKey('uid') !== FALSE &&
             $account->hasPermission($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
@@ -390,7 +368,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
       // by the view query matches the same bundle and belongs to the user.
       $c_and = new Condition('AND');
       $conditions->condition(c_and()
-        ->condition($base_table . '.' . $entity_info['entity keys']['bundle'], $bundle_name)
+        ->condition($base_table . '.' . $entity_info->getKey('bundle'), $bundle_name)
         ->condition($base_table . '.' . $entity_info->getKey('uid'), $account->id())
       );
     }
@@ -516,4 +494,48 @@ function template_preprocess_bat_type_group(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
+}
+
+/**
+ *
+ */
+function bat_type_group_load($group_id) {
+  return TypeGroup::load($group_id);
+}
+
+/**
+ *
+ */
+function bat_type_group_load_multiple() {
+}
+
+/**
+ *
+ */
+function bat_type_group_save() {
+}
+
+/**
+ *
+ */
+function bat_type_group_delete() {
+}
+
+/**
+ *
+ */
+function bat_type_group_get_bundles($bundle_name = NULL, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('bat_type_group_bundle')->resetCache();
+  }
+
+  $types = TypeGroupBundle::loadMultiple();
+  return isset($bundle_name) ? $types[$bundle_name] : $types;
+}
+
+/**
+ *
+ */
+function bat_type_group_create($values = array()) {
+  return TypeGroup::create($values);
 }

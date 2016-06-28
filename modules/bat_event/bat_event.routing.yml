@@ -75,7 +75,7 @@ entity.bat_event.collection:
     _entity_list: 'bat_event'
     _title: 'Event list'
   requirements:
-    _permission: 'view event entities'
+    _permission: 'bypass bat_event entities access'
   options:
     _admin_route: TRUE
 
@@ -129,7 +129,7 @@ entity.bat_event_type.collection:
     _entity_list: 'bat_event_type'
     _title: 'Event Type list'
   requirements:
-    _permission: 'view event entities'
+    _permission: 'administer bat_event_type entities'
   options:
     _admin_route: TRUE
 
@@ -147,7 +147,7 @@ entity.bat_event_type.edit_form:
     _entity_form: 'bat_event_type.edit'
     _title: 'Edit Event type'
   requirements:
-    _permission: 'edit event entities'
+    _permission: 'administer bat_event_type entities'
   options:
     _admin_route: TRUE
 
@@ -157,4 +157,4 @@ entity.bat_event_type.delete_form:
     _entity_form: 'bat_event_type.delete'
     _title: 'Delete'
   requirements:
-    _entity_access: 'event_type.delete'
+    _permission: 'administer bat_event_type entities'

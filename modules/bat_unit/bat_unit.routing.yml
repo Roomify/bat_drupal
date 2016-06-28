@@ -15,7 +15,7 @@ entity.bat_unit_type.collection:
     _entity_list: 'bat_unit_type'
     _title: 'Unit type list'
   requirements:
-    _permission: 'view unit type entities'
+    _permission: 'view any bat_unit_type entity'
   options:
     _admin_route: TRUE
 
@@ -49,7 +49,7 @@ entity.bat_unit_type.edit_form:
     _entity_form: bat_unit_type.edit
     _title: 'Edit Type'
   requirements:
-    _permission: 'edit unit type entities'
+    _entity_access: 'bat_unit_type.update'
   options:
     _admin_route: TRUE
 
@@ -59,7 +59,7 @@ entity.bat_unit_type.delete_form:
     _entity_form: bat_unit_type.delete
     _title: 'Delete Type'
   requirements:
-    _permission: 'delete unit type entities'
+    _entity_access: 'bat_unit_type.delete'
   options:
     _admin_route: TRUE
 
@@ -80,7 +80,7 @@ entity.bat_unit.collection:
     _entity_list: 'bat_unit'
     _title: 'Unit list'
   requirements:
-    _permission: 'view unit entities'
+    _permission: 'view any bat_unit entity'
   options:
     _admin_route: TRUE
 
@@ -114,7 +114,7 @@ entity.bat_unit.edit_form:
     _entity_form: bat_unit.edit
     _title: 'Edit Unit'
   requirements:
-    _permission: 'edit unit entities'
+    _entity_access: 'bat_unit.update'
   options:
     _admin_route: TRUE
 
@@ -124,7 +124,7 @@ entity.bat_unit.delete_form:
     _entity_form: bat_unit.delete
     _title: 'Delete Unit'
   requirements:
-    _permission: 'delete unit entities'
+    _entity_access: 'bat_unit.delete'
   options:
     _admin_route: TRUE
 
@@ -134,7 +134,7 @@ entity.bat_type_bundle.collection:
     _entity_list: 'bat_type_bundle'
     _title: 'Type Bundle list'
   requirements:
-    _permission: 'view event entities'
+    _permission: 'administer bat_type_bundle entities'
   options:
     _admin_route: TRUE
 
@@ -152,7 +152,7 @@ entity.bat_type_bundle.edit_form:
     _entity_form: 'bat_type_bundle.edit'
     _title: 'Edit Type bundle'
   requirements:
-    _permission: 'edit event entities'
+    _permission: 'administer bat_type_bundle entities'
   options:
     _admin_route: TRUE
 
@@ -162,7 +162,7 @@ entity.bat_type_bundle.delete_form:
     _entity_form: 'bat_type_bundle.delete'
     _title: 'Delete'
   requirements:
-    _entity_access: 'bat_type_bundle.delete'
+    _permission: 'administer bat_type_bundle entities'
 
 entity.bat_unit_bundle.collection:
   path: '/admin/bat/config/unit-bundles'
@@ -170,7 +170,7 @@ entity.bat_unit_bundle.collection:
     _entity_list: 'bat_unit_bundle'
     _title: 'Unit Bundle list'
   requirements:
-    _permission: 'view event entities'
+    _permission: 'administer bat_unit_bundle entities'
   options:
     _admin_route: TRUE
 
@@ -188,7 +188,7 @@ entity.bat_unit_bundle.edit_form:
     _entity_form: bat_unit_bundle.edit
     _title: 'Edit Unit bundle'
   requirements:
-    _permission: 'edit event entities'
+    _permission: 'administer bat_unit_bundle entities'
   options:
     _admin_route: TRUE
 
@@ -198,7 +198,7 @@ entity.bat_unit_bundle.delete_form:
     _entity_form: 'bat_unit_bundle.delete'
     _title: 'Delete'
   requirements:
-    _entity_access: 'bat_unit_bundle.delete'
+    _permission: 'administer bat_unit_bundle entities'
 
 unit.multiple_delete_confirm:
   path: '/admin/bat/config/units/delete'

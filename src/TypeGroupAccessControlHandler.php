@@ -40,8 +40,8 @@ class TypeGroupAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add property entities');
+  protected function checkCreateAccess(AccountInterface $account, array $context, $type_group_bundle = NULL) {
+    return bat_entity_access(bat_type_group_create(array('type' => $type_group_bundle)), 'create', $account);
   }
 
 }
