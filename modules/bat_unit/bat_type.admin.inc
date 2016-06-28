@@ -298,7 +298,7 @@ function bat_type_edit_form($form, &$form_state, $type) {
 
   // Add the field related form elements.
   $form_state['bat_type'] = $type;
-  field_attach_form('bat_type', $type, $form, $form_state, isset($type->language)? $type->language : NULL);
+  field_attach_form('bat_type', $type, $form, $form_state, entity_language('bat_type', $type));
   $form['additional_settings'] = array(
     '#type' => 'vertical_tabs',
     '#weight' => 99,
