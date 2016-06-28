@@ -25,7 +25,7 @@ entity.bat_unit_type.add_page:
     _title: 'Add type'
     _controller: '\Drupal\bat_unit\Controller\TypeController::addPage'
   requirements:
-    _permission: 'add unit type entities'
+    _unit_type_add_access: 'bat_unit_type'
   options:
     _admin_route: TRUE
 
@@ -35,7 +35,7 @@ entity.bat_unit_type.add:
     _controller: '\Drupal\bat_unit\Controller\TypeController::add'
     _title_callback: '\Drupal\bat_unit\Controller\TypeController::addPageTitle'
   requirements:
-    _permission: 'add unit type entities'
+    _unit_type_add_access: 'bat_unit_type:{type_bundle}'
   options:
     _admin_route: TRUE
     parameters:
@@ -90,7 +90,7 @@ entity.bat_unit.add_page:
     _title: 'Add unit'
     _controller: '\Drupal\bat_unit\Controller\UnitController::addPage'
   requirements:
-    _permission: 'add unit entities'
+    _unit_add_access: 'bat_unit'
   options:
     _admin_route: TRUE
 
@@ -100,7 +100,7 @@ entity.bat_unit.add_form:
     _controller: '\Drupal\bat_unit\Controller\UnitController::add'
     _title_callback: '\Drupal\bat_unit\Controller\UnitController::addPageTitle'
   requirements:
-    _permission: 'add unit entities'
+    _unit_add_access: 'bat_unit:{unit_bundle}'
   options:
     _admin_route: TRUE
     parameters:
@@ -144,7 +144,7 @@ entity.bat_type_bundle.type_add:
     _entity_form: 'bat_type_bundle.add'
     _title: 'Add type bundle'
   requirements:
-    _unit_type_add_access: 'bat_unit_type:{bat_type_bundle}'
+    _permission: 'administer bat_type_bundle entities'
 
 entity.bat_type_bundle.edit_form:
   path: '/admin/bat/config/type-bundles/{bat_type_bundle}/edit'
@@ -180,7 +180,7 @@ entity.bat_unit_bundle.type_add:
     _entity_form: 'bat_unit_bundle.add'
     _title: 'Add unit bundle'
   requirements:
-    _unit_add_access: 'bat_unit:{bat_unit_bundle}'
+    _permission: 'administer bat_unit_bundle entities'
 
 entity.bat_unit_bundle.edit_form:
   path: '/admin/bat/config/unit-bundles/{bat_unit_bundle}/edit'

@@ -23,7 +23,7 @@ entity.state.collection:
     _entity_list: 'state'
     _title: 'State'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'administer state entities'
   options:
     _admin_route: TRUE
 
@@ -33,7 +33,7 @@ entity.state.add_form:
     _entity_form: 'state.add'
     _title: 'Add State'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'administer state entities'
   options:
     _admin_route: TRUE
 
@@ -43,7 +43,7 @@ entity.state.edit_form:
     _entity_form: 'state.edit'
     _title: 'Edit State'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'administer state entities'
   options:
     _admin_route: TRUE
 
@@ -53,7 +53,7 @@ entity.state.delete_form:
     _entity_form: 'state.delete'
     _title: 'Delete State'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'administer state entities'
   options:
     _admin_route: TRUE
 
@@ -85,7 +85,7 @@ entity.bat_event.add_page:
     _title: 'Add event'
     _controller: '\Drupal\bat_event\Controller\EventController::addPage'
   requirements:
-    _permission: 'add unit type entities'
+    _event_add_access: 'bat_event'
   options:
     _admin_route: TRUE
 
@@ -95,7 +95,7 @@ entity.bat_event.add_form:
     _controller: '\Drupal\bat_event\Controller\EventController::add'
     _title_callback: '\Drupal\bat_event\Controller\EventController::addPageTitle'
   requirements:
-    _permission: 'add unit type entities'
+    _event_add_access: 'bat_event:{event_type}'
   options:
     _admin_route: TRUE
     parameters:
@@ -139,7 +139,7 @@ entity.bat_event_type.type_add:
     _entity_form: 'bat_event_type.add'
     _title: 'Add event type'
   requirements:
-    _unit_type_add_access: 'bat_event:{bat_event_type}'
+    _permission: 'administer bat_event_type entities'
 
 entity.bat_event_type.edit_form:
   path: '/admin/bat/events/event/event-types/{bat_event_type}/edit'

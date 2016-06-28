@@ -382,7 +382,7 @@ function bat_unit_delete_multiple(array $unit_ids) {
  *   The properties for the new unit bundle.
  */
 function bat_unit_create($values = array()) {
-
+  return Unit::create($values);
 }
 
 /**
@@ -735,7 +735,7 @@ function bat_type_delete_multiple(array $type_ids) {
  *   The properties for the new type bundle.
  */
 function bat_type_create($values = array()) {
-
+  return UnitType::create($values);
 }
 
 /**

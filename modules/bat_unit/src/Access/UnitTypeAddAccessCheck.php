@@ -35,31 +35,35 @@ class UnitTypeAddAccessCheck implements AccessInterface {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The currently logged in account.
-   * @param \Drupal\bat_unit\TypeBundleInterface $node_type
+   * @param \Drupal\bat_unit\TypeBundleInterface $type_bundle
    *   (optional) The node type. If not specified, access is allowed if there
    *   exists at least one node type for which the user may create a node.
    *
    * @return string
    *   A \Drupal\Core\Access\AccessInterface constant value.
    */
-  public function access(AccountInterface $account, TypeBundleInterface $node_type = NULL) {
-    $access_control_handler = $this->entityManager->getAccessControlHandler('node');
-    // If checking whether a node of a particular type may be created.
+  public function access(AccountInterface $account, TypeBundleInterface $type_bundle = NULL) {
+    $access_control_handler = $this->entityManager->getAccessControlHandler('bat_unit_type');
+
     if ($account->hasPermission('administer bat_type_bundle entities')) {
-      return AccessResult::allowed()->cachePerPermissions();
+      // There are no type bundles defined that the user has permission to
+      // create, but the user does have the permission to administer the content
+      // types, so grant them access to the page anyway.
+      return AccessResult::allowed();
     }
-    if ($node_type) {
-      return $access_control_handler->createAccess($node_type->id(), $account, [], TRUE);
+
+    if ($type_bundle) {
+      return $access_control_handler->createAccess($type_bundle->id(), $account, [], TRUE);
     }
-    // If checking whether a node of any type may be created.
-    foreach ($this->entityManager->getStorage('node_type')->loadMultiple() as $node_type) {
-      if (($access = $access_control_handler->createAccess($node_type->id(), $account, [], TRUE)) && $access->isAllowed()) {
-        return $access;
+
+    $bundles = bat_unit_get_type_bundles();
+    foreach ($bundles as $bundle) {
+      if (bat_type_access(bat_type_create(array('type' => $bundle->id(), 'uid' => 0)), 'create', $account->getAccount())) {
+        return AccessResult::allowed();
       }
     }
 
-    // No opinion.
-    return AccessResult::neutral();
+    return AccessResult::forbidden();
   }
 
 }

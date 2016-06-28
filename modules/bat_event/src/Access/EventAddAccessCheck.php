@@ -35,31 +35,35 @@ class EventAddAccessCheck implements AccessInterface {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The currently logged in account.
-   * @param \Drupal\bat_event\EventTypeInterface $node_type
+   * @param \Drupal\bat_event\EventTypeInterface $event_type
    *   (optional) The node type. If not specified, access is allowed if there
    *   exists at least one node type for which the user may create a node.
    *
    * @return string
    *   A \Drupal\Core\Access\AccessInterface constant value.
    */
-  public function access(AccountInterface $account, EventTypeInterface $node_type = NULL) {
-    $access_control_handler = $this->entityManager->getAccessControlHandler('node');
-    // If checking whether a unit of a particular type may be created.
+  public function access(AccountInterface $account, EventTypeInterface $event_type = NULL) {
+    $access_control_handler = $this->entityManager->getAccessControlHandler('bat_event');
+
     if ($account->hasPermission('administer bat_event_type entities')) {
-      return AccessResult::allowed()->cachePerPermissions();
+      // There are no type bundles defined that the user has permission to
+      // create, but the user does have the permission to administer the content
+      // types, so grant them access to the page anyway.
+      return AccessResult::allowed();
     }
-    if ($node_type) {
-      return $access_control_handler->createAccess($node_type->id(), $account, [], TRUE);
+
+    if ($event_type) {
+      return $access_control_handler->createAccess($event_type->id(), $account, [], TRUE);
     }
-    // If checking whether a unit of any type may be created.
-    foreach ($this->entityManager->getStorage('bat_unit_bundle')->loadMultiple() as $node_type) {
-      if (($access = $access_control_handler->createAccess($node_type->id(), $account, [], TRUE)) && $access->isAllowed()) {
-        return $access;
+
+    $bundles = bat_event_get_types();
+    foreach ($bundles as $bundle) {
+      if (bat_event_access(bat_event_create(array('type' => $bundle->id(), 'uid' => 0)), 'create', $account->getAccount())) {
+        return AccessResult::allowed();
       }
     }
 
-    // No opinion.
-    return AccessResult::neutral();
+    return AccessResult::forbidden();
   }
 
 }

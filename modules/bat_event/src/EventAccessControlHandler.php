@@ -40,8 +40,8 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add event entities');
+  protected function checkCreateAccess(AccountInterface $account, array $context, $event_type = NULL) {
+    return bat_event_access(bat_event_create(array('type' => $event_type)), 'create', $account);
   }
 
 }

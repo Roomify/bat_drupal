@@ -1,6 +1,11 @@
-administer event_type entities:
+administer bat_event_type entities:
   title: 'Administer event types'
   description: 'Allows users to add event types and configure their fields.'
 
+administer state entities:
+  title: 'Administer event states'
+  description: 'Allows users to add event states.'
+
 permission_callbacks:
   - Drupal\bat_event\EventPermissions::permissions
+  - Drupal\bat_event\StatePermissions::permissions

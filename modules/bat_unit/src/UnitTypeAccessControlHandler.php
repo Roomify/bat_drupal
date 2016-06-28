@@ -18,6 +18,7 @@ use Drupal\Core\Access\AccessResult;
  * @see \Drupal\bat\Entity\UnitType.
  */
 class UnitTypeAccessControlHandler extends EntityAccessControlHandler {
+
   /**
    * {@inheritdoc}
    */
@@ -40,8 +41,8 @@ class UnitTypeAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add unit type entities');
+  protected function checkCreateAccess(AccountInterface $account, array $context, $type_bundle = NULL) {
+    return bat_type_access(bat_type_create(array('type' => $type_bundle)), 'create', $account);
   }
 
 }
