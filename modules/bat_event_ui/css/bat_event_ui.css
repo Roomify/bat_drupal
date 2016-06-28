@@ -19,11 +19,11 @@
 #bat-event-ui-bulk-update-form .bat-date-range,
 #bat-event-ui-bulk-update-form .form-type-select {
   float: left;
-  margin: 0 20px 0 0;
+  margin-left: 20px;
   clear: none;
   padding: 0;
 }
 
 #bat-event-ui-bulk-update-form input[type="submit"] {
-  margin-top: 1.1em;
+  margin-top: 2.1em;
 }

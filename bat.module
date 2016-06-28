@@ -151,7 +151,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
     else { // Non-view operations.
       // First grant access to the entity for the specified operation if no other
       // module denies it and at least one other module says to grant access.
-      $access_results = \Drupal::moduleHandler()->invokeAll('bat_entity_access', array($operation, $entity, $account, $entity_type));
+      $access_results = \Drupal::moduleHandler()->invokeAll('bat_entity_access', array($entity, $operation, $account));
 
       if (in_array(FALSE, $access_results, TRUE)) {
         $rights[$account->id()][$cid][$operation] = FALSE;
@@ -497,32 +497,105 @@ function template_preprocess_bat_type_group(array &$variables) {
 }
 
 /**
+ * Fetches a type group object.
  *
+ * @param int $group_id
+ *   Integer specifying the group id.
+ * @param bool $reset
+ *   A boolean indicating whether the internal cache should be reset.
+ * @return BatUnit|false
+ *   A fully-loaded $unit object or FALSE if it cannot be loaded.
+ *
+ * @see bat_type_group_load_multiple()
  */
-function bat_type_group_load($group_id) {
+function bat_type_group_load($group_id, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('bat_type_group')->resetCache();
+  }
+
   return TypeGroup::load($group_id);
 }
 
 /**
+ * Loads multiple units based on certain conditions.
  *
+ * @param array $group_ids
+ *   An array of group IDs.
+ * @param array $conditions
+ *   An array of conditions to match against the {type_group} table.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return array
+ *   An array of type group objects, indexed by group_id.
+ *
+ * @see entity_load()
+ * @see bat_type_group_load()
  */
-function bat_type_group_load_multiple() {
+function bat_type_group_load_multiple($group_ids = array(), $conditions = array(), $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('bat_type_group')->resetCache();
+  }
+
+  if (!empty($conditions)) {
+    $query = \Drupal::entityQuery('bat_type_group');
+    if (!empty($group_ids)) {
+      $query->condition('id', $group_ids, 'IN');
+    }
+    foreach ($conditions as $key => $value) {
+      $query->condition($key, $value);
+    }
+
+    $group_ids = $query->execute();
+  }
+
+  return TypeGroup::loadMultiple($group_ids);
 }
 
 /**
+ * Saves a type group to the database.
  *
+ * @param TypeGroup $group
+ *   The TypeGroup object.
  */
-function bat_type_group_save() {
+function bat_type_group_save(TypeGroup $group) {
+  return $group->save();
 }
 
 /**
+ * Deletes a type group.
  *
+ * @param TypeGroup $group
+ *   The TypeGroup object that represents the group to delete.
  */
-function bat_type_group_delete() {
+function bat_type_group_delete(TypeGroup $group) {
+  $group->delete();
 }
 
 /**
+ * Deletes multiple type groups.
  *
+ * @param array $group_ids
+ *   An array of group IDs.
+ */
+function bat_type_group_delete_multiple(array $group_ids) {
+  $groups = Unit::loadMultiple($group_ids);
+
+  foreach ($groups as $group) {
+    $group->delete();
+  }
+}
+
+/**
+ * Gets an array of all type group bundles, keyed by the bundle name.
+ *
+ * @param string $bundle_name
+ *   If set, the bundle with the given name is returned.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return TypeGroupBundle[]
+ *   Depending whether $bundle isset, an array of type group bundles or a single one.
  */
 function bat_type_group_get_bundles($bundle_name = NULL, $reset = FALSE) {
   if ($reset) {
@@ -534,7 +607,10 @@ function bat_type_group_get_bundles($bundle_name = NULL, $reset = FALSE) {
 }
 
 /**
+ * Creates a type group object.
  *
+ * @param array $values
+ *   The properties for the new type group bundle.
  */
 function bat_type_group_create($values = array()) {
   return TypeGroup::create($values);

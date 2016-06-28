@@ -165,7 +165,7 @@ function bat_unit_bat_event_target_entity_types() {
  * @param string $op
  *   The operation being performed. One of 'view', 'update', 'create', 'delete'
  *   or just 'edit' (being the same as 'create' or 'update').
- * @param BatUnit $unit
+ * @param Unit $unit
  *   Optionally a unit or a unit bundle to check access for. If nothing is
  *   given, access for all units is determined.
  * @param object $account
@@ -244,7 +244,7 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
  * @param bool $reset
  *   A boolean indicating that the internal cache should be reset.
  *
- * @return BatUnitBundle[]
+ * @return UnitBundle[]
  *   Depending whether $bundle isset, an array of unit bundles or a single one.
  */
 function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
@@ -312,7 +312,7 @@ function bat_unit_bundle_load($bundle, $reset = FALSE) {
  *   Integer specifying the unit id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
- * @return BatUnit|false
+ * @return Unit|false
  *   A fully-loaded $unit object or FALSE if it cannot be loaded.
  *
  * @see bat_unit_load_multiple()
@@ -331,7 +331,7 @@ function bat_unit_load($unit_id, $reset = FALSE) {
  * @param array $unit_ids
  *   An array of unit IDs.
  * @param array $conditions
- *   An array of conditions to match against the {bat_units} table.
+ *   An array of conditions to match against the {unit} table.
  * @param bool $reset
  *   A boolean indicating that the internal cache should be reset.
  *
@@ -364,8 +364,8 @@ function bat_unit_load_multiple($unit_ids = array(), $conditions = array(), $res
 /**
  * Deletes a unit.
  *
- * @param BatUnit $unit
- *   The BatUnit object that represents the unit to delete.
+ * @param Unit $unit
+ *   The Unit object that represents the unit to delete.
  */
 function bat_unit_delete(Unit $unit) {
   $unit->delete();
@@ -398,7 +398,7 @@ function bat_unit_create($values = array()) {
 /**
  * Saves a unit to the database.
  *
- * @param BatUnit $unit
+ * @param Unit $unit
  *   The Unit object.
  */
 function bat_unit_save(Unit $unit) {
@@ -418,7 +418,7 @@ function bat_unit_bundle_create($values = array()) {
 /**
  * Saves a unit bundle to the db.
  *
- * @param BatUnitBundle $bundle
+ * @param UnitBundle $bundle
  *   The unit bundle to save.
  */
 function bat_unit_bundle_save(UnitBundle $bundle) {

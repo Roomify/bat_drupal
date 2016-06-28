@@ -20,19 +20,17 @@
  * If no modules return FALSE but none return TRUE either, normal permission
  * based checking will apply.
  *
- * @param $op
- *   The request operation: update, create, or delete.
  * @param $entity
  *   The entity to perform the operation on.
+ * @param $operation
+ *   The request operation: update, create, or delete.
  * @param $account
  *   The user account whose access should be determined.
- * @param $entity_type
- *   The machine-name of the entity type of the given $entity.
  *
  * @return
  *   TRUE or FALSE indicating an explicit denial of permission or a grant in the
  *   presence of no other denials; NULL to not affect the access check at all.
  */
-function hook_bat_entity_access($op, $entity, $account, $entity_type) {
+function hook_bat_entity_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account) {
   // No example.
 }
