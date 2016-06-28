@@ -4,6 +4,12 @@ drupal.bat.toolbar:
     theme:
       css/bat.icons.css: {}
 
+bat_ui:
+  version: VERSION
+  css:
+    theme:
+      css/bat_ui.css: {}
+
 bat_date_range:
   version: VERSION
   js:

@@ -41,6 +41,9 @@ function bat_theme() {
     'bat_type_group_add_list' => array(
       'variables' => array('content' => NULL),
     ),
+    'bat_entity_edit_form' => array(
+      'render element' => 'form',
+    ),
   );
 }
 

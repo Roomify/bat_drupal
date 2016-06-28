@@ -260,7 +260,6 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Event entity.'))
-      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
@@ -298,7 +297,6 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['start'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Start Date'))
       ->setDescription(t('The time that this event starts.'))
-      ->setRevisionable(TRUE)
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'timestamp',
@@ -314,7 +312,6 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['end'] = BaseFieldDefinition::create('created')
       ->setLabel(t('End Date'))
       ->setDescription(t('The time that this event ends.'))
-      ->setRevisionable(TRUE)
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'timestamp',

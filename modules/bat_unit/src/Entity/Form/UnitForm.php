@@ -10,6 +10,7 @@ namespace Drupal\bat_unit\Entity\Form;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
+use Drupal\bat_unit\UnitInterface;
 
 /**
  * Form controller for Unit edit forms.
@@ -25,12 +26,75 @@ class UnitForm extends ContentEntityForm {
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
 
+    $form['changed'] = array(
+      '#type' => 'hidden',
+      '#default_value' => $entity->getChangedTime(),
+    );
+
     $form['langcode'] = array(
       '#title' => $this->t('Language'),
       '#type' => 'language_select',
       '#default_value' => $entity->getUntranslated()->language()->getId(),
       '#languages' => Language::STATE_ALL,
     );
+
+    $form['#theme'] = array('bat_entity_edit_form');
+    $form['#attached']['library'][] = 'bat/bat_ui';
+
+    $form['advanced'] = array(
+      '#type' => 'container',
+      '#attributes' => array('class' => array('entity-meta')),
+      '#weight' => 99,
+    );
+
+    $is_new = !$entity->isNew() ? format_date($entity->getChangedTime(), 'short') : t('Not saved yet');
+    $form['meta'] = array(
+      '#attributes' => array('class' => array('entity-meta__header')),
+      '#type' => 'container',
+      '#group' => 'advanced',
+      '#weight' => -100,
+      'published' => array(
+        '#type' => 'html_tag',
+        '#tag' => 'h3',
+        '#value' => $entity->getStatus() ? t('Published') : t('Not published'),
+        '#access' => !$entity->isNew(),
+        '#attributes' => array(
+          'class' => 'entity-meta__title',
+        ),
+      ),
+      'changed' => array(
+        '#type' => 'item',
+        '#wrapper_attributes' => array('class' => array('entity-meta__last-saved', 'container-inline')),
+        '#markup' => '<h4 class="label inline">' . t('Last saved') . '</h4> ' . $is_new,
+      ),
+      'author' => array(
+        '#type' => 'item',
+        '#wrapper_attributes' => array('class' => array('author', 'container-inline')),
+        '#markup' => '<h4 class="label inline">' . t('Author') . '</h4> ' . $entity->getOwner()->getUsername(),
+      ),
+    );
+
+    $form['author'] = array(
+      '#type' => 'details',
+      '#title' => t('Authoring information'),
+      '#group' => 'advanced',
+      '#attributes' => array(
+        'class' => array('type-form-author'),
+      ),
+      '#weight' => 90,
+      '#optional' => TRUE,
+      '#open' => TRUE,
+    );
+
+    if (isset($form['uid'])) {
+      $form['uid']['#group'] = 'author';
+    }
+
+    if (isset($form['created'])) {
+      $form['created']['#group'] = 'author';
+    }
+
+    $form['#entity_builders']['update_status'] = [$this, 'updateStatus'];
 
     return $form;
   }
@@ -55,6 +119,74 @@ class UnitForm extends ContentEntityForm {
         ]));
     }
     $form_state->setRedirect('entity.bat_unit.edit_form', ['bat_unit' => $entity->id()]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function actions(array $form, FormStateInterface $form_state) {
+    $element = parent::actions($form, $form_state);
+    $entity = $this->entity;
+
+    // Add a "Publish" button.
+    $element['publish'] = $element['submit'];
+    // If the "Publish" button is clicked, we want to update the status to "published".
+    $element['publish']['#published_status'] = TRUE;
+    $element['publish']['#dropbutton'] = 'save';
+    if ($entity->isNew()) {
+      $element['publish']['#value'] = t('Save and publish');
+    }
+    else {
+      $element['publish']['#value'] = $entity->getStatus() ? t('Save and keep published') : t('Save and publish');
+    }
+    $element['publish']['#weight'] = 0;
+
+    // Add a "Unpublish" button.
+    $element['unpublish'] = $element['submit'];
+    // If the "Unpublish" button is clicked, we want to update the status to "unpublished".
+    $element['unpublish']['#published_status'] = FALSE;
+    $element['unpublish']['#dropbutton'] = 'save';
+    if ($entity->isNew()) {
+      $element['unpublish']['#value'] = t('Save as unpublished');
+    }
+    else {
+      $element['unpublish']['#value'] = !$entity->getStatus() ? t('Save and keep unpublished') : t('Save and unpublish');
+    }
+    $element['unpublish']['#weight'] = 10;
+
+    // If already published, the 'publish' button is primary.
+    if ($entity->getStatus()) {
+      unset($element['unpublish']['#button_type']);
+    }
+    // Otherwise, the 'unpublish' button is primary and should come first.
+    else {
+      unset($element['publish']['#button_type']);
+      $element['unpublish']['#weight'] = -10;
+    }
+
+    // Remove the "Save" button.
+    $element['submit']['#access'] = FALSE;
+
+    return $element;
+  }
+
+  /**
+   * Entity builder updating the node status with the submitted value.
+   *
+   * @param string $entity_type_id
+   *   The entity type identifier.
+   * @param \Drupal\bat_unit\UnitInterface $unit
+   *   The node updated with the submitted values.
+   * @param array $form
+   *   The complete form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  function updateStatus($entity_type_id, UnitInterface $unit, array $form, FormStateInterface $form_state) {
+    $element = $form_state->getTriggeringElement();
+    if (isset($element['#published_status'])) {
+      $unit->setStatus($element['#published_status']);
+    }
   }
 
 }

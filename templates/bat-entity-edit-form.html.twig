@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * Theme override for a type edit form.
+ *
+ * Two column template for the type add/edit form.
+ *
+ * This template will be used when a type edit form specifies 'node_edit_form'
+ * as its #theme callback.  Otherwise, by default, type add/edit forms will be
+ * themed by form.html.twig.
+ *
+ * Available variables:
+ * - form: The type add/edit form.
+ */
+#}
+<div class="layout-type-form clearfix">
+  <div class="layout-region layout-region-type-main">
+    {{ form|without('advanced', 'actions') }}
+  </div>
+  <div class="layout-region layout-region-type-secondary">
+    {{ form.advanced }}
+  </div>
+  <div class="layout-region layout-region-type-footer">
+    {{ form.actions }}
+  </div>
+</div>

@@ -137,7 +137,6 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Unit type entity.'))
-      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
@@ -186,8 +185,13 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
       ->setDescription(t('The language code for the Unit type entity.'));
 
     $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Created'))
-      ->setDescription(t('The time that the entity was created.'));
+      ->setLabel(t('Authored on'))
+      ->setDescription(t('The time that the entity was created.'))
+      ->setDisplayOptions('form', array(
+        'type' => 'datetime_timestamp',
+        'weight' => 10,
+      ))
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
@@ -200,14 +204,7 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Published'))
-      ->setDefaultValue(TRUE)
-      ->setDisplayOptions('form', array(
-        'type' => 'boolean_checkbox',
-        'weight' => 10,
-        'settings' => array(
-          'display_label' => TRUE,
-        ),
-      ));
+      ->setDefaultValue(TRUE);
 
     $fields['group_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Group'))

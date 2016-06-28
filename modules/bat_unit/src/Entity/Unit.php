@@ -175,7 +175,6 @@ class Unit extends ContentEntityBase implements UnitInterface {
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Unit entity.'))
-      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
@@ -201,7 +200,6 @@ class Unit extends ContentEntityBase implements UnitInterface {
     $fields['unit_type_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Unit Type'))
       ->setDescription(t('The ID of the Unit Type entity this Unit entity belongs to.'))
-      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'bat_unit_type')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
@@ -248,8 +246,13 @@ class Unit extends ContentEntityBase implements UnitInterface {
       ->setDescription(t('The language code for the Unit entity.'));
 
     $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Created'))
-      ->setDescription(t('The time that the entity was created.'));
+      ->setLabel(t('Authored on'))
+      ->setDescription(t('The time that the entity was created.'))
+      ->setDisplayOptions('form', array(
+        'type' => 'datetime_timestamp',
+        'weight' => 10,
+      ))
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
@@ -262,14 +265,7 @@ class Unit extends ContentEntityBase implements UnitInterface {
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Published'))
-      ->setDefaultValue(TRUE)
-      ->setDisplayOptions('form', array(
-        'type' => 'boolean_checkbox',
-        'weight' => 10,
-        'settings' => array(
-          'display_label' => TRUE,
-        ),
-      ));
+      ->setDefaultValue(TRUE);
 
     return $fields;
   }

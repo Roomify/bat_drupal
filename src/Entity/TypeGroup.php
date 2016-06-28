@@ -89,6 +89,13 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
   /**
    * {@inheritdoc}
    */
+  public function getStatus() {
+    return $this->get('status')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setOwnerId($uid) {
     $this->set('uid', $uid);
     return $this;
@@ -99,6 +106,14 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
    */
   public function setOwner(UserInterface $account) {
     $this->set('uid', $account->id());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setStatus($status) {
+    $this->set('status', $status);
     return $this;
   }
 
@@ -119,7 +134,6 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Type Group entity.'))
-      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
@@ -168,8 +182,13 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
       ->setDescription(t('The language code for the Property entity.'));
 
     $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Created'))
-      ->setDescription(t('The time that the entity was created.'));
+      ->setLabel(t('Authored on'))
+      ->setDescription(t('The time that the entity was created.'))
+      ->setDisplayOptions('form', array(
+        'type' => 'datetime_timestamp',
+        'weight' => 10,
+      ))
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
@@ -182,14 +201,7 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Published'))
-      ->setDefaultValue(TRUE)
-      ->setDisplayOptions('form', array(
-        'type' => 'boolean_checkbox',
-        'weight' => 10,
-        'settings' => array(
-          'display_label' => TRUE,
-        ),
-      ));
+      ->setDefaultValue(TRUE);
 
     return $fields;
   }

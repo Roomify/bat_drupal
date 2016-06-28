@@ -1,0 +1,118 @@
+.entity-meta {
+  background-color: #ececec;
+  border-left: 1px solid #bfbfbf;
+  border-right: 1px solid #bfbfbf;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15);
+}
+.entity-meta__header,
+.entity-meta details {
+  background-color: #f7f7f7;
+  border-top: 1px solid #bfbfbf;
+  border-bottom: 1px solid #bfbfbf;
+}
+.entity-meta__header {
+  padding: 1em 1.5em;
+}
+.entity-meta__title {
+  text-shadow: 0 1px 0 #fff;
+  margin: 0.25em 0;
+}
+.entity-meta__header .form-item {
+  margin: 0.25em 0;
+}
+.entity-meta__last-saved {
+  font-style: italic; /* As-designed, but really: why is this italic? */
+}
+.entity-meta details {
+  border-left: 0;
+  border-right: 0;
+  border-top: 1px solid #fff;
+  margin: 0;
+}
+.entity-meta details:first-child {
+  border-top-color: #bfbfbf;
+}
+.entity-meta details[open] {
+  background-color: transparent;
+  background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.125), transparent 4px);
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.125), transparent 4px);
+  border-top-width: 0;
+  padding-top: 1px;
+}
+.entity-meta details[open] + details[open] {
+  background-image: none;
+  border-top-width: 1px;
+  padding-top: 0;
+}
+.entity-meta details > .details-wrapper {
+  padding-top: 0;
+}
+.entity-meta details > summary {
+  padding: 0.85em 1.25em;
+  text-shadow: 0 1px 0 white;
+}
+.entity-meta details .summary {
+ display: none; /* Hide JS summaries. @todo Rethink summaries. */
+}
+
+@media
+  screen and (min-width: 780px),
+  (orientation: landscape) and (min-device-height: 780px) {
+
+  .layout-region-type-main,
+  .layout-region-type-footer {
+    float: left; /* LTR */
+    width: 65%;
+    padding-right: 2em; /* LTR */
+    box-sizing: border-box;
+  }
+
+  [dir="rtl"] .layout-region-type-main,
+  [dir="rtl"] .layout-region-type-footer {
+    float: right;
+    padding-left: 2em;
+    padding-right: 0;
+  }
+
+  .layout-region-type-secondary {
+    float: right; /* LTR */
+    width: 35%;
+  }
+
+  [dir="rtl"] .layout-region-type-secondary {
+    float: left;
+  }
+
+  /* @todo File an issue to add a standard class to all text-like inputs */
+  .layout-region-type-secondary .form-autocomplete,
+  .layout-region-type-secondary .form-text,
+  .layout-region-type-secondary .form-tel,
+  .layout-region-type-secondary .form-email,
+  .layout-region-type-secondary .form-url,
+  .layout-region-type-secondary .form-search,
+  .layout-region-type-secondary .form-number,
+  .layout-region-type-secondary .form-color,
+  .layout-region-type-secondary textarea {
+    box-sizing:         border-box;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/**
+ * The vertical toolbar mode gets triggered for narrow screens, which throws off
+ * the intent of media queries written for the viewport width. When the vertical
+ * toolbar is on, we need to suppress layout for the original media width + the
+ * toolbar width (240px). In this case, 240px + 780px.
+ */
+@media
+  screen and (max-width: 1020px) {
+
+  .toolbar-vertical.toolbar-tray-open .layout-region-type-main,
+  .toolbar-vertical.toolbar-tray-open .layout-region-type-footer,
+  .toolbar-vertical.toolbar-tray-open .layout-region-type-secondary {
+    float: none;
+    width: auto;
+    padding-right: 0;
+  }
+}
