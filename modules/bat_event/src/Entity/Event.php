@@ -158,6 +158,20 @@ class Event extends ContentEntityBase implements EventInterface {
   /**
    * {@inheritdoc}
    */
+  public function setStartDate(\DateTime $date) {
+    $this->set('start', $date->getTimestamp());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setEndDate(\DateTime $date) {
+    $this->set('end', $date->getTimestamp());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function save() {
     $entity_original = entity_load_unchanged('bat_event', $this->id());
 

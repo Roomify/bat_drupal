@@ -38,7 +38,7 @@ class EventListBuilder extends EntityListBuilder {
 
     $row['id'] = $entity->id();
     $row['start_date'] = $entity->getStartDate()->format($date_format);
-    $row['end_date'] = $entity->getEndDate()->format($date_format);
+    $row['end_date'] = $entity->getEndDate()->add(new \DateInterval('PT1M'))->format($date_format);
     $row['type'] = bat_event_type_load($entity->bundle())->label();
     return $row + parent::buildRow($entity);
   }

@@ -10,6 +10,7 @@ namespace Drupal\bat_event\Entity\Form;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
+use Drupal\Core\Database\Database;
 use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
@@ -28,12 +29,30 @@ class EventForm extends ContentEntityForm {
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
 
+    $event_type = bat_event_type_load($entity->bundle());
+
     $form['langcode'] = array(
       '#title' => $this->t('Language'),
       '#type' => 'language_select',
       '#default_value' => $entity->getUntranslated()->language()->getId(),
       '#languages' => Language::STATE_ALL,
     );
+
+    if ($entity->isNew()) {
+      $form['start']['widget'][0]['value']['#default_value'] = '';
+      $form['end']['widget'][0]['value']['#default_value'] = '';
+    }
+    else {
+      $form['end']['widget'][0]['value']['#default_value']->add(new \DateInterval('PT1M'));
+    }
+
+    unset($form['start']['widget'][0]['value']['#description']);
+    unset($form['end']['widget'][0]['value']['#description']);
+
+    if ($event_type->getEventGranularity() == 'bat_daily') {
+      $form['start']['widget'][0]['value']['#date_time_element'] = 'none';
+      $form['end']['widget'][0]['value']['#date_time_element'] = 'none';
+    }
 
     return $form;
   }
@@ -43,6 +62,9 @@ class EventForm extends ContentEntityForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
+
+    $entity = $this->entity;
+    $event_type = bat_event_type_load($entity->bundle());
 
     $values = $form_state->getValues();
 
@@ -97,6 +119,19 @@ class EventForm extends ContentEntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     $event = $this->entity;
+    $event_type = bat_event_type_load($event->bundle());
+
+    $end_date = $event->getEndDate();
+    if ($event_type->getEventGranularity() == 'bat_daily') {
+      $start_date = $event->getStartDate()->setTime(0, 0);
+      $event->setStartDate($start_date);
+
+      $end_date->setTime(0, 0);
+    }
+
+    $end_date->sub(new \DateInterval('PT1M'));
+    $event->setEndDate($end_date);
+
     $status = $event->save();
 
     switch ($status) {
