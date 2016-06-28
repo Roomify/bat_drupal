@@ -11,4 +11,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides a form for content type deletion.
  */
 class UnitBundleDeleteConfirm extends EntityDeleteForm {
+
+	/**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $form = parent::buildForm($form, $form_state);
+    $entity = $this->getEntity();
+
+    return $form;
+  }
+
 }

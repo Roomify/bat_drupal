@@ -64,7 +64,7 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $form['event_title'] = array(
       '#prefix' => '<h2>',
-      '#markup' => t('@unit_name', array('@unit_name' => $unit->name)),
+      '#markup' => t('@unit_name', array('@unit_name' => $unit->label())),
       '#suffix' => '</h2>',
     );
 

@@ -177,7 +177,7 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
 
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
-      ->setDescription(t('The property type.'))
+      ->setDescription(t('The type group bundle.'))
       ->setSetting('target_type', 'bat_type_group_bundle');
 
     return $fields;

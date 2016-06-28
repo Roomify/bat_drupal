@@ -50,7 +50,7 @@ class TypeGroupBundleListBuilder extends ConfigEntityListBuilder {
    */
   public function render() {
     $build = parent::render();
-    $build['table']['#empty'] = $this->t('No property types available. <a href=":link">Add type group bundle</a>.', [
+    $build['table']['#empty'] = $this->t('No type group bundles available. <a href=":link">Add type group bundle</a>.', [
         ':link' => Url::fromRoute('entity.bat_type_group_bundle.type_add')->toString()
       ]);
     return $build;

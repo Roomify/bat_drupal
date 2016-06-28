@@ -165,7 +165,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
       $form['event_label']['default_event_label_field_name'] = array(
         '#type' => 'select',
-        '#title' => t('Select your label field', array('@event' => $event_type->label)),
+        '#title' => t('Select your label field', array('@event' => $event_type->label())),
         '#default_value' => isset($event_type->default_event_label_field_name) ? $event_type->default_event_label_field_name : NULL,
         '#empty_option' => t('- Select a field -'),
         '#description' => t('If you select a field here, its value will be used as the label for your event. BAT will fall back to using the event state as the label if the field has no value.'),

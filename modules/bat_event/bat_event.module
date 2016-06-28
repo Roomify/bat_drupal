@@ -216,7 +216,7 @@ function bat_event_types_ids() {
 
   $types = bat_event_get_types();
   foreach ($types as $type) {
-    $event_types[$type->id] = $type->label;
+    $event_types[$type->id()] = $type->label();
   }
 
   return $event_types;
@@ -374,16 +374,14 @@ function bat_event_page_title(Event $event) {
 function bat_event_ids($conditions = array()) {
   $events = array();
 
-  $query = new EntityFieldQuery();
+  $query = \Drupal::entityQuery('bat_event');
 
-  $result = $query->entityCondition('entity_type', 'bat_event')
-                    ->execute();
+  $result = $query->execute();
 
   if (count($result) > 0) {
-    $entities = bat_event_load_multiple(array_keys($result['bat_event']), $conditions);
+    $entities = bat_event_load_multiple($result, $conditions);
     foreach ($entities as $event) {
-      $wrapper = entity_metadata_wrapper('bat_event', $event);
-      $events[$wrapper->event_id->value()] = $wrapper->name->value();
+      $events[$event->id()] = $event->label();
     }
   }
 
@@ -424,76 +422,6 @@ function bat_event_menu_local_tasks_alter(&$data, $router_item, $root_path) {
         '#theme' => 'menu_local_action',
         '#link' => $item,
       );
-    }
-  }
-}
-
-/**
- * JSON output for autocomplete bat_event_types.
- *
- * @param string $bat_event_type_name
- *   The bat_event type seed to look for.
- */
-function bat_event_get_unit_bundles($bat_event_type_name = '') {
-  /*$matches = array();
-  if ($bat_event_type_name) {
-    $result = db_select('bat_event_type')
-      ->fields('bat_event_type', array('type'))
-      ->condition('type', db_like($bat_event_type_name) . '%', 'LIKE')
-      ->range(0, 10)
-      ->execute();
-    foreach ($result as $unit_bundle) {
-      $matches[$unit_bundle->type] = SafeMarkup::checkPlain($unit_bundle->type);
-    }
-  }
-
-  return new JsonResponse ($matches);*/
-}
-
-/**
- * Menu callback for the autocomplete results.
- */
-function bat_event_reference_autocomplete($entity_type, $bundle, $field_name, $string = '') {
-  $field = FieldStorageConfig::loadByName($field_name);
-  $instance = FieldConfig::loadByName($entity_type, $bundle, $field_name);
-
-  $options = array(
-    'string' => $string,
-    'match' => $instance['widget']['settings']['autocomplete_match'],
-    'limit' => 10,
-    'event_type' => $instance['settings']['event_type'],
-  );
-  $references = bat_event_potential_references($field, $options);
-
-  $matches = array();
-  foreach ($references as $id => $row) {
-    // Markup is fine in autocompletion results (might happen when rendered
-    // through Views) but we want to remove hyperlinks.
-    $suggestion = preg_replace('/<a href="([^<]*)">([^<]*)<\/a>/', '$2', $row['rendered']);
-    // Add a class wrapper for a few required CSS overrides.
-    $matches[$row['title'] . " [state_id:$id]"] = '<div class="reference-autocomplete">' . $suggestion . '</div>';
-  }
-
-  return new JsonResponse ($matches);
-}
-
-/**
- * Value callback for a bat_event_reference autocomplete element.
- */
-function bat_event_autocomplete_value($element, $input = FALSE, $form_state) {
-  if ($input === FALSE) {
-    $state_id = $element['#default_value'];
-
-    if (!empty($state_id)) {
-      if ($state = bat_event_load_state($state_id)) {
-        $value = $state['label'];
-        $value .= ' [state_id:' . $state_id . ']';
-
-        return $value;
-      }
-      else {
-        return '';
-      }
     }
   }
 }
@@ -1043,7 +971,7 @@ function bat_event_action_info() {
  * VBO action: Assign fixed-state event to units.
  */
 function bat_event_unit_set_state(&$unit, $context) {
-  $type = bat_type_load($unit->type_id);
+  $type = bat_type_load($unit->id());
   $type_bundle = bat_type_bundle_load($type->type);
 
   $event_state = $context['form_values']['event_state'];

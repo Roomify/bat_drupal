@@ -157,7 +157,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
     else { // Non-view operations.
       // First grant access to the entity for the specified operation if no other
       // module denies it and at least one other module says to grant access.
-      $access_results = \Drupal::moduleHandler()->invokeAll('bat_entity_access', $operation, $entity, $account, $entity_type);
+      $access_results = \Drupal::moduleHandler()->invokeAll('bat_entity_access', array($operation, $entity, $account, $entity_type));
 
       if (in_array(FALSE, $access_results, TRUE)) {
         $rights[$account->id()][$cid][$operation] = FALSE;
@@ -216,7 +216,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
         }
 
         // Then check an authenticated user's access to delete his own entities.
-        if ($account->id() && !empty($entity_info['access arguments']['user key']) && isset($entity->{$entity_info['access arguments']['user key']}) && $entity->{$entity_info['access arguments']['user key']} == $account->id()) {
+        if ($account->id() && $entity_info->getKey('uid') !== FALSE && isset($entity->{$entity_info->getKey('uid')}) && $entity->{$entity_info->getKey('uid')} == $account->id()) {
           if ($account->hasPermission($operation . ' own ' . $entity_type . ' entities') ||
               $account->hasPermission($operation . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
             $rights[$account->id()][$cid][$operation] = TRUE;
@@ -250,23 +250,29 @@ function bat_entity_access_permissions($entity_type) {
   $permissions['create ' . $entity_type . ' entities'] = array(
     'title' => t('Create @entity_type of any type', array('@entity_type' => $label)),
   );
-  $permissions['view own ' . $entity_type . ' entities'] = array(
-    'title' => t('View own @entity_type of any type', array('@entity_type' => $label)),
-  );
+  if ($entity_info->getKey('uid') !== FALSE) {
+    $permissions['view own ' . $entity_type . ' entities'] = array(
+     'title' => t('View own @entity_type of any type', array('@entity_type' => $label)),
+    );
+  }
   $permissions['view any ' . $entity_type . ' entity'] = array(
     'title' => t('View any @entity_type of any type', array('@entity_type' => $label)),
     'restrict access' => TRUE,
   );
-  $permissions['update own ' . $entity_type . ' entities'] = array(
-    'title' => t('Edit own @entity_type of any type', array('@entity_type' => $label)),
-  );
+  if ($entity_info->getKey('uid') !== FALSE) {
+    $permissions['update own ' . $entity_type . ' entities'] = array(
+      'title' => t('Edit own @entity_type of any type', array('@entity_type' => $label)),
+    );
+  }
   $permissions['update any ' . $entity_type . ' entity'] = array(
     'title' => t('Edit any @entity_type of any type', array('@entity_type' => $label)),
     'restrict access' => TRUE,
   );
-  $permissions['delete own ' . $entity_type . ' entities'] = array(
-    'title' => t('Delete own @entity_type of any type', array('@entity_type' => $label)),
-  );
+  if ($entity_info->getKey('uid') !== FALSE) {
+    $permissions['delete own ' . $entity_type . ' entities'] = array(
+      'title' => t('Delete own @entity_type of any type', array('@entity_type' => $label)),
+    );
+  }
   $permissions['delete any ' . $entity_type . ' entity'] = array(
     'title' => t('Delete any @entity_type of any type', array('@entity_type' => $label)),
     'restrict access' => TRUE,
@@ -277,23 +283,29 @@ function bat_entity_access_permissions($entity_type) {
     $permissions['create ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
       'title' => t('Create %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
     );
-    $permissions['view own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-      'title' => t('View own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-    );
+    if ($entity_info->getKey('uid') !== FALSE) {
+      $permissions['view own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+        'title' => t('View own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+      );
+    }
     $permissions['view any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
       'title' => t('View any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
       'restrict access' => TRUE,
     );
-    $permissions['update own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-      'title' => t('Edit own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-    );
+    if ($entity_info->getKey('uid') !== FALSE) {
+      $permissions['update own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+        'title' => t('Edit own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+      );
+    }
     $permissions['update any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
       'title' => t('Edit any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
       'restrict access' => TRUE,
     );
-    $permissions['delete own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-      'title' => t('Delete own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-    );
+    if ($entity_info->getKey('uid') !== FALSE) {
+      $permissions['delete own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
+        'title' => t('Delete own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+      );
+    }
     $permissions['delete any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
       'title' => t('Delete any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
       'restrict access' => TRUE,
@@ -372,22 +384,22 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
       // query is of the same bundle.
       $conditions->condition($base_table . '.' . $entity_info['entity keys']['bundle'], $bundle_name);
     }
-    elseif ($account->uid && !empty($entity_info['access arguments']['user key']) &&
+    elseif ($account->id() && $entity_info->getKey('uid') !== FALSE &&
             $account->hasPermission($op . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
       // Add an AND condition group that grants access if the entity specified
       // by the view query matches the same bundle and belongs to the user.
       $c_and = new Condition('AND');
       $conditions->condition(c_and()
         ->condition($base_table . '.' . $entity_info['entity keys']['bundle'], $bundle_name)
-        ->condition($base_table . '.' . $entity_info['access arguments']['user key'], $account->uid)
+        ->condition($base_table . '.' . $entity_info->getKey('uid'), $account->id())
       );
     }
   }
 
   // Perform 'operation own' access control for the entity in the query if the
   // user is authenticated.
-  if ($account->uid && $account->hasPermission($op . ' own ' . $entity_type . ' entities')) {
-    //$conditions->condition($base_table . '.' . $entity_info['access arguments']['user key'], $account->uid);
+  if ($account->id() && $account->hasPermission($op . ' own ' . $entity_type . ' entities')) {
+    $conditions->condition($base_table . '.' . $entity_info->getKey('uid'), $account->id());
   }
 
   // Prepare an array of condition alter hooks to invoke and an array of context

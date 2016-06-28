@@ -30,7 +30,7 @@ class BatCalendarReferenceMonthView extends FormatterBase {
       foreach ($items as $delta => $item) {
         if ($unit_type = bat_type_load($item->unit_type_id)) {
           $unit_type_names[] = $unit_type->label();
-          $unit_type_ids[] = $unit_type->type_id;
+          $unit_type_ids[] = $unit_type->id();
         }
 
         if ($type = bat_event_type_load($item->event_type_id)) {

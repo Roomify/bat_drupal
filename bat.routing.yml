@@ -17,7 +17,7 @@ bat.admin.config:
 
 # Property routing definition
 entity.bat_type_group.canonical:
-  path: '/admin/bat/type-group/{bat_type_group}'
+  path: '/admin/bat/config/type-group/{bat_type_group}'
   defaults:
     _entity_view: 'bat_type_group'
     _title: 'Property'
@@ -25,7 +25,7 @@ entity.bat_type_group.canonical:
     _entity_access: 'bat_type_group.view'
 
 entity.bat_type_group.collection:
-  path: '/admin/bat/type-group'
+  path: '/admin/bat/config/type-group'
   defaults:
     _entity_list: 'bat_type_group'
     _title: 'Type Group list'
@@ -33,7 +33,7 @@ entity.bat_type_group.collection:
     _permission: 'view property entities'
 
 entity.bat_type_group.add_page:
-  path: '/admin/bat/type-group/add'
+  path: '/admin/bat/config/type-group/add'
   defaults:
     _title: 'Add Type Group'
     _controller: '\Drupal\bat\Controller\TypeGroupController::addPage'
@@ -43,7 +43,7 @@ entity.bat_type_group.add_page:
     _admin_route: TRUE
 
 entity.bat_type_group.add_form:
-  path: '/admin/bat/type-group/add/{property_type}'
+  path: '/admin/bat/config/type-group/add/{property_type}'
   defaults:
     _controller: '\Drupal\bat\Controller\TypeGroupController::add'
     _title_callback: '\Drupal\bat\Controller\TypeGroupController::addPageTitle'
@@ -57,7 +57,7 @@ entity.bat_type_group.add_form:
         with_config_overrides: TRUE
 
 entity.bat_type_group.edit_form:
-  path: '/admin/bat/type-group/{bat_type_group}/edit'
+  path: '/admin/bat/config/type-group/{bat_type_group}/edit'
   defaults:
     _entity_form: bat_type_group.edit
     _title: 'Edit Property'
@@ -65,7 +65,7 @@ entity.bat_type_group.edit_form:
     _permission: 'edit property entities'
 
 entity.bat_type_group.delete_form:
-  path: '/admin/bat/type-group/{bat_type_group}/delete'
+  path: '/admin/bat/config/type-group/{bat_type_group}/delete'
   defaults:
     _entity_form: bat_type_group.delete
     _title: 'Delete Property'
@@ -73,7 +73,7 @@ entity.bat_type_group.delete_form:
     _permission: 'delete property entities'
 
 entity.bat_type_group_bundle.collection:
-  path: '/admin/bat/group-types'
+  path: '/admin/bat/config/group-types'
   defaults:
     _entity_list: 'bat_type_group_bundle'
     _title: 'Type Group Bundles list'
@@ -83,7 +83,7 @@ entity.bat_type_group_bundle.collection:
     _admin_route: TRUE
 
 entity.bat_type_group_bundle.type_add:
-  path: '/admin/bat/group-types/add'
+  path: '/admin/bat/config/group-types/add'
   defaults:
     _entity_form: 'bat_type_group_bundle.add'
     _title: 'Add type group bundle'
@@ -91,17 +91,17 @@ entity.bat_type_group_bundle.type_add:
     _permission: 'administer content types'
 
 entity.bat_type_group_bundle.edit_form:
-  path: '/admin/bat/group-types/{bat_type_group_bundle}/edit'
+  path: '/admin/bat/config/group-types/{bat_type_group_bundle}/edit'
   defaults:
     _entity_form: bat_type_group_bundle.edit
-    _title: 'Edit property type'
+    _title: 'Edit type group bundle'
   requirements:
     _permission: 'edit event entities'
   options:
     _admin_route: TRUE
 
 entity.bat_type_group_bundle.delete_form:
-  path: '/admin/bat/group-types/{bat_type_group_bundle}/delete'
+  path: '/admin/bat/config/group-types/{bat_type_group_bundle}/delete'
   defaults:
     _entity_form: 'bat_type_group_bundle.delete'
     _title: 'Delete'

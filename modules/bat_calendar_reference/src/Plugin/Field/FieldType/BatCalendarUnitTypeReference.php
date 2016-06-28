@@ -5,6 +5,7 @@ namespace Drupal\bat_calendar_reference\Plugin\Field\FieldType;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataReferenceTargetDefinition;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * @FieldType(
@@ -56,6 +57,34 @@ class BatCalendarUnitTypeReference extends FieldItemBase {
       ->setLabel(t('Event type id'));
 
     return $properties;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultFieldSettings() {
+    return array(
+      'referenceable_event_types' => array(),
+    ) + parent::defaultFieldSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
+    $element = array();
+    $settings = $this->getSettings();
+
+    $element['referenceable_event_types'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Event types that can be referenced'),
+      '#multiple' => TRUE,
+      '#default_value' => $settings['referenceable_event_types'],
+      '#options' => array_map('\Drupal\Component\Utility\Html::escape', bat_event_types_ids()),
+      '#required' => TRUE,
+    );
+
+    return $element;
   }
 
 }

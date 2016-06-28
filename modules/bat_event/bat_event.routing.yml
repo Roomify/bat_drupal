@@ -8,7 +8,7 @@ bat.admin.events:
 
 # State routing definition
 entity.state.canonical:
-  path: '/admin/bat/state/{state}'
+  path: '/admin/bat/events/state/{state}'
   defaults:
     _entity_view: 'state'
     _title: 'State'
@@ -18,7 +18,7 @@ entity.state.canonical:
     _admin_route: TRUE
 
 entity.state.collection:
-  path: '/admin/bat/state'
+  path: '/admin/bat/events/state'
   defaults:
     _entity_list: 'state'
     _title: 'State'
@@ -28,7 +28,7 @@ entity.state.collection:
     _admin_route: TRUE
 
 entity.state.add_form:
-  path: '/admin/bat/state/add'
+  path: '/admin/bat/events/state/add'
   defaults:
     _entity_form: 'state.add'
     _title: 'Add State'
@@ -38,7 +38,7 @@ entity.state.add_form:
     _admin_route: TRUE
 
 entity.state.edit_form:
-  path: '/admin/bat/state/{state}/edit'
+  path: '/admin/bat/events/state/{state}/edit'
   defaults:
     _entity_form: 'state.edit'
     _title: 'Edit State'
@@ -48,7 +48,7 @@ entity.state.edit_form:
     _admin_route: TRUE
 
 entity.state.delete_form:
-  path: '/admin/bat/state/{state}/delete'
+  path: '/admin/bat/events/state/{state}/delete'
   defaults:
     _entity_form: 'state.delete'
     _title: 'Delete State'
@@ -60,7 +60,7 @@ entity.state.delete_form:
 
 # Event routing definition
 entity.bat_event.canonical:
-  path: '/admin/bat/event/{bat_event}'
+  path: '/admin/bat/events/event/{bat_event}'
   defaults:
     _entity_view: 'bat_event'
     _title: 'Event'
@@ -70,7 +70,7 @@ entity.bat_event.canonical:
     _admin_route: TRUE
 
 entity.bat_event.collection:
-  path: '/admin/bat/event'
+  path: '/admin/bat/events/event'
   defaults:
     _entity_list: 'bat_event'
     _title: 'Event list'
@@ -80,7 +80,7 @@ entity.bat_event.collection:
     _admin_route: TRUE
 
 entity.bat_event.add_page:
-  path: '/admin/bat/event/add'
+  path: '/admin/bat/events/event/add'
   defaults:
     _title: 'Add event'
     _controller: '\Drupal\bat_event\Controller\EventController::addPage'
@@ -90,7 +90,7 @@ entity.bat_event.add_page:
     _admin_route: TRUE
 
 entity.bat_event.add_form:
-  path: '/admin/bat/event/add/{event_type}'
+  path: '/admin/bat/events/event/add/{event_type}'
   defaults:
     _controller: '\Drupal\bat_event\Controller\EventController::add'
     _title_callback: '\Drupal\bat_event\Controller\EventController::addPageTitle'
@@ -104,7 +104,7 @@ entity.bat_event.add_form:
         with_config_overrides: TRUE
 
 entity.bat_event.edit_form:
-  path: '/admin/bat/event/{bat_event}/edit'
+  path: '/admin/bat/events/event/{bat_event}/edit'
   defaults:
     _entity_form: 'bat_event.edit'
     _title: 'Edit Event'
@@ -114,7 +114,7 @@ entity.bat_event.edit_form:
     _admin_route: TRUE
 
 entity.bat_event.delete_form:
-  path: '/admin/bat/event/{bat_event}/delete'
+  path: '/admin/bat/events/event/{bat_event}/delete'
   defaults:
     _entity_form: 'bat_event.delete'
     _title: 'Delete Event'
@@ -124,7 +124,7 @@ entity.bat_event.delete_form:
     _admin_route: TRUE
 
 entity.bat_event_type.collection:
-  path: '/admin/bat/event/event-types'
+  path: '/admin/bat/events/event/event-types'
   defaults:
     _entity_list: 'bat_event_type'
     _title: 'Event Type list'
@@ -134,7 +134,7 @@ entity.bat_event_type.collection:
     _admin_route: TRUE
 
 entity.bat_event_type.type_add:
-  path: '/admin/bat/event/event-types/add'
+  path: '/admin/bat/events/event/event-types/add'
   defaults:
     _entity_form: 'bat_event_type.add'
     _title: 'Add event type'
@@ -142,7 +142,7 @@ entity.bat_event_type.type_add:
     _unit_type_add_access: 'bat_event:{bat_event_type}'
 
 entity.bat_event_type.edit_form:
-  path: '/admin/bat/event/event-types/{bat_event_type}/edit'
+  path: '/admin/bat/events/event/event-types/{bat_event_type}/edit'
   defaults:
     _entity_form: 'bat_event_type.edit'
     _title: 'Edit Event type'
@@ -152,7 +152,7 @@ entity.bat_event_type.edit_form:
     _admin_route: TRUE
 
 entity.bat_event_type.delete_form:
-  path: '/admin/bat/event/event-types/{bat_event_type}/delete'
+  path: '/admin/bat/events/event/event-types/{bat_event_type}/delete'
   defaults:
     _entity_form: 'bat_event_type.delete'
     _title: 'Delete'

@@ -212,14 +212,14 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
   $old_conditions = $conditions;
   $conditions = db_and();
 
-  if ($account->uid && $account->hasPermission('view own bat_unit unpublished entities')) {
-    $or = db_and()
+  if ($account->id() && $account->hasPermission('view own bat_unit unpublished entities')) {
+    /*$or = new Condition('AND')
       ->condition($context['base_table'] . '.status', 0)
-      ->condition($context['base_table'] . '.uid', $account->uid);
-    $conditions->condition(db_or()
+      ->condition($context['base_table'] . '.uid', $account->id());
+    $conditions->condition(new Condition('OR')
       ->condition($or)
       ->condition($context['base_table'] . '.status', 1)
-    );
+    );*/
 
   }
   else {
@@ -574,15 +574,14 @@ function bat_type_bat_entity_access_view_condition_bat_type_alter(&$conditions, 
   $old_conditions = $conditions;
   $conditions = db_and();
 
-  if ($account->uid && $account->hasPermission('view own bat_type unpublished entities')) {
-    $or = db_and()
+  if ($account->id() && $account->hasPermission('view own bat_type unpublished entities')) {
+    /*$or = new Condition('AND')
       ->condition($context['base_table'] . '.status', 0)
-      ->condition($context['base_table'] . '.uid', $account->uid);
-    $conditions->condition(db_or()
+      ->condition($context['base_table'] . '.uid', $account->id());
+    $conditions->condition(new Condition('OR')
       ->condition($or)
       ->condition($context['base_table'] . '.status', 1)
-    );
-
+    );*/
   }
   else {
     $conditions->condition($context['base_table'] . '.status', 1);
@@ -686,7 +685,23 @@ function bat_type_load($type_id, $reset = FALSE) {
  * @see bat_type_load()
  */
 function bat_type_load_multiple($type_ids = array(), $conditions = array(), $reset = FALSE) {
-  return entity_load('bat_type', $type_ids, $conditions, $reset);
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('bat_unit_type')->resetCache();
+  }
+
+  if (!empty($conditions)) {
+    $query = \Drupal::entityQuery('bat_unit_type');
+    if (!empty($type_ids)) {
+      $query->condition('id', $type_ids, 'IN');
+    }
+    foreach ($conditions as $key => $value) {
+      $query->condition($key, $value);
+    }
+
+    $type_ids = $query->execute();
+  }
+
+  return UnitType::loadMultiple($type_ids);
 }
 
 /**
@@ -825,35 +840,6 @@ function bat_type_bundle_ids() {
  */
 function bat_type_page_view($type, $view_mode = 'full') {
   return $content;
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- *
- * FORM_ID = bat_type_bundle_operation_form
- * Prevent a Bat type bundle with associated unit bundles from being deleted.
- */
-function bat_unit_form_bat_type_bundle_operation_form_alter(&$form, FormStateInterface $form_state) {
-  // Check if types of a type bundle exist before allowing deletion.
-  if ($form_state['op'] == 'delete') {
-    $type_bundle = $form_state['bat_type_bundle'];
-
-    // Load the Bat Types associated with this bundle.
-    $query = new EntityFieldQuery();
-
-    $query->entityCondition('entity_type', 'bat_type')
-          ->propertyCondition('type', $type_bundle->type);
-    $types = $query->execute();
-    if (isset($types['bat_type']) && count($types['bat_type'])) {
-
-      // This type bundle has associated types, don't allow deletion.
-      form_set_error('confirm', t('This Bat Type bundle has associated Types. Please delete all Types before attempting to delete this Bat Type bundle.'));
-
-      unset($form['description']);
-      unset($form['actions']);
-      unset($form['confirm']);
-    }
-  }
 }
 
 /**

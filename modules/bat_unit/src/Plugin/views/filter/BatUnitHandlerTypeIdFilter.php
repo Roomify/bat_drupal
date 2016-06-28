@@ -21,7 +21,7 @@ class BatUnitHandlerTypeIdFilter extends ManyToOne {
 
     $options = array();
     foreach ($types as $type) {
-      $options[$type->type_id] = $type->name;
+      $options[$type->id()] = $type->label();
     }
 
     $this->value_options = $options;
