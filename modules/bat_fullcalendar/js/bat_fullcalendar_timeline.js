@@ -181,7 +181,7 @@ Drupal.batCalendar.Modal = function(element, eid, sd, ed, $unit_id) {
 
   var base = '/admin/bat/fullcalendar/';
   // Create a drupal ajax object that points to the event form.
-  var url = base + $unit_id + '/event/' + drupalSettings.batCalendar[0].eventType + '/' + eid + '/' + sd + '/' + ed;
+  var url = base + $unit_id + '/event/' + drupalSettings.batCalendar[0].eventType + '/' + eid + '/' + sd + '/' + ed + '?ajax_form';
 
   var element_settings = {
     url : url,

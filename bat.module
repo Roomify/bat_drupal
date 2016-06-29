@@ -506,8 +506,8 @@ function template_preprocess_bat_type_group(array &$variables) {
  *   Integer specifying the group id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
- * @return BatUnit|false
- *   A fully-loaded $unit object or FALSE if it cannot be loaded.
+ * @return TypeGroup|false
+ *   A fully-loaded $type_group object or FALSE if it cannot be loaded.
  *
  * @see bat_type_group_load_multiple()
  */

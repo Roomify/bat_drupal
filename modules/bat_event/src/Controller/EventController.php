@@ -9,6 +9,7 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\bat_event\EventInterface;
 use Drupal\bat_event\EventTypeInterface;
 
 /**
@@ -69,7 +70,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
    *   The event type entity for the event.
    *
    * @return array
-   *   A event submission form.
+   *   An event submission form.
    */
   public function add(EventTypeInterface $event_type) {
     $type = $this->entityManager()->getStorage('bat_event')->create(array(
@@ -92,6 +93,25 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
    */
   public function addPageTitle(EventTypeInterface $event_type) {
     return $this->t('Create @name', array('@name' => $event_type->label()));
+  }
+
+  /**
+   * Provides the event edit form.
+   *
+   * @param \Drupal\bat_event\EventInterface $event
+   *   The event event for edit.
+   *
+   * @return array
+   *   An event edit form.
+   */
+  public function editEvent(EventInterface $event) {
+    $input = \Drupal::request()->request->all();
+    $programmed = isset($input['form_id']);
+    $input['form_id'] = 'bat_event_' . $event->bundle() . '_edit_form';
+
+    $form = $this->entityFormBuilder()->getForm($event, 'default', array('programmed' => $programmed, 'input' => $input));
+
+    return $form;
   }
 
 }

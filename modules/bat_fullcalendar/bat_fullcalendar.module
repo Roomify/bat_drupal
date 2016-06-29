@@ -7,7 +7,9 @@
  * to easily modify it.
  */
 
+use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Template\Attribute;
+use Drupal\bat_event\Controller\EventController;
 
 
 /**
@@ -15,55 +17,33 @@ use Drupal\Core\Template\Attribute;
  */
 function bat_fullcalendar_bat_fullcalendar_modal_content($entity_id, $event_type, $event_id, $start_date, $end_date) {
   if ($event_id > 0) {
-    // For existing events allow to edit in the modal.
-    module_load_include('inc', 'bat_event', 'bat_event.admin');
-
     $event = bat_event_load($event_id);
 
-    $form_state = array(
-      'title' => t('Edit event'),
-      'ajax' => TRUE,
-      'build_info' => array(
-        'args' => array($event),
-        'files' => array(
-          'bat_event' => array(
-            'module' => 'bat_event',
-            'name' => 'bat_event.admin',
-            'type' => 'inc',
-          ),
+    $event_form = (new EventController())->editEvent($event);
+    if (isset($event_form['#validated']) && $event_form['#validated']) {
+      return array(
+        'bat_fullcalendar' => array(
+          'commands' => array(new CloseModalDialogCommand()),
         ),
-      ),
-    );
-
-    // Wrap the form via ctools modal.
-    $output = ctools_modal_form_wrapper('bat_event_edit_form', $form_state);
-    if ($form_state['executed']) {
-      if (!empty($form_state['event_deleted'])) {
-        // If there are messages for the form, render them.
-        $messages = theme('status_messages');
-
-        $output = array();
-        // If the form has not yet been rendered, render it.
-        $output[] = ctools_modal_command_display(t('Event deleted'), $messages);
-      }
-      else {
-        $output = array(ctools_modal_command_dismiss());
-      }
+      );
     }
-
+    else {
+      return array(
+        'bat_fullcalendar' => array(
+          'title' => t('Edit event'),
+          'content' => $event_form,
+        ),
+      );
+    }
+  }
+  else {
     return array(
       'bat_fullcalendar' => array(
-        'commands' => $output,
+        'title' => t('Event Management'),
+        'content' => \Drupal::formBuilder()->getForm('Drupal\bat_fullcalendar\Form\FullcalendarEventManagerForm', $entity_id, $event_type, $event_id, $start_date, $end_date),
       ),
     );
   }
-
-  return array(
-    'bat_fullcalendar' => array(
-      'title' => t('Event Management'),
-      'content' => \Drupal::formBuilder()->getForm('Drupal\bat_fullcalendar\Form\FullcalendarEventManagerForm', $entity_id, $event_type, $event_id, $start_date, $end_date),
-    ),
-  );
 }
 
 /**

@@ -7,6 +7,7 @@
 
 namespace Drupal\bat_event\Entity\Form;
 
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
@@ -52,6 +53,11 @@ class EventForm extends ContentEntityForm {
     if ($event_type->getEventGranularity() == 'bat_daily') {
       $form['start']['widget'][0]['value']['#date_time_element'] = 'none';
       $form['end']['widget'][0]['value']['#date_time_element'] = 'none';
+    }
+
+    if (\Drupal::request()->query->has('ajax_form')) {
+      $form['actions']['submit']['#attributes']['class'][] = 'use-ajax-submit';
+      $form['actions']['delete']['#access'] = FALSE;
     }
 
     return $form;
