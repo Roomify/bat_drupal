@@ -983,13 +983,13 @@ function bat_event_unit_set_state(&$unit, $context) {
 }
 
 /**
- * Prepares variables for list of available node type templates.
+ * Prepares variables for list of available event types templates.
  *
  * Default template: bat-event-add-list.html.twig.
  *
  * @param array $variables
  *   An associative array containing:
- *   - content: An array of content types.
+ *   - content: An array of event types.
  */
 function template_preprocess_bat_event_add_list(&$variables) {
   $variables['types'] = array();

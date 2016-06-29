@@ -4,7 +4,6 @@ namespace Drupal\bat_fullcalendar\Controller;
 
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\RendererInterface;

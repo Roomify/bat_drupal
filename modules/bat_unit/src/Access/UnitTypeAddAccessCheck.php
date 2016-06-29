@@ -9,7 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\bat_unit\TypeBundleInterface;
 
 /**
- * Determines access to for node add pages.
+ * Determines access to for unit type add pages.
  */
 class UnitTypeAddAccessCheck implements AccessInterface {
 
@@ -31,13 +31,13 @@ class UnitTypeAddAccessCheck implements AccessInterface {
   }
 
   /**
-   * Checks access to the node add page for the node type.
+   * Checks access to the unit type add page for the type bundle.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The currently logged in account.
    * @param \Drupal\bat_unit\TypeBundleInterface $type_bundle
-   *   (optional) The node type. If not specified, access is allowed if there
-   *   exists at least one node type for which the user may create a node.
+   *   (optional) The type bundle. If not specified, access is allowed if there
+   *   exists at least one type bundle for which the user may create a unit type.
    *
    * @return string
    *   A \Drupal\Core\Access\AccessInterface constant value.

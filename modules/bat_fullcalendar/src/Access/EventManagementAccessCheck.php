@@ -8,7 +8,7 @@ use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Determines access to for node add pages.
+ * Determines access to for event add pages.
  */
 class EventManagementAccessCheck implements AccessInterface {
 
@@ -30,7 +30,7 @@ class EventManagementAccessCheck implements AccessInterface {
   }
 
   /**
-   * Checks access to the node add page for the node type.
+   * Checks access to the event add page for the event type.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The currently logged in account.

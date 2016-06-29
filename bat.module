@@ -66,13 +66,13 @@ function bat_toolbar() {
 }
 
 /**
- * Prepares variables for list of available node type templates.
+ * Prepares variables for list of available type group bundles templates.
  *
  * Default template: bat-type-group-add-list.html.twig.
  *
  * @param array $variables
  *   An associative array containing:
- *   - content: An array of content types.
+ *   - content: An array of type group bundles.
  */
 function template_preprocess_bat_type_group_add_list(&$variables) {
   $variables['types'] = array();
@@ -107,7 +107,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
       $cid = $entity->getEntityType()->id();
     }
 
-    // If we've already checked access for this node, user and op, return the
+    // If we've already checked access for this entity, user and op, return the
     // cached result.
     if (isset($rights[$account->id()][$cid][$operation])) {
       if ($rights[$account->id()][$cid][$operation]) {

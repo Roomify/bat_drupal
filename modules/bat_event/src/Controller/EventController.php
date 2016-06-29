@@ -4,7 +4,6 @@ namespace Drupal\bat_event\Controller;
 
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -18,41 +17,20 @@ use Drupal\bat_event\EventTypeInterface;
 class EventController extends ControllerBase implements ContainerInjectionInterface {
 
   /**
-   * The date formatter service.
-   *
-   * @var \Drupal\Core\Datetime\DateFormatterInterface
-   */
-  protected $dateFormatter;
-
-  /**
-   * The renderer service.
-   *
-   * @var \Drupal\Core\Render\RendererInterface
-   */
-  protected $renderer;
-
-  /**
    * Constructs a TypeController object.
-   *
-   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
-   *   The date formatter service.
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer service.
    */
   public function __construct() {
-    //$this->dateFormatter = $date_formatter;
-    //$this->renderer = $renderer;
   }
 
 	/**
-   * Displays add content links for available content types.
+   * Displays add event links for available event types.
    *
-   * Redirects to node/add/[type] if only one content type is available.
+   * Redirects to admin/bat/events/event/add/[type] if only one event type is available.
    *
    * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
-   *   A render array for a list of the node types that can be added; however,
-   *   if there is only one node type defined for the site, the function
-   *   will return a RedirectResponse to the node add page for that one node
+   *   A render array for a list of the event types that can be added; however,
+   *   if there is only one event type defined for the site, the function
+   *   will return a RedirectResponse to the event add page for that one event
    *   type.
    */
   public function addPage() {
@@ -65,7 +43,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
 
     $content = array();
 
-    // Only use node types the user has access to.
+    // Only use event types the user has access to.
     foreach ($this->entityManager()->getStorage('bat_event_type')->loadMultiple() as $type) {
       $access = $this->entityManager()->getAccessControlHandler('bat_event')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
@@ -73,7 +51,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
       }
     }
 
-    // Bypass the node/add listing if only one content type is available.
+    // Bypass the add listing if only one event type is available.
     if (count($content) == 1) {
       $type = array_shift($content);
       return $this->redirect('entity.bat_event.add_form', array('event_type' => $type->id()));
@@ -91,7 +69,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
    *   The event type entity for the event.
    *
    * @return array
-   *   A node submission form.
+   *   A event submission form.
    */
   public function add(EventTypeInterface $event_type) {
     $type = $this->entityManager()->getStorage('bat_event')->create(array(

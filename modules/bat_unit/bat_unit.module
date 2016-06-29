@@ -71,13 +71,13 @@ function bat_unit_theme() {
 }
 
 /**
- * Prepares variables for list of available node type templates.
+ * Prepares variables for list of available unit type bundles templates.
  *
  * Default template: bat-type-add-list.html.twig.
  *
  * @param array $variables
  *   An associative array containing:
- *   - content: An array of content types.
+ *   - content: An array of unit type bundles.
  */
 function template_preprocess_bat_type_add_list(&$variables) {
   $variables['types'] = array();
@@ -92,13 +92,13 @@ function template_preprocess_bat_type_add_list(&$variables) {
 }
 
 /**
- * Prepares variables for list of available node type templates.
+ * Prepares variables for list of available unit bundles templates.
  *
  * Default template: bat-unit-add-list.html.twig.
  *
  * @param array $variables
  *   An associative array containing:
- *   - content: An array of content types.
+ *   - content: An array of unit bundles.
  */
 function template_preprocess_bat_unit_add_list(&$variables) {
   $variables['types'] = array();
@@ -926,10 +926,8 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
 
     $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
 
-    // Spoof the default view mode and node teaser so its display type is set.
     $entity_info['view modes'] += array(
       'default' => array(),
-      'node_teaser' => array(),
     );
 
     foreach ($entity_info['view modes'] as $view_mode => $data) {

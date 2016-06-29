@@ -8,9 +8,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Defines the access control handler for the node type entity type.
+ * Defines the access control handler for the state entity type.
  *
- * @see \Drupal\bat_event\Entity\EventType
+ * @see \Drupal\bat_event\Entity\State
  */
 class StateAccessControlHandler extends EntityAccessControlHandler {
 

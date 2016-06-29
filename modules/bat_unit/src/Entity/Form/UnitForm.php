@@ -171,12 +171,12 @@ class UnitForm extends ContentEntityForm {
   }
 
   /**
-   * Entity builder updating the node status with the submitted value.
+   * Entity builder updating the unit status with the submitted value.
    *
    * @param string $entity_type_id
    *   The entity type identifier.
    * @param \Drupal\bat_unit\UnitInterface $unit
-   *   The node updated with the submitted values.
+   *   The unit updated with the submitted values.
    * @param array $form
    *   The complete form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state

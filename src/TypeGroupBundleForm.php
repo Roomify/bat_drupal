@@ -10,7 +10,7 @@ use Drupal\language\Entity\ContentLanguageSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Form handler for node type forms.
+ * Form handler for type group bundle forms.
  */
 class TypeGroupBundleForm extends BundleEntityFormBase {
 

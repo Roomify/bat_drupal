@@ -9,7 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\bat_event\EventTypeInterface;
 
 /**
- * Determines access to for node add pages.
+ * Determines access to for event add pages.
  */
 class EventAddAccessCheck implements AccessInterface {
 
@@ -31,13 +31,13 @@ class EventAddAccessCheck implements AccessInterface {
   }
 
   /**
-   * Checks access to the node add page for the node type.
+   * Checks access to the event add page for the event type.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The currently logged in account.
    * @param \Drupal\bat_event\EventTypeInterface $event_type
-   *   (optional) The node type. If not specified, access is allowed if there
-   *   exists at least one node type for which the user may create a node.
+   *   (optional) The event type. If not specified, access is allowed if there
+   *   exists at least one event type for which the user may create a event.
    *
    * @return string
    *   A \Drupal\Core\Access\AccessInterface constant value.

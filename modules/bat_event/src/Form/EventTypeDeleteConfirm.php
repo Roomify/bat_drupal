@@ -8,7 +8,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a form for content type deletion.
+ * Provides a form for event type deletion.
  */
 class EventTypeDeleteConfirm extends EntityDeleteForm {
+
 }

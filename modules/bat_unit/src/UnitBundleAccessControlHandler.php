@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Defines the access control handler for the node type entity type.
+ * Defines the access control handler for the unit bundle entity type.
  *
  * @see \Drupal\bat_unit\Entity\TypeBundle
  */

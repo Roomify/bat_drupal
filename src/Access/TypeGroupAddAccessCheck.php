@@ -9,7 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\bat\TypeGroupBundleInterface;
 
 /**
- * Determines access to for node add pages.
+ * Determines access to for type group add pages.
  */
 class TypeGroupAddAccessCheck implements AccessInterface {
 
@@ -31,13 +31,13 @@ class TypeGroupAddAccessCheck implements AccessInterface {
   }
 
   /**
-   * Checks access to the node add page for the node type.
+   * Checks access to the type group add page for the type group bundle.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The currently logged in account.
    * @param \Drupal\bat\TypeGroupBundleInterface $type_group_bundle
-   *   (optional) The node type. If not specified, access is allowed if there
-   *   exists at least one node type for which the user may create a node.
+   *   (optional) The type group bundle. If not specified, access is allowed if there
+   *   exists at least one type group bundle for which the user may create a type group.
    *
    * @return string
    *   A \Drupal\Core\Access\AccessInterface constant value.
