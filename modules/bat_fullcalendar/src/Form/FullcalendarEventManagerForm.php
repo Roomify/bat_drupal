@@ -22,7 +22,10 @@ class FullcalendarEventManagerForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $entity_id = 0, $event_type = 0, $event_id = 0, $start_date = 0, $end_date = 0) {
-    $form = array();
+    if (!isset($form_state->getUserInput()['form_id'])) {
+      $form_state->getUserInput()['form_id'] = '';
+    }
+
     $new_event_id = $event_id;
 
     if ($form_state->getValue('change_event_status')) {
@@ -138,7 +141,6 @@ class FullcalendarEventManagerForm extends FormBase {
     $state_id = $values['change_event_status'];
 
     $event = bat_event_create(array('type' => $event_type));
-    $event->created = REQUEST_TIME;
     $event->uid = \Drupal::currentUser()->id();
 
     $event->start = $start_date->getTimestamp();
@@ -182,7 +184,6 @@ class FullcalendarEventManagerForm extends FormBase {
     $field_name = $values['field_name'];
 
     $event = bat_event_create(array('type' => $event_type));
-    $event->created = REQUEST_TIME;
     $event->uid = \Drupal::currentUser()->id();
 
     $event->start = $start_date->getTimestamp();

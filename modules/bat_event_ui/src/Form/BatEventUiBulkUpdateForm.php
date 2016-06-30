@@ -104,7 +104,6 @@ class BatEventUiBulkUpdateForm extends FormBase {
         'start' => $start_date->getTimestamp(),
         'end' => $end_date->getTimestamp(),
         'uid' => $type->uid->entity->uid->value,
-        'created' => REQUEST_TIME,
       ));
 
       $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';

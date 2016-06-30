@@ -109,13 +109,6 @@ class Unit extends ContentEntityBase implements UnitInterface {
   /**
    * {@inheritdoc}
    */
-  public function getProperty() {
-    return $this->get('property_id')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getUnitType() {
     return $this->get('unit_type_id')->entity;
   }

@@ -14,12 +14,11 @@
  */
 #}
 {% if types is not empty %}
-  <dl>
+  <ul class="admin-list">
     {% for type in types %}
-      <dt>{{ type.add_link }}</dt>
-      <dd>{{ type.description }}</dd>
+      <li class="clearfix"><span class="label">{{ type.add_link }}</span></li>
     {% endfor %}
-  </dl>
+  </ul>
 {% else %}
   <p>
     {% set create_content = path('entity.bat_type_group_bundle.collection') %}

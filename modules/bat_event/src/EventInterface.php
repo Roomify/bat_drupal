@@ -11,6 +11,7 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\EntityOwnerInterface;
+use Drupal\bat_unit\UnitInterface;
 
 /**
  * Provides an interface for defining Event entities.
@@ -18,9 +19,21 @@ use Drupal\user\EntityOwnerInterface;
  * @ingroup bat
  */
 interface EventInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
-  // Add get/set methods for your configuration properties here.
 
 	public function getStartDate();
 
 	public function getEndDate();
+
+	public function getUnit();
+
+	public function getUnitId();
+
+	public function setUnitId($unit_id);
+
+	public function setUnit(UnitInterface $unit);
+
+	public function setStartDate(\DateTime $date)
+
+	public function setEndDate(\DateTime $date);
+
 }

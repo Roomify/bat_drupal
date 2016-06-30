@@ -39,6 +39,53 @@ class EventForm extends ContentEntityForm {
       '#languages' => Language::STATE_ALL,
     );
 
+    $form['#theme'] = array('bat_entity_edit_form');
+    $form['#attached']['library'][] = 'bat/bat_ui';
+
+    $form['advanced'] = array(
+      '#type' => 'container',
+      '#attributes' => array('class' => array('entity-meta')),
+      '#weight' => 99,
+    );
+
+    $is_new = !$entity->isNew() ? format_date($entity->getChangedTime(), 'short') : t('Not saved yet');
+    $form['meta'] = array(
+      '#attributes' => array('class' => array('entity-meta__header')),
+      '#type' => 'container',
+      '#group' => 'advanced',
+      '#weight' => -100,
+      'changed' => array(
+        '#type' => 'item',
+        '#wrapper_attributes' => array('class' => array('entity-meta__last-saved', 'container-inline')),
+        '#markup' => '<h4 class="label inline">' . t('Last saved') . '</h4> ' . $is_new,
+      ),
+      'author' => array(
+        '#type' => 'item',
+        '#wrapper_attributes' => array('class' => array('author', 'container-inline')),
+        '#markup' => '<h4 class="label inline">' . t('Author') . '</h4> ' . $entity->getOwner()->getUsername(),
+      ),
+    );
+
+    $form['author'] = array(
+      '#type' => 'details',
+      '#title' => t('Authoring information'),
+      '#group' => 'advanced',
+      '#attributes' => array(
+        'class' => array('type-form-author'),
+      ),
+      '#weight' => 90,
+      '#optional' => TRUE,
+      '#open' => TRUE,
+    );
+
+    if (isset($form['uid'])) {
+      $form['uid']['#group'] = 'author';
+    }
+
+    if (isset($form['created'])) {
+      $form['created']['#group'] = 'author';
+    }
+
     if ($entity->isNew()) {
       $form['start']['widget'][0]['value']['#default_value'] = '';
       $form['end']['widget'][0]['value']['#default_value'] = '';

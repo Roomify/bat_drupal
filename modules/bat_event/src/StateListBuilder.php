@@ -28,6 +28,7 @@ class StateListBuilder extends EntityListBuilder {
     $header['color'] = $this->t('Color');
     $header['calendar_label'] = $this->t('Calendar label');
     $header['blocking'] = $this->t('Blocking');
+    $header['event_type'] = $this->t('Event type');
     return $header + parent::buildHeader();
   }
 
@@ -47,6 +48,7 @@ class StateListBuilder extends EntityListBuilder {
     $row['color'] = $entity->getColor();
     $row['calendar_label'] = $entity->getCalendarLabel();
     $row['blocking'] = ($entity->getBlocking()) ? t('Blocking') : t('Not blocking');
+    $row['event_type'] = $entity->getEventType()->label();
     return $row + parent::buildRow($entity);
   }
 

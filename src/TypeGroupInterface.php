@@ -18,6 +18,5 @@ use Drupal\user\EntityOwnerInterface;
  * @ingroup bat
  */
 interface TypeGroupInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
-  // Add get/set methods for your configuration properties here.
 
 }

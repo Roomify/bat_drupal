@@ -105,6 +105,13 @@ class State extends ContentEntityBase implements StateInterface {
   /**
    * {@inheritdoc}
    */
+  public function getEventType() {
+    return $this->get('event_type')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
@@ -195,9 +202,19 @@ class State extends ContentEntityBase implements StateInterface {
       ->setLabel(t('Machine name'))
       ->setDescription(t('Machine name.'));
 
-    $fields['event_type'] = BaseFieldDefinition::create('string')
+    $fields['event_type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Event type'))
-      ->setDescription(t('Event type.'));
+      ->setSetting('target_type', 'bat_event_type')
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
+      ->setRequired(TRUE);
 
     return $fields;
   }
