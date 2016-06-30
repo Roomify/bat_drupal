@@ -206,3 +206,10 @@ unit.multiple_delete_confirm:
     _form: '\Drupal\bat_unit\Form\UnitDeleteMultiple'
   requirements:
     _permission: 'bypass bat_unit entities access'
+
+unit.unit_set_state_action:
+  path: '/admin/bat/config/units/set-state'
+  defaults:
+    _form: '\Drupal\bat_unit\Form\UnitSetStateAction'
+  requirements:
+    _permission: 'bypass bat_unit entities access'

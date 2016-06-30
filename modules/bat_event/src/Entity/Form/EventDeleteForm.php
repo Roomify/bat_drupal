@@ -17,6 +17,7 @@ use Drupal\Core\Url;
  * @ingroup bat
  */
 class EventDeleteForm extends ContentEntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -44,14 +45,7 @@ class EventDeleteForm extends ContentEntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    drupal_set_message(
-      $this->t('content @type: deleted @label.',
-        [
-          '@type' => $this->entity->bundle(),
-          '@label' => $this->entity->label()
-        ]
-        )
-    );
+    drupal_set_message($this->t('The event has been deleted'));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

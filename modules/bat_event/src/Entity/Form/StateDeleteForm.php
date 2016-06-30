@@ -15,6 +15,7 @@ use Drupal\Core\Url;
  * Builds the form to delete State entities.
  */
 class StateDeleteForm extends ContentEntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -42,14 +43,7 @@ class StateDeleteForm extends ContentEntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    drupal_set_message(
-      $this->t('content @type: deleted @label.',
-        [
-          '@type' => $this->entity->bundle(),
-          '@label' => $this->entity->label()
-        ]
-        )
-    );
+    drupal_set_message($this->t('State @label has been deleted.', array('@label' => $this->entity->label())));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

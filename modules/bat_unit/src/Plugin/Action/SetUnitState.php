@@ -2,9 +2,11 @@
 
 namespace Drupal\bat_unit\Plugin\Action;
 
-use Drupal\Core\Action\ConfigurableActionBase;
+use Drupal\Core\Action\ActionBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\PrivateTempStoreFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Assign fixed-state event to units.
@@ -12,104 +14,78 @@ use Drupal\Core\Form\FormStateInterface;
  * @Action(
  *   id = "unit_set_state_action",
  *   label = @Translation("Assign fixed-state event to units"),
- *   type = "bat_unit"
+ *   type = "bat_unit",
+ *   confirm_form_route_name = "unit.unit_set_state_action"
  * )
  */
-class SetUnitState extends ConfigurableActionBase {
+class SetUnitState extends ActionBase implements ContainerFactoryPluginInterface {
 
   /**
-   * {@inheritdoc}
+   * The tempstore object.
+   *
+   * @var \Drupal\user\SharedTempStore
    */
-  public function defaultConfiguration() {
-    return array();
+  protected $tempStore;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * Constructs a new DeleteUnit object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
+   *   The tempstore factory.
+   * @param AccountInterface $current_user
+   *   Current user.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, PrivateTempStoreFactory $temp_store_factory, AccountInterface $current_user) {
+    $this->currentUser = $current_user;
+    $this->tempStore = $temp_store_factory->get('unit_set_state_action_form');
+
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $event_types_options = array();
-    $event_types = bat_event_get_types();
-    foreach ($event_types as $event_type) {
-      if ($event_type->fixed_event_states) {
-        $event_types_options[$event_type->type] = $event_type->label;
-      }
-    }
-
-    $form += bat_date_range_fields();
-
-    $form['event_type'] = array(
-      '#type' => 'select',
-      '#title' => t('Event type'),
-      '#options' => $event_types_options,
-      '#required' => TRUE,
-      '#ajax' => array(
-        'callback' => 'bat_event_unit_set_state_form_callback',
-        'wrapper' => 'event-state-wrapper',
-      ),
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('user.private_tempstore'),
+      $container->get('current_user')
     );
-
-    if (isset($form_state['values']['event_type'])) {
-      $state_options = array();
-      foreach (bat_event_get_states($form_state['values']['event_type']) as $state) {
-        $state_options[$state['machine_name']] = $state['label'];
-      }
-
-      $form['event_state'] = array(
-        '#type' => 'select',
-        '#title' => t('Event state'),
-        '#options' => $state_options,
-        '#required' => TRUE,
-        '#prefix' => '<div id="event-state-wrapper">',
-        '#suffix' => '</div>',
-      );
-    }
-    else {
-      $form['event_state'] = array(
-        '#prefix' => '<div id="event-state-wrapper">',
-        '#suffix' => '</div>',
-      );
-    }
-
-    return $form;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public function executeMultiple(array $entities) {
+    $info = [];
+
+    foreach ($entities as $unit) {
+      $langcode = $unit->language()->getId();
+      $info[$unit->id()][$langcode] = $langcode;
+    }
+    $this->tempStore->set($this->currentUser->id(), $info);
   }
 
   /**
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
-    $type = $entity->unit_type_id->entity;
-    $type_bundle = bat_type_bundle_load($type->bundle());
-
-    $event_state = $context['form_values']['event_state'];
-    $event_type = $context['form_values']['event_type'];
-
-    $start_date = new DateTime($context['form_values']['bat_start_date']);
-    $end_date = new DateTime($context['form_values']['bat_end_date']);
-    $end_date->sub(new DateInterval('PT1M'));
-
-    if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
-      $event = bat_event_create(array(
-        'type' => $event_type,
-        'start_date' => $start_date->format('Y-m-d H:i:s'),
-        'end_date' => $end_date->format('Y-m-d H:i:s'),
-        'uid' => $type->uid,
-        'created' => REQUEST_TIME,
-      ));
-
-      $event->event_bat_unit_reference[LANGUAGE_NONE][0]['target_id'] = $unit->unit_id;
-
-      $state = bat_event_load_state_by_machine_name($event_state);
-      $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = $state['id'];
-
-      $event->save();
-    }
+    $this->executeMultiple(array($object));
   }
 
   /**

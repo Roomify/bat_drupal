@@ -15,6 +15,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\bat\Entity\TypeGroup;
+use Drupal\bat\Entity\TypeGroupBundle;
 
 
 /**
@@ -617,4 +618,19 @@ function bat_type_group_get_bundles($bundle_name = NULL, $reset = FALSE) {
  */
 function bat_type_group_create($values = array()) {
   return TypeGroup::create($values);
+}
+
+/**
+ * Menu argument loader; Load a type group bundle by string.
+ *
+ * @param $bundle
+ *   The machine-readable name of a type group bundle to load.
+ * @param bool $reset
+ *   A boolean indicating whether the internal cache should be reset.
+ *
+ * @return array|false
+ *   A type group bundle array or FALSE if $bundle does not exist.
+ */
+function bat_type_group_bundle_load($bundle, $reset = FALSE) {
+  return TypeGroupBundle::load($bundle);
 }

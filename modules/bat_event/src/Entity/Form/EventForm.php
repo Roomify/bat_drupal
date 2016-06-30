@@ -54,6 +54,10 @@ class EventForm extends ContentEntityForm {
       $form['start']['widget'][0]['value']['#date_time_element'] = 'none';
       $form['end']['widget'][0]['value']['#date_time_element'] = 'none';
     }
+    else {
+      $form['start']['widget'][0]['value']['#date_increment'] = 60;
+      $form['end']['widget'][0]['value']['#date_increment'] = 60;
+    }
 
     if (\Drupal::request()->query->has('ajax_form')) {
       $form['actions']['submit']['#attributes']['class'][] = 'use-ajax-submit';

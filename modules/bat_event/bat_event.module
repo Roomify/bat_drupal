@@ -137,31 +137,6 @@ function bat_event_type_add_target_entity_field($entity) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- *
- * FORM_ID = views_exposed_form
- */
-function bat_event_form_views_exposed_form_alter(&$form, FormStateInterface $form_state) {
-  // Events admin view exposed filters.
-  if ($form['#id'] == 'views-exposed-form-events-page-1') {
-    $date_format = \Drupal::config('bat.settings')->get('daily_date_format') ?: 'Y-m-d';
-
-    $form['start_date']['#type'] = 'date_popup';
-    $form['start_date']['#date_format'] = $date_format;
-    $form['start_date']['#date_label_position'] = 'before';
-
-    $form['end_date']['#type'] = 'date_popup';
-    $form['end_date']['#date_format'] = $date_format;
-    $form['end_date']['#date_label_position'] = 'before';
-
-    $form['#attached']['css'][] = array(
-      'data' => '.views-exposed-form .views-exposed-widget { height: 70px; }',
-      'type' => 'inline',
-    );
-  }
-}
-
-/**
  * Checks event access for various operations.
  *
  * @param string $op
@@ -713,6 +688,8 @@ function bat_event_validate_hex_color($element, FormStateInterface $form_state) 
 
 /**
  * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = bat_type_bundle_edit_form
  */
 function bat_event_form_bat_type_bundle_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $type_bundle = $form_state->getFormObject()->getEntity();
@@ -933,53 +910,6 @@ function bat_event_constraints_get_info() {
   }
 
   return $constraints_info;
-}
-
-/**
- * Implements hook_action_info().
- */
-function bat_event_action_info() {
-  return array(
-    'bat_event_unit_set_state' => array(
-      'type' => 'bat_unit',
-      'label' => t('Assign fixed-state event to units'),
-      'behavior' => array('bat_event_unit_set_state'),
-      'configurable' => TRUE,
-      'vbo_configurable' => FALSE,
-      'triggers' => array('any'),
-    ),
-  );
-}
-
-/**
- * VBO action: Assign fixed-state event to units.
- */
-function bat_event_unit_set_state(&$unit, $context) {
-  $type = bat_type_load($unit->id());
-  $type_bundle = bat_type_bundle_load($type->type);
-
-  $event_state = $context['form_values']['event_state'];
-  $event_type = $context['form_values']['event_type'];
-
-  $start_date = new DateTime($context['form_values']['bat_start_date']);
-  $end_date = new DateTime($context['form_values']['bat_end_date']);
-  $end_date->sub(new DateInterval('PT1M'));
-
-  if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
-    $event = bat_event_create(array(
-      'type' => $event_type,
-      'start_date' => $start_date->format('Y-m-d H:i:s'),
-      'end_date' => $end_date->format('Y-m-d H:i:s'),
-      'uid' => $type->uid,
-      'created' => REQUEST_TIME,
-    ));
-
-    $event->event_bat_unit_reference['und'][0]['target_id'] = $unit->unit_id;
-
-    $event->event_state_reference['und'][0]['state_id'] = $state['id'];
-
-    $event->save();
-  }
 }
 
 /**

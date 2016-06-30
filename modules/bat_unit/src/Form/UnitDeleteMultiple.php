@@ -15,6 +15,50 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 class UnitDeleteMultiple extends ConfirmFormBase {
 
+  /**
+   * The array of units to delete.
+   *
+   * @var string[][]
+   */
+  protected $unitInfo = array();
+
+  /**
+   * The tempstore factory.
+   *
+   * @var \Drupal\user\PrivateTempStoreFactory
+   */
+  protected $tempStoreFactory;
+
+  /**
+   * The unit storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $manager;
+
+  /**
+   * Constructs a DeleteMultiple form object.
+   *
+   * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
+   *   The tempstore factory.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $manager
+   *   The entity manager.
+   */
+  public function __construct(PrivateTempStoreFactory $temp_store_factory, EntityManagerInterface $manager) {
+    $this->tempStoreFactory = $temp_store_factory;
+    $this->storage = $manager->getStorage('bat_unit');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('user.private_tempstore'),
+      $container->get('entity.manager')
+    );
+  }
+
 	/**
    * {@inheritdoc}
    */
@@ -26,7 +70,7 @@ class UnitDeleteMultiple extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->formatPlural(count($this->nodeInfo), 'Are you sure you want to delete this item?', 'Are you sure you want to delete these items?');
+    return $this->formatPlural(count($this->unitInfo), 'Are you sure you want to delete this unit?', 'Are you sure you want to delete these units?');
   }
 
   /**
@@ -46,7 +90,21 @@ class UnitDeleteMultiple extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $this->unitInfo = $this->tempStoreFactory->get('unit_multiple_delete_confirm')->get(\Drupal::currentUser()->id());
+
+    $form = parent::buildForm($form, $form_state);
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    if ($form_state->getValue('confirm') && !empty($this->unitInfo)) {
+      bat_unit_delete_multiple(array_keys($this->unitInfo));
+    }
   }
 
 }

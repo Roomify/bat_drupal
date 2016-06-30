@@ -17,6 +17,7 @@ use Drupal\Core\Url;
  * @ingroup bat
  */
 class TypeGroupDeleteForm extends ContentEntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -44,14 +45,7 @@ class TypeGroupDeleteForm extends ContentEntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    drupal_set_message(
-      $this->t('content @type: deleted @label.',
-        [
-          '@type' => $this->entity->bundle(),
-          '@label' => $this->entity->label()
-        ]
-        )
-    );
+    drupal_set_message($this->t('The Type Group @label has been deleted.', array('@label' => $this->entity->label())));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
