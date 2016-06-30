@@ -28,6 +28,20 @@ function bat_unit_module_implements_alter(&$implementations, $hook) {
     unset($implementations['bat_unit']);
     $implementations['bat_unit'] = $group;
   }
+
+  if ($hook == 'menu_alter' && isset($implementations['bat_unit'])) {
+    $group = $implementations['bat_unit'];
+    unset($implementations['bat_unit']);
+    $implementations['bat_unit'] = $group;
+  }
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function bat_unit_menu_alter(&$items) {
+  $items['admin/bat/config/types/type/%bat_type/units']['access callback'] = 'bat_type_access';
+  $items['admin/bat/config/types/type/%bat_type/units']['access arguments'] = array('update', 5);
 }
 
 /**
