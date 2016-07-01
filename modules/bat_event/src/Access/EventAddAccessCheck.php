@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event\Access\EventAddAccessCheck.
+ */
+
 namespace Drupal\bat_event\Access;
 
 use Drupal\Core\Access\AccessResult;

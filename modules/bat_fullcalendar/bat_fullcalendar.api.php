@@ -17,24 +17,6 @@ function hook_bat_calendar_settings_alter(&$calendar_settings) {
 }
 
 /**
- * Provide alter hook to change calendar js files.
- *
- * @param $js_files
- */
-function hook_bat_fullcalendar_render_js_alter(&$js_files) {
-  // No example.
-}
-
-/**
- * Provide alter hook to change calendar css files.
- *
- * @param $css_files
- */
-function hook_bat_fullcalendar_render_css_alter(&$css_files) {
-  // No example.
-}
-
-/**
  * Allow other modules to change the modal style.
  *
  * @param $modal_style

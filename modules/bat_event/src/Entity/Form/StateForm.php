@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
+use Drupal\Component\Utility\Color;
 
 /**
  * Class StateForm.
@@ -45,7 +46,6 @@ class StateForm extends ContentEntityForm {
       '#size' => 12,
       '#maxlength' => 7,
       '#default_value' => $state->getColor(),
-      '#element_validate' => array('bat_event_validate_hex_color'),
       '#dependency' => array('edit-row-options-colors-legend' => array('type')),
       '#prefix' => '<div class="bat-colorpicker-wrapper form-wrapper">',
       '#suffix' => '<div class="bat-colorpicker"></div></div>',
@@ -78,6 +78,14 @@ class StateForm extends ContentEntityForm {
     }
 
     return $form;
+  }
+
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+
+    if (!$form_state->isValueEmpty('color') && !Color::validateHex($form_state->getValue('color'))) {
+      $form_state->setErrorByName('color', $this->t('Color must be a hexadecimal color value.'));
+    }
   }
 
   /**

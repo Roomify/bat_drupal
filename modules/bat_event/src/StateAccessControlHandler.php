@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event\StateAccessControlHandler.
+ */
+
 namespace Drupal\bat_event;
 
 use Drupal\Core\Access\AccessResult;

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event\EventTypeForm.
+ */
+
 namespace Drupal\bat_event;
 
 use Drupal\field\Entity\FieldConfig;

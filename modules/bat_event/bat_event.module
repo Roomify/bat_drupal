@@ -176,6 +176,9 @@ function bat_event_query_bat_event_access_alter(AlterableInterface $query) {
   }
 }
 
+/**
+ * @param $state_id
+ */
 function bat_event_load_state($state_id) {
   return State::load($state_id);
 }
@@ -282,7 +285,7 @@ function bat_event_load_multiple(array $event_ids = NULL, $reset = FALSE) {
  *   The BatEvent object that represents the event to delete
  */
 function bat_event_delete(Event $event) {
-  bat_event_delete_multiple(array($event->event_id));
+  $event->delete();
 }
 
 /**
@@ -292,7 +295,11 @@ function bat_event_delete(Event $event) {
  *   An array of event IDs.
  */
 function bat_event_delete_multiple(array $event_ids) {
-  
+  $events = Event::loadMultiple($event_ids);
+
+  foreach ($events as $event) {
+    $event->delete();
+  }
 }
 
 /**
@@ -316,7 +323,7 @@ function bat_event_save(Event $event) {
  * Create a event object.
  */
 function bat_event_type_create($values = array()) {
-  
+  return EventType::create($values);
 }
 
 /**
@@ -330,7 +337,7 @@ function bat_event_type_save(EventType $type) {
  * Deletes a event type from the db.
  */
 function bat_event_type_delete(EventType $type) {
-  
+  $type->delete();
 }
 
 /**
@@ -340,13 +347,6 @@ function bat_event_uri(Event $event) {
   return array(
     'path' => 'event/' . $event->event_id,
   );
-}
-
-/**
- * Menu title callback for showing individual entities.
- */
-function bat_event_page_title(Event $event) {
-  return '';
 }
 
 /**
@@ -367,13 +367,6 @@ function bat_event_ids($conditions = array()) {
   }
 
   return $events;
-}
-
-/**
- * Sets up content to show an individual event.
- */
-function bat_event_page_view($event, $view_mode = 'full') {
-  return $content;
 }
 
 /**
@@ -684,15 +677,6 @@ function bat_event_generate_minute_schema_fields() {
 }
 
 /**
- * Utility function to validate hex color numbers.
- */
-function bat_event_validate_hex_color($element, FormStateInterface $form_state) {
-  if (!preg_match('/^#[a-f0-9]{6}$/i', $element['#value'])) {
-    form_error($element, t('This is not a valid hexadecimal color!'));
-  }
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  *
  * FORM_ID = bat_type_bundle_edit_form
@@ -941,9 +925,27 @@ function template_preprocess_bat_event_add_list(&$variables) {
 
 /**
  * @param $event_type
+ * @param $conditions
+ *
+ * @return array|false
  */
-function bat_event_get_states($event_type, $options = array()) {
-  return State::loadMultiple();
+function bat_event_get_states($event_type = NULL, $conditions = array()) {
+  $query = \Drupal::entityQuery('state');
+
+  if ($event_type !== NULL) {
+    $query->condition('event_type', $event_type);
+  }
+  foreach ($conditions as $key => $value) {
+    $query->condition($key, $value);
+  }
+
+  $result = $query->execute();
+
+  if (count($result) > 0) {
+    return State::loadMultiple($result);
+  }
+
+  return FALSE;
 }
 
 /**

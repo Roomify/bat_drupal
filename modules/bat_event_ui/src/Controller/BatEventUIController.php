@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event_ui\Controller\BatEventUIController.
+ */
+
 namespace Drupal\bat_event_ui\Controller;
 
 use Drupal\Core\Controller\ControllerBase;

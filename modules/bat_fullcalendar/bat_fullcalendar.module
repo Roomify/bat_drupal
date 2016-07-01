@@ -153,74 +153,11 @@ function bat_fullcalendar_configure($user_settings) {
 }
 
 /**
- * Sets up JS files for fullcalendar and calls an alter to allow other modules to change them
- *
- * @param array $user_js_files
- * @return array
- */
-function bat_fullcalendar_set_js_files($user_js_files = array()) {
-
-  if (count($user_js_files) > 0) {
-    $js_files = $user_js_files;
-  }
-  else {
-    $js_files = array(
-      drupal_get_path('module', 'bat_fullcalendar') . '/js/bat_fullcalendar_timeline.js'
-    );
-  }
-
-  // Provide alter hook to change calendar js files.
-  \Drupal::moduleHandler()->alter('bat_fullcalendar_render_js', $js_files);
-
-  return $js_files;
-}
-
-/**
- * Sets up CSS files for fullcalendar and calls an alter to allow other modules to change them
- *
- * @param array $user_css_files
- * @return array
- */
-function bat_fullcalendar_set_css_files($user_css_files = array()) {
-
-  if (count($user_css_files) > 0) {
-    $css_files = $user_css_files;
-  }
-  else {
-    $css_files = array(
-      drupal_get_path('module', 'bat_fullcalendar') . '/css/bat_fullcalendar_timeline.css',
-      drupal_get_path('module', 'bat_fullcalendar') . '/css/fullcalendar.theme.css',
-    );
-  }
-
-  // Provide alter hook to change calendar css files
-  \Drupal::moduleHandler()->alter('bat_fullcalendar_render_css', $css_files);
-
-  return $css_files;
-}
-
-/**
  * Theme function for FullCalendar
  */
 function template_preprocess_bat_fullcalendar(&$variables) {
   $calendar_id = $variables['calendar_settings']['calendar_id'];
   $user_settings = $variables['calendar_settings']['user_settings'];
-
-  // Check if user has defined js files and swap those in
-  if (!empty($variables['js_files'])) {
-    $js_files = bat_fullcalendar_set_js_files($variables['js_files']);
-  }
-  else {
-    $js_files = bat_fullcalendar_set_js_files();
-  }
-
-  // Check for CSS fiels
-  if (!empty($variables['css_files'])) {
-    $css_files = bat_fullcalendar_set_css_files($variables['css_files']);
-  }
-  else {
-    $css_files =  bat_fullcalendar_set_css_files();
-  }
 
   // Attributes
   if (!empty($variables['attributes'])) {
@@ -261,8 +198,6 @@ function bat_fullcalendar_theme($existing, $type, $theme, $path) {
     'bat_fullcalendar' => array(
       'variables' => array(
         'calendar_settings' => array(NULL),
-        'js_files' => array(),
-        'css_files' => array(),
         'attributes' => array(),
       ),
     ),

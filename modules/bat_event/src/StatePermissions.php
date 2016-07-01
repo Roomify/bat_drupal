@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event\StatePermissions.
+ */
+
 namespace Drupal\bat_event;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;

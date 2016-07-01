@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event\EventTypeListBuilder.
+ */
+
 namespace Drupal\bat_event;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;

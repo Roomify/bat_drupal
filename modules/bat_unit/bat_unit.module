@@ -446,13 +446,6 @@ function bat_unit_uri(Unit $unit) {
 }
 
 /**
- * Menu title callback for showing individual entities.
- */
-function bat_unit_page_title(Unit $unit) {
-  return $unit->label();
-}
-
-/**
  * Gets a list of Units keyed by id and name in value.
  */
 function bat_unit_ids($bundle = '') {
@@ -477,13 +470,6 @@ function bat_unit_ids($bundle = '') {
 }
 
 /**
- * Sets up content to show an individual unit.
- */
-function bat_unit_page_view($unit, $view_mode = 'full') {
-  return $content;
-}
-
-/**
  * Helper function to generate a list of available unit states for select lists.
  *
  * @param $event_type
@@ -502,22 +488,6 @@ function bat_unit_state_options($event_type = NULL, $conditions = array()) {
   }
 
   return $event_states;
-}
-
-/**
- * Returns an initialized bat bundle array. This is here to help other modules easily and
- * consistently add BAT unit bundles.
- */
-function bat_unit_unit_bundle_new() {
-  return array(
-    'type' => '',
-    'label' => '',
-    'weight' => '0',
-    'data' => array(
-      'hourly_availability' => 0,
-    ),
-    'bat_opening_time' => '',
-  );
 }
 
 /**
@@ -804,21 +774,14 @@ function bat_type_uri(UnitType $type) {
 }
 
 /**
- * Menu title callback for showing individual entities.
- */
-function bat_type_page_title(UnitType $type) {
-  return $type->label();
-}
-
-/**
  * Gets a list of Bat Types keyed by id and name in value.
  */
-function bat_type_ids($bundle = '') {
+function bat_type_ids($bundle = NULL) {
   $types = array();
 
   $query = \Drupal::entityQuery('bat_unit_type');
 
-  if ($bundle != '') {
+  if ($bundle !== NULL) {
     $query->condition('type', $bundle);
   }
 
@@ -852,13 +815,6 @@ function bat_type_bundle_ids() {
   }
 
   return $type_bundles;
-}
-
-/**
- * Sets up content to show an individual Bat Type.
- */
-function bat_type_page_view($type, $view_mode = 'full') {
-  return $content;
 }
 
 /**

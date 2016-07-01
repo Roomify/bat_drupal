@@ -24,20 +24,20 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
 
     if (is_array($type_bundle->default_event_value_field_ids)) {
       if (!(isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type]))) {
-        //throw new NotFoundHttpException();
+        throw new NotFoundHttpException();
       }
     }
     else {
-      //throw new NotFoundHttpException();
+      throw new NotFoundHttpException();
     }
   }
   elseif ($unit_type != 'all') {
-    //throw new NotFoundHttpException();
+    throw new NotFoundHttpException();
   }
 
   // Check if user has permission to view calendar data for this event type.
-  if (\Drupal::currentUser()->hasPermission('view calendar data for any ' . $ev_type->id() . ' event')) {
-    //throw new AccessDeniedHttpException();
+  if (!(\Drupal::currentUser()->hasPermission('view calendar data for any ' . $ev_type->id() . ' event'))) {
+    throw new AccessDeniedHttpException();
   }
 
   // Pick what modal style to use

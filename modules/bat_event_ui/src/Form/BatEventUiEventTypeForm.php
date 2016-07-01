@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event_ui\Form\BatEventUiEventTypeForm.
+ */
+
 namespace Drupal\bat_event_ui\Form;
 
 use Drupal\Core\Url;
