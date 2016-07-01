@@ -46,6 +46,7 @@ use Drupal\user\UserInterface;
  *   },
  *   bundle_entity_type = "bat_type_group_bundle",
  *   field_ui_base_route = "entity.bat_type_group_bundle.edit_form",
+ *   permission_granularity = "bundle",
  *   links = {
  *     "canonical" = "/admin/type_group/{bat_type_group}",
  *     "edit-form" = "/admin/type_group/{bat_type_group}/edit",

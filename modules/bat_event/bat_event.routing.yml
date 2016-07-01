@@ -2,7 +2,7 @@ bat.admin.events:
   path: '/admin/bat/events'
   defaults:
     _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
-    _title: 'Configuration'
+    _title: 'Events'
   requirements:
     _permission: 'access administration pages'
 

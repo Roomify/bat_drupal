@@ -53,6 +53,7 @@ use Roomify\Bat\Unit\Unit;
  *   },
  *   bundle_entity_type = "bat_event_type",
  *   field_ui_base_route = "entity.bat_event_type.edit_form",
+ *   permission_granularity = "bundle",
  *   links = {
  *     "canonical" = "/admin/event/{event}",
  *     "edit-form" = "/admin/event/{event}/edit",

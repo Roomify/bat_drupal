@@ -49,6 +49,7 @@ use Drupal\field\Entity\FieldStorageConfig;
  *   },
  *   bundle_entity_type = "bat_type_bundle",
  *   field_ui_base_route = "entity.bat_type_bundle.edit_form",
+ *   permission_granularity = "bundle",
  *   links = {
  *     "canonical" = "/admin/unit_type/{bat_unit_type}",
  *     "edit-form" = "/admin/unit_type/{bat_unit_type}/edit",

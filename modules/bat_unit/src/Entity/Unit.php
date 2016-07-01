@@ -50,6 +50,7 @@ use Drupal\commerce_price\Price;
  *   },
  *   bundle_entity_type = "bat_unit_bundle",
  *   field_ui_base_route = "entity.bat_unit_bundle.edit_form",
+ *   permission_granularity = "bundle",
  *   links = {
  *     "canonical" = "/admin/unit/{bat_unit}",
  *     "edit-form" = "/admin/unit/{bat_unit}/edit",
