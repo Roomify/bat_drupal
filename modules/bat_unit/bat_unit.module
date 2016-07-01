@@ -302,6 +302,10 @@ function bat_unit_types_ids() {
  *   A unit bundle array or FALSE if $bundle does not exist.
  */
 function bat_unit_bundle_load($bundle, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('bat_unit_bundle')->resetCache(array($bundle));
+  }
+
   return UnitBundle::load($bundle);
 }
 
@@ -656,6 +660,10 @@ function bat_type_bundles_ids() {
  *   A type bundle array or FALSE if $bundle does not exist.
  */
 function bat_type_bundle_load($bundle, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('bat_type_bundle')->resetCache(array($bundle));
+  }
+
   return TypeBundle::load($bundle);
 }
 
@@ -675,6 +683,7 @@ function bat_type_load($type_id, $reset = FALSE) {
   if ($reset) {
     \Drupal::entityManager()->getStorage('bat_unit_type')->resetCache(array($type_id));
   }
+
   return UnitType::load($type_id);
 }
 

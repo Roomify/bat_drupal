@@ -632,5 +632,9 @@ function bat_type_group_create($values = array()) {
  *   A type group bundle array or FALSE if $bundle does not exist.
  */
 function bat_type_group_bundle_load($bundle, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('bat_type_group_bundle')->resetCache(array($bundle));
+  }
+
   return TypeGroupBundle::load($bundle);
 }

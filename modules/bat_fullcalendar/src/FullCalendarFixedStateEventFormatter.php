@@ -51,14 +51,14 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
     // However if the event is in the database, then load the actual event and get its value.
     if ($event->getValue()) {
       // Load the event from the database to get the actual state and load that info.
-      $bat_event = bat_event_load($event->getValue());
+      if ($bat_event = bat_event_load($event->getValue())) {
+        $state_info = bat_event_load_state($bat_event->getEventValue());
 
-      $state_info = bat_event_load_state($bat_event->getEventValue());
+        $calendar_label = $state_info->getCalendarLabel();
 
-      $calendar_label = $state_info->getCalendarLabel();
-
-      if (bat_event_access($bat_event, 'update', \Drupal::currentUser())) {
-        $editable = TRUE;
+        if (bat_event_access($bat_event, 'update', \Drupal::currentUser())) {
+          $editable = TRUE;
+        }
       }
     }
 

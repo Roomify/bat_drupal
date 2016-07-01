@@ -120,7 +120,7 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
 	      'user_settings' => array('batCalendar' => $fc_user_settings),
 	    );
 
-	    $element[] = array(
+	    return array(
 	      '#theme' => 'bat_fullcalendar',
 	      '#calendar_settings' => $calendar_settings,
 	      '#attached' => array('library' => array('bat_calendar_reference/bat_calendar_reference')),
@@ -134,8 +134,9 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
 	      '#prefix' => $header,
 	    );
 	  }
-
-	  return $element;
+    else {
+  	  return array();
+    }
 	}
 
 }

@@ -209,6 +209,10 @@ function bat_event_types_ids() {
  *   Depending whether $type isset, an array of event types or a single one.
  */
 function bat_event_get_types($type_name = NULL, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityManager()->getStorage('bat_event_type')->resetCache();
+  }
+
   $types = EventType::loadMultiple();
   return isset($type_name) ? $types[$type_name] : $types;
 }
@@ -243,6 +247,7 @@ function bat_event_load($event_id = NULL, $reset = FALSE) {
   if ($reset) {
     \Drupal::entityManager()->getStorage('bat_event')->resetCache(array($nid));
   }
+
   return Event::load($event_id);
 }
 
@@ -266,6 +271,7 @@ function bat_event_load_multiple(array $event_ids = NULL, $reset = FALSE) {
   if ($reset) {
     \Drupal::entityManager()->getStorage('bat_event')->resetCache($event_ids);
   }
+
   return Event::loadMultiple($event_ids);
 }
 

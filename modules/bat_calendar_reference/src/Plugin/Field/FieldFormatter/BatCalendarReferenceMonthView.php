@@ -117,7 +117,7 @@ class BatCalendarReferenceMonthView extends FormatterBase {
         'user_settings' => array('batCalendar' => $fc_user_settings),
       );
 
-      $element[] = array(
+      return array(
         '#theme' => 'bat_fullcalendar',
         '#calendar_settings' => $calendar_settings,
         '#js_files' => array(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js'),
@@ -132,8 +132,9 @@ class BatCalendarReferenceMonthView extends FormatterBase {
         '#prefix' => $header,
       );
     }
-
-    return $element;
+    else {
+      return array();
+    }
   }
 
 }

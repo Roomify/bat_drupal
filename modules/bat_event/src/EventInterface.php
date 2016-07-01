@@ -32,7 +32,7 @@ interface EventInterface extends ContentEntityInterface, EntityChangedInterface,
 
 	public function setUnit(UnitInterface $unit);
 
-	public function setStartDate(\DateTime $date)
+	public function setStartDate(\DateTime $date);
 
 	public function setEndDate(\DateTime $date);
 
