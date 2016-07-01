@@ -3,6 +3,8 @@ status: true
 dependencies:
   module:
     - bat_unit
+_core:
+  default_config_hash: Ns-TmEDnT9VQjYFf_BLUWQyXXiakNHzMqZpegZb94G4
 id: units
 label: Units
 module: views
@@ -65,6 +67,57 @@ display:
           quantity: 9
       style:
         type: table
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          override: true
+          sticky: false
+          caption: ''
+          summary: ''
+          description: ''
+          columns:
+            unit_bulk_form: unit_bulk_form
+            id: id
+            name: name
+            status: status
+            operations: operations
+          info:
+            unit_bulk_form:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            id:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            name:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            status:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            operations:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          default: id
+          empty_table: false
       row:
         type: fields
       fields:
