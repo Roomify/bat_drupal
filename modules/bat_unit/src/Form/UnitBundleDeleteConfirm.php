@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_unit\Form\UnitBundleDeleteConfirm.
+ */
+
 namespace Drupal\bat_unit\Form;
 
 use Drupal\Core\Entity\Query\QueryFactory;
@@ -12,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class UnitBundleDeleteConfirm extends EntityDeleteForm {
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {

@@ -17,11 +17,11 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class BatCalendarReferenceUnitAutocomplete extends WidgetBase {
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-		$field_storage = $this->fieldDefinition->getFieldStorageDefinition();
+  /**
+   * {@inheritdoc}
+   */
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+    $field_storage = $this->fieldDefinition->getFieldStorageDefinition();
 
     $element['unit_id'] = array(
       '#title' => t('Unit'),
@@ -44,6 +44,6 @@ class BatCalendarReferenceUnitAutocomplete extends WidgetBase {
     );
 
     return $element;
-	}
+  }
 
 }

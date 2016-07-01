@@ -15,7 +15,6 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Database\Database;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\bat_event\EventInterface;
-use Drupal\bat_event\StateInterface;
 use Drupal\bat_unit\UnitInterface;
 use Drupal\user\UserInterface;
 

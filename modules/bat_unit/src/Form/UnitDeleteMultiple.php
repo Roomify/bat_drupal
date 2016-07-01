@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_unit\Form\UnitDeleteMultiple.
+ */
+
 namespace Drupal\bat_unit\Form;
 
 use Drupal\Core\Entity\EntityManagerInterface;
@@ -59,7 +64,7 @@ class UnitDeleteMultiple extends ConfirmFormBase {
     );
   }
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {

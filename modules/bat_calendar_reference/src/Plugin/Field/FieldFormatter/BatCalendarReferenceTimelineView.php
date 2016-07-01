@@ -18,15 +18,15 @@ use Drupal\Component\Utility\Html;
  */
 class BatCalendarReferenceTimelineView extends FormatterBase {
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function viewElements(FieldItemListInterface $items, $langcode) {
-		$field_type = $this->fieldDefinition->getFieldStorageDefinition()->getType();
+  /**
+   * {@inheritdoc}
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $field_type = $this->fieldDefinition->getFieldStorageDefinition()->getType();
 
     $calendar_id = Html::getUniqueId($this->fieldDefinition->getFieldStorageDefinition()->getName() . '-calendar-formatter');
 
-		if ($field_type == 'bat_calendar_unit_type_reference') {
+    if ($field_type == 'bat_calendar_unit_type_reference') {
       $unit_type_names = array();
       $unit_type_ids = array();
 
@@ -114,29 +114,29 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
     }
 
     if (!empty($fc_user_settings)) {
-	    $calendar_settings = array(
-	      'modal_style' => 'default',
-	      'calendar_id' => 'fullcalendar-scheduler',
-	      'user_settings' => array('batCalendar' => $fc_user_settings),
-	    );
+      $calendar_settings = array(
+        'modal_style' => 'default',
+        'calendar_id' => 'fullcalendar-scheduler',
+        'user_settings' => array('batCalendar' => $fc_user_settings),
+      );
 
-	    return array(
-	      '#theme' => 'bat_fullcalendar',
-	      '#calendar_settings' => $calendar_settings,
-	      '#attached' => array('library' => array('bat_calendar_reference/bat_calendar_reference')),
-	      '#attributes' => array(
-	        'id' => $calendar_id,
-	        'class' => array(
-	          'cal',
-	          'clearfix',
-	        ),
-	      ),
-	      '#prefix' => $header,
-	    );
-	  }
-    else {
-  	  return array();
+      return array(
+        '#theme' => 'bat_fullcalendar',
+        '#calendar_settings' => $calendar_settings,
+        '#attached' => array('library' => array('bat_calendar_reference/bat_calendar_reference')),
+        '#attributes' => array(
+          'id' => $calendar_id,
+          'class' => array(
+            'cal',
+            'clearfix',
+          ),
+        ),
+        '#prefix' => $header,
+      );
     }
-	}
+    else {
+      return array();
+    }
+  }
 
 }

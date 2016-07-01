@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_unit\UnitBundleAccessControlHandler.
+ */
+
 namespace Drupal\bat_unit;
 
 use Drupal\Core\Access\AccessResult;

@@ -21,12 +21,12 @@ use Drupal\bat_unit\UnitTypeInterface;
  */
 interface UnitInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface, EntityUnitTypeInterface {
 
-	public function getUnitType();
+  public function getUnitType();
 
-	public function getUnitTypeId();
+  public function getUnitTypeId();
 
-	public function setUnitTypeId($utid);
+  public function setUnitTypeId($utid);
 
-	public function setUnitType(UnitTypeInterface $unit_type);
+  public function setUnitType(UnitTypeInterface $unit_type);
 
 }

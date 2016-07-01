@@ -18,6 +18,7 @@ use Drupal\Core\Access\AccessResult;
  * @see \Drupal\bat\Entity\TypeGroup.
  */
 class TypeGroupAccessControlHandler extends EntityAccessControlHandler {
+
   /**
    * {@inheritdoc}
    */

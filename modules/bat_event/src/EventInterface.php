@@ -20,20 +20,20 @@ use Drupal\bat_unit\UnitInterface;
  */
 interface EventInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
 
-	public function getStartDate();
+  public function getStartDate();
 
-	public function getEndDate();
+  public function getEndDate();
 
-	public function getUnit();
+  public function getUnit();
 
-	public function getUnitId();
+  public function getUnitId();
 
-	public function setUnitId($unit_id);
+  public function setUnitId($unit_id);
 
-	public function setUnit(UnitInterface $unit);
+  public function setUnit(UnitInterface $unit);
 
-	public function setStartDate(\DateTime $date);
+  public function setStartDate(\DateTime $date);
 
-	public function setEndDate(\DateTime $date);
+  public function setEndDate(\DateTime $date);
 
 }

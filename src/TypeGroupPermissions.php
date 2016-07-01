@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat\TypeGroupPermissions.
+ */
+
 namespace Drupal\bat;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;

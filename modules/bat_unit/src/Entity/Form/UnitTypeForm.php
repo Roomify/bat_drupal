@@ -183,7 +183,7 @@ class UnitTypeForm extends ContentEntityForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  function updateStatus($entity_type_id, UnitTypeInterface $unit_type, array $form, FormStateInterface $form_state) {
+  public function updateStatus($entity_type_id, UnitTypeInterface $unit_type, array $form, FormStateInterface $form_state) {
     $element = $form_state->getTriggeringElement();
     if (isset($element['#published_status'])) {
       $unit_type->setStatus($element['#published_status']);

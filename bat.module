@@ -12,11 +12,8 @@ use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
 use Drupal\Core\Render\Element;
-use Drupal\Component\Utility\Html;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\bat\Entity\TypeGroup;
 use Drupal\bat\Entity\TypeGroupBundle;
-
 
 /**
  * Implements hook_help().
@@ -234,7 +231,7 @@ function bat_entity_access_permissions($entity_type) {
   );
   if ($entity_info->getKey('uid') !== FALSE) {
     $permissions['view own ' . $entity_type . ' entities'] = array(
-     'title' => t('View own @entity_type of any type', array('@entity_type' => $label)),
+      'title' => t('View own @entity_type of any type', array('@entity_type' => $label)),
     );
   }
   $permissions['view any ' . $entity_type . ' entity'] = array(
@@ -507,6 +504,7 @@ function template_preprocess_bat_type_group(array &$variables) {
  *   Integer specifying the group id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
+ *
  * @return TypeGroup|false
  *   A fully-loaded $type_group object or FALSE if it cannot be loaded.
  *
@@ -623,7 +621,7 @@ function bat_type_group_create($values = array()) {
 /**
  * Menu argument loader; Load a type group bundle by string.
  *
- * @param $bundle
+ * @param string $bundle
  *   The machine-readable name of a type group bundle to load.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.

@@ -41,7 +41,7 @@ use Drupal\bat\TypeGroupBundleInterface;
  */
 class TypeGroupBundle extends ConfigEntityBundleBase implements TypeGroupBundleInterface {
 
-	/**
+  /**
    * The machine name of this event type.
    *
    * @var string
@@ -59,7 +59,7 @@ class TypeGroupBundle extends ConfigEntityBundleBase implements TypeGroupBundleI
    */
   protected $name;
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function id() {

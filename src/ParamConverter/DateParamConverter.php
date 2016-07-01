@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat\ParamConverter\DateParamConverter.
+ */
+
 namespace Drupal\bat\ParamConverter;
  
 use Drupal\Core\ParamConverter\ParamConverterInterface;

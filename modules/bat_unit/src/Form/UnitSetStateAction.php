@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_unit\Form\UnitSetStateAction.
+ */
+
 namespace Drupal\bat_unit\Form;
 
 use Drupal\Core\Entity\EntityManagerInterface;
@@ -10,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UnitSetStateAction extends FormBase {
 
-	/**
+  /**
    * The array of units.
    *
    * @var string[][]
@@ -54,7 +59,7 @@ class UnitSetStateAction extends FormBase {
     );
   }
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -163,5 +168,5 @@ class UnitSetStateAction extends FormBase {
       }
     }
   }
-	
+  
 }

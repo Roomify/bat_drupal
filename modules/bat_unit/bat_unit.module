@@ -159,6 +159,7 @@ function bat_unit_bat_event_target_entity_types() {
  *
  * The following code deals with Bat Units and their bundles. (entity types)
  */
+
 /**
  * Determines whether the given user has access to a unit.
  *
@@ -845,6 +846,7 @@ function bat_type_bundle_new() {
  * @param bool|FALSE $locked
  * @param bool|FALSE $calculation
  * @param array $display
+ *
  * @throws \Exception
  * @throws \FieldException
  */

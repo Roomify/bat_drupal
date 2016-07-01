@@ -7,7 +7,6 @@
 
 namespace Drupal\bat_fullcalendar;
 
-use Drupal\field\Entity\FieldStorageConfig;
 use Roomify\Bat\Event\Event;
 use Roomify\Bat\Event\EventInterface;
 use Roomify\Bat\EventFormatter\AbstractEventFormatter;

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_unit\Form\TypeBundleDeleteConfirm.
+ */
+
 namespace Drupal\bat_unit\Form;
 
 use Drupal\Core\Entity\Query\QueryFactory;
@@ -12,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class TypeBundleDeleteConfirm extends EntityDeleteForm {
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
@@ -26,7 +31,7 @@ class TypeBundleDeleteConfirm extends EntityDeleteForm {
       // This type bundle has associated types, don't allow deletion.
       drupal_set_message(t('This Bat Type bundle has associated Types. Please delete all Types before attempting to delete this Bat Type bundle.'), 'error');
 
-    	return array();
+      return array();
     }
 
     return $form;

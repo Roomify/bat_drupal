@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class UnitBundleForm extends BundleEntityFormBase {
 
-	/**
+  /**
    * The entity manager.
    *
    * @var \Drupal\Core\Entity\EntityManagerInterface
@@ -44,11 +44,11 @@ class UnitBundleForm extends BundleEntityFormBase {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-  	$form = parent::form($form, $form_state);
+    $form = parent::form($form, $form_state);
 
-  	$type = $this->entity;
+    $type = $this->entity;
 
-  	$form['name'] = array(
+    $form['name'] = array(
       '#title' => t('Name'),
       '#type' => 'textfield',
       '#default_value' => $type->label(),
@@ -99,9 +99,9 @@ class UnitBundleForm extends BundleEntityFormBase {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-  	$type = $this->entity;
+    $type = $this->entity;
 
-  	$type->set('type', trim($type->id()));
+    $type->set('type', trim($type->id()));
     $type->set('name', trim($type->label()));
 
     $status = $type->save();
@@ -115,7 +115,7 @@ class UnitBundleForm extends BundleEntityFormBase {
       drupal_set_message(t('The unit bundle %name has been added.', $t_args));
     }
 
-  	$form_state->setRedirectUrl($type->urlInfo('collection'));
+    $form_state->setRedirectUrl($type->urlInfo('collection'));
   }
 
 }

@@ -16,11 +16,9 @@ use Drupal\Core\Url;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\views\ViewExecutable;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\bat_event\Entity\Event;
 use Drupal\bat_event\Entity\EventType;
 use Drupal\bat_event\Entity\State;
@@ -188,7 +186,7 @@ function bat_event_load_state($state_id) {
  *
  * @return array
  *  An array of event types keyed by type id and labels
-*/
+ */
 function bat_event_types_ids() {
   $event_types = array();
 

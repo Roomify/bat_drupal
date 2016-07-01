@@ -52,7 +52,7 @@
   text-shadow: 0 1px 0 white;
 }
 .entity-meta details .summary {
- display: none; /* Hide JS summaries. @todo Rethink summaries. */
+  display: none;
 }
 
 @media
@@ -93,7 +93,7 @@
   .layout-region-type-secondary .form-number,
   .layout-region-type-secondary .form-color,
   .layout-region-type-secondary textarea {
-    box-sizing:         border-box;
+    box-sizing: border-box;
     width: 100%;
     max-width: 100%;
   }

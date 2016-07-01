@@ -2,13 +2,8 @@
 
 namespace Drupal\bat_event\Controller;
 
-use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Render\RendererInterface;
-use Drupal\Core\Url;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\bat_event\EventInterface;
 use Drupal\bat_event\EventTypeInterface;
 

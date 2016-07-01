@@ -1,9 +1,12 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_fullcalendar\Form\FullcalendarEventManagerForm.
+ */
+
 namespace Drupal\bat_fullcalendar\Form;
 
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldItemList;
@@ -130,7 +133,7 @@ class FullcalendarEventManagerForm extends FormBase {
   /**
    * The callback for the change_event_status widget of the event manager form.
    */
-  function ajaxEventStatusChange($form, FormStateInterface $form_state) {
+  public function ajaxEventStatusChange($form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
 
     $start_date = new \DateTime($values['bat_start_date']);

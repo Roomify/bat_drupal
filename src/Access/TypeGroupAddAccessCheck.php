@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat\Access\TypeGroupAddAccessCheck.
+ */
+
 namespace Drupal\bat\Access;
 
 use Drupal\Core\Access\AccessResult;

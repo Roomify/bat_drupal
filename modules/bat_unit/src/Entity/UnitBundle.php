@@ -41,7 +41,7 @@ use Drupal\bat_unit\UnitBundleInterface;
  */
 class UnitBundle extends ConfigEntityBundleBase implements UnitBundleInterface {
 
-	/**
+  /**
    * The machine name of this event type.
    *
    * @var string
@@ -59,7 +59,7 @@ class UnitBundle extends ConfigEntityBundleBase implements UnitBundleInterface {
    */
   protected $name;
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function id() {

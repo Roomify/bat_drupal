@@ -1,12 +1,16 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_unit\TypeBundleForm.
+ */
+
 namespace Drupal\bat_unit;
 
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\language\Entity\ContentLanguageSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -14,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class TypeBundleForm extends BundleEntityFormBase {
 
-	/**
+  /**
    * The entity manager.
    *
    * @var \Drupal\Core\Entity\EntityManagerInterface
@@ -44,11 +48,11 @@ class TypeBundleForm extends BundleEntityFormBase {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-  	$form = parent::form($form, $form_state);
+    $form = parent::form($form, $form_state);
 
-  	$type = $this->entity;
+    $type = $this->entity;
 
-  	$form['name'] = array(
+    $form['name'] = array(
       '#title' => t('Name'),
       '#type' => 'textfield',
       '#default_value' => $type->label(),
@@ -105,9 +109,9 @@ class TypeBundleForm extends BundleEntityFormBase {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-  	$type = $this->entity;
+    $type = $this->entity;
 
-  	$type->set('type', trim($type->id()));
+    $type->set('type', trim($type->id()));
     $type->set('name', trim($type->label()));
 
     $status = $type->save();
@@ -121,7 +125,7 @@ class TypeBundleForm extends BundleEntityFormBase {
       drupal_set_message(t('The type bundle %name has been added.', $t_args));
     }
 
-  	$form_state->setRedirectUrl($type->urlInfo('collection'));
+    $form_state->setRedirectUrl($type->urlInfo('collection'));
   }
 
 }

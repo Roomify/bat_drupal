@@ -22,7 +22,7 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
   public function __construct() {
   }
 
-	/**
+  /**
    * Displays add content links for available type group bundles.
    *
    * Redirects to admin/bat/config/type-group/add/[type] if only one type group bundle is available.
