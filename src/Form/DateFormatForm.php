@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat\Form\DateFormatForm.
+ */
+
 namespace Drupal\bat\Form;
 
 use Drupal\Core\Form\ConfigFormBase;

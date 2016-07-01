@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat\Entity\TypeGroupBundle.
+ */
+
 namespace Drupal\bat\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;

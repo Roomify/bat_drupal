@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_facets\Form\FacetsAvailabilityForm.
+ */
+
 namespace Drupal\bat_facets\Form;
 
 use Drupal\Core\Url;

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat\Form\TypeGroupBundleDeleteConfirm.
+ */
+
 namespace Drupal\bat\Form;
 
 /**

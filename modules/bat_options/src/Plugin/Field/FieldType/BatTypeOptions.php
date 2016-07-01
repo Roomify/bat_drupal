@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_options\Plugin\Field\FieldType\BatTypeOptions.
+ */
+
 namespace Drupal\bat_options\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemBase;

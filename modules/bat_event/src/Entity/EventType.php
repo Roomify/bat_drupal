@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event\Entity\EventType.
+ */
+
 namespace Drupal\bat_event\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;

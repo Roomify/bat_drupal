@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_unit\Plugin\Action\UnpublishUnit.
+ */
+
 namespace Drupal\bat_unit\Plugin\Action;
 
 use Drupal\Core\Action\ActionBase;

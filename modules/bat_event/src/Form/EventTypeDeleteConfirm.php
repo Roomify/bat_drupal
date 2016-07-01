@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event\Form\EventTypeDeleteConfirm.
+ */
+
 namespace Drupal\bat_event\Form;
 
 /**

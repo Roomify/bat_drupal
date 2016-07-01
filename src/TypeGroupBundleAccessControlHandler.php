@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat\TypeGroupBundleAccessControlHandler.
+ */
+
 namespace Drupal\bat;
 
 use Drupal\Core\Access\AccessResult;

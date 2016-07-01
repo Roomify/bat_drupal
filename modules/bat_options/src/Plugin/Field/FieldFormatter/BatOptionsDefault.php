@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_options\Plugin\Field\FieldFormatter\BatOptionsDefault.
+ */
+
 namespace Drupal\bat_options\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FormatterBase;

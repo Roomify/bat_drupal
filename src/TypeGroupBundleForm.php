@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat\TypeGroupBundleForm.
+ */
+
 namespace Drupal\bat;
 
 use Drupal\Core\Entity\BundleEntityFormBase;

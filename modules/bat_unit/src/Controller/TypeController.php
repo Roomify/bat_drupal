@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_unit\Controller\TypeController.
+ */
+
 namespace Drupal\bat_unit\Controller;
 
 use Drupal\Core\Controller\ControllerBase;

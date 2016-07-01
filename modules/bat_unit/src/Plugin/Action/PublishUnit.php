@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_unit\Plugin\Action\PublishUnit.
+ */
+
 namespace Drupal\bat_unit\Plugin\Action;
 
 use Drupal\Core\Action\ActionBase;

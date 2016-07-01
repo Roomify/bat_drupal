@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_facets\Plugin\facets\widget\BatStateWidget.
+ */
+
 namespace Drupal\bat_facets\Plugin\facets\widget;
 
 use Drupal\Core\Form\FormStateInterface;

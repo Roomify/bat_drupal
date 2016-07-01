@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event\Entity\State.
+ */
+
 namespace Drupal\bat_event\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
