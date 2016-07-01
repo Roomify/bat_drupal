@@ -9,6 +9,7 @@ namespace Drupal\bat_event\Plugin\views\field;
 use Drupal\views\Plugin\views\filter\BooleanOperator;
 
 class BatEventHandlerBlockingFilter extends BooleanOperator {
+
   function construct() {
     parent::construct();
 
@@ -68,4 +69,5 @@ class BatEventHandlerBlockingFilter extends BooleanOperator {
 
     return $this->value_options[$this->value];
   }
+
 }

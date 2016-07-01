@@ -9,7 +9,6 @@ namespace Drupal\bat_event;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\bat_unit\UnitInterface;
 

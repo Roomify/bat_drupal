@@ -17,7 +17,7 @@ class TypeController extends ControllerBase implements ContainerInjectionInterfa
   public function __construct() {
   }
 
-	/**
+  /**
    * Displays add content links for available unit type bundles.
    *
    * Redirects to admin/bat/config/unit_type/add/[type] if only one unit type bundle is available.

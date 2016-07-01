@@ -20,14 +20,14 @@
  * If no modules return FALSE but none return TRUE either, normal permission
  * based checking will apply.
  *
- * @param $entity
+ * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The entity to perform the operation on.
  * @param $operation
  *   The request operation: update, create, or delete.
- * @param $account
+ * @param \Drupal\Core\Session\AccountInterface $account
  *   The user account whose access should be determined.
  *
- * @return
+ * @return bool
  *   TRUE or FALSE indicating an explicit denial of permission or a grant in the
  *   presence of no other denials; NULL to not affect the access check at all.
  */

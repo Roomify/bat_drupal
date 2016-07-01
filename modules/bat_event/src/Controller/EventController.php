@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_event\Controller\EventController.
+ */
+
 namespace Drupal\bat_event\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
@@ -18,7 +23,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
   public function __construct() {
   }
 
-	/**
+  /**
    * Displays add event links for available event types.
    *
    * Redirects to admin/bat/events/event/add/[type] if only one event type is available.

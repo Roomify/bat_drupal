@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_calendar_reference\Plugin\Field\FieldFormatter\BatCalendarReferenceTimelineView.
+ */
+
 namespace Drupal\bat_calendar_reference\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FormatterBase;

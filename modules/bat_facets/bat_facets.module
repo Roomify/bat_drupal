@@ -4,7 +4,6 @@
  * @file
  */
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Database\Database;
 
 use Roomify\Bat\Calendar\Calendar;

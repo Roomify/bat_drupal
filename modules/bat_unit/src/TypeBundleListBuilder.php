@@ -13,7 +13,7 @@ use Drupal\Core\Entity\EntityInterface;
  */
 class TypeBundleListBuilder extends ConfigEntityListBuilder {
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function buildHeader() {

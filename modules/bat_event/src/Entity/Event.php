@@ -62,6 +62,7 @@ use Roomify\Bat\Unit\Unit;
  */
 class Event extends ContentEntityBase implements EventInterface {
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */

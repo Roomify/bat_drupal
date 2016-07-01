@@ -103,7 +103,7 @@ class BatStateWidget extends LinksWidget {
   /**
    * Ajax callback when change 'Event type'.
    */
-  function eventTypeChange(array $form, FormStateInterface $form_state) {
+  public function eventTypeChange(array $form, FormStateInterface $form_state) {
     return $form;
   }
 

@@ -11,9 +11,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\EntityFieldManager;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\language\Entity\ContentLanguageSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -21,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class EventTypeForm extends BundleEntityFormBase {
 
-	/**
+  /**
    * The entity manager.
    *
    * @var \Drupal\Core\Entity\EntityManagerInterface
@@ -51,11 +49,11 @@ class EventTypeForm extends BundleEntityFormBase {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-  	$form = parent::form($form, $form_state);
+    $form = parent::form($form, $form_state);
 
-  	$event_type = $this->entity;
+    $event_type = $this->entity;
 
-  	$form['name'] = array(
+    $form['name'] = array(
       '#title' => t('Label'),
       '#type' => 'textfield',
       '#default_value' => $event_type->label(),
@@ -208,9 +206,9 @@ class EventTypeForm extends BundleEntityFormBase {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-  	$type = $this->entity;
+    $type = $this->entity;
 
-  	$type->set('type', trim($type->id()));
+    $type->set('type', trim($type->id()));
     $type->set('name', trim($type->label()));
 
     $type->set('default_event_label_field_name', $form_state->getValues()['event_label']['default_event_label_field_name']);
@@ -227,7 +225,7 @@ class EventTypeForm extends BundleEntityFormBase {
       drupal_set_message(t('The event type %name has been added.', $t_args));
     }
 
-  	$form_state->setRedirectUrl($type->urlInfo('collection'));
+    $form_state->setRedirectUrl($type->urlInfo('collection'));
   }
 
 }

@@ -56,7 +56,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
       array(
         'unitType' => $unit_type,
         'eventType' => $event_type,
-        'eventGranularity' =>  $event_granularity,
+        'eventGranularity' => $event_granularity,
       ),
     ),
   );

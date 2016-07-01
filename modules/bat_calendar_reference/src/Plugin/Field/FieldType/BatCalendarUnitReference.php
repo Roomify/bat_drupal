@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\bat_calendar_reference\Plugin\Field\FieldType\BatCalendarUnitReference.
+ */
+
 namespace Drupal\bat_calendar_reference\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemBase;

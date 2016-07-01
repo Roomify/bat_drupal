@@ -14,14 +14,14 @@ use Drupal\Core\Entity\ContentEntityInterface;
  */
 interface StateInterface extends ContentEntityInterface {
 
-	public function getMachineName();
+  public function getMachineName();
 
-	public function getColor();
+  public function getColor();
 
-	public function getCalendarLabel();
+  public function getCalendarLabel();
 
-	public function getBlocking();
+  public function getBlocking();
 
-	public function getEventType();
+  public function getEventType();
 
 }

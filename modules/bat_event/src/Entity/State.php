@@ -45,6 +45,7 @@ use Drupal\bat_event\StateInterface;
  */
 class State extends ContentEntityBase implements StateInterface {
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */

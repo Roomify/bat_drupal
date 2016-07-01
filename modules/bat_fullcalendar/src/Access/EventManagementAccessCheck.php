@@ -7,7 +7,6 @@
 
 namespace Drupal\bat_fullcalendar\Access;
 
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;

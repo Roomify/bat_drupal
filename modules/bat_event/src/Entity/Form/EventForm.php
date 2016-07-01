@@ -7,7 +7,6 @@
 
 namespace Drupal\bat_event\Entity\Form;
 
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;

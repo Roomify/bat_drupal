@@ -206,7 +206,7 @@ function bat_event_types_ids() {
  * @param bool $reset
  *   A boolean indicating that the internal cache should be reset.
  *
- * @return BatEventType[]
+ * @return EventType[]
  *   Depending whether $type isset, an array of event types or a single one.
  */
 function bat_event_get_types($type_name = NULL, $reset = FALSE) {
@@ -279,8 +279,8 @@ function bat_event_load_multiple(array $event_ids = NULL, $reset = FALSE) {
 /**
  * Deletes a event.
  *
- * @param BatEvent $event
- *   The BatEvent object that represents the event to delete
+ * @param Event $event
+ *   The Event object that represents the event to delete
  */
 function bat_event_delete(Event $event) {
   $event->delete();
@@ -310,7 +310,7 @@ function bat_event_create($values = array()) {
 /**
  * Saves a event to the database.
  *
- * @param BatEvent $event
+ * @param Event $event
  *   The Event object.
  */
 function bat_event_save(Event $event) {
@@ -661,7 +661,7 @@ function bat_event_generate_minute_schema_fields() {
   for ($i = 0; $i <= 59; $i++) {
     // PHP has no clean way to get the minutes without leading zeros so setting table
     // fields names to contain the leading zeros to save strangeness in code elsewhere
-    if ($i <= 9) { $m='0' . $i; } else { $m = $i; }
+    if ($i <= 9) { $m = '0' . $i; } else { $m = $i; }
 
     $fields['m' . $m] = array(
       'description' => 'M' . $m,

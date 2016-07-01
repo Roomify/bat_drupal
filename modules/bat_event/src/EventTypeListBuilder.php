@@ -18,7 +18,7 @@ use Drupal\Core\Entity\EntityInterface;
  */
 class EventTypeListBuilder extends ConfigEntityListBuilder {
 
-	/**
+  /**
    * {@inheritdoc}
    */
   public function buildHeader() {

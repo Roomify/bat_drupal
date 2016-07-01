@@ -9,10 +9,7 @@ namespace Drupal\bat_unit;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\EntityOwnerInterface;
-use Drupal\bat_unit\EntityUnitTypeInterface;
-use Drupal\bat_unit\UnitTypeInterface;
 
 /**
  * Provides an interface for defining Unit entities.
