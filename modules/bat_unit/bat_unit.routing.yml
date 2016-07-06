@@ -213,3 +213,17 @@ unit.unit_set_state_action:
     _form: '\Drupal\bat_unit\Form\UnitSetStateAction'
   requirements:
     _permission: 'bypass bat_unit entities access'
+
+unit.units_list:
+  path: '/admin/bat/config/types/type/{bat_unit_type}/units'
+  defaults:
+    _controller: '\Drupal\bat_unit\Controller\UnitController::listUnits'
+  requirements:
+    _access: 'TRUE'
+
+entity.bat_unit.add_units:
+  path: '/admin/bat/config/types/type/{bat_unit_type}/units/add'
+  defaults:
+    _controller: '\Drupal\bat_unit\Controller\UnitController::addUnits'
+  requirements:
+    _access: 'TRUE'

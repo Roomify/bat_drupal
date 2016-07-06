@@ -9,6 +9,9 @@ namespace Drupal\bat_event\Plugin\views\field;
 
 use Drupal\views\Plugin\views\filter\Date;
 
+/**
+ * @ViewsFilter("bat_event_handler_date_filter")
+ */
 class BatEventHandlerDateFilter extends Date {
 
   function op_simple($field) {

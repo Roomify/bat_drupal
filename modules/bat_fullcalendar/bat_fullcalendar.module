@@ -9,6 +9,7 @@
 
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Template\Attribute;
+use Drupal\Component\Utility\Html;
 use Drupal\bat_event\Controller\EventController;
 
 
@@ -165,7 +166,7 @@ function template_preprocess_bat_fullcalendar(&$variables) {
   }
   else {
     $attributes = array(
-      'id' => 'calendar',
+      'id' => Html::getUniqueId('calendar'),
       'class' => array(
         'calendar-set',
         'clearfix',
@@ -179,6 +180,8 @@ function template_preprocess_bat_fullcalendar(&$variables) {
 
   // Override default settings with ones coming form user
   $settings = bat_fullcalendar_configure($variables['calendar_settings']['user_settings']);
+
+  $settings['batCalendar'][0]['id'] = $attributes['id'];
 
   $attributes = new Attribute($attributes);
 

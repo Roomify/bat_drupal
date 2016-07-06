@@ -87,11 +87,10 @@ class EventViewsData extends EntityViewsData implements EntityViewsDataInterface
     );
 
     $data['event']['duration'] = array(
-      'title' => t('Duration'),
-      'help' => t("Event's duration."),
       'field' => array(
+        'title' => t('Duration'),
+        'help' => t("Event's duration."),
         'id' => 'bat_event_handler_duration_field',
-        'click sortable' => TRUE,
       ),
     );
 

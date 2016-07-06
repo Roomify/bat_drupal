@@ -6,17 +6,16 @@
  * for unit bundles.
  */
 
-namespace Drupal\bat_unit\Plugin\views\field;
+namespace Drupal\bat_unit\Plugin\views\filter;
 
 use Drupal\views\Plugin\views\filter\ManyToOne;
 
+/**
+ * @ViewsFilter("bat_unit_handler_type_id_filter")
+ */
 class BatUnitHandlerTypeIdFilter extends ManyToOne {
 
-  function construct() {
-    parent::construct();
-  }
-
-  function get_value_options() {
+  public function getValueOptions() {
     $types = bat_unit_get_types();
 
     $options = array();
@@ -24,7 +23,9 @@ class BatUnitHandlerTypeIdFilter extends ManyToOne {
       $options[$type->id()] = $type->label();
     }
 
-    $this->value_options = $options;
+    $this->valueOptions = $options;
+
+    return $this->valueOptions;
   }
 
 }

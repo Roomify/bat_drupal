@@ -10,6 +10,7 @@ namespace Drupal\bat_unit\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\bat_unit\UnitBundleInterface;
+use Drupal\bat_unit\UnitTypeInterface;
 
 /**
  * Returns responses for Type routes.
@@ -91,6 +92,20 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
    */
   public function addPageTitle(UnitBundleInterface $unit_bundle) {
     return $this->t('Create @name', array('@name' => $unit_bundle->label()));
+  }
+
+  /**
+   *
+   */
+  public function listUnits(UnitTypeInterface $unit_type) {
+
+  }
+
+  /**
+   *
+   */
+  public function addUnits(UnitTypeInterface $unit_type) {
+    
   }
 
 }

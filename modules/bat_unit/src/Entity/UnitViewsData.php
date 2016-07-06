@@ -40,6 +40,8 @@ class UnitViewsData extends EntityViewsData implements EntityViewsDataInterface 
       ),
     );
 
+    $data['unit']['unit_type_id']['filter']['id'] = 'bat_unit_handler_type_id_filter';
+
     return $data;
   }
 

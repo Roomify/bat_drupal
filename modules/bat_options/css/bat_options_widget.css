@@ -1,9 +1,13 @@
+.field--widget-bat-options-combined .field-multiple-table {
+  display: inline-block;
+}
+
 .field--widget-bat-options-combined .field-multiple-table .form-item {
   float: left;
   margin-right: 20px;
 }
 
-.field--widget-bat-options-combined .bat_options-option--remove-button {
+.field--widget-bat-options-combined .button {
   clear: both;
   float: right;
 }

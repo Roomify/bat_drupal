@@ -8,6 +8,9 @@ namespace Drupal\bat_event\Plugin\views\field;
 
 use Drupal\views\Plugin\views\filter\BooleanOperator;
 
+/**
+ * @ViewsFilter("bat_event_handler_blocking_filter")
+ */
 class BatEventHandlerBlockingFilter extends BooleanOperator {
 
   function construct() {
