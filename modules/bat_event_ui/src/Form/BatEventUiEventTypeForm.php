@@ -37,7 +37,7 @@ class BatEventUiEventTypeForm extends FormBase {
       '#options' => $event_types_options,
       '#default_value' => $event_type,
       '#ajax' => array(
-        'callback' => 'bat_event_ui_event_type_form_callback',
+        'callback' => '::eventTypeFormCallback',
         'wrapper' => 'unit-type-wrapper',
       ),
     );
@@ -79,7 +79,7 @@ class BatEventUiEventTypeForm extends FormBase {
   /**
    * Ajax callback for bat_event_ui_event_type_form form.
    */
-  function bat_event_ui_event_type_form_callback($form, &$form_state) {
+  function eventTypeFormCallback($form, &$form_state) {
     return $form['unit_type'];
   }
 

@@ -41,33 +41,28 @@ class BatStateWidget extends LinksWidget {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state, $config) {
-    $widget_configs = !is_null($config) ? $config->get('widget_configs') : [];
-
-    $widget_configs += ['event_type' => '', 'state' => '', 'first_state' => '', 'second_state' => ''];
-
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state, FacetInterface $facet) {
     $event_types_options = array();
     $event_types = bat_event_get_types();
     foreach ($event_types as $event_type) {
       $event_types_options[$event_type->id()] = $event_type->label();
     }
 
-    $form['#prefix'] = '<div id="bat-facet">';
-    $form['#suffix'] = '</div>';
-
     $form['event_type'] = array(
       '#type' => 'select',
       '#title' => t('Event type'),
       '#options' => $event_types_options,
-      '#default_value' => $widget_configs['event_type'],
+      '#default_value' => $this->getConfiguration()['event_type'],
       '#ajax' => array(
-        'callback' => '::eventTypeChange',
-        'wrapper' => 'bat-facet',
+        'callback' => '::buildAjaxWidgetConfigForm',
+        'wrapper' => 'facets-widget-config-form',
       ),
     );
 
-    if ($form_state->getValue('event_type')) {
-      $ev_type = $form_state->getValue('event_type');
+    $widget_config = $form_state->getValue('widget_config');
+
+    if (isset($widget_config['event_type'])) {
+      $ev_type = $widget_config['event_type'];
     }
     else {
       $ev_types = array_keys($event_types_options);
@@ -81,7 +76,7 @@ class BatStateWidget extends LinksWidget {
         '#type' => 'select',
         '#title' => t('Event State'),
         '#options' => $state_options,
-        '#default_value' => $widget_configs['state'],
+        '#default_value' => $this->getConfiguration()['state'],
       );
     }
     else {
@@ -90,7 +85,7 @@ class BatStateWidget extends LinksWidget {
         '#title' => t('First state'),
         '#size' => 10,
         '#prefix' => '<div class="container-inline">',
-        '#default_value' => $widget_configs['first_state'],
+        '#default_value' => $this->getConfiguration()['first_state'],
       );
 
       $form['second_state'] = array(
@@ -98,17 +93,10 @@ class BatStateWidget extends LinksWidget {
         '#title' => t('Second state'),
         '#size' => 10,
         '#suffix' => '</div>',
-        '#default_value' => $widget_configs['second_state'],
+        '#default_value' => $this->getConfiguration()['second_state'],
       );
     }
 
-    return $form;
-  }
-
-  /**
-   * Ajax callback when change 'Event type'.
-   */
-  public function eventTypeChange(array $form, FormStateInterface $form_state) {
     return $form;
   }
 

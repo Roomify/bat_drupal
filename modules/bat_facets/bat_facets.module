@@ -26,7 +26,7 @@ function bat_facets_search_api_query_alter(\Drupal\search_api\Query\QueryInterfa
       $facets = $facet_manager->getEnabledFacets();
 
       if (isset($facets['id'])) {
-        $settings = $facets['id']->getWidgetConfigs();
+        $settings = $facets['id']->getWidget()['config'];
 
         // Get URL parameters.
         $params = \Drupal::request()->query->all();
