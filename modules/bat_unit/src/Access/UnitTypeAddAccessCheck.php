@@ -8,7 +8,7 @@
 namespace Drupal\bat_unit\Access;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\bat_unit\TypeBundleInterface;
@@ -21,18 +21,18 @@ class UnitTypeAddAccessCheck implements AccessInterface {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Constructs a EntityCreateAccessCheck object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_manager) {
+    $this->entityTypeManager = $entity_manager;
   }
 
   /**
@@ -48,7 +48,7 @@ class UnitTypeAddAccessCheck implements AccessInterface {
    *   A \Drupal\Core\Access\AccessInterface constant value.
    */
   public function access(AccountInterface $account, TypeBundleInterface $type_bundle = NULL) {
-    $access_control_handler = $this->entityManager->getAccessControlHandler('bat_unit_type');
+    $access_control_handler = $this->entityTypeManager->getAccessControlHandler('bat_unit_type');
 
     if ($account->hasPermission('administer bat_type_bundle entities')) {
       // There are no type bundles defined that the user has permission to

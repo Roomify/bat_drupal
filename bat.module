@@ -93,7 +93,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
   $entity_type = $entity->getEntityType()->id();
 
   if (in_array($entity_type, array('bat_type_group', 'bat_unit', 'bat_unit_type', 'bat_event'))) {
-    $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
+    $entity_info = \Drupal::entityTypeManager()->getDefinition($entity_type);
 
     // $entity may be either an object or a entity type. Since entity types cannot
     // be an integer, use either nid or type as the static cache id.
@@ -512,7 +512,7 @@ function template_preprocess_bat_type_group(array &$variables) {
  */
 function bat_type_group_load($group_id, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_type_group')->resetCache();
+    \Drupal::entityTypeManager()->getStorage('bat_type_group')->resetCache();
   }
 
   return TypeGroup::load($group_id);
@@ -536,7 +536,7 @@ function bat_type_group_load($group_id, $reset = FALSE) {
  */
 function bat_type_group_load_multiple($group_ids = array(), $conditions = array(), $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_type_group')->resetCache();
+    \Drupal::entityTypeManager()->getStorage('bat_type_group')->resetCache();
   }
 
   if (!empty($conditions)) {
@@ -601,7 +601,7 @@ function bat_type_group_delete_multiple(array $group_ids) {
  */
 function bat_type_group_get_bundles($bundle_name = NULL, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_type_group_bundle')->resetCache();
+    \Drupal::entityTypeManager()->getStorage('bat_type_group_bundle')->resetCache();
   }
 
   $types = TypeGroupBundle::loadMultiple();
@@ -631,7 +631,7 @@ function bat_type_group_create($values = array()) {
  */
 function bat_type_group_bundle_load($bundle, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_type_group_bundle')->resetCache(array($bundle));
+    \Drupal::entityTypeManager()->getStorage('bat_type_group_bundle')->resetCache(array($bundle));
   }
 
   return TypeGroupBundle::load($bundle);

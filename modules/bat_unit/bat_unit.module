@@ -250,7 +250,7 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
  */
 function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_unit_bundle')->resetCache();
+    \Drupal::entityTypeManager()->getStorage('bat_unit_bundle')->resetCache();
   }
 
   $types = UnitBundle::loadMultiple();
@@ -304,7 +304,7 @@ function bat_unit_types_ids() {
  */
 function bat_unit_bundle_load($bundle, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_unit_bundle')->resetCache(array($bundle));
+    \Drupal::entityTypeManager()->getStorage('bat_unit_bundle')->resetCache(array($bundle));
   }
 
   return UnitBundle::load($bundle);
@@ -324,7 +324,7 @@ function bat_unit_bundle_load($bundle, $reset = FALSE) {
  */
 function bat_unit_load($unit_id, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_unit')->resetCache(array($unit_id));
+    \Drupal::entityTypeManager()->getStorage('bat_unit')->resetCache(array($unit_id));
   }
 
   return Unit::load($unit_id);
@@ -348,7 +348,7 @@ function bat_unit_load($unit_id, $reset = FALSE) {
  */
 function bat_unit_load_multiple($unit_ids = array(), $conditions = array(), $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_unit')->resetCache();
+    \Drupal::entityTypeManager()->getStorage('bat_unit')->resetCache();
   }
 
   if (!empty($conditions)) {
@@ -632,7 +632,7 @@ function bat_type_bundles_ids() {
  */
 function bat_type_bundle_load($bundle, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_type_bundle')->resetCache(array($bundle));
+    \Drupal::entityTypeManager()->getStorage('bat_type_bundle')->resetCache(array($bundle));
   }
 
   return TypeBundle::load($bundle);
@@ -652,7 +652,7 @@ function bat_type_bundle_load($bundle, $reset = FALSE) {
  */
 function bat_type_load($type_id, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_unit_type')->resetCache(array($type_id));
+    \Drupal::entityTypeManager()->getStorage('bat_unit_type')->resetCache(array($type_id));
   }
 
   return UnitType::load($type_id);
@@ -676,7 +676,7 @@ function bat_type_load($type_id, $reset = FALSE) {
  */
 function bat_type_load_multiple($type_ids = array(), $conditions = array(), $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_unit_type')->resetCache();
+    \Drupal::entityTypeManager()->getStorage('bat_unit_type')->resetCache();
   }
 
   if (!empty($conditions)) {
@@ -891,7 +891,7 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
       'display' => array(),
     );
 
-    $entity_info = \Drupal::entityManager()->getDefinition($entity_type);
+    $entity_info = \Drupal::entityTypeManager()->getDefinition($entity_type);
 
     $entity_info['view modes'] += array(
       'default' => array(),

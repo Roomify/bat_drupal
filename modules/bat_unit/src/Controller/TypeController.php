@@ -36,15 +36,15 @@ class TypeController extends ControllerBase implements ContainerInjectionInterfa
     $build = [
       '#theme' => 'bat_type_add_list',
       '#cache' => [
-        'tags' => $this->entityManager()->getDefinition('bat_type_bundle')->getListCacheTags(),
+        'tags' => $this->entityTypeManager()->getDefinition('bat_type_bundle')->getListCacheTags(),
       ],
     ];
 
     $content = array();
 
     // Only use type bundles the user has access to.
-    foreach ($this->entityManager()->getStorage('bat_type_bundle')->loadMultiple() as $type) {
-      $access = $this->entityManager()->getAccessControlHandler('bat_unit_type')->createAccess($type->id(), NULL, [], TRUE);
+    foreach ($this->entityTypeManager()->getStorage('bat_type_bundle')->loadMultiple() as $type) {
+      $access = $this->entityTypeManager()->getAccessControlHandler('bat_unit_type')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
         $content[$type->id()] = $type;
       }
@@ -71,7 +71,7 @@ class TypeController extends ControllerBase implements ContainerInjectionInterfa
    *   A unit type submission form.
    */
   public function add(TypeBundleInterface $type_bundle) {
-    $type = $this->entityManager()->getStorage('bat_unit_type')->create(array(
+    $type = $this->entityTypeManager()->getStorage('bat_unit_type')->create(array(
       'type' => $type_bundle->id(),
     ));
 

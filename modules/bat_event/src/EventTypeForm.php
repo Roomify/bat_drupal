@@ -9,7 +9,7 @@ namespace Drupal\bat_event;
 
 use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Entity\BundleEntityFormBase;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,18 +22,18 @@ class EventTypeForm extends BundleEntityFormBase {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Constructs the EventTypeForm object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_manager) {
+    $this->entityTypeManager = $entity_manager;
   }
 
   /**
@@ -41,7 +41,7 @@ class EventTypeForm extends BundleEntityFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -103,7 +103,7 @@ class EventTypeForm extends BundleEntityFormBase {
         // Build option list.
         $options = array();
         foreach ($target_entity_types as $target_entity_type) {
-          $target_entity_info = \Drupal::entityManager()->getDefinition($target_entity_type);
+          $target_entity_info = \Drupal::entityTypeManager()->getDefinition($target_entity_type);
           $options[$target_entity_type] = $target_entity_info['label'];
         }
         $form['target_entity_type'] = array(
@@ -125,7 +125,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
     if (!$event_type->isNew() && $event_type->getFixedEventStates() == 0) {
       $fields_options = array();
-      $fields = $this->entityManager->getFieldDefinitions('bat_event', $event_type->id());
+      $fields = $this->entityTypeManager->getFieldDefinitions('bat_event', $event_type->id());
       foreach ($fields as $field) {
         if ($field instanceof FieldConfig) {
           $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';
@@ -151,7 +151,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
     if (!$event_type->isNew()) {
       $fields_options = array();
-      $fields = $this->entityManager->getFieldDefinitions('bat_event', $event_type->id());
+      $fields = $this->entityTypeManager->getFieldDefinitions('bat_event', $event_type->id());
       foreach ($fields as $field) {
         if ($field instanceof FieldConfig) {
           $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';

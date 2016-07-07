@@ -8,7 +8,7 @@
 namespace Drupal\bat_event\Access;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\bat_event\EventTypeInterface;
@@ -21,18 +21,18 @@ class EventAddAccessCheck implements AccessInterface {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Constructs a EntityCreateAccessCheck object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_manager) {
+    $this->entityTypeManager = $entity_manager;
   }
 
   /**
@@ -48,7 +48,7 @@ class EventAddAccessCheck implements AccessInterface {
    *   A \Drupal\Core\Access\AccessInterface constant value.
    */
   public function access(AccountInterface $account, EventTypeInterface $event_type = NULL) {
-    $access_control_handler = $this->entityManager->getAccessControlHandler('bat_event');
+    $access_control_handler = $this->entityTypeManager->getAccessControlHandler('bat_event');
 
     if ($account->hasPermission('administer bat_event_type entities')) {
       // There are no type bundles defined that the user has permission to

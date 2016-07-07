@@ -38,15 +38,15 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
     $build = [
       '#theme' => 'bat_event_add_list',
       '#cache' => [
-        'tags' => $this->entityManager()->getDefinition('bat_type_bundle')->getListCacheTags(),
+        'tags' => $this->entityTypeManager()->getDefinition('bat_type_bundle')->getListCacheTags(),
       ],
     ];
 
     $content = array();
 
     // Only use event types the user has access to.
-    foreach ($this->entityManager()->getStorage('bat_event_type')->loadMultiple() as $type) {
-      $access = $this->entityManager()->getAccessControlHandler('bat_event')->createAccess($type->id(), NULL, [], TRUE);
+    foreach ($this->entityTypeManager()->getStorage('bat_event_type')->loadMultiple() as $type) {
+      $access = $this->entityTypeManager()->getAccessControlHandler('bat_event')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
         $content[$type->id()] = $type;
       }
@@ -73,7 +73,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
    *   An event submission form.
    */
   public function add(EventTypeInterface $event_type) {
-    $type = $this->entityManager()->getStorage('bat_event')->create(array(
+    $type = $this->entityTypeManager()->getStorage('bat_event')->create(array(
       'type' => $event_type->id(),
     ));
 

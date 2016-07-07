@@ -37,15 +37,15 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
     $build = [
       '#theme' => 'bat_unit_add_list',
       '#cache' => [
-        'tags' => $this->entityManager()->getDefinition('bat_unit_bundle')->getListCacheTags(),
+        'tags' => $this->entityTypeManager()->getDefinition('bat_unit_bundle')->getListCacheTags(),
       ],
     ];
 
     $content = array();
 
     // Only use unit bundles the user has access to.
-    foreach ($this->entityManager()->getStorage('bat_unit_bundle')->loadMultiple() as $type) {
-      $access = $this->entityManager()->getAccessControlHandler('bat_unit')->createAccess($type->id(), NULL, [], TRUE);
+    foreach ($this->entityTypeManager()->getStorage('bat_unit_bundle')->loadMultiple() as $type) {
+      $access = $this->entityTypeManager()->getAccessControlHandler('bat_unit')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
         $content[$type->id()] = $type;
       }
@@ -72,7 +72,7 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
    *   A unit submission form.
    */
   public function add(UnitBundleInterface $unit_bundle) {
-    $unit = $this->entityManager()->getStorage('bat_unit')->create(array(
+    $unit = $this->entityTypeManager()->getStorage('bat_unit')->create(array(
       'type' => $unit_bundle->id(),
     ));
 

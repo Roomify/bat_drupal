@@ -37,15 +37,15 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
     $build = [
       '#theme' => 'bat_type_group_add_list',
       '#cache' => [
-        'tags' => $this->entityManager()->getDefinition('bat_type_group_bundle')->getListCacheTags(),
+        'tags' => $this->entityTypeManager()->getDefinition('bat_type_group_bundle')->getListCacheTags(),
       ],
     ];
 
     $content = array();
 
     // Only use type group bundles the user has access to.
-    foreach ($this->entityManager()->getStorage('bat_type_group_bundle')->loadMultiple() as $type) {
-      $access = $this->entityManager()->getAccessControlHandler('bat_type_group')->createAccess($type->id(), NULL, [], TRUE);
+    foreach ($this->entityTypeManager()->getStorage('bat_type_group_bundle')->loadMultiple() as $type) {
+      $access = $this->entityTypeManager()->getAccessControlHandler('bat_type_group')->createAccess($type->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {
         $content[$type->id()] = $type;
       }
@@ -72,7 +72,7 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
    *   A type group submission form.
    */
   public function add(TypeGroupBundleInterface $type_group_bundle) {
-    $type = $this->entityManager()->getStorage('bat_type_group')->create(array(
+    $type = $this->entityTypeManager()->getStorage('bat_type_group')->create(array(
       'type' => $type_group_bundle->id(),
     ));
 

@@ -84,7 +84,7 @@ function bat_event_type_add_event_state_reference($entity) {
  * We need to create a field/instance for each possible target entity type.
  */
 function bat_event_type_add_target_entity_field($entity) {
-  $entity_info = \Drupal::entityManager()->getDefinition($entity->target_entity_type);
+  $entity_info = \Drupal::entityTypeManager()->getDefinition($entity->target_entity_type);
   $field_name = 'event_' . $entity->target_entity_type . '_reference';
 
   $field_storage = FieldStorageConfig::loadByName('bat_event', $field_name);
@@ -212,7 +212,7 @@ function bat_event_types_ids() {
  */
 function bat_event_get_types($type_name = NULL, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_event_type')->resetCache();
+    \Drupal::entityTypeManager()->getStorage('bat_event_type')->resetCache();
   }
 
   $types = EventType::loadMultiple();
@@ -247,7 +247,7 @@ function bat_event_type_load($type) {
  */
 function bat_event_load($event_id = NULL, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_event')->resetCache(array($nid));
+    \Drupal::entityTypeManager()->getStorage('bat_event')->resetCache(array($nid));
   }
 
   return Event::load($event_id);
@@ -271,7 +271,7 @@ function bat_event_load($event_id = NULL, $reset = FALSE) {
  */
 function bat_event_load_multiple(array $event_ids = NULL, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityManager()->getStorage('bat_event')->resetCache($event_ids);
+    \Drupal::entityTypeManager()->getStorage('bat_event')->resetCache($event_ids);
   }
 
   return Event::loadMultiple($event_ids);
@@ -685,7 +685,7 @@ function bat_event_form_bat_type_bundle_edit_form_alter(&$form, FormStateInterfa
 
   $fields_options = array();
 
-  $fields = \Drupal::entityManager()->getFieldDefinitions('bat_unit_type', $type_bundle->id());
+  $fields = \Drupal::entityTypeManager()->getFieldDefinitions('bat_unit_type', $type_bundle->id());
   foreach ($fields as $field) {
     if ($field instanceof FieldConfig) {
       $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';
