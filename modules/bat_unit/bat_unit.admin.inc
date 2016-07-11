@@ -207,8 +207,8 @@ function bat_unit_edit_form($form, &$form_state, $unit) {
   $form['#attributes']['class'][] = 'bat-management-form bat-unit-edit-form';
   $form['#attached']['css'] = array(
     drupal_get_path('module', 'bat_unit') . '/css/bat_unit.css',
-    drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css',
   );
+
   $form['type'] = array(
     '#type' => 'value',
     '#value' => $unit->type,

@@ -43,8 +43,6 @@ class BatEventTypeUIController extends EntityDefaultUIController {
  * Generates the Event type editing form.
  */
 function bat_event_type_form($form, &$form_state, $event_type, $op = 'edit') {
-
-  $form['#attached']['css'][] = drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css';
   $form['#attributes']['class'][] = 'bat-management-form bat-event-type-form';
 
   if ($op == 'clone') {

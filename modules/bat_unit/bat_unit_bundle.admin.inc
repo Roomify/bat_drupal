@@ -31,12 +31,7 @@ class BatUnitBundleUIController extends EntityDefaultUIController {
  * Generates the unit bundle editing form.
  */
 function bat_unit_bundle_form($form, &$form_state, $unit_bundle, $op = 'edit') {
-
   $form['#attributes']['class'][] = 'bat-management-form bat-unit-bundle-edit-form';
-  $form['#attached']['css'] = array(
-    drupal_get_path('module', 'bat_unit') . '/css/bat_unit_bundle.css',
-    drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css',
-  );
 
   if ($op == 'clone') {
     $unit_bundle->label .= ' (cloned)';

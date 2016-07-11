@@ -277,10 +277,7 @@ function bat_type_delete_form_wrapper($type) {
  */
 function bat_type_edit_form($form, &$form_state, $type) {
   $form['#attributes']['class'][] = 'bat-management-form bat-type-edit-form';
-  $form['#attached']['css'] = array(
-    drupal_get_path('module', 'bat_type') . '/css/bat_type.css',
-    drupal_get_path('module', 'bat_ui') . '/css/bat_ui.css',
-  );
+
   $form['type'] = array(
     '#type' => 'value',
     '#value' => $type->type,
