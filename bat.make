@@ -26,7 +26,7 @@ libraries[fullcalendar][type] = library
 libraries[fullcalendar][destination] = libraries
 libraries[fullcalendar][download][type] = get
 ; NB: please update the link in the documentation when changing this version.
-libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v2.8.0/fullcalendar-2.8.0.zip
+libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v2.9.0/fullcalendar-2.9.0.zip
 
 ; FullCalendar Scheduler
 libraries[scheduler][directory_name] = fullcalendar-scheduler
