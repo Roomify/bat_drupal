@@ -28,7 +28,7 @@ before_script:
 
   # Install drush.
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - composer -n global require drush/drush:7.*
+  - composer -n global require drush/drush:8.*
   # Install drush composer extension.
   - drush dl composer-8.x-1.x
 
@@ -62,8 +62,8 @@ before_script:
   - sleep 3
 
   - mkdir -p $HOME/.cache
-  - wget -nc -O $HOME/.cache/selenium-server-standalone-2.53.0.jar http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar || true
-  - java -jar $HOME/.cache/selenium-server-standalone-2.53.0.jar -p 4444 &> /tmp/selenium.log &
+  - wget -nc -O $HOME/.cache/selenium-server-standalone-2.53.1.jar http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar || true
+  - java -jar $HOME/.cache/selenium-server-standalone-2.53.1.jar -p 4444 &> /tmp/selenium.log &
   - sleep 5
 
 script:
