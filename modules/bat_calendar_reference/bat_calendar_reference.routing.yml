@@ -1,0 +1,13 @@
+bat_calendar_reference.bat_unit_autocomplete:
+  path: '/bat_unit_reference_autocomplete/{target_type}/{selection_handler}/{selection_settings_key}'
+  defaults:
+    _controller: '\Drupal\bat_calendar_reference\Controller\BatUnitAutocompleteController::handleAutocomplete'
+  requirements:
+    _access: 'TRUE'
+
+bat_calendar_reference.bat_event_type_autocomplete:
+  path: '/bat_event_type_reference_autocomplete/{target_type}/{selection_handler}/{selection_settings_key}'
+  defaults:
+    _controller: '\Drupal\bat_calendar_reference\Controller\BatEventTypeAutocompleteController::handleAutocomplete'
+  requirements:
+    _access: 'TRUE'

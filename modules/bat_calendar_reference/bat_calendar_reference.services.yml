@@ -1,0 +1,7 @@
+services:
+  entity.bat_unit_autocomplete_matcher:
+    class: Drupal\bat_calendar_reference\BatUnitAutocompleteMatcher
+    arguments: ['@plugin.manager.entity_reference_selection']
+  entity.bat_event_type_autocomplete_matcher:
+    class: Drupal\bat_calendar_reference\BatEventTypeAutocompleteMatcher
+    arguments: ['@plugin.manager.entity_reference_selection']
