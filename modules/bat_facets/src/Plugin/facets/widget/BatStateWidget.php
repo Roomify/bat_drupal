@@ -48,26 +48,24 @@ class BatStateWidget extends LinksWidget {
       $event_types_options[$event_type->id()] = $event_type->label();
     }
 
-    $form['event_type'] = array(
-      '#type' => 'select',
-      '#title' => t('Event type'),
-      '#options' => $event_types_options,
-      '#default_value' => $this->getConfiguration()['event_type'],
-      '#ajax' => array(
-        'callback' => '::buildAjaxWidgetConfigForm',
-        'wrapper' => 'facets-widget-config-form',
-      ),
-    );
-
-    $widget_config = $form_state->getValue('widget_config');
-
-    if (isset($widget_config['event_type'])) {
-      $ev_type = $widget_config['event_type'];
+    if (isset($this->getConfiguration()['event_type'])) {
+      $ev_type = $this->getConfiguration()['event_type'];
     }
     else {
       $ev_types = array_keys($event_types_options);
       $ev_type = reset($ev_types);
     }
+
+    $form['event_type'] = array(
+      '#type' => 'select',
+      '#title' => t('Event type'),
+      '#options' => $event_types_options,
+      '#default_value' => $ev_type,
+      '#ajax' => array(
+        'callback' => '::buildAjaxWidgetConfigForm',
+        'wrapper' => 'facets-widget-config-form',
+      ),
+    );
 
     if ($event_types[$ev_type]->getFixedEventStates()) {
       $state_options = bat_unit_state_options($ev_type);
@@ -76,7 +74,8 @@ class BatStateWidget extends LinksWidget {
         '#type' => 'select',
         '#title' => t('Event State'),
         '#options' => $state_options,
-        '#default_value' => $this->getConfiguration()['state'],
+        '#multiple' => TRUE,
+        '#default_value' => (isset($this->getConfiguration()['state'])) ? $this->getConfiguration()['state'] : '',
       );
     }
     else {
@@ -85,7 +84,7 @@ class BatStateWidget extends LinksWidget {
         '#title' => t('First state'),
         '#size' => 10,
         '#prefix' => '<div class="container-inline">',
-        '#default_value' => $this->getConfiguration()['first_state'],
+        '#default_value' => (isset($this->getConfiguration()['first_state'])) ? $this->getConfiguration()['first_state'] : '',
       );
 
       $form['second_state'] = array(
@@ -93,7 +92,7 @@ class BatStateWidget extends LinksWidget {
         '#title' => t('Second state'),
         '#size' => 10,
         '#suffix' => '</div>',
-        '#default_value' => $this->getConfiguration()['second_state'],
+        '#default_value' => (isset($this->getConfiguration()['second_state'])) ? $this->getConfiguration()['second_state'] : '',
       );
     }
 

@@ -45,7 +45,7 @@ function bat_facets_search_api_query_alter(\Drupal\search_api\Query\QueryInterfa
 
           $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
 
-          $valid_states = array($settings['state']);
+          $valid_states = $settings['state'];
 
           $valid_type_ids = array();
 
