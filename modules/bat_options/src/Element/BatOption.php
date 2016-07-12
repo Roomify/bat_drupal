@@ -8,8 +8,12 @@
 namespace Drupal\bat_options\Element;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @FormElement("bat_option")
@@ -25,9 +29,6 @@ class BatOption extends FormElement {
       '#input' => TRUE,
       '#process' => [
         [$class, 'processBatOption'],
-      ],
-      '#element_validate' => [
-        [$class, 'validateBatOption'],
       ],
       '#multiple' => FALSE,
       '#attached' => [
@@ -46,13 +47,10 @@ class BatOption extends FormElement {
   public static function processBatOption(&$element, FormStateInterface $form_state, &$complete_form) {
     $parents_prefix = implode('_', $element['#parents']);
 
-    // Generate a unique wrapper HTML ID.
-    $ajax_wrapper_id = Html::getUniqueId('ajax-wrapper');
-
     $element['name'] = array(
       '#type' => 'textfield',
       '#title' => t('Name'),
-      '#default_value' => isset($items[$delta]->name) ? $items[$delta]->name : NULL,
+      '#default_value' => isset($element['#default_value']['name']) ? $element['#default_value']['name'] : NULL,
       '#attributes' => array(
         'class' => array('bat_options-option--name'),
       ),
@@ -61,7 +59,7 @@ class BatOption extends FormElement {
       '#type' => 'select',
       '#title' => t('Quantity'),
       '#options' => array_combine(range(1, 10, 1), range(1, 10, 1)),
-      '#default_value' => isset($items[$delta]->quantity) ? $items[$delta]->quantity : NULL,
+      '#default_value' => isset($element['#default_value']['quantity']) ? $element['#default_value']['quantity'] : NULL,
       '#description' => t('How many of this add-on should be available'),
       '#attributes' => array(
         'class' => array('bat_options-option--quantity'),
@@ -72,7 +70,7 @@ class BatOption extends FormElement {
       '#type' => 'select',
       '#title' => t('Operation'),
       '#options' => $price_options,
-      '#default_value' => isset($items[$delta]->operation) ? $items[$delta]->operation : NULL,
+      '#default_value' => isset($element['#default_value']['operation']) ? $element['#default_value']['operation'] : NULL,
       '#attributes' => array(
         'class' => array('bat_options-option--operation'),
       ),
@@ -81,14 +79,14 @@ class BatOption extends FormElement {
       '#type' => 'textfield',
       '#title' => t('Value'),
       '#size' => 10,
-      '#default_value' => (isset($items[$delta]->value) && $items[$delta]->value != 0) ? $items[$delta]->value : NULL,
-      '#element_validate' => array('\Drupal\Core\Render\Element\Number::validateNumber', '\Drupal\bat_options\Plugin\Field\FieldWidget\BatOptionsCombined::elementValueValidate'),
+      '#default_value' => (isset($element['#default_value']['value']) && $element['#default_value']['value'] != 0) ? $element['#default_value']['value'] : NULL,
+      '#element_validate' => array('\Drupal\Core\Render\Element\Number::validateNumber'),
       '#attributes' => array(
         'class' => array('bat_options-option--value'),
       ),
       '#states' => array(
         'disabled' => array(
-          ':input[name="field_addons[en][' . $delta . '][operation]"]' => array('value' => 'no_charge'),
+          ':input[name="' . $element['#parents'][0] . '[' . $element['#parents'][1] . '][operation]"]' => array('value' => 'no_charge'),
         )
       ),
     );
@@ -101,27 +99,11 @@ class BatOption extends FormElement {
       '#type' => 'select',
       '#title' => t('Type'),
       '#options' => $type_options,
-      '#default_value' => isset($items[$delta]->type) ? $items[$delta]->type : 'optional',
+      '#default_value' => isset($element['#default_value']['type']) ? $element['#default_value']['type'] : 'optional',
       '#attributes' => array(
         'class' => array('bat_options-option--type'),
       ),
     );
-
-    $element['remove_button'] = array(
-      '#name' => $parents_prefix . '_remove_button',
-      '#type' => 'submit',
-      '#value' => $element['#multiple'] ? t('Remove selected') : t('Remove'),
-      '#validate' => array(),
-      '#submit' => array(),
-      '#limit_validation_errors' => array($element['#parents']),
-      '#ajax' => array(
-        'wrapper' => $ajax_wrapper_id,
-      ),
-    );
-
-    // Prefix and suffix used for Ajax replacement.
-    $element['#prefix'] = '<div class="field-multiple-table" id="' . $ajax_wrapper_id . '">';
-    $element['#suffix'] = '</div>';
 
     return $element;
   }
