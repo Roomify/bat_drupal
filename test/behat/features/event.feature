@@ -5,7 +5,7 @@ Feature: Once bat_event is installed
 
 @api @javascript
 Scenario: Type manager can access the Event Types page and create, edit and delete Event types
-  Given I am logged in as a user with the "administer bat_event_type entities" permission
+  Given I am logged in as a user with the "administer bat_event_type entities,administer fields" permission
   When I am on "admin/bat/events/event-types"
   Then I should see the link "Add event type"
   When I click "Add event type"
