@@ -18,7 +18,7 @@ addons:
 
 before_script:
   # Remove xdebug for the moment. We aren't generating code coverage, and it slows us down.
-  - rm /home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+  - phpenv config-rm xdebug.ini
 
   # Set github access token for composer if available.
   - if [[ $GITHUB_OAUTH_TOKEN ]]; then git config --global github.accesstoken $GITHUB_OAUTH_TOKEN; fi
