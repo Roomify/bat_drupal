@@ -16,11 +16,11 @@ mysql:
 addons:
   firefox: "46.0"
 
-before_script:
+install:
   # Remove xdebug for the moment. We aren't generating code coverage, and it slows us down.
-  - phpenv config-rm xdebug.ini
   - if [ "${TRAVIS_PHP_VERSION}" != '7.0' ]; then mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini /tmp/xdebug.ini; fi;
 
+before_script:
   # Set github access token for composer if available.
   - if [[ $GITHUB_OAUTH_TOKEN ]]; then git config --global github.accesstoken $GITHUB_OAUTH_TOKEN; fi
   # Copy module to tmp dir for later use.
