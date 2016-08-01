@@ -114,7 +114,12 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
     $jquery_version = theme_get_setting('jquery_update_jquery_version', $admin_theme);
   }
 
-  $jquery_versions = array_keys(jquery_update_get_versions());
+  if (function_exists('jquery_update_get_versions')) {
+    $jquery_versions = array_keys(jquery_update_get_versions());
+  }
+  else {
+    $jquery_versions = array('1.5', '1.6', '1.7', '1.8', '1.9', '1.10');
+  }
 
   if ($jquery_version == 'default' || array_search($jquery_version, $jquery_versions) < array_search('1.8', $jquery_versions)) {
     drupal_set_message(t('Please ensure that you are using version 1.8 or greater of the jQuery library (<a href="@link">configure</a>)', array('@link' => url('admin/config/development/jquery_update'))), 'error');
