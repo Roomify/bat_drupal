@@ -11,7 +11,8 @@ default:
     Behat\MinkExtension:
       base_url:  'http://127.0.0.1:8888'
       files_path:  '%paths.base%/testing_files'
-      selenium2: ~
+      selenium2:
+        browser: chrome
       javascript_session: 'selenium2'
     Drupal\DrupalExtension:
       blackbox: ~

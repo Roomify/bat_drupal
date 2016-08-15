@@ -13,8 +13,14 @@ mysql:
   username: root
   encoding: utf8
 
-addons:
-  firefox: "46.0"
+before_install:
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  # Show the chrome version so we can update chromedriver if travis updates.
+  # Compatibility matrix here: https://support.saucelabs.com/customer/portal/articles/2005319-chromedriver-version-for-each-chrome-browser-version
+  - chromium-browser --version
+  - wget http://chromedriver.storage.googleapis.com/2.11/chromedriver_linux64.zip && unzip chromedriver_linux64.zip && sudo mv chromedriver /usr/bin
 
 install:
   # Set unlimited memory_limit.
@@ -61,11 +67,6 @@ before_script:
 
   # Link test dir into working dir.
   - ln -s $TRAVIS_BUILD_DIR/test .
-
-  # Setup display for selenium
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - sleep 3
 
   - mkdir -p $HOME/.cache
   - wget -nc -O $HOME/.cache/selenium-server-standalone-2.53.1.jar http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar || true
