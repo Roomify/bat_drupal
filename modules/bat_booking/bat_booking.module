@@ -1,0 +1,645 @@
+<?php
+
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_entity_info().
+ */
+function bat_booking_entity_info() {
+  $return['bat_booking'] = array(
+    'label' => t('BAT Booking'),
+    // The entity class and controller class extend the classes provided by the
+    // Entity API.
+    'entity class' => 'BatBooking',
+    'controller class' => 'BatBookingController',
+    'base table' => 'bat_bookings',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'booking_id',
+      'bundle' => 'type',
+      'label' => 'label',
+    ),
+    // Bundles are defined by the booking bundles below.
+    'bundles' => array(),
+    // Bundle keys tell the FieldAPI how to extract information from the bundle
+    // objects.
+    'bundle keys' => array(
+      'bundle' => 'type',
+    ),
+    'label callback' => 'entity_class_label',
+    'uri callback' => 'entity_class_uri',
+    'creation callback' => 'bat_booking_create',
+    'access callback' => 'bat_booking_access',
+    'access arguments' => array(
+      'user key' => 'uid',
+      'access tag' => 'bat_booking_access',
+    ),
+    'permission labels' => array(
+      'singular' => t('booking'),
+      'plural' => t('bookings'),
+    ),
+    'module' => 'bat_booking',
+    // The information below is used by the BatBookingUIController (which extends
+    // the EntityDefaultUIController).
+    'admin ui' => array(
+      'path' => 'admin/bat/config/booking',
+      'file' => 'bat_booking.admin.inc',
+      'controller class' => 'BatBookingUIController',
+      'menu wildcard' => '%bat_booking',
+    ),
+    'metadata controller class' => 'BatBookingMetadataController',
+    'translation' => array(
+      'entity_translation' => array(
+        'base path' => 'admin/bat/config/booking/%bat_booking',
+        'default settings' => array(
+          'default_language' => LANGUAGE_NONE,
+          'hide_language_selector' => FALSE,
+        ),
+      ),
+    ),
+  );
+
+  $return['bat_booking_type'] = array(
+    'label' => t('BAT Booking Type'),
+    'entity class' => 'BatBookingType',
+    'controller class' => 'BatBookingTypeController',
+    'base table' => 'bat_booking_types',
+    'fieldable' => TRUE,
+    'bundle of' => 'bat_booking',
+    'exportable' => TRUE,
+    'entity keys' => array(
+      'id' => 'id',
+      'name' => 'type',
+      'label' => 'label',
+    ),
+    'access callback' => 'bat_booking_type_access',
+    'module' => 'bat_booking',
+    // Enable the entity API's admin UI.
+    'admin ui' => array(
+      'path' => 'admin/bat/config/booking-types',
+      'file' => 'bat_booking_type.admin.inc',
+      'controller class' => 'BatBookingTypeUIController',
+    ),
+  );
+
+  return $return;
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ *
+ * We are adding the info about the booking types via a hook to avoid a recursion
+ * issue as loading the room types requires the entity info as well.
+ */
+function bat_booking_entity_info_alter(&$entity_info) {
+  foreach (bat_booking_get_types() as $type => $info) {
+    $entity_info['bat_booking']['bundles'][$type] = array(
+      'label' => $info->label,
+      'admin' => array(
+        'path' => 'admin/bat/config/booking-types/manage/%bat_booking_type',
+        'real path' => 'admin/bat/config/booking-types/manage/' . $type,
+        'bundle argument' => 5,
+        'access arguments' => array('bypass bat_booking entities access'),
+      ),
+    );
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function bat_booking_permission() {
+  $permissions = array();
+
+  // Permission for Bat Booking Types.
+  $permissions += array(
+    'administer bat_booking_type entities' => array(
+      'title' => t('Administer booking types'),
+      'description' => t('Allows users to add booking types and configure their fields.'),
+      'restrict access' => TRUE,
+    ),
+  );
+
+  // Permission for Booking page.
+  $permissions += array(
+    'book units' => array(
+      'title' => t('Book units'),
+      'description' => t('Allows users to access booking page.'),
+    ),
+  );
+
+  $permissions += bat_entity_access_permissions('bat_booking');
+
+  return $permissions;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function bat_booking_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'bat_booking') . '/views',
+  );
+}
+
+/**
+ * Determines whether the given user has access to a unit.
+ *
+ * @param string $op
+ *   The operation being performed. One of 'view', 'update', 'create', 'delete'
+ *   or just 'edit' (being the same as 'create' or 'update').
+ * @param BatBooking $booking
+ *   Optionally a booking to check access for. If nothing is
+ *   given, access for all bookings is determined.
+ * @param object $account
+ *   The user to check for. Leave it to NULL to check for the global user.
+ *
+ * @return boolean
+ *   Whether access is allowed or not.
+ */
+function bat_booking_access($op, $booking = NULL, $account = NULL) {
+  return bat_entity_access($op, $booking, $account, 'bat_booking');
+}
+
+/**
+ * Access callback: Checks whether the user has permission to add a booking.
+ *
+ * @return bool
+ *   TRUE if the user has add permission, otherwise FALSE.
+ */
+function bat_booking_add_access() {
+  if (user_access('administer bat_booking_type entities')) {
+    return TRUE;
+  }
+
+  $bundles = bat_booking_get_types();
+  foreach ($bundles as $bundle) {
+    if (bat_booking_access('create', bat_booking_create(array('type' => $bundle->type, 'uid' => 0)))) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * The class used for booking entities
+ */
+class BatBooking extends Entity {
+
+  public function __construct($values = array()) {
+    parent::__construct($values, 'bat_booking');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function defaultLabel() {
+    // If the user has configured a field to store the booking name, return that
+    // field's value.
+    $booking_type = bat_booking_type_load($this->type);
+    if (isset($booking_type->default_booking_label_field_name) && ($booking_type->default_booking_label_field_name != '')) {
+      $event_wrapper = entity_metadata_wrapper('bat_booking', $this);
+      $value = $event_wrapper->{$booking_type->default_booking_label_field_name}->value(array('sanitize' => TRUE));
+      // Handle entity reference fields - if this is an object, return its
+      // label.
+      if (is_object($value)) {
+        $field_info = field_info_field($booking_type->default_booking_label_field_name);
+
+        if ($field_info['type'] == 'entityreference') {
+          return entity_label($field_info['settings']['target_type'], $value);
+        }
+      }
+      elseif ($value) {
+        return $value;
+      }
+    }
+
+    // If we got this far, a field is not configured, we don't support its
+    // type, or the field is empty. Return booking label.
+    return $this->label;
+  }
+
+}
+
+/**
+ * The class used for booking type entities
+ */
+class BatBookingType extends Entity {
+
+  /**
+   * The booking type.
+   *
+   * @var string
+   */
+  public $type;
+
+  /**
+   * The booking type label.
+   *
+   * @var string
+   */
+  public $label;
+
+  public function __construct($values = array()) {
+    parent::__construct($values, 'bat_booking_type');
+  }
+
+}
+
+/**
+ * The MetadataController for BatBooking entities
+ */
+class BatBookingMetadataController extends EntityDefaultMetadataController {
+
+  public function entityPropertyInfo() {
+    $info = parent::entityPropertyInfo();
+
+    $properties = array('booking_id', 'type', 'language', 'label', 'created', 'changed', 'uid');
+
+    foreach ($properties as $property) {
+      if (isset($info['bat_booking']['properties'][$property])) {
+        $info['bat_booking']['properties'][$property]['getter callback'] = 'entity_property_verbatim_get';
+        $info['bat_booking']['properties'][$property]['setter callback'] = 'entity_property_verbatim_set';
+      }
+    }
+
+    return $info;
+  }
+
+}
+
+/**
+ * The Controller for BatBooking entities
+ */
+class BatBookingController extends EntityAPIController {
+
+  public function __construct($entityType) {
+    parent::__construct($entityType);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function create(array $values = array()) {
+    $values += array(
+      'booking_id' => '',
+      'is_new' => TRUE,
+      'data' => '',
+      'label' => '',
+      'created' => '',
+    );
+
+    $booking = parent::create($values);
+
+    return $booking;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save($entity) {
+    if (isset($entity->is_new) && $entity->is_new) {
+      parent::save($entity);
+    }
+
+    // Set default value for label.
+    if (empty($entity->label)) {
+      $booking_type = bat_booking_type_load($entity->type);
+      $entity->label = $booking_type->label . ' ' . $entity->booking_id;
+    }
+
+    parent::save($entity);
+  }
+
+  /**
+   * Overriding the buildContent function to add entity specific fields.
+   */
+  public function buildContent($entity, $view_mode = 'full', $langcode = NULL, $content = array()) {
+    $content = parent::buildContent($entity, $view_mode, $langcode, $content);
+
+    return $content;
+  }
+
+}
+
+/**
+ * The Controller for BatBookingType entities
+ */
+class BatBookingTypeController extends EntityAPIControllerExportable {
+
+  public function __construct($entityType) {
+    parent::__construct($entityType);
+  }
+
+  public function create(array $values = array()) {
+    $values += array(
+      'id' => '',
+      'is_new' => TRUE,
+      'data' => '',
+    );
+
+    $booking_type = parent::create($values);
+
+    return $booking_type;
+  }
+
+}
+
+/**
+ * Access callback for the entity API.
+ */
+function bat_booking_type_access($op, $unit = NULL, $account = NULL) {
+  return user_access('administer bat_booking_type entities', $account);
+}
+
+/**
+ * Create a booking object.
+ */
+function bat_booking_create($values = array()) {
+  return entity_get_controller('bat_booking')->create($values);
+}
+
+/**
+ * Create a booking type object.
+ */
+function bat_booking_type_create($values = array()) {
+  return entity_get_controller('bat_booking_type')->create($values);
+}
+
+/**
+ * Menu argument loader; Load a booking type by string.
+ *
+ * @param $type
+ *   The machine-readable name of a booking type to load.
+ * @param bool $reset
+ *   A boolean indicating whether the internal cache should be reset.
+ *
+ * @return array|false
+ *   A booking type array or FALSE if $type does not exist.
+ */
+function bat_booking_type_load($type, $reset = FALSE) {
+  return bat_booking_get_types($type, $reset);
+}
+
+/**
+ * Gets an array of all booking types, keyed by the type name.
+ *
+ * @param string $type_name
+ *   If set, the type with the given name is returned.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return BatBookingType[]
+ *   Depending whether $type isset, an array of booking types or a single one.
+ */
+function bat_booking_get_types($type_name = NULL, $reset = FALSE) {
+  // entity_load() will get the Entity controller for our booking type
+  // entity and call the load function of that object.
+  $types = entity_load_multiple_by_name('bat_booking_type', isset($type_name) ? array($type_name) : FALSE);
+  return isset($type_name) ? reset($types) : $types;
+}
+
+/**
+ * Saves a booking type to the db.
+ *
+ * @param BatBookingType $booking_type
+ *   The booking type to save.
+ */
+function bat_booking_type_save(BatBookingType $booking_type) {
+  $booking_type->save();
+}
+
+/**
+ * Deletes a booking type from the db.
+ */
+function bat_booking_type_delete(BatBookingType $bundle) {
+  $bundle->delete();
+}
+
+/**
+ * Fetches a booking object.
+ *
+ * @param int $booking_id
+ *   Integer specifying the booking id.
+ * @param bool $reset
+ *   A boolean indicating whether the internal cache should be reset.
+ * @return BatBooking|false
+ *   A fully-loaded $booking object or FALSE if it cannot be loaded.
+ *
+ * @see bat_booking_load_multiple()
+ */
+function bat_booking_load($booking_id, $reset = FALSE) {
+  $bookings = bat_booking_load_multiple(array($booking_id), array(), $reset);
+  return reset($bookings);
+}
+
+/**
+ * Loads multiple bookings based on certain conditions.
+ *
+ * @param array $booking_ids
+ *   An array of booking IDs.
+ * @param array $conditions
+ *   An array of conditions to match against the {bat_bookings} table.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return array
+ *   An array of booking objects, indexed by booking_id.
+ *
+ * @see entity_load()
+ * @see bat_booking_load()
+ */
+function bat_booking_load_multiple($booking_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('bat_booking', $booking_ids, $conditions, $reset);
+}
+
+/**
+ * Deletes a Bat Booking.
+ *
+ * @param BatBooking $booking
+ *   The BatBooking object that represents the booking to delete.
+ */
+function bat_booking_delete(BatBooking $booking) {
+  $booking->delete();
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bat_booking_theme() {
+  return array(
+    'bat_booking_add_list' => array(
+      'variables' => array('content' => array()),
+      'file' => 'bat_booking.admin.inc',
+    ),
+  );
+}
+
+/**
+ * Add "Start Date" field.
+ */
+function bat_booking_add_start_date_field($type_bundle) {
+  field_info_cache_clear();
+
+  // "booking_start_date" field.
+  if (field_read_field('booking_start_date') === FALSE) {
+    $field = array(
+      'field_name' => 'booking_start_date',
+      'type' => 'datetime',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => array(
+        'cache_count' => 4,
+        'cache_enabled' => 0,
+        'granularity' => array(
+          'day' => 'day',
+          'hour' => 'hour',
+          'minute' => 'minute',
+          'month' => 'month',
+          'second' => 0,
+          'year' => 'year',
+        ),
+        'profile2_private' => FALSE,
+        'timezone_db' => '',
+        'todate' => '',
+        'tz_handling' => 'none',
+      ),
+    );
+    field_create_field($field);
+  }
+
+  field_cache_clear();
+
+  // "booking_start_date" field instance.
+  if (field_read_instance('bat_booking', 'booking_start_date', $type_bundle) === FALSE) {
+    $instance = array(
+      'field_name' => 'booking_start_date',
+      'entity_type' => 'bat_booking',
+      'label' => 'Start Date',
+      'bundle' => $type_bundle,
+      'required' => FALSE,
+      'widget' => array(
+        'type' => 'date_popup',
+      ),
+      'settings' => array(
+        'default_value' => 'blank',
+        'default_value2' => 'same',
+        'default_value_code' => '',
+        'default_value_code2' => '',
+        'user_register_form' => FALSE,
+      ),
+    );
+    field_create_instance($instance);
+  }
+}
+
+/**
+ * Add "End Date" field.
+ */
+function bat_booking_add_end_date_field($type_bundle) {
+  field_info_cache_clear();
+
+  // "booking_end_date" field.
+  if (field_read_field('booking_end_date') === FALSE) {
+    $field = array(
+      'field_name' => 'booking_end_date',
+      'type' => 'datetime',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => array(
+        'cache_count' => 4,
+        'cache_enabled' => 0,
+        'granularity' => array(
+          'day' => 'day',
+          'hour' => 'hour',
+          'minute' => 'minute',
+          'month' => 'month',
+          'second' => 0,
+          'year' => 'year',
+        ),
+        'profile2_private' => FALSE,
+        'timezone_db' => '',
+        'todate' => '',
+        'tz_handling' => 'none',
+      ),
+    );
+    field_create_field($field);
+  }
+
+  field_cache_clear();
+
+  // "booking_end_date" field instance.
+  if (field_read_instance('bat_booking', 'booking_end_date', $type_bundle) === FALSE) {
+    $instance = array(
+      'field_name' => 'booking_end_date',
+      'entity_type' => 'bat_booking',
+      'label' => 'End Date',
+      'bundle' => $type_bundle,
+      'required' => FALSE,
+      'widget' => array(
+        'type' => 'date_popup',
+      ),
+      'settings' => array(
+        'default_value' => 'blank',
+        'default_value2' => 'same',
+        'default_value_code' => '',
+        'default_value_code2' => '',
+        'user_register_form' => FALSE,
+      ),
+    );
+    field_create_instance($instance);
+  }
+}
+
+/**
+ * Add "Event" reference field.
+ */
+function bat_booking_add_event_reference_field($type_bundle) {
+  field_info_cache_clear();
+
+  // "booking_event_reference" field.
+  if (field_read_field('booking_event_reference') === FALSE) {
+    $field = array(
+      'field_name' => 'booking_event_reference',
+      'type' => 'entityreference',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => array(
+        'target_type' => 'bat_event',
+      ),
+    );
+    field_create_field($field);
+  }
+
+  field_cache_clear();
+
+  // "booking_event_reference" field instance.
+  if (field_read_instance('bat_booking', 'booking_event_reference', $type_bundle) === FALSE) {
+    $instance = array(
+      'field_name' => 'booking_event_reference',
+      'entity_type' => 'bat_booking',
+      'label' => 'Event',
+      'bundle' => $type_bundle,
+      'required' => FALSE,
+      'widget' => array(
+        'type' => 'entityreference_autocomplete',
+      ),
+    );
+    field_create_instance($instance);
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function bat_booking_entity_insert($entity, $type) {
+  if ($type == 'bat_booking_type') {
+    bat_booking_add_start_date_field($entity->type);
+    bat_booking_add_end_date_field($entity->type);
+    bat_booking_add_event_reference_field($entity->type);
+  }
+}

@@ -1,0 +1,11 @@
+name = BAT Booking Example
+description = BAT Booking Example
+core = 7.x
+
+package = BAT
+
+dependencies[] = bat_booking
+dependencies[] = bat_facets
+
+files[] = views/bat_booking_example.views.inc
+files[] = views/bat_booking_example_book_this_field.inc

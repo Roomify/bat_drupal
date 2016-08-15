@@ -1,0 +1,200 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the BAT Booking module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function bat_booking_install() {
+  // Create "Standard" booking type.
+  bat_booking_create_standard_booking_type();
+}
+
+/**
+ * Implements hook_schema().
+ */
+function bat_booking_schema() {
+  $schema = array();
+
+  $schema['bat_bookings'] = array(
+    'description' => 'The base table for Bookings.',
+    'fields' => array(
+      'booking_id' => array(
+        'description' => 'Primary Key: Identifier for a Booking.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'The {booking_type}.type of this Booking.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'language' => array(
+        'description' => 'The language of the Booking.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'label' => array(
+        'description' => 'The label of the Booking - a human-readable identifier.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp when the Booking was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the Booking was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'uid' => array(
+        'description' => 'The {users}.uid that created this booking.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0x01,
+        'size' => 'tiny',
+        'description' => 'The exportable status of the entity.',
+      ),
+      'data' => array(
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array of additional data.',
+      ),
+    ),
+    'primary key' => array('booking_id'),
+    'indexes' => array(
+      'type' => array('type'),
+    ),
+  );
+
+  $schema['bat_booking_types'] = array(
+    'description' => 'The base table for Types.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Identifier for a Type.',
+      ),
+      'type' => array(
+        'description' => 'The {type_bundle}.type of this Type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'label' => array(
+        'description' => 'The human-readable name of this booking type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'default_booking_label_field_name' => array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'length' => 32,
+        'description' => 'The name of a field to use to retrieve label information.',
+      ),
+      'data' => array(
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array of additional data.',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0x01,
+        'size' => 'tiny',
+        'description' => 'The exportable status of the entity.',
+      ),
+      'module' => array(
+        'description' => 'The name of the providing module if the entity has been defined in code.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'unique keys' => array(
+      'type' => array('type'),
+    ),
+  );
+
+  return $schema;
+}
+
+/**
+ * Create "Standard" booking type.
+ */
+function bat_booking_create_standard_booking_type() {
+  $booking_type = bat_booking_type_create(array(
+    'label' => 'Standard',
+    'type' => 'standard',
+  ));
+
+  $booking_type->save();
+}
+
+/**
+ * Add default label name field.
+ */
+function bat_booking_update_7100() {
+  $field = array(
+    'type' => 'varchar',
+    'not null' => FALSE,
+    'length' => 32,
+    'description' => 'The name of a field to use to retrieve label information.',
+  );
+
+  db_add_field('bat_booking_types', 'default_booking_label_field_name', $field);
+}
+
+/**
+ * Rename 'name' field in 'label'.
+ */
+function bat_booking_update_7101() {
+  db_change_field('bat_bookings', 'name', 'label', array(
+    'description' => 'The label of the Booking - a human-readable identifier.',
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+  ));
+}
+
+/**
+ * Add booking status field.
+ */
+function bat_booking_update_7102() {
+  $field = array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0x01,
+    'size' => 'tiny',
+    'description' => 'The exportable status of the entity.',
+  );
+
+  db_add_field('bat_bookings', 'status', $field);
+}

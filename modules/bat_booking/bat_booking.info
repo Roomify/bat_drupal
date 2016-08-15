@@ -1,0 +1,14 @@
+name = BAT Booking
+description = BAT Booking
+core = 7.x
+
+package = BAT
+
+dependencies[] = bat_event
+
+files[] = bat_booking.admin.inc
+files[] = bat_booking_type.admin.inc
+files[] = views/bat_booking.views.inc
+files[] = views/bat_booking_handler_delete_link_field.inc
+files[] = views/bat_booking_handler_edit_link_field.inc
+files[] = views/bat_booking_handler_night_field.inc
