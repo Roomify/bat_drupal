@@ -89,6 +89,20 @@ function bat_date_format_form($form, &$form_state) {
     '#default_value' => variable_get('bat_daily_date_format', 'Y-m-d'),
   );
 
+  $form['bat_hourly_format'] = array(
+    '#type' => 'item',
+    '#title' => 'Hourly PHP Date Format',
+    '#description' => t("Define a php date format string like 'H:i' (see <a href=\"@link\">http://php.net/date</a> for more details).", array('@link' => 'http://php.net/date')),
+  );
+
+  $form['bat_hourly_format']['bat_hourly_date_format'] = array(
+    '#type' => 'textfield',
+    '#size' => 12,
+    '#prefix' => '<div class="container-inline form-item">' . t('Time format') . ': &nbsp;',
+    '#suffix' => '</div>',
+    '#default_value' => variable_get('bat_hourly_date_format', 'H:i'),
+  );
+
   return system_settings_form($form);
 }
 
