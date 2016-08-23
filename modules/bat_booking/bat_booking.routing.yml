@@ -1,0 +1,99 @@
+entity.bat_booking.canonical:
+  path: '/admin/bat/config/booking/{bat_booking}'
+  defaults:
+    _entity_view: 'bat_booking'
+    _title: 'Booking'
+  requirements:
+    _entity_access: 'bat_booking.view'
+  options:
+    _admin_route: TRUE
+
+entity.bat_booking.collection:
+  path: '/admin/bat/config/booking'
+  defaults:
+    _entity_list: 'bat_booking'
+    _title: 'Booking list'
+  requirements:
+    _permission: 'view any bat_booking entity'
+  options:
+    _admin_route: TRUE
+
+entity.bat_booking.add_page:
+  path: '/admin/bat/config/booking/add'
+  defaults:
+    _title: 'Add booking'
+    _controller: '\Drupal\bat_booking\Controller\BookingController::addPage'
+  requirements:
+    _booking_add_access: 'bat_booking'
+  options:
+    _admin_route: TRUE
+
+entity.bat_booking.add:
+  path: '/admin/bat/config/booking/add/{booking_bundle}'
+  defaults:
+    _controller: '\Drupal\bat_booking\Controller\BookingController::add'
+    _title_callback: '\Drupal\bat_booking\Controller\BookingController::addPageTitle'
+  requirements:
+    _booking_add_access: 'bat_booking:{booking_bundle}'
+  options:
+    _admin_route: TRUE
+    parameters:
+      type_bundle:
+        type: entity:bat_booking_bundle
+        with_config_overrides: TRUE
+
+entity.bat_booking.edit_form:
+  path: '/admin/bat/config/booking/{bat_booking}/edit'
+  defaults:
+    _entity_form: bat_booking.edit
+    _title: 'Edit Type'
+  requirements:
+    _entity_access: 'bat_booking.update'
+  options:
+    _admin_route: TRUE
+
+entity.bat_booking.delete_form:
+  path: '/admin/bat/config/booking/{bat_booking}/delete'
+  defaults:
+    _entity_form: bat_booking.delete
+    _title: 'Delete Booking'
+  requirements:
+    _entity_access: 'bat_booking.delete'
+  options:
+    _admin_route: TRUE
+
+entity.bat_booking_bundle.collection:
+  path: '/admin/bat/config/booking-bundles'
+  defaults:
+    _entity_list: 'bat_booking_bundle'
+    _title: 'Booking Bundle list'
+  requirements:
+    _permission: 'administer bat_booking_bundle entities'
+  options:
+    _admin_route: TRUE
+
+entity.bat_booking_bundle.type_add:
+  path: '/admin/bat/config/booking-bundles/add'
+  defaults:
+    _entity_form: 'bat_booking_bundle.add'
+    _title: 'Add booking bundle'
+  requirements:
+    _permission: 'administer bat_booking_bundle entities'
+
+entity.bat_booking_bundle.edit_form:
+  path: '/admin/bat/config/booking-bundles/{bat_booking_bundle}/edit'
+  defaults:
+    _entity_form: 'bat_booking_bundle.edit'
+    _title: 'Edit Booking bundle'
+  requirements:
+    _permission: 'administer bat_booking_bundle entities'
+  options:
+    _admin_route: TRUE
+
+entity.bat_booking_bundle.delete_form:
+  path: '/admin/bat/config/booking-bundles/{bat_booking_bundle}/delete'
+  defaults:
+    _entity_form: 'bat_booking_bundle.delete'
+    _title: 'Delete'
+  requirements:
+    _permission: 'administer bat_booking_bundle entities'

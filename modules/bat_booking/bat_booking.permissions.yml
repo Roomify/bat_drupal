@@ -1,0 +1,10 @@
+administer bat_booking_type entities:
+  title: 'Administer booking types'
+  description: 'Allows users to add booking types and configure their fields.'
+
+book units:
+  title: 'Book units'
+  description: 'Allows users to access booking page.'
+
+permission_callbacks:
+  - Drupal\bat_booking\BookingPermissions::permissions

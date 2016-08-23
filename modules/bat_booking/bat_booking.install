@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the BAT Booking module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function bat_booking_install() {
+  // Create "Standard" booking type.
+  bat_booking_create_standard_booking_type();
+}
+
+/**
+ * Create "Standard" booking type.
+ */
+function bat_booking_create_standard_booking_type() {
+  $booking_type = bat_booking_type_create(array(
+    'name' => 'Standard',
+    'type' => 'standard',
+  ));
+
+  $booking_type->save();
+}

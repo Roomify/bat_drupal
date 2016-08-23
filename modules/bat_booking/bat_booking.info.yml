@@ -1,0 +1,8 @@
+name: BAT Booking
+type: module
+description: BAT Booking
+core: 8.x
+package: bat
+
+dependencies:
+  - bat_event

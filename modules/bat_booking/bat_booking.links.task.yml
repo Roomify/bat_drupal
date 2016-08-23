@@ -1,0 +1,20 @@
+entity.bat_booking.canonical:
+  route_name: entity.bat_booking.canonical
+  base_route: entity.bat_booking.canonical
+  title: 'View'
+
+entity.bat_booking.edit_form:
+  route_name: entity.bat_booking.edit_form
+  base_route: entity.bat_booking.canonical
+  title: Edit
+
+entity.bat_booking.delete_form:
+  route_name:  entity.bat_booking.delete_form
+  base_route:  entity.bat_booking.canonical
+  title: Delete
+  weight: 10
+
+entity.bat_booking_bundle.edit_form:
+  route_name: entity.bat_booking_bundle.edit_form
+  base_route: entity.bat_booking_bundle.edit_form
+  title: Edit

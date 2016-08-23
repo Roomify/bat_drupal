@@ -1,0 +1,13 @@
+entity.bat_booking.collection:
+  title: 'Bookings list'
+  route_name: entity.bat_booking.collection
+  description: 'List Bookings'
+  parent: bat.admin.config
+  weight: 6
+
+entity.bat_booking_bundle.collection:
+  title: 'Booking Bundles list'
+  route_name: entity.bat_booking_bundle.collection
+  description: 'List Booking Bundles'
+  parent: bat.admin.config
+  weight: 5

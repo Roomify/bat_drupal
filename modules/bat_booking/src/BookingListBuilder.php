@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\bat_unit\UnitTypeListBuilder.
+ * Contains \Drupal\bat_booking\BookingListBuilder.
  */
 
-namespace Drupal\bat_unit;
+namespace Drupal\bat_booking;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
@@ -17,11 +17,11 @@ use Drupal\Core\Entity\Query\QueryFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Defines a class to build a listing of Unit type entities.
+ * Defines a class to build a listing of Unit entities.
  *
  * @ingroup bat
  */
-class UnitTypeListBuilder extends EntityListBuilder {
+class BookingListBuilder extends EntityListBuilder {
   use LinkGeneratorTrait;
 
   /**
@@ -32,7 +32,7 @@ class UnitTypeListBuilder extends EntityListBuilder {
   protected $queryFactory;
 
   /**
-   * Constructs a new UnitTypeListBuilder object.
+   * Constructs a new UnitListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.
@@ -61,7 +61,7 @@ class UnitTypeListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function load() {
-    $entity_query = $this->queryFactory->get('bat_unit_type');
+    $entity_query = $this->queryFactory->get('bat_booking');
     $entity_query->pager(50);
 
     $header = $this->buildHeader();
@@ -78,7 +78,7 @@ class UnitTypeListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header = array(
       'id' => array(
-        'data' => $this->t('Unit type ID'),
+        'data' => $this->t('Unit ID'),
         'field' => 'id',
         'specifier' => 'id',
         'class' => array(RESPONSIVE_PRIORITY_LOW),
@@ -109,17 +109,17 @@ class UnitTypeListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\bat_unit\Entity\UnitType */
+    /* @var $entity \Drupal\bat\Entity\Unit */
     $row['id'] = $entity->id();
     $row['name'] = $this->l(
       $this->getLabel($entity),
       new Url(
-        'entity.bat_unit_type.edit_form', array(
-          'bat_unit_type' => $entity->id(),
+        'entity.bat_booking.edit_form', array(
+          'bat_booking' => $entity->id(),
         )
       )
     );
-    $row['bundle'] = bat_type_bundle_load($entity->bundle())->label();
+    $row['bundle'] = bat_booking_bundle_load($entity->bundle())->label();
     $row['status'] = ($entity->getStatus()) ? t('Published') : t('Unpublished');
     return $row + parent::buildRow($entity);
   }

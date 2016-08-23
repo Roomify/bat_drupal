@@ -2,28 +2,28 @@
 
 /**
  * @file
- * Contains \Drupal\bat_unit\Entity\Form\UnitTypeForm.
+ * Contains \Drupal\bat_booking\Entity\Form\BookingForm.
  */
 
-namespace Drupal\bat_unit\Entity\Form;
+namespace Drupal\bat_booking\Entity\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
-use Drupal\bat_unit\UnitTypeInterface;
+use Drupal\bat_booking\BookingInterface;
 
 /**
  * Form controller for Unit type edit forms.
  *
  * @ingroup bat
  */
-class UnitTypeForm extends ContentEntityForm {
+class BookingForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var $entity \Drupal\bat_unit\Entity\UnitType */
+    /* @var $entity \Drupal\bat_booking\Entity\Booking */
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
 
@@ -119,7 +119,7 @@ class UnitTypeForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
     }
-    $form_state->setRedirect('entity.bat_unit_type.edit_form', ['bat_unit_type' => $entity->id()]);
+    $form_state->setRedirect('entity.bat_booking.edit_form', ['bat_booking' => $entity->id()]);
   }
 
   /**
@@ -176,14 +176,14 @@ class UnitTypeForm extends ContentEntityForm {
    *
    * @param string $entity_type_id
    *   The entity type identifier.
-   * @param \Drupal\bat_unit\UnitTypeInterface $unit_type
+   * @param \Drupal\bat_booking\BookingInterface $unit_type
    *   The unit type updated with the submitted values.
    * @param array $form
    *   The complete form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function updateStatus($entity_type_id, UnitTypeInterface $unit_type, array $form, FormStateInterface $form_state) {
+  public function updateStatus($entity_type_id, BookingInterface $unit_type, array $form, FormStateInterface $form_state) {
     $element = $form_state->getTriggeringElement();
     if (isset($element['#published_status'])) {
       $unit_type->setStatus($element['#published_status']);

@@ -1,0 +1,12 @@
+entity.bat_booking.add_page:
+  route_name: entity.bat_booking.add_page
+  title: 'Add Booking'
+  appears_on:
+    - entity.bat_booking.collection
+    - entity.bat_booking.canonical
+
+entity.bat_booking_bundle.type_add:
+  route_name: entity.bat_booking_bundle.type_add
+  title: 'Add booking bundle'
+  appears_on:
+    - entity.bat_booking_bundle.collection

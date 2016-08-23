@@ -1,0 +1,6 @@
+services:
+  access_check.bat_booking.add:
+    class: Drupal\bat_booking\Access\BookingAddAccessCheck
+    arguments: ['@entity.manager']
+    tags:
+      - { name: access_check, applies_to: _booking_add_access }
