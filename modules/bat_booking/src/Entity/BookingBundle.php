@@ -9,6 +9,7 @@ namespace Drupal\bat_booking\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\bat_booking\BookingBundleInterface;
 
 /**
  * Defines the Booking Bundle configuration entity.
@@ -43,7 +44,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *   }
  * )
  */
-class BookingBundle extends ConfigEntityBundleBase {
+class BookingBundle extends ConfigEntityBundleBase implements BookingBundleInterface {
 
   /**
    * The machine name of this event type.

@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Default theme implementation to list type bundles available for adding unit type.
+ * Default theme implementation to list booking bundles available for adding booking.
  *
  * Available variables:
  * - types: A list of unit type bundles, each with the following properties:
@@ -23,7 +23,7 @@
   <p>
     {% set create_content = path('entity.bat_booking_bundle.collection') %}
     {% trans %}
-      You have not created any type bundle yet. Go to the <a href="{{ create_content }}">type bundle creation page</a> to add a new type bundle.
+      You have not created any booking bundle yet. Go to the <a href="{{ create_content }}">booking bundle creation page</a> to add a new booking bundle.
     {% endtrans %}
   </p>
 {% endif %}

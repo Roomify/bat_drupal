@@ -176,17 +176,17 @@ class BookingForm extends ContentEntityForm {
    *
    * @param string $entity_type_id
    *   The entity type identifier.
-   * @param \Drupal\bat_booking\BookingInterface $unit_type
+   * @param \Drupal\bat_booking\BookingInterface $booking_type
    *   The unit type updated with the submitted values.
    * @param array $form
    *   The complete form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function updateStatus($entity_type_id, BookingInterface $unit_type, array $form, FormStateInterface $form_state) {
+  public function updateStatus($entity_type_id, BookingInterface $booking_type, array $form, FormStateInterface $form_state) {
     $element = $form_state->getTriggeringElement();
     if (isset($element['#published_status'])) {
-      $unit_type->setStatus($element['#published_status']);
+      $booking_type->setStatus($element['#published_status']);
     }
   }
 

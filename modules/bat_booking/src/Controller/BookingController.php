@@ -44,13 +44,13 @@ class BookingController extends ControllerBase implements ContainerInjectionInte
 
     // Only use type bundles the user has access to.
     foreach ($this->entityTypeManager()->getStorage('bat_booking_bundle')->loadMultiple() as $type) {
-      $access = $this->entityTypeManager()->getAccessControlHandler('bat_booking')->createAccess($type->id(), NULL, [], TRUE);
-      if ($access->isAllowed()) {
+      //$access = $this->entityTypeManager()->getAccessControlHandler('bat_booking')->createAccess($type->id(), NULL, [], TRUE);
+      //if ($access->isAllowed()) {
         $content[$type->id()] = $type;
-      }
+      //}
     }
 
-    // Bypass the add listing if only one unit type bundle is available.
+    // Bypass the add listing if only one booking bundle is available.
     if (count($content) == 1) {
       $type = array_shift($content);
       return $this->redirect('entity.bat_booking.add', array('booking_bundle' => $type->id()));

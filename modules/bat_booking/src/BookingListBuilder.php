@@ -32,7 +32,7 @@ class BookingListBuilder extends EntityListBuilder {
   protected $queryFactory;
 
   /**
-   * Constructs a new UnitListBuilder object.
+   * Constructs a new BookingListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.
@@ -78,7 +78,7 @@ class BookingListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header = array(
       'id' => array(
-        'data' => $this->t('Unit ID'),
+        'data' => $this->t('Booking ID'),
         'field' => 'id',
         'specifier' => 'id',
         'class' => array(RESPONSIVE_PRIORITY_LOW),

@@ -55,7 +55,7 @@ class BookingBundleListBuilder extends ConfigEntityListBuilder {
    */
   public function render() {
     $build = parent::render();
-    $build['table']['#empty'] = $this->t('No booking bundles available. <a href=":link">Add unit bundle</a>.', [
+    $build['table']['#empty'] = $this->t('No booking bundles available. <a href=":link">Add booking bundle</a>.', [
         ':link' => Url::fromRoute('entity.bat_booking_bundle.type_add')->toString()
       ]);
     return $build;

@@ -11,6 +11,8 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\user\UserInterface;
+use Drupal\bat_booking\BookingInterface;
 
 /**
  * Defines the Booking entity.
@@ -51,8 +53,53 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *   }
  * )
  */
-class Booking extends ContentEntityBase {
+class Booking extends ContentEntityBase implements BookingInterface {
 	use EntityChangedTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwner() {
+    return $this->get('uid')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwnerId() {
+    return $this->get('uid')->target_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwnerId($uid) {
+    $this->set('uid', $uid);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwner(UserInterface $account) {
+    $this->set('uid', $account->id());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getStatus() {
+    return $this->get('status')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setStatus($status) {
+    $this->set('status', $status);
+    return $this;
+  }
 
 	/**
    * {@inheritdoc}
@@ -108,7 +155,7 @@ class Booking extends ContentEntityBase {
 
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
-      ->setDescription(t('The unit bundle.'))
+      ->setDescription(t('The booking bundle.'))
       ->setSetting('target_type', 'bat_booking_bundle');
 
     $fields['status'] = BaseFieldDefinition::create('boolean')

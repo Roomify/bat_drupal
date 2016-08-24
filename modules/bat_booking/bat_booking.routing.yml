@@ -38,7 +38,7 @@ entity.bat_booking.add:
   options:
     _admin_route: TRUE
     parameters:
-      type_bundle:
+      booking_bundle:
         type: entity:bat_booking_bundle
         with_config_overrides: TRUE
 
