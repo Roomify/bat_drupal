@@ -17,7 +17,7 @@ projects[bat_api][subdir] = bat
 
 projects[composer_manager][version] = 1.8
 
-projects[ctools][version] = 1.x-dev
+projects[ctools][version] = 1.10
 
 projects[date][version] = 2.9
 
@@ -31,9 +31,9 @@ projects[jquery_update][version] = 3.0-alpha3
 
 projects[libraries][version] = 2.3
 
-projects[search_api][version] = 1.19
+projects[search_api][version] = 1.20
 
-projects[services][version] = 3.15
+projects[services][version] = 3.17
 
 projects[variable][version] = 2.5
 

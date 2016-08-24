@@ -9,14 +9,14 @@ projects[date][version] = 2.9
 projects[entity][version] = 1.7
 projects[entityreference][version] = 1.1
 projects[entityreference][patch][] = https://www.drupal.org/files/issues/entityreference-1836106-20.patch
-projects[ctools][version] = 1.9
+projects[ctools][version] = 1.10
 projects[jquery_update][version] = 3.0-alpha3
 projects[libraries][version] = 2.3
 projects[views][version] = 3.14
 projects[views_megarow][version] = 1.6
 projects[views_bulk_operations][version] = 3.3
-projects[search_api][version] = 1.19
-projects[services][version] = 3.15
+projects[search_api][version] = 1.20
+projects[services][version] = 3.17
 projects[facetapi][version] = 1.5
 projects[facetapi][patch][] = https://www.drupal.org/files/issues/facetapi-cur-search-block-not-exported-1469002_2.patch
 
