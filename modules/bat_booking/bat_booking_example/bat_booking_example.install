@@ -24,6 +24,7 @@ function bat_booking_example_create_availability_event_type() {
     'type' => 'availability_example',
     'fixed_event_states' => 1,
     'event_granularity' => 'bat_daily',
+    'target_entity_type' => 'bat_unit',
   ));
 
   bat_event_type_save($event);
@@ -37,6 +38,7 @@ function bat_booking_example_create_standard_event_states() {
     'label' => 'Available',
     'color' => '#8BA175',
     'calendar_label' => 'AV',
+    'machine_name' => 'availability_example_available',
   );
 
   bat_event_save_state($event_state, 'availability_example');
@@ -45,6 +47,7 @@ function bat_booking_example_create_standard_event_states() {
     'label' => 'Not Available',
     'color' => '#CC2727',
     'calendar_label' => 'N/A',
+    'machine_name' => 'availability_example_not_available',
   );
 
   bat_event_save_state($event_state, 'availability_example');
@@ -54,6 +57,7 @@ function bat_booking_example_create_standard_event_states() {
     'color' => '#1A1A73',
     'calendar_label' => 'Booked',
     'blocking' => 1,
+    'machine_name' => 'availability_example_available_booked',
   );
 
   bat_event_save_state($event_state, 'availability_example');

@@ -11,6 +11,7 @@ function bat_booking_example_views_data_alter(&$data) {
           'title' => t('Book this'),
           'help' => t('Display links to create a new booking.'),
           'handler' => 'bat_booking_example_book_this_field',
+          'type' => 'text',
         ),
       );
     }
