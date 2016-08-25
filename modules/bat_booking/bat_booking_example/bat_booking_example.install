@@ -67,7 +67,9 @@ function bat_booking_example_create_standard_event_states() {
  * Delete the "Availability Example" event type.
  */
 function bat_booking_example_delete_availability_event_type() {
-  if ($event_type = bat_event_type_load('availability_example')) {
-    bat_event_type_delete($event_type);
+  if (module_exists('bat_event')) {
+    if ($event_type = bat_event_type_load('availability_example')) {
+      bat_event_type_delete($event_type);
+    }
   }
 }
