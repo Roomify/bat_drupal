@@ -104,7 +104,7 @@ class FullcalendarEventManagerForm extends FormBase {
           '#value' => $field_name,
         );
 
-        $field_definition = \Drupal::entityTypeManager()->getFieldDefinitions('bat_event', 'pricing')[$field_name];
+        $field_definition = \Drupal::entityManager()->getFieldDefinitions('bat_event', 'pricing')[$field_name];
         $items = new FieldItemList($field_definition, NULL, EntityAdapter::createFromEntity(bat_event_create(array('type' => $event_type->id()))));
 
         $form_display = entity_get_form_display('bat_event', $event_type->id(), 'default');

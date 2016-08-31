@@ -125,7 +125,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
     if (!$event_type->isNew() && $event_type->getFixedEventStates() == 0) {
       $fields_options = array();
-      $fields = $this->entityTypeManager->getFieldDefinitions('bat_event', $event_type->id());
+      $fields = \Drupal::entityManager()->getFieldDefinitions('bat_event', $event_type->id());
       foreach ($fields as $field) {
         if ($field instanceof FieldConfig) {
           $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';
@@ -151,7 +151,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
     if (!$event_type->isNew()) {
       $fields_options = array();
-      $fields = $this->entityTypeManager->getFieldDefinitions('bat_event', $event_type->id());
+      $fields = \Drupal::entityManager()->getFieldDefinitions('bat_event', $event_type->id());
       foreach ($fields as $field) {
         if ($field instanceof FieldConfig) {
           $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';
