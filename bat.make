@@ -26,7 +26,7 @@ libraries[fullcalendar][type] = library
 libraries[fullcalendar][destination] = libraries
 libraries[fullcalendar][download][type] = get
 ; NB: please update the link in the documentation when changing this version.
-libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v2.9.1/fullcalendar-2.9.1.zip
+libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v3.0.0/fullcalendar-3.0.0.zip
 
 ; FullCalendar Scheduler
 libraries[scheduler][directory_name] = fullcalendar-scheduler
@@ -34,7 +34,7 @@ libraries[scheduler][type] = library
 libraries[scheduler][destination] = libraries
 libraries[scheduler][download][type] = get
 ; NB: please update the link in the documentation when changing this version.
-libraries[scheduler][download][url] = https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.3.3/fullcalendar-scheduler-1.3.3.zip
+libraries[scheduler][download][url] = https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.4.0/fullcalendar-scheduler-1.4.0.zip
 
 ; jquery.timepicker
 libraries[jquery.timepicker][directory_name] = jquery.timepicker
