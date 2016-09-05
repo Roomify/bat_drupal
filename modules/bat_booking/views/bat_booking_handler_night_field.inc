@@ -1,6 +1,11 @@
 <?php
 
+/**
+ * @file
+ */
+
 class bat_booking_handler_night_field extends views_handler_field {
+
   function construct() {
     parent::construct();
 
@@ -20,4 +25,5 @@ class bat_booking_handler_night_field extends views_handler_field {
 
     return $end_date->diff($start_date)->days;
   }
+
 }
