@@ -138,6 +138,10 @@ Drupal.behaviors.bat_event = {
               var start = event.start.clone();
               start.subtract(start.hour(), 'hours').subtract(start.minute(), 'minutes');
 
+              if (start < view.start) {
+                start = view.start.clone();
+              }
+
               if (event.end === null) {
                 var end = event.start.clone();
               }
