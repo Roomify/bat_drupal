@@ -37,7 +37,7 @@ Drupal.behaviors.bat_event = {
         },
         businessHours: Drupal.settings.batCalendar[key].businessHours,
         defaultView: Drupal.settings.batCalendar[key].defaultView,
-        selectConstraint: Drupal.settings.batCalendar[key].selectConstraint,
+        selectConstraint: (Drupal.settings.batCalendar[key].selectConstraint == null) ? undefined : Drupal.settings.batCalendar[key].selectConstraint,
         minTime: Drupal.settings.batCalendar[key].minTime,
         maxTime: Drupal.settings.batCalendar[key].maxTime,
         hiddenDays: Drupal.settings.batCalendar[key].hiddenDays,
