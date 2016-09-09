@@ -7,6 +7,7 @@
  */
 
 class bat_type_handler_edit_link_field extends bat_type_handler_link_field {
+
   function construct() {
     parent::construct();
     $this->additional_fields['type'] = 'type';
@@ -20,9 +21,16 @@ class bat_type_handler_edit_link_field extends bat_type_handler_link_field {
     if (!bat_type_access('update', $dummy_type)) {
       return;
     }
+
     $text = !empty($this->options['text']) ? $this->options['text'] : t('edit');
     $type_id = $values->{$this->aliases['type_id']};
 
-    return l($text, 'admin/bat/config/types/type/' . $type_id . '/edit');
+    $options = array();
+    if (!empty($this->options['destination'])) {
+      $options = array('query' => drupal_get_destination());
+    }
+
+    return l($text, 'admin/bat/config/types/type/' . $type_id . '/edit', $options);
   }
+
 }

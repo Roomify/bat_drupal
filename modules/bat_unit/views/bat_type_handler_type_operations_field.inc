@@ -7,6 +7,7 @@
  */
 
 class bat_type_handler_type_operations_field extends views_handler_field {
+
   function construct() {
     parent::construct();
 
@@ -39,4 +40,5 @@ class bat_type_handler_type_operations_field extends views_handler_field {
       ));
     }
   }
+
 }

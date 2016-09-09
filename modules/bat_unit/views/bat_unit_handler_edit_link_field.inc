@@ -7,6 +7,7 @@
  */
 
 class bat_unit_handler_edit_link_field extends bat_unit_handler_link_field {
+
   function construct() {
     parent::construct();
     $this->additional_fields['type'] = 'type';
@@ -23,6 +24,12 @@ class bat_unit_handler_edit_link_field extends bat_unit_handler_link_field {
     $text = !empty($this->options['text']) ? $this->options['text'] : t('edit');
     $unit_id = $values->{$this->aliases['unit_id']};
 
-    return l($text, 'admin/bat/units/unit/' . $unit_id . '/edit');
+    $options = array();
+    if (!empty($this->options['destination'])) {
+      $options = array('query' => drupal_get_destination());
+    }
+
+    return l($text, 'admin/bat/units/unit/' . $unit_id . '/edit', $options);
   }
+
 }

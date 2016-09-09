@@ -107,6 +107,13 @@ function bat_unit_views_data_alter(&$data) {
       'handler' => 'bat_type_handler_edit_link_field',
     ),
   );
+  $data['bat_types']['delete_type'] = array(
+    'field' => array(
+      'title' => t('Delete Link'),
+      'help' => t('Provide a link to delete the type.'),
+      'handler' => 'bat_type_handler_delete_link_field',
+    ),
+  );
 
   $data['bat_types']['calendars'] = array(
     'field' => array(

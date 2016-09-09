@@ -6,7 +6,7 @@
  * as fields.
  */
 
-class bat_unit_handler_delete_link_field extends bat_unit_handler_link_field {
+class bat_type_handler_delete_link_field extends bat_type_handler_link_field {
 
   function construct() {
     parent::construct();
@@ -16,21 +16,21 @@ class bat_unit_handler_delete_link_field extends bat_unit_handler_link_field {
   function render($values) {
     $type = $values->{$this->aliases['type']};
 
-    // Creating a dummy unit to check access against.
-    $dummy_unit = (object) array('type' => $type, 'unit_id' => NULL);
-    if (!bat_unit_access('delete', $dummy_unit)) {
+    // Creating a dummy type to check access against.
+    $dummy_type = (object) array('type' => $type, 'type_id' => NULL);
+    if (!bat_type_access('delete', $dummy_type)) {
       return;
     }
 
     $text = !empty($this->options['text']) ? $this->options['text'] : t('delete');
-    $unit_id = $values->{$this->aliases['unit_id']};
+    $type_id = $values->{$this->aliases['type_id']};
 
     $options = array();
     if (!empty($this->options['destination'])) {
       $options = array('query' => drupal_get_destination());
     }
 
-    return l($text, 'admin/bat/units/unit/' . $unit_id . '/delete', $options);
+    return l($text, 'admin/bat/config/types/type/' . $type_id . '/delete', $options);
   }
 
 }
