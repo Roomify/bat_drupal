@@ -1125,7 +1125,7 @@ class BatEvent extends Entity {
         elseif ($field_info['type'] == 'commerce_price') {
           return $values[0]['amount'];
         }
-        elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer') {
+        elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer' || $field_info['type'] == 'number_decimal') {
           return $values[0]['value'];
         }
       }
@@ -1331,7 +1331,7 @@ class BatEventController extends EntityAPIController {
           elseif ($field_info['type'] == 'commerce_price') {
             $event_value = $values[0]['amount'];
           }
-          elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer') {
+          elseif ($field_info['type'] == 'text' || $field_info['type'] == 'number_integer' || $field_info['type'] == 'number_decimal') {
             $event_value = $values[0]['value'];
           }
         }
