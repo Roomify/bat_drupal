@@ -27,15 +27,31 @@
           },
           businessHours: Drupal.settings.batCalendar[cal_id].businessHours,
           defaultView: Drupal.settings.batCalendar[cal_id].defaultView,
-          selectConstraint: Drupal.settings.batCalendar[cal_id].selectConstraint,
+          selectConstraint: (Drupal.settings.batCalendar[cal_id].selectConstraint == null) ? undefined : Drupal.settings.batCalendar[cal_id].selectConstraint,
           views: {
             timelineDay: {
-              buttonText: ':15 slots',
-              slotDuration: '00:15'
+              buttonText: Drupal.settings.batCalendar[cal_id].viewsTimelineDayButtonText,
+              slotDuration: Drupal.settings.batCalendar[cal_id].viewsTimelineDaySlotDuration,
+            },
+            timelineSevenDay: {
+              buttonText: Drupal.settings.batCalendar[cal_id].viewsTimelineSevenDayButtonText,
+              duration: Drupal.settings.batCalendar[cal_id].viewsTimelineSevenDaySlotDuration,
+              type: 'timeline',
             },
             timelineTenDay: {
+              buttonText: Drupal.settings.batCalendar[cal_id].viewsTimelineTenDayButtonText,
+              duration: Drupal.settings.batCalendar[cal_id].viewsTimelineTenDaySlotDuration,
               type: 'timeline',
-              duration: { days: 10 }
+            },
+            timelineThirtyDay: {
+              buttonText: Drupal.settings.batCalendar[cal_id].viewsTimelineThirtyDayButtonText,
+              duration: Drupal.settings.batCalendar[cal_id].viewsTimelineThirtyDaySlotDuration,
+              type: 'timeline',
+            },
+            timeline365Day: {
+              buttonText: Drupal.settings.batCalendar[cal_id].viewsTimeline365DayButtonText,
+              duration: Drupal.settings.batCalendar[cal_id].viewsTimeline365DaySlotDuration,
+              type: 'timeline',
             }
           },
           resourceAreaWidth: Drupal.settings.batCalendar[cal_id].resourceAreaWidth,
