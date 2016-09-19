@@ -106,6 +106,39 @@ Drupal.behaviors.bat_event = {
 
           $(value[0]).fullCalendar('unselect');
         },
+        selectAllow: function(selectInfo) {
+          if (Drupal.settings.batCalendar[key].selectAllowBusinessHours) {
+            var business_hours = $(this)[0].businessHours;
+
+            var start_day = selectInfo.start.day();
+            var end_day = selectInfo.end.clone().subtract(1, 'minute').day();
+
+            if (start_day == end_day) {
+              if (isInsideBusinessHour(business_hours, start_day, selectInfo.start.format('HH:mm'), selectInfo.end.format('HH:mm'))) {
+                return true;
+              }
+            }
+            else {
+              if (!isInsideBusinessHour(business_hours, start_day, selectInfo.start.format('HH:mm'), '24:00')) {
+                return false;
+              }
+
+              for (date of enumerateDaysBetweenDates(selectInfo.start, selectInfo.end)) {
+                if (!isInsideBusinessHour(business_hours, date.day(), '00:00', '24:00')) {
+                  return false;
+                }
+              }
+
+              if (!isInsideBusinessHour(business_hours, end_day, '00:00', selectInfo.end.format('HH:mm'))) {
+                return false;
+              }
+
+              return true;
+            }
+
+            return false;
+          }
+        },
         eventOverlap: function(stillEvent, movingEvent) {
           // Prevent events from being drug over blocking events.
           return !stillEvent.blocking && (stillEvent.type == movingEvent.type);
@@ -186,6 +219,37 @@ Drupal.behaviors.bat_event = {
         }
       });
     });
+
+    function isInsideBusinessHour(business_hours, day, start, end) {
+      for (business_hour of business_hours) {
+        if (business_hour.dow.indexOf(day) >= 0) {
+          var business_start = moment.duration(business_hour.start);
+          var business_end = moment.duration(business_hour.end);
+
+          var start = moment.duration(start);
+          var end = moment.duration(end);
+
+          if (business_start._milliseconds <= start._milliseconds && business_end._milliseconds >= end._milliseconds) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    function enumerateDaysBetweenDates(startDate, endDate) {
+      var dates = [];
+
+      var currDate = startDate.clone().startOf('day');
+      var lastDate = endDate.clone().startOf('day');
+
+      while (currDate.add(1, 'days').diff(lastDate) < 0) {
+        dates.push(currDate.clone());
+      }
+
+      return dates;
+    };
   }
 };
 
