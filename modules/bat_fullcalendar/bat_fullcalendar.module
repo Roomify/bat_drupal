@@ -562,6 +562,7 @@ function bat_fullcalendar_configure($user_settings) {
       'defaultDate' => $default_date,
       'repeatEventTitle' => TRUE,
       'customButtons' => array(),
+      'eventOrder' => 'title',
       'titleFormat' => '',
     );
 

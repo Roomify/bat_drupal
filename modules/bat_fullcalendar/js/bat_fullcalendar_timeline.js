@@ -69,6 +69,7 @@ Drupal.behaviors.bat_event = {
           }
         },
         customButtons: Drupal.settings.batCalendar[key].customButtons,
+        eventOrder: Drupal.settings.batCalendar[key].eventOrder,
         titleFormat: Drupal.settings.batCalendar[key].titleFormat,
         resourceAreaWidth: Drupal.settings.batCalendar[key].resourceAreaWidth,
         resourceLabelText: Drupal.settings.batCalendar[key].resourceLabelText,
