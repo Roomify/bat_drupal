@@ -49,17 +49,20 @@ Drupal.behaviors.bat_event = {
           },
           timelineSevenDay: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineSevenDayButtonText,
-            duration: Drupal.settings.batCalendar[key].viewsTimelineSevenDaySlotDuration,
+            duration: Drupal.settings.batCalendar[key].viewsTimelineSevenDayDuration,
+            slotDuration: Drupal.settings.batCalendar[key].viewsTimelineSevenDaySlotDuration,
             type: 'timeline',
           },
           timelineTenDay: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineTenDayButtonText,
-            duration: Drupal.settings.batCalendar[key].viewsTimelineTenDaySlotDuration,
+            duration: Drupal.settings.batCalendar[key].viewsTimelineTenDayDuration,
+            slotDuration: Drupal.settings.batCalendar[key].viewsTimelineTenDaySlotDuration,
             type: 'timeline',
           },
           timelineThirtyDay: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineThirtyDayButtonText,
-            duration: Drupal.settings.batCalendar[key].viewsTimelineThirtyDaySlotDuration,
+            duration: Drupal.settings.batCalendar[key].viewsTimelineThirtyDayDuration,
+            slotDuration: Drupal.settings.batCalendar[key].viewsTimelineThirtyDaySlotDuration,
             type: 'timeline',
           },
           timeline365Day: {
