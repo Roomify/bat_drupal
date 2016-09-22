@@ -68,6 +68,7 @@ Drupal.behaviors.bat_event = {
             type: 'timeline',
           }
         },
+        defaultTimedEventDuration: Drupal.settings.batCalendar[key].defaultTimedEventDuration,
         customButtons: Drupal.settings.batCalendar[key].customButtons,
         eventOrder: Drupal.settings.batCalendar[key].eventOrder,
         titleFormat: Drupal.settings.batCalendar[key].titleFormat,

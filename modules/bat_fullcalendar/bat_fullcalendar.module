@@ -564,6 +564,7 @@ function bat_fullcalendar_configure($user_settings) {
       'customButtons' => array(),
       'eventOrder' => 'title',
       'titleFormat' => '',
+      'defaultTimedEventDuration' => '00:00:00',
       'selectAllowBusinessHours' => FALSE,
     );
 
