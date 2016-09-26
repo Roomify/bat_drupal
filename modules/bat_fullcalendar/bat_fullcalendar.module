@@ -365,7 +365,7 @@ function bat_fullcalendar_libraries_info() {
   $libraries['fullcalendar'] = array(
     'name' => 'Full Calendar',
     'vendor url' => 'http://fullcalendar.io',
-    'download url' => 'https://github.com/arshaw/fullcalendar/releases/download/v3.0.0/fullcalendar-3.0.0.zip',
+    'download url' => 'https://github.com/arshaw/fullcalendar/releases/download/v3.0.1/fullcalendar-3.0.1.zip',
     'version arguments' => array(
       'file' => 'fullcalendar.min.js',
       // 3.0.0
