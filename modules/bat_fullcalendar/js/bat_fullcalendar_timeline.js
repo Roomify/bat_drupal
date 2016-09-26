@@ -254,6 +254,27 @@ Drupal.behaviors.bat_event = {
 
       return dates;
     };
+
+    $.fullCalendar.Calendar.prototype.computeBusinessHourEvents = function(wholeDay, input) {
+      var view = this.getView();
+
+      if (moment.duration(view.options.maxTime) > moment.duration('24:00')) {
+        this.getView().end = view.start.clone().add(view.intervalDuration).add(1, 'day');
+      }
+
+      if (input === true) {
+        return this.expandBusinessHourEvents(wholeDay, [ {} ]);
+      }
+      else if ($.isPlainObject(input)) {
+        return this.expandBusinessHourEvents(wholeDay, [ input ]);
+      }
+      else if ($.isArray(input)) {
+        return this.expandBusinessHourEvents(wholeDay, input, true);
+      }
+      else {
+        return [];
+      }
+    };
   }
 };
 
