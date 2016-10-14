@@ -1,7 +1,7 @@
-$items['booking/%start_date/%end_date/%'] = array(
-    'title' => 'Booking',
-    'page callback' =>  'bat_booking_confirmation_page',
-    'page arguments' => array(1, 2, 3),
-    'access arguments' => array('book units'),
-    'type' => MENU_CALLBACK,
-  );
+bat_booking_example.booking:
+  path: '/booking/%start_date/%end_date/%'
+  defaults:
+    _controller: '\Drupal\bat_booking_example\Controller\BatBookingExampleController::batBookingConfirmationPage'
+    _title: 'Booking'
+  requirements:
+    _permission: 'book units'
