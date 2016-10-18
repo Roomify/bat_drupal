@@ -55,13 +55,15 @@ class BookingConfirmationForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
+
     $event_type = 'availability_example';
 
-    $start_date = $form_state['values']['start_date'];
-    $end_date = $form_state['values']['end_date'];
+    $start_date = $values['start_date'];
+    $end_date = $values['end_date'];
     $end_date->sub(new DateInterval('PT1M'));
 
-    $type_id = $form_state['values']['type_id'];
+    $type_id = $values['type_id'];
 
     $state_ids = array_keys(bat_event_get_states($event_type));
 

@@ -1,5 +1,5 @@
 bat_booking_example.booking:
-  path: '/booking/%start_date/%end_date/%'
+  path: '/booking/{start_date}/{end_date}/{type_id}'
   defaults:
     _controller: '\Drupal\bat_booking_example\Controller\BatBookingExampleController::batBookingConfirmationPage'
     _title: 'Booking'

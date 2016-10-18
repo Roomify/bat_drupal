@@ -167,7 +167,7 @@ function bat_options_get_option_price($booking_price, $option, $quantity, $night
       break;
 
     case BAT_OPTIONS_REPLACE:
-      $price = $option['value'] - ($booking_price / 100);
+      $price = $option['value'] - $booking_price;
       break;
 
     case BAT_OPTIONS_INCREASE:
@@ -175,7 +175,7 @@ function bat_options_get_option_price($booking_price, $option, $quantity, $night
       break;
 
     case BAT_OPTIONS_DECREASE:
-      $price -= $base_price * $option['value'] / 100;
+      $price -= $booking_price * $option['value'] / 100;
       break;
   }
 

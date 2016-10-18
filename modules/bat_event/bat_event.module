@@ -183,6 +183,20 @@ function bat_event_load_state($state_id) {
 }
 
 /**
+ * @param $values
+ */
+function bat_event_create_state($values = array()) {
+  return State::create($values);
+}
+
+/**
+ * @param $state
+ */
+function bat_event_save_state(State $state) {
+  return $state->save();
+}
+
+/**
  * Helper function to easily get event types in an array for use in forms, etc.
  *
  * @return array
