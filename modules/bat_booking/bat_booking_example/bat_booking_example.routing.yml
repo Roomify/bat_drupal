@@ -3,5 +3,11 @@ bat_booking_example.booking:
   defaults:
     _controller: '\Drupal\bat_booking_example\Controller\BatBookingExampleController::batBookingConfirmationPage'
     _title: 'Booking'
+  options:
+    parameters:
+      start_date:
+        type: bat_date
+      end_date:
+        type: bat_date
   requirements:
     _permission: 'book units'
