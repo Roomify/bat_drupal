@@ -36,7 +36,7 @@ use Drupal\user\UserInterface;
  *     "access" = "Drupal\bat\TypeGroupAccessControlHandler",
  *   },
  *   base_table = "type_group",
- *   admin_permission = "administer Property entity",
+ *   admin_permission = "administer type_group entity",
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",

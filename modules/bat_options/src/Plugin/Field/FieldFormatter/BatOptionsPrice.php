@@ -25,7 +25,7 @@ class BatOptionsPrice extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $element = array();
+    $element = [];
 
     $currency_symbol = '$';
 

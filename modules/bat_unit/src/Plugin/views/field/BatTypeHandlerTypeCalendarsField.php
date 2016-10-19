@@ -25,7 +25,7 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
   }
 
   public function render(ResultRow $values) {
-    $links = array();
+    $links = [];
 
     $type = $this->getEntity($values);
     $type_bundle = bat_type_bundle_load($type->bundle());

@@ -18,7 +18,7 @@ class BatUnitHandlerTypeIdFilter extends ManyToOne {
   public function getValueOptions() {
     $types = bat_unit_get_types();
 
-    $options = array();
+    $options = [];
     foreach ($types as $type) {
       $options[$type->id()] = $type->label();
     }

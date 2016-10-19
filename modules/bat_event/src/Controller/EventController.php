@@ -42,7 +42,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
       ],
     ];
 
-    $content = array();
+    $content = [];
 
     // Only use event types the user has access to.
     foreach ($this->entityTypeManager()->getStorage('bat_event_type')->loadMultiple() as $type) {
@@ -55,7 +55,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
     // Bypass the add listing if only one event type is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.bat_event.add_form', array('event_type' => $type->id()));
+      return $this->redirect('entity.bat_event.add_form', ['event_type' => $type->id()]);
     }
 
     $build['#content'] = $content;
@@ -92,7 +92,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
    *   The page title.
    */
   public function addPageTitle(EventTypeInterface $event_type) {
-    return $this->t('Create @name', array('@name' => $event_type->label()));
+    return $this->t('Create @name', ['@name' => $event_type->label()]);
   }
 
   /**

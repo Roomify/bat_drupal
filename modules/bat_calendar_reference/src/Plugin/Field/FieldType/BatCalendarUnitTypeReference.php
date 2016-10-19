@@ -69,7 +69,7 @@ class BatCalendarUnitTypeReference extends FieldItemBase {
    */
   public static function defaultFieldSettings() {
     return array(
-      'referenceable_event_types' => array(),
+      'referenceable_event_types' => [],
     ) + parent::defaultFieldSettings();
   }
 
@@ -77,7 +77,7 @@ class BatCalendarUnitTypeReference extends FieldItemBase {
    * {@inheritdoc}
    */
   public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
-    $element = array();
+    $element = [];
     $settings = $this->getSettings();
 
     $element['referenceable_event_types'] = array(

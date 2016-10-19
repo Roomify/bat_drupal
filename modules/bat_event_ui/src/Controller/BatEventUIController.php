@@ -71,7 +71,7 @@ class BatEventUIController extends ControllerBase {
 
     $render_array = array(
       'event_type_form' => \Drupal::formBuilder()->getForm('Drupal\bat_event_ui\Form\BatEventUiEventTypeForm', $unit_type, $event_type),
-      'bulk_update_form' => array(),
+      'bulk_update_form' => [],
       'calendar' => array(
         '#theme' => 'bat_fullcalendar',
         '#calendar_settings' => $calendar_settings,

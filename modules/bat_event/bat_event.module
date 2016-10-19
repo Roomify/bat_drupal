@@ -185,7 +185,7 @@ function bat_event_load_state($state_id) {
 /**
  * @param $values
  */
-function bat_event_create_state($values = array()) {
+function bat_event_create_state($values = []) {
   return State::create($values);
 }
 
@@ -203,7 +203,7 @@ function bat_event_save_state(State $state) {
  *  An array of event types keyed by type id and labels
  */
 function bat_event_types_ids() {
-  $event_types = array();
+  $event_types = [];
 
   $types = bat_event_get_types();
   foreach ($types as $type) {
@@ -317,7 +317,7 @@ function bat_event_delete_multiple(array $event_ids) {
 /**
  * Create a event object.
  */
-function bat_event_create($values = array()) {
+function bat_event_create($values = []) {
   return Event::create($values);
 }
 
@@ -334,7 +334,7 @@ function bat_event_save(Event $event) {
 /**
  * Create a event object.
  */
-function bat_event_type_create($values = array()) {
+function bat_event_type_create($values = []) {
   return EventType::create($values);
 }
 
@@ -364,8 +364,8 @@ function bat_event_uri(Event $event) {
 /**
  * Get a list of Event keyed by id and name in value.
  */
-function bat_event_ids($conditions = array()) {
-  $events = array();
+function bat_event_ids($conditions = []) {
+  $events = [];
 
   $query = \Drupal::entityQuery('bat_event');
 
@@ -385,15 +385,15 @@ function bat_event_ids($conditions = array()) {
  * Implements hook_theme().
  */
 function bat_event_theme() {
-  return array(
-    'bat_event' => array(
+  return [
+    'bat_event' => [
       'render element' => 'elements',
       'template' => 'bat_event',
-    ),
-    'bat_event_add_list' => array(
-      'variables' => array('content' => NULL),
-    ),
-  );
+    ],
+    'bat_event_add_list' => [
+      'variables' => ['content' => NULL],
+    ],
+  ];
 }
 
 /**
@@ -428,7 +428,7 @@ function bat_event_get_event_type_tables($machine_name) {
  * @param $machine_name
  */
 function bat_event_create_event_type_schema($machine_name) {
-  $schema = array();
+  $schema = [];
 
   $schema['bat_event_' . $machine_name . '_day_state'] = array(
     'description' => 'Holds the state of each unit for a given day',
@@ -696,7 +696,7 @@ function bat_event_generate_minute_schema_fields() {
 function bat_event_form_bat_type_bundle_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $type_bundle = $form_state->getFormObject()->getEntity();
 
-  $fields_options = array();
+  $fields_options = [];
 
   $fields = \Drupal::entityManager()->getFieldDefinitions('bat_unit_type', $type_bundle->id());
   foreach ($fields as $field) {
@@ -717,7 +717,7 @@ function bat_event_form_bat_type_bundle_edit_form_alter(&$form, FormStateInterfa
   foreach ($event_types as $event_type) {
     $form['events'][$event_type->id()] = array(
       '#type' => 'select',
-      '#title' => t('Select your default @event field', array('@event' => $event_type->label())),
+      '#title' => t('Select your default @event field', ['@event' => $event_type->label()]),
       '#options' => $fields_options,
       '#default_value' => isset($type_bundle->default_event_value_field_ids[$event_type->id()]) ? $type_bundle->default_event_value_field_ids[$event_type->id()] : NULL,
       '#empty_option' => t('- Select a field -'),
@@ -794,7 +794,7 @@ function bat_event_get_calendar($type_id, $event_type) {
   $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
 
   $drupal_units = bat_unit_load_multiple(FALSE, array('type_id' => $type_id));
-  $bat_units = array();
+  $bat_units = [];
 
   foreach ($drupal_units as $unit_id => $unit) {
     $bat_units[] = new Unit($unit_id, $unit->getEventDefaultValue($event_type));
@@ -820,12 +820,12 @@ function bat_event_get_calendar($type_id, $event_type) {
  * @return array|bool
  */
 function bat_event_get_matching_units_from_calendar($calendar, DateTime $start_date, DateTime $end_date, $valid_name_states, $intersect = FALSE, $reset = TRUE) {
-  $valid_states = array();
+  $valid_states = [];
   foreach ($valid_name_states as $name) {
     $valid_states[] = $state['id'];
   }
 
-  $constraints = array();
+  $constraints = [];
   foreach (bat_event_constraints_get_info() as $constraint) {
     $constraints[] = $constraint['constraint'];
   }
@@ -856,8 +856,8 @@ function bat_event_get_matching_units_from_calendar($calendar, DateTime $start_d
  */
 function bat_event_get_calendar_response(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE) {
   $results = array(
-    'included' => array(),
-    'excluded' => array(),
+    'included' => [],
+    'excluded' => [],
   );
 
   $calendar = bat_event_get_calendar($start_date, $end_date, $type_id, $event_type);
@@ -866,7 +866,7 @@ function bat_event_get_calendar_response(DateTime $start_date, DateTime $end_dat
 
   $valid_unit_ids = array_keys($response->getIncluded());
 
-  $excluded = array();
+  $excluded = [];
   foreach ($response->getExcluded() as $unit_id => $ex) {
     if (isset($ex['constraint'])) {
       $p = $ex['constraint']->toString();
@@ -924,12 +924,12 @@ function bat_event_constraints_get_info() {
  *   - content: An array of event types.
  */
 function template_preprocess_bat_event_add_list(&$variables) {
-  $variables['types'] = array();
+  $variables['types'] = [];
   if (!empty($variables['content'])) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = array(
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_event.add_form', array('event_type' => $type->id()))),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_event.add_form', ['event_type' => $type->id()])),
       );
     }
   }
@@ -941,7 +941,7 @@ function template_preprocess_bat_event_add_list(&$variables) {
  *
  * @return array|false
  */
-function bat_event_get_states($event_type = NULL, $conditions = array()) {
+function bat_event_get_states($event_type = NULL, $conditions = []) {
   $query = \Drupal::entityQuery('state');
 
   if ($event_type !== NULL) {

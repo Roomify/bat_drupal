@@ -54,7 +54,7 @@ function bat_fullcalendar_bat_fullcalendar_modal_content($entity_id, $event_type
  * @return array
  */
 function bat_fullcalendar_configure($user_settings) {
-  $settings = array();
+  $settings = [];
 
   $config = \Drupal::config('bat_fullcalendar.settings');
 
@@ -142,10 +142,10 @@ function bat_fullcalendar_configure($user_settings) {
       'selectConstraint' => NULL,
       'minTime' => '00:00:00',
       'maxTime' => '24:00:00',
-      'hiddenDays' => array(),
+      'hiddenDays' => [],
       'defaultDate' => $default_date,
       'repeatEventTitle' => TRUE,
-      'customButtons' => array(),
+      'customButtons' => [],
       'eventOrder' => 'title',
       'titleFormat' => '',
       'defaultTimedEventDuration' => '00:00:00',
@@ -205,14 +205,14 @@ function template_preprocess_bat_fullcalendar(&$variables) {
  * Implements hook_theme().
  */
 function bat_fullcalendar_theme($existing, $type, $theme, $path) {
-  return array(
-    'bat_fullcalendar' => array(
-      'variables' => array(
-        'calendar_settings' => array(NULL),
-        'attributes' => array(),
-      ),
-    ),
-  );
+  return [
+    'bat_fullcalendar' => [
+      'variables' => [
+        'calendar_settings' => [],
+        'attributes' => [],
+      ],
+    ],
+  ];
 }
 
 /**

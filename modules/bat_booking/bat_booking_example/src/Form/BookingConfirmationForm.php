@@ -71,8 +71,8 @@ class BookingConfirmationForm extends FormBase {
 
     $valid_states = array_merge(array(0), array_slice($state_ids, 0, 1));
 
-    $drupal_units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $type_id));
-    $bat_units = array();
+    $drupal_units = bat_unit_load_multiple(FALSE, ['unit_type_id' => $type_id]);
+    $bat_units = [];
     foreach ($drupal_units as $unit_id => $unit) {
       $bat_units[] = new Unit($unit_id, $unit->getEventDefaultValue($event_type));
     }
@@ -80,7 +80,7 @@ class BookingConfirmationForm extends FormBase {
     if (count($bat_units)) {
       $calendar = new Calendar($bat_units, $state_store);
 
-      $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, array());
+      $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, []);
       $valid_unit_ids = array_keys($response->getIncluded());
 
       if (count($valid_unit_ids)) {

@@ -40,7 +40,7 @@ class TypeController extends ControllerBase implements ContainerInjectionInterfa
       ],
     ];
 
-    $content = array();
+    $content = [];
 
     // Only use type bundles the user has access to.
     foreach ($this->entityTypeManager()->getStorage('bat_type_bundle')->loadMultiple() as $type) {

@@ -65,7 +65,7 @@ class State extends ContentEntityBase implements StateInterface {
    * @param $machine_name
    */
   public function loadByMachineName($machine_name) {
-    $units = array();
+    $units = [];
 
     $query = \Drupal::entityQuery('state');
     $query->condition('machine_name', $machine_name);

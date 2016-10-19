@@ -5,7 +5,7 @@
  * Filter to handle dates stored as a string.
  */
 
-namespace Drupal\bat_event\Plugin\views\field;
+namespace Drupal\bat_event\Plugin\views\filter;
 
 use Drupal\views\Plugin\views\filter\Date;
 

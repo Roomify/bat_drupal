@@ -41,7 +41,7 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
       ],
     ];
 
-    $content = array();
+    $content = [];
 
     // Only use unit bundles the user has access to.
     foreach ($this->entityTypeManager()->getStorage('bat_unit_bundle')->loadMultiple() as $type) {
@@ -91,7 +91,7 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
    *   The page title.
    */
   public function addPageTitle(UnitBundleInterface $unit_bundle) {
-    return $this->t('Create @name', array('@name' => $unit_bundle->label()));
+    return $this->t('Create @name', ['@name' => $unit_bundle->label()]);
   }
 
   /**

@@ -35,30 +35,30 @@ function bat_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_theme().
  */
 function bat_theme() {
-  return array(
-    'bat_type_group_add_list' => array(
-      'variables' => array('content' => NULL),
-    ),
-    'bat_entity_edit_form' => array(
+  return [
+    'bat_type_group_add_list' => [
+      'variables' => ['content' => NULL],
+    ],
+    'bat_entity_edit_form' => [
       'render element' => 'form',
-    ),
-  );
+    ],
+  ];
 }
 
 /**
  * Implements hook_toolbar().
  */
 function bat_toolbar() {
-  $items = array();
+  $items = [];
 
-  $items['bat'] = array(
+  $items['bat'] = [
     '#type' => 'toolbar_item',
-    '#attached' => array(
-      'library' => array(
+    '#attached' => [
+      'library' => [
         'bat/drupal.bat.toolbar',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
   return $items;
 }
@@ -73,12 +73,12 @@ function bat_toolbar() {
  *   - content: An array of type group bundles.
  */
 function template_preprocess_bat_type_group_add_list(&$variables) {
-  $variables['types'] = array();
+  $variables['types'] = [];
   if (!empty($variables['content'])) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = array(
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_type_group.add_form', array('property_type' => $type->id()))),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_type_group.add_form', ['property_type' => $type->id()])),
       );
     }
   }
@@ -88,7 +88,7 @@ function template_preprocess_bat_type_group_add_list(&$variables) {
  * Implements hook_entity_access().
  */
 function bat_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
-  $rights = &drupal_static(__FUNCTION__, array());
+  $rights = &drupal_static(__FUNCTION__, []);
 
   $entity_type = $entity->getEntityType()->id();
 
@@ -216,79 +216,79 @@ function bat_entity_access_permissions($entity_type) {
   $entity_info = \Drupal::entityTypeManager()->getDefinition($entity_type);
   $label = $entity_info->getLabel()->__toString();
 
-  $permissions = array();
+  $permissions = [];
 
   // General 'bypass' permission.
-  $permissions['bypass ' . $entity_type . ' entities access'] = array(
-    'title' => t('Bypass access to @entity_type', array('@entity_type' => $label)),
-    'description' => t('Allows users to perform any action on @entity_type.', array('@entity_type' => $label)),
+  $permissions['bypass ' . $entity_type . ' entities access'] = [
+    'title' => t('Bypass access to @entity_type', ['@entity_type' => $label]),
+    'description' => t('Allows users to perform any action on @entity_type.', ['@entity_type' => $label]),
     'restrict access' => TRUE,
-  );
+  ];
 
   // Generic create and edit permissions.
-  $permissions['create ' . $entity_type . ' entities'] = array(
-    'title' => t('Create @entity_type of any type', array('@entity_type' => $label)),
-  );
+  $permissions['create ' . $entity_type . ' entities'] = [
+    'title' => t('Create @entity_type of any type', ['@entity_type' => $label]),
+  ];
   if ($entity_info->getKey('uid') !== FALSE) {
-    $permissions['view own ' . $entity_type . ' entities'] = array(
-      'title' => t('View own @entity_type of any type', array('@entity_type' => $label)),
-    );
+    $permissions['view own ' . $entity_type . ' entities'] = [
+      'title' => t('View own @entity_type of any type', ['@entity_type' => $label]),
+    ];
   }
-  $permissions['view any ' . $entity_type . ' entity'] = array(
-    'title' => t('View any @entity_type of any type', array('@entity_type' => $label)),
+  $permissions['view any ' . $entity_type . ' entity'] = [
+    'title' => t('View any @entity_type of any type', ['@entity_type' => $label]),
     'restrict access' => TRUE,
-  );
+  ];
   if ($entity_info->getKey('uid') !== FALSE) {
-    $permissions['update own ' . $entity_type . ' entities'] = array(
-      'title' => t('Edit own @entity_type of any type', array('@entity_type' => $label)),
-    );
+    $permissions['update own ' . $entity_type . ' entities'] = [
+      'title' => t('Edit own @entity_type of any type', ['@entity_type' => $label]),
+    ];
   }
-  $permissions['update any ' . $entity_type . ' entity'] = array(
-    'title' => t('Edit any @entity_type of any type', array('@entity_type' => $label)),
+  $permissions['update any ' . $entity_type . ' entity'] = [
+    'title' => t('Edit any @entity_type of any type', ['@entity_type' => $label]),
     'restrict access' => TRUE,
-  );
+  ];
   if ($entity_info->getKey('uid') !== FALSE) {
-    $permissions['delete own ' . $entity_type . ' entities'] = array(
-      'title' => t('Delete own @entity_type of any type', array('@entity_type' => $label)),
-    );
+    $permissions['delete own ' . $entity_type . ' entities'] = [
+      'title' => t('Delete own @entity_type of any type', ['@entity_type' => $label]),
+    ];
   }
-  $permissions['delete any ' . $entity_type . ' entity'] = array(
-    'title' => t('Delete any @entity_type of any type', array('@entity_type' => $label)),
+  $permissions['delete any ' . $entity_type . ' entity'] = [
+    'title' => t('Delete any @entity_type of any type', ['@entity_type' => $label]),
     'restrict access' => TRUE,
-  );
+  ];
 
   // Per-bundle create and edit permissions.
   foreach (entity_get_bundles($entity_type) as $bundle_name => $bundle_info) {
-    $permissions['create ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-      'title' => t('Create %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-    );
+    $permissions['create ' . $entity_type . ' entities of bundle ' . $bundle_name] = [
+      'title' => t('Create %bundle @entity_type', ['@entity_type' => $label, '%bundle' => $bundle_info['label']]),
+    ];
     if ($entity_info->getKey('uid') !== FALSE) {
-      $permissions['view own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-        'title' => t('View own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-      );
+      $permissions['view own ' . $entity_type . ' entities of bundle ' . $bundle_name] = [
+        'title' => t('View own %bundle @entity_type', ['@entity_type' => $label, '%bundle' => $bundle_info['label']]),
+      ];
     }
-    $permissions['view any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
-      'title' => t('View any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+    $permissions['view any ' . $entity_type . ' entity of bundle ' . $bundle_name] = [
+      'title' => t('View any %bundle @entity_type', ['@entity_type' => $label, '%bundle' => $bundle_info['label']]),
       'restrict access' => TRUE,
-    );
+    ];
     if ($entity_info->getKey('uid') !== FALSE) {
-      $permissions['update own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-        'title' => t('Edit own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-      );
+      $permissions['update own ' . $entity_type . ' entities of bundle ' . $bundle_name] = [
+        'title' => t('Edit own %bundle @entity_type', ['@entity_type' => $label, '%bundle' => $bundle_info['label']]),
+      ];
     }
-    $permissions['update any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
-      'title' => t('Edit any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+    $permissions['update any ' . $entity_type . ' entity of bundle ' . $bundle_name] = [
+      'title' => t('Edit any %bundle @entity_type', ['@entity_type' => $label, '%bundle' => $bundle_info['label']]),
       'restrict access' => TRUE,
-    );
+    ];
     if ($entity_info->getKey('uid') !== FALSE) {
-      $permissions['delete own ' . $entity_type . ' entities of bundle ' . $bundle_name] = array(
-        'title' => t('Delete own %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
-      );
+      $permissions['delete own ' . $entity_type . ' entities of bundle ' . $bundle_name] = [
+        'title' => t('Delete own %bundle @entity_type', ['@entity_type' => $label, '%bundle' => $bundle_info['label']]),
+      ];
     }
-    $permissions['delete any ' . $entity_type . ' entity of bundle ' . $bundle_name] = array(
-      'title' => t('Delete any %bundle @entity_type', array('@entity_type' => $label, '%bundle' => $bundle_info['label'])),
+    $permissions['delete any ' . $entity_type . ' entity of bundle ' . $bundle_name] = [
+      'title' => t('Delete any %bundle @entity_type', ['@entity_type' => $label, '%bundle' => $bundle_info['label']]),
       'restrict access' => TRUE,
-    );
+    ];
   }
 
   return $permissions;
@@ -425,7 +425,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
  *   The array holding the field definitions
  */
 function bat_date_range_fields($year = NULL, $month = NULL, $granularity = 'bat_hourly') {
-  $date_range_fields = array();
+  $date_range_fields = [];
 
   $config = \Drupal::config('bat.settings');
 
@@ -533,7 +533,7 @@ function bat_type_group_load($group_id, $reset = FALSE) {
  *
  * @see bat_type_group_load()
  */
-function bat_type_group_load_multiple($group_ids = array(), $conditions = array(), $reset = FALSE) {
+function bat_type_group_load_multiple($group_ids = [], $conditions = [], $reset = FALSE) {
   if ($reset) {
     \Drupal::entityTypeManager()->getStorage('bat_type_group')->resetCache();
   }
@@ -613,7 +613,7 @@ function bat_type_group_get_bundles($bundle_name = NULL, $reset = FALSE) {
  * @param array $values
  *   The properties for the new type group bundle.
  */
-function bat_type_group_create($values = array()) {
+function bat_type_group_create($values = []) {
   return TypeGroup::create($values);
 }
 

@@ -47,18 +47,18 @@ function bat_facets_search_api_query_alter(\Drupal\search_api\Query\QueryInterfa
 
           $valid_states = $settings['state'];
 
-          $valid_type_ids = array();
+          $valid_type_ids = [];
 
           // We need to narrow the query to all Types with Units that have the
           // requested state over the requested dates.
           // First, we retrieve all types.
           $type_ids = bat_type_ids();
 
-          $units = array();
+          $units = [];
           foreach ($type_ids as $type_id => $name) {
             // Get the units of this type.
             $drupal_units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $type_id));
-            $bat_units = array();
+            $bat_units = [];
             foreach ($drupal_units as $unit_id => $unit) {
               $bat_units[] = new Unit($unit_id, $unit->getEventDefaultValue($event_type));
             }
@@ -68,7 +68,7 @@ function bat_facets_search_api_query_alter(\Drupal\search_api\Query\QueryInterfa
             if (count($bat_units)) {
               $calendar = new Calendar($bat_units, $state_store);
 
-              $constraints = array();
+              $constraints = [];
               foreach (bat_event_constraints_get_info() as $constraint) {
                 $constraints[] = $constraint['constraint'];
               }

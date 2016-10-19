@@ -70,7 +70,7 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $form['event_title'] = array(
       '#prefix' => '<h2>',
-      '#markup' => t('@unit_name', array('@unit_name' => $unit->label())),
+      '#markup' => t('@unit_name', ['@unit_name' => $unit->label()]),
       '#suffix' => '</h2>',
     );
 
@@ -110,7 +110,7 @@ class FullcalendarEventManagerForm extends FormBase {
         $form_display = entity_get_form_display('bat_event', $event_type->id(), 'default');
         $widget = $form_display->getRenderer($field_name);
 
-        $form['#parents'] = array();
+        $form['#parents'] = [];
 
         $form[$field_name] = $widget->form($items, $form, $form_state);
         $form[$field_name]['#weight'] = 1;

@@ -51,7 +51,7 @@ class BatOptionsCombined extends WidgetBase {
     $title = $this->fieldDefinition->getLabel();
     $description = FieldFilteredMarkup::create(\Drupal::token()->replace($this->fieldDefinition->getDescription()));
 
-    $elements = array();
+    $elements = [];
 
     for ($delta = 0; $delta <= $max; $delta++) {
       // Add a new empty item if it doesn't exist yet at this delta.

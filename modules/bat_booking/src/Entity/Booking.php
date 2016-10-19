@@ -35,7 +35,7 @@ use Drupal\bat_booking\BookingInterface;
  *     "access" = "Drupal\bat_booking\BookingAccessControlHandler",
  *   },
  *   base_table = "booking",
- *   admin_permission = "administer Booking entity",
+ *   admin_permission = "administer booking entity",
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",

@@ -113,9 +113,9 @@ class TypeGroupListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $this->getLabel($entity),
       new Url(
-        'entity.bat_type_group.edit_form', array(
+        'entity.bat_type_group.edit_form', [
           'bat_type_group' => $entity->id(),
-        )
+        ]
       )
     );
     $row['bundle'] = bat_type_group_bundle_load($entity->bundle())->label();

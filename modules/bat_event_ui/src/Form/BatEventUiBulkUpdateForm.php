@@ -38,7 +38,7 @@ class BatEventUiBulkUpdateForm extends FormBase {
     if ($unit_type == 'all') {
       $types = bat_unit_get_types(NULL, TRUE);
 
-      $types_options = array();
+      $types_options = [];
 
       foreach ($types as $type) {
         $type_bundle = bat_type_bundle_load($type->bundle());

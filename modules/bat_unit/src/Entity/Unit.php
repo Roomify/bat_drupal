@@ -40,7 +40,7 @@ use Drupal\commerce_price\Price;
  *     "access" = "Drupal\bat_unit\UnitAccessControlHandler",
  *   },
  *   base_table = "unit",
- *   admin_permission = "administer Unit entity",
+ *   admin_permission = "administer unit entity",
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",

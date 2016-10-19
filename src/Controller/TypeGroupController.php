@@ -41,7 +41,7 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
       ],
     ];
 
-    $content = array();
+    $content = [];
 
     // Only use type group bundles the user has access to.
     foreach ($this->entityTypeManager()->getStorage('bat_type_group_bundle')->loadMultiple() as $type) {
@@ -54,7 +54,7 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
     // Bypass the add listing if only one type group bundle is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.bat_type_group.add_form', array('type_group_bundle' => $type->id()));
+      return $this->redirect('entity.bat_type_group.add_form', ['type_group_bundle' => $type->id()]);
     }
 
     $build['#content'] = $content;
@@ -91,7 +91,7 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
    *   The page title.
    */
   public function addPageTitle(TypeGroupBundleInterface $type_group_bundle) {
-    return $this->t('Create @name', array('@name' => $type_group_bundle->label()));
+    return $this->t('Create @name', ['@name' => $type_group_bundle->label()]);
   }
 
 }

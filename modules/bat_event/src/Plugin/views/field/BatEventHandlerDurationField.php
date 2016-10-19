@@ -22,7 +22,7 @@ class BatEventHandlerDurationField extends FieldPluginBase {
   }
 
   /*public function clickSort($order) {
-    $params = $this->options['group_type'] != 'group' ? array('function' => $this->options['group_type']) : array();
+    $params = $this->options['group_type'] != 'group' ? array('function' => $this->options['group_type']) : [];
     $this->query->add_orderby(NULL, NULL, $order, $this->field_alias, $params);
   }*/
 

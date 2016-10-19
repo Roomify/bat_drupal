@@ -5,13 +5,13 @@
  * Implements hook_theme().
  */
 function bat_booking_example_theme() {
-  return array(
-    'booking_confirmation_page' => array(
+  return [
+    'booking_confirmation_page' => [
       'template' => 'booking_confirmation_page',
-      'variables' => array(
+      'variables' => [
         'header' => NULL,
         'form' => NULL,
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }

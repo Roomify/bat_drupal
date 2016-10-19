@@ -32,8 +32,8 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
     $calendar_id = Html::getUniqueId($this->fieldDefinition->getFieldStorageDefinition()->getName() . '-calendar-formatter');
 
     if ($field_type == 'bat_calendar_unit_type_reference') {
-      $unit_type_names = array();
-      $unit_type_ids = array();
+      $unit_type_names = [];
+      $unit_type_ids = [];
 
       foreach ($items as $delta => $item) {
         if ($unit_type = bat_type_load($item->unit_type_id)) {
@@ -75,8 +75,8 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
       }
     }
     elseif ($field_type == 'bat_calendar_unit_reference') {
-      $unit_names = array();
-      $unit_ids = array();
+      $unit_names = [];
+      $unit_ids = [];
 
       foreach ($items as $delta => $item) {
         if ($unit = bat_unit_load($item->unit_id)) {
@@ -140,7 +140,7 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
       );
     }
     else {
-      return array();
+      return [];
     }
   }
 

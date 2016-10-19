@@ -26,7 +26,7 @@ use Drupal\bat\TypeGroupBundleInterface;
  *     },
  *     "list_builder" = "Drupal\bat\TypeGroupBundleListBuilder",
  *   },
- *   admin_permission = "administer property entities",
+ *   admin_permission = "administer type_group_bundle entities",
  *   config_prefix = "type_group_bundle",
  *   bundle_of = "bat_type_group",
  *   entity_keys = {

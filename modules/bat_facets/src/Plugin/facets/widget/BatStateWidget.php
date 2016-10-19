@@ -42,7 +42,7 @@ class BatStateWidget extends LinksWidget {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state, FacetInterface $facet) {
-    $event_types_options = array();
+    $event_types_options = [];
     $event_types = bat_event_get_types();
     foreach ($event_types as $event_type) {
       $event_types_options[$event_type->id()] = $event_type->label();

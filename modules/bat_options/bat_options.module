@@ -51,7 +51,7 @@ function bat_options_get_type_options($type) {
     return $options['types'][$type->id()];
   }
 
-  $type_options = is_array($type->getTranslation('und')->get('field_addons')) ? $type->getTranslation('und')->get('field_addons') : array();
+  $type_options = is_array($type->getTranslation('und')->get('field_addons')) ? $type->getTranslation('und')->get('field_addons') : [];
   $options['types'][$type->id()] = $type_options;
 
   return $options['types'][$type->id()];

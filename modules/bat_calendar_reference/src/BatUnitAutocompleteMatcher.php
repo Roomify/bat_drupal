@@ -33,7 +33,7 @@ class BatUnitAutocompleteMatcher extends EntityAutocompleteMatcher {
    * {@inheritdoc}
    */
   public function getMatches($target_type, $selection_handler, $selection_settings, $string = '') {
-    $matches = array();
+    $matches = [];
 
     $options = array(
       'target_type' => $target_type,

@@ -41,14 +41,14 @@ function bat_booking_type_access($op, $unit = NULL, $account = NULL) {
 /**
  * Create a booking object.
  */
-function bat_booking_create($values = array()) {
+function bat_booking_create($values = []) {
   return Booking::create($values);
 }
 
 /**
  * Create a booking type object.
  */
-function bat_booking_type_create($values = array()) {
+function bat_booking_type_create($values = []) {
   return BookingBundle::create($values);
 }
 
@@ -117,7 +117,7 @@ function bat_booking_type_delete(BookingBundle $bundle) {
  * @see bat_booking_load_multiple()
  */
 function bat_booking_load($booking_id, $reset = FALSE) {
-  $bookings = bat_booking_load_multiple(array($booking_id), array(), $reset);
+  $bookings = bat_booking_load_multiple(array($booking_id), [], $reset);
   return reset($bookings);
 }
 
@@ -136,7 +136,7 @@ function bat_booking_load($booking_id, $reset = FALSE) {
  *
  * @see bat_booking_load()
  */
-function bat_booking_load_multiple($booking_ids = array(), $conditions = array(), $reset = FALSE) {
+function bat_booking_load_multiple($booking_ids = [], $conditions = [], $reset = FALSE) {
   if ($reset) {
     \Drupal::entityTypeManager()->getStorage('bat_booking')->resetCache();
   }
@@ -170,11 +170,11 @@ function bat_booking_delete(Booking $booking) {
  * Implements hook_theme().
  */
 function bat_booking_theme() {
-  return array(
-    'bat_booking_add_list' => array(
-      'variables' => array('content' => NULL),
-    ),
-  );
+  return [
+    'bat_booking_add_list' => [
+      'variables' => ['content' => NULL],
+    ],
+  ];
 }
 
 /**
@@ -187,12 +187,12 @@ function bat_booking_theme() {
  *   - content: An array of unit type bundles.
  */
 function template_preprocess_bat_booking_add_list(&$variables) {
-  $variables['types'] = array();
+  $variables['types'] = [];
   if (!empty($variables['content'])) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = array(
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_booking.add', array('booking_bundle' => $type->id()))),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_booking.add', ['booking_bundle' => $type->id()])),
       );
     }
   }

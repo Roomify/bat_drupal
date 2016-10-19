@@ -101,7 +101,7 @@ class EventTypeForm extends BundleEntityFormBase {
       }
       else {
         // Build option list.
-        $options = array();
+        $options = [];
         foreach ($target_entity_types as $target_entity_type) {
           $target_entity_info = \Drupal::entityTypeManager()->getDefinition($target_entity_type);
           $options[$target_entity_type] = $target_entity_info['label'];
@@ -124,7 +124,7 @@ class EventTypeForm extends BundleEntityFormBase {
     );
 
     if (!$event_type->isNew() && $event_type->getFixedEventStates() == 0) {
-      $fields_options = array();
+      $fields_options = [];
       $fields = \Drupal::entityManager()->getFieldDefinitions('bat_event', $event_type->id());
       foreach ($fields as $field) {
         if ($field instanceof FieldConfig) {
@@ -142,7 +142,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
       $form['events'][$event_type->id()] = array(
         '#type' => 'select',
-        '#title' => t('Select your default @event field', array('@event' => $event_type->label())),
+        '#title' => t('Select your default @event field', ['@event' => $event_type->label()]),
         '#options' => $fields_options,
         '#default_value' => isset($event_type->default_event_value_field_ids) ? $event_type->default_event_value_field_ids : NULL,
         '#empty_option' => t('- Select a field -'),
@@ -150,7 +150,7 @@ class EventTypeForm extends BundleEntityFormBase {
     }
 
     if (!$event_type->isNew()) {
-      $fields_options = array();
+      $fields_options = [];
       $fields = \Drupal::entityManager()->getFieldDefinitions('bat_event', $event_type->id());
       foreach ($fields as $field) {
         if ($field instanceof FieldConfig) {
@@ -168,7 +168,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
       $form['event_label']['default_event_label_field_name'] = array(
         '#type' => 'select',
-        '#title' => t('Select your label field', array('@event' => $event_type->label())),
+        '#title' => t('Select your label field', ['@event' => $event_type->label()]),
         '#default_value' => isset($event_type->default_event_label_field_name) ? $event_type->default_event_label_field_name : NULL,
         '#empty_option' => t('- Select a field -'),
         '#description' => t('If you select a field here, its value will be used as the label for your event. BAT will fall back to using the event state as the label if the field has no value.'),
@@ -198,7 +198,7 @@ class EventTypeForm extends BundleEntityFormBase {
     $id = trim($form_state->getValue('type'));
     // '0' is invalid, since elsewhere we check it using empty().
     if ($id == '0') {
-      $form_state->setErrorByName('type', $this->t("Invalid machine-readable name. Enter a name other than %invalid.", array('%invalid' => $id)));
+      $form_state->setErrorByName('type', $this->t("Invalid machine-readable name. Enter a name other than %invalid.", ['%invalid' => $id]));
     }
   }
 

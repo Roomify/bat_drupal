@@ -39,7 +39,7 @@ class BatFullcalendarController extends ControllerBase implements ContainerInjec
       }
     }
     else {
-      $response->addCommand(new OpenModalDialogCommand($modal_content['title'], $modal_content['content'], array()));
+      $response->addCommand(new OpenModalDialogCommand($modal_content['title'], $modal_content['content'], []));
     }
 
     return $response;

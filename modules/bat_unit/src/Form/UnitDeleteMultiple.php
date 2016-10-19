@@ -24,7 +24,7 @@ class UnitDeleteMultiple extends ConfirmFormBase {
    *
    * @var string[][]
    */
-  protected $unitInfo = array();
+  protected $unitInfo = [];
 
   /**
    * The tempstore factory.

@@ -40,7 +40,7 @@ class BookingController extends ControllerBase implements ContainerInjectionInte
       ],
     ];
 
-    $content = array();
+    $content = [];
 
     // Only use type bundles the user has access to.
     foreach ($this->entityTypeManager()->getStorage('bat_booking_bundle')->loadMultiple() as $type) {
@@ -53,7 +53,7 @@ class BookingController extends ControllerBase implements ContainerInjectionInte
     // Bypass the add listing if only one booking bundle is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.bat_booking.add', array('booking_bundle' => $type->id()));
+      return $this->redirect('entity.bat_booking.add', ['booking_bundle' => $type->id()]);
     }
 
     $build['#content'] = $content;
@@ -90,7 +90,7 @@ class BookingController extends ControllerBase implements ContainerInjectionInte
    *   The page title.
    */
   public function addPageTitle(BookingBundleInterface $booking_bundle) {
-    return $this->t('Create @name', array('@name' => $booking_bundle->label()));
+    return $this->t('Create @name', ['@name' => $booking_bundle->label()]);
   }
 
 }

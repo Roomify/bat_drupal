@@ -39,7 +39,7 @@ use Drupal\field\Entity\FieldStorageConfig;
  *     "access" = "Drupal\bat_unit\UnitTypeAccessControlHandler",
  *   },
  *   base_table = "unit_type",
- *   admin_permission = "administer UnitType entity",
+ *   admin_permission = "administer unit_type entity",
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",

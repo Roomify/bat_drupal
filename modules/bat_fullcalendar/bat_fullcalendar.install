@@ -11,7 +11,7 @@
  */
 function bat_fullcalendar_requirements($phase) {
   if ($phase != 'runtime') {
-    return array();
+    return [];
   }
 
   $library = \Drupal::service('library.discovery')->getLibraryByName('bat_fullcalendar', 'fullcalendar');

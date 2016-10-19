@@ -20,7 +20,7 @@ class UnitSetStateAction extends FormBase {
    *
    * @var string[][]
    */
-  protected $unitInfo = array();
+  protected $unitInfo = [];
 
   /**
    * The tempstore factory.
@@ -74,7 +74,7 @@ class UnitSetStateAction extends FormBase {
 
     $values = $form_state->getValues();
 
-    $event_types_options = array();
+    $event_types_options = [];
     $event_types = bat_event_get_types();
     foreach ($event_types as $event_type) {
       if ($event_type->getFixedEventStates()) {
@@ -96,7 +96,7 @@ class UnitSetStateAction extends FormBase {
     );
 
     if (isset($values['event_type'])) {
-      $state_options = array();
+      $state_options = [];
       foreach (bat_event_get_states($values['event_type']) as $state) {
         $state_options[$state->getMachineName()] = $state->label();
       }

@@ -60,14 +60,14 @@ function bat_unit_query_bat_unit_type_alter(AlterableInterface $query) {
  * Implements hook_theme().
  */
 function bat_unit_theme() {
-  return array(
-    'bat_type_add_list' => array(
-      'variables' => array('content' => NULL),
-    ),
-    'bat_unit_add_list' => array(
-      'variables' => array('content' => NULL),
-    ),
-  );
+  return [
+    'bat_type_add_list' => [
+      'variables' => ['content' => NULL],
+    ],
+    'bat_unit_add_list' => [
+      'variables' => ['content' => NULL],
+    ],
+  ];
 }
 
 /**
@@ -80,12 +80,12 @@ function bat_unit_theme() {
  *   - content: An array of unit type bundles.
  */
 function template_preprocess_bat_type_add_list(&$variables) {
-  $variables['types'] = array();
+  $variables['types'] = [];
   if (!empty($variables['content'])) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = array(
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_unit_type.add', array('type_bundle' => $type->id()))),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_unit_type.add', ['type_bundle' => $type->id()])),
       );
     }
   }
@@ -101,7 +101,7 @@ function template_preprocess_bat_type_add_list(&$variables) {
  *   - content: An array of unit bundles.
  */
 function template_preprocess_bat_unit_add_list(&$variables) {
-  $variables['types'] = array();
+  $variables['types'] = [];
   if (!empty($variables['content'])) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = array(
@@ -182,8 +182,8 @@ function bat_unit_access(EntityInterface $entity, $operation, AccountInterface $
 /**
  * Filters units based on permissions for multiple values.
  */
-function bat_unit_access_filter($operation, $units = array(), $account = NULL) {
-  $filtered_units = array();
+function bat_unit_access_filter($operation, $units = [], $account = NULL) {
+  $filtered_units = [];
 
   // If no user object is supplied, the access check is for the current user.
   if (empty($account)) {
@@ -264,7 +264,7 @@ function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
  *   An array of unit bundles keyed by bundle name and labels
 */
 function bat_unit_bundles_ids() {
-  $unit_bundles = array();
+  $unit_bundles = [];
 
   $bundles = bat_unit_get_bundles();
   foreach ($bundles as $bundle) {
@@ -281,7 +281,7 @@ function bat_unit_bundles_ids() {
  *   An array of unit types keyed by type id and labels
 */
 function bat_unit_types_ids() {
-  $unit_types = array();
+  $unit_types = [];
 
   $types = bat_unit_get_types();
   foreach ($types as $type) {
@@ -345,7 +345,7 @@ function bat_unit_load($unit_id, $reset = FALSE) {
  *
  * @see bat_unit_load()
  */
-function bat_unit_load_multiple($unit_ids = array(), $conditions = array(), $reset = FALSE) {
+function bat_unit_load_multiple($unit_ids = [], $conditions = [], $reset = FALSE) {
   if ($reset) {
     \Drupal::entityTypeManager()->getStorage('bat_unit')->resetCache();
   }
@@ -395,7 +395,7 @@ function bat_unit_delete_multiple(array $unit_ids) {
  * @param array $values
  *   The properties for the new unit bundle.
  */
-function bat_unit_create($values = array()) {
+function bat_unit_create($values = []) {
   return Unit::create($values);
 }
 
@@ -415,7 +415,7 @@ function bat_unit_save(Unit $unit) {
  * @param array $values
  *   The properties for the new unit bundle.
  */
-function bat_unit_bundle_create($values = array()) {
+function bat_unit_bundle_create($values = []) {
   return UnitBundle::create($values);
 }
 
@@ -449,7 +449,7 @@ function bat_unit_uri(Unit $unit) {
  * Gets a list of Units keyed by id and name in value.
  */
 function bat_unit_ids($bundle = '') {
-  $units = array();
+  $units = [];
 
   $query = \Drupal::entityQuery('bat_unit');
 
@@ -478,8 +478,8 @@ function bat_unit_ids($bundle = '') {
  * @return array
  *   Array of available unit states keyed by id.
  */
-function bat_unit_state_options($event_type = NULL, $conditions = array()) {
-  $event_states = array();
+function bat_unit_state_options($event_type = NULL, $conditions = []) {
+  $event_states = [];
 
   $states = bat_event_get_states($event_type);
 
@@ -522,8 +522,8 @@ function bat_type_access(EntityInterface $entity, $operation, AccountInterface $
 /**
  * Filters types based on permissions for multiple values.
  */
-function bat_type_access_filter($operation, $types = array(), $account = NULL) {
-  $filtered_types = array();
+function bat_type_access_filter($operation, $types = [], $account = NULL) {
+  $filtered_types = [];
 
   // If no user object is supplied, the access check is for the current user.
   if (empty($account)) {
@@ -609,7 +609,7 @@ function bat_unit_get_types($bundle_name = NULL) {
  *   An array of type bundles keyed by bundle name and labels
 */
 function bat_type_bundles_ids() {
-  $type_bundles = array();
+  $type_bundles = [];
   $bundles = bat_unit_get_type_bundles();
   foreach ($bundles as $bundle) {
     $type_bundles[$bundle->bundle()] = $bundle->label();
@@ -672,7 +672,7 @@ function bat_type_load($type_id, $reset = FALSE) {
  *
  * @see bat_type_load()
  */
-function bat_type_load_multiple($type_ids = array(), $conditions = array(), $reset = FALSE) {
+function bat_type_load_multiple($type_ids = [], $conditions = [], $reset = FALSE) {
   if ($reset) {
     \Drupal::entityTypeManager()->getStorage('bat_unit_type')->resetCache();
   }
@@ -722,7 +722,7 @@ function bat_type_delete_multiple(array $type_ids) {
  * @param array $values
  *   The properties for the new type bundle.
  */
-function bat_type_create($values = array()) {
+function bat_type_create($values = []) {
   return UnitType::create($values);
 }
 
@@ -742,7 +742,7 @@ function bat_type_save(UnitType $type) {
  * @param array $values
  *   The properties for the new type bundle.
  */
-function bat_type_bundle_create($values = array()) {
+function bat_type_bundle_create($values = []) {
   return TypeBundle::create($values);
 }
 
@@ -776,7 +776,7 @@ function bat_type_uri(UnitType $type) {
  * Gets a list of Bat Types keyed by id and name in value.
  */
 function bat_type_ids($bundle = NULL) {
-  $types = array();
+  $types = [];
 
   $query = \Drupal::entityQuery('bat_unit_type');
 
@@ -800,7 +800,7 @@ function bat_type_ids($bundle = NULL) {
  * Gets a list of Bat Type bundles keyed by id and name in value.
  */
 function bat_type_bundle_ids() {
-  $type_bundles = array();
+  $type_bundles = [];
 
   $query = \Drupal::entityQuery('bat_type_bundle');
 
@@ -848,7 +848,7 @@ function bat_type_bundle_new() {
  * @throws \Exception
  * @throws \FieldException
  */
-function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = FALSE, $calculation = FALSE, $display = array()) {
+function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $description, $weight = 0, $locked = FALSE, $calculation = FALSE, $display = []) {
 
   $field = FieldStorageConfig::loadByName($entity_type, $field_name);
   $instance = FieldConfig::loadByName($entity_type, $bundle, $field_name);
@@ -874,7 +874,7 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
 
       'label' => $label,
       'required' => TRUE,
-      'settings' => array(),
+      'settings' => [],
 
       // Because this widget is locked, we need it to use the full price widget
       // since the currency option can't be adjusted at the moment.
@@ -886,13 +886,13 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
         ),
       ),
 
-      'display' => array(),
+      'display' => [],
     );
 
     $entity_info = \Drupal::entityTypeManager()->getDefinition($entity_type);
 
     $entity_info['view modes'] += array(
-      'default' => array(),
+      'default' => [],
     );
 
     foreach ($entity_info['view modes'] as $view_mode => $data) {
@@ -914,7 +914,7 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
  * Implements hook_entity_operation().
  */
 function bat_unit_entity_operation(EntityInterface $entity) {
-  $operations = array();
+  $operations = [];
   $entity_type = $entity->getEntityType();
   if ($entity_type->id() == 'bat_unit_type') {
     if (\Drupal::currentUser()->hasPermission('administer type_bundle entities')) {
