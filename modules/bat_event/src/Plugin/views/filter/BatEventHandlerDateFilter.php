@@ -14,15 +14,15 @@ use Drupal\views\Plugin\views\filter\Date;
  */
 class BatEventHandlerDateFilter extends Date {
 
-  function op_simple($field) {
+  function opSimple($field) {
     $query_substitutions = views_views_query_substitutions($this->view);
 
     $value = date('Y-m-d', intval(strtotime($this->value['value'], $query_substitutions['***CURRENT_TIME***'])));
 
-    $this->query->add_where_expression($this->options['group'], "$field $this->operator '$value'");
+    $this->query->addWhereExpression($this->options['group'], "$field $this->operator '$value'");
   }
 
-  function op_between($field) {
+  function opBetween($field) {
     // Use the substitutions to ensure a consistent timestamp.
     $query_substitutions = views_views_query_substitutions($this->view);
     $a = date('Y-m-d', intval(strtotime($this->value['min'], $query_substitutions['***CURRENT_TIME***'])));
@@ -31,7 +31,7 @@ class BatEventHandlerDateFilter extends Date {
     // This is safe because we are manually scrubbing the values.
     // It is necessary to do it this way because $a and $b are formulas when using an offset.
     $operator = strtoupper($this->operator);
-    $this->query->add_where_expression($this->options['group'], "$field $operator '$a' AND '$b'");
+    $this->query->addWhereExpression($this->options['group'], "$field $operator '$a' AND '$b'");
   }
 
 }
