@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat_unit\Entity\Unit.
+ * Contains \Drupal\bat_unit\Entity\UnitViewsData.
  */
 
 namespace Drupal\bat_unit\Entity;
@@ -14,6 +14,7 @@ use Drupal\views\EntityViewsDataInterface;
  * Provides Views data for Unit entities.
  */
 class UnitViewsData extends EntityViewsData implements EntityViewsDataInterface {
+
   /**
    * {@inheritdoc}
    */

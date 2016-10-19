@@ -107,17 +107,17 @@ class Booking extends ContentEntityBase implements BookingInterface {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
   	$fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
-      ->setDescription(t('The ID of the Unit entity.'))
+      ->setDescription(t('The ID of the Booking entity.'))
       ->setReadOnly(TRUE);
 
     $fields['uuid'] = BaseFieldDefinition::create('uuid')
       ->setLabel(t('UUID'))
-      ->setDescription(t('The UUID of the Unit entity.'))
+      ->setDescription(t('The UUID of the Booking entity.'))
       ->setReadOnly(TRUE);
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
-      ->setDescription(t('The user ID of author of the Unit entity.'))
+      ->setDescription(t('The user ID of author of the Booking entity.'))
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')

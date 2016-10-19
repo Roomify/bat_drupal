@@ -27,8 +27,7 @@ class BatOptionsPrice extends FormatterBase {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $element = array();
 
-    /*$currency_setting = commerce_currency_load(commerce_default_currency());
-    $currency_symbol = $currency_setting['symbol'];
+    $currency_symbol = '$';
 
     foreach ($items as $delta => $item) {
       $price = t('@currency_symbol@amount', array(
@@ -36,15 +35,15 @@ class BatOptionsPrice extends FormatterBase {
         '@amount' => number_format($item->value, 2, '.', ''),
       ));
 
-      if ($item['value'] > 0) {
+      if ($item->value > 0) {
         $element[$delta] = array('#markup' => "{$item->quantity} x {$item->name} - {$price}");
       }
       else {
         $element[$delta] = array('#markup' => "{$item->quantity} x {$item->name}");
       }
-    }*/
+    }
 
-    return array();
+    return $element;
   }
 
 }

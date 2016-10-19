@@ -31,7 +31,7 @@ class BatOptionsAdmin extends FormatterBase {
       $element[$delta] = array('#markup' => "{$item->quantity} x {$item->name} - {$item->operation} {$item->value}");
     }
 
-    return array();
+    return $element;
   }
 
 }
