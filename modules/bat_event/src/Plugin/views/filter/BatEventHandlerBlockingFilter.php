@@ -4,8 +4,9 @@
  * @file
  */
 
-namespace Drupal\bat_event\Plugin\views\field;
+namespace Drupal\bat_event\Plugin\views\filter;
 
+use Drupal\views\Views;
 use Drupal\views\Plugin\views\filter\BooleanOperator;
 
 /**
@@ -19,58 +20,62 @@ class BatEventHandlerBlockingFilter extends BooleanOperator {
     $this->value_value = t('State');
   }
 
-  function get_value_options() {
+  function getValueOptions() {
     $options = array(
       'blocking' => t('Blocking'),
       'not_blocking' => t('Not blocking'),
     );
 
-    $this->value_options = $options;
+    $this->valueOptions = $options;
   }
 
   function query() {
-    $this->ensure_my_table();
+    $this->ensureMyTable();
 
     if ($this->value == 'not_blocking' || $this->value == 'blocking') {
-      $state_reference_join = new views_join();
-      $state_reference_join->table = 'field_data_event_state_reference';
-      $state_reference_join->field = 'entity_id';
-      $state_reference_join->left_table = 'bat_events';
-      $state_reference_join->left_field = 'event_id';
-      $state_reference_join->type = 'left';
+      $configuration = array(
+        'table' => 'bat_event__event_state_reference',
+        'field' => 'entity_id',
+        'left_table' => 'event',
+        'left_field' => 'id',
+        'type' => 'left',
+      );
+      $state_reference_join = Views::pluginManager('join')->createInstance('standard', $configuration);
 
-      $this->query->add_relationship('field_data_event_state_reference', $state_reference_join, 'bat_events');
+      $this->query->addRelationship('bat_event__event_state_reference', $state_reference_join, 'event');
 
-      $state_join = new views_join();
-      $state_join->table = 'bat_event_state';
-      $state_join->field = 'id';
-      $state_join->left_table = 'field_data_event_state_reference';
-      $state_join->left_field = 'event_state_reference_state_id';
-      $state_join->type = 'left';
+      $configuration = array(
+        'table' => 'states',
+        'field' => 'id',
+        'left_table' => 'bat_event__event_state_reference',
+        'left_field' => 'event_state_reference_target_id',
+        'type' => 'left',
+      );
+      $state_join = Views::pluginManager('join')->createInstance('standard', $configuration);
 
-      $this->query->add_relationship('bat_event_state', $state_join, 'field_data_event_state_reference');
+      $this->query->addRelationship('states', $state_join, 'bat_event__event_state_reference');
 
       if ($this->value == 'not_blocking') {
-        $this->query->add_where(1, 'bat_event_state.blocking', '0', '=');
+        $this->query->addWhere(1, 'states.blocking', '0', '=');
       }
       elseif ($this->value == 'blocking') {
-        $this->query->add_where(1, 'bat_event_state.blocking', '1', '=');
+        $this->query->addWhere(1, 'states.blocking', '1', '=');
       }
     }
   }
 
-  function admin_summary() {
-    if ($this->is_a_group()) {
+  function adminSummary() {
+    if ($this->isAGroup()) {
       return t('grouped');
     }
     if (!empty($this->options['exposed'])) {
       return t('exposed');
     }
-    if (empty($this->value_options)) {
-      $this->get_value_options();
+    if (empty($this->valueOptions)) {
+      $this->getValueOptions();
     }
 
-    return $this->value_options[$this->value];
+    return $this->valueOptions[$this->value];
   }
 
 }
