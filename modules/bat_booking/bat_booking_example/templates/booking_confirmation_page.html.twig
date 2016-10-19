@@ -16,7 +16,10 @@
  */
 #}
 <div{{ attributes.addClass('booking_confirmation_page') }}>
-  {% if content %}
-    {{- content -}}
+  {% if header %}
+    {{- header -}}
+  {% endif %}
+  {% if form %}
+    {{- form -}}
   {% endif %}
 </div>

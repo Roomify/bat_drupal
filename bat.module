@@ -531,7 +531,6 @@ function bat_type_group_load($group_id, $reset = FALSE) {
  * @return array
  *   An array of type group objects, indexed by group_id.
  *
- * @see entity_load()
  * @see bat_type_group_load()
  */
 function bat_type_group_load_multiple($group_ids = array(), $conditions = array(), $reset = FALSE) {

@@ -343,7 +343,6 @@ function bat_unit_load($unit_id, $reset = FALSE) {
  * @return array
  *   An array of unit objects, indexed by unit_id.
  *
- * @see entity_load()
  * @see bat_unit_load()
  */
 function bat_unit_load_multiple($unit_ids = array(), $conditions = array(), $reset = FALSE) {
@@ -671,7 +670,6 @@ function bat_type_load($type_id, $reset = FALSE) {
  * @return array
  *   An array of type objects, indexed by type_id.
  *
- * @see entity_load()
  * @see bat_type_load()
  */
 function bat_type_load_multiple($type_ids = array(), $conditions = array(), $reset = FALSE) {

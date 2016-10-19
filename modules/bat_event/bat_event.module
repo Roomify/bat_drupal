@@ -280,7 +280,6 @@ function bat_event_load($event_id = NULL, $reset = FALSE) {
  * @return array
  *   An array of event objects, indexed by event_id.
  *
- * @see entity_load()
  * @see bat_event_load()
  */
 function bat_event_load_multiple(array $event_ids = NULL, $reset = FALSE) {

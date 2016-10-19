@@ -79,10 +79,8 @@ function bat_booking_type_load($type, $reset = FALSE) {
  *   Depending whether $type isset, an array of booking types or a single one.
  */
 function bat_booking_get_types($type_name = NULL, $reset = FALSE) {
-  // entity_load() will get the Entity controller for our booking type
-  // entity and call the load function of that object.
-  $types = entity_load_multiple_by_name('bat_booking_type', isset($type_name) ? array($type_name) : FALSE);
-  return isset($type_name) ? reset($types) : $types;
+  $types = BookingBundle::loadMultiple();
+  return isset($type_name) ? $types[$type_name] : $types;
 }
 
 /**
@@ -132,7 +130,6 @@ function bat_booking_load($booking_id, $reset = FALSE) {
  * @return array
  *   An array of booking objects, indexed by booking_id.
  *
- * @see entity_load()
  * @see bat_booking_load()
  */
 function bat_booking_load_multiple($booking_ids = array(), $conditions = array(), $reset = FALSE) {

@@ -30,12 +30,12 @@ class BookingConfirmationForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state, $start_date = NULL, $end_date = NULL, $type_id = NULL) {
     $form['start_date'] = array(
       '#type' => 'hidden',
-      '#value' => $start_date,
+      '#value' => $start_date->format('Y-m-d'),
     );
 
     $form['end_date'] = array(
       '#type' => 'hidden',
-      '#value' => $end_date,
+      '#value' => $end_date->format('Y-m-d'),
     );
 
     $form['type_id'] = array(
@@ -59,9 +59,9 @@ class BookingConfirmationForm extends FormBase {
 
     $event_type = 'availability_example';
 
-    $start_date = $values['start_date'];
-    $end_date = $values['end_date'];
-    $end_date->sub(new DateInterval('PT1M'));
+    $start_date = new \DateTime($values['start_date']);
+    $end_date = new \DateTime($values['end_date']);
+    $end_date->sub(new \DateInterval('PT1M'));
 
     $type_id = $values['type_id'];
 
@@ -71,7 +71,7 @@ class BookingConfirmationForm extends FormBase {
 
     $valid_states = array_merge(array(0), array_slice($state_ids, 0, 1));
 
-    $drupal_units = bat_unit_load_multiple(FALSE, array('type_id' => $type_id));
+    $drupal_units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $type_id));
     $bat_units = array();
     foreach ($drupal_units as $unit_id => $unit) {
       $bat_units[] = new Unit($unit_id, $unit->getEventDefaultValue($event_type));
@@ -92,8 +92,8 @@ class BookingConfirmationForm extends FormBase {
           'uid' => \Drupal::currentUser()->id(),
         ));
 
-        $event->event_bat_unit_reference[LANGUAGE_NONE][0]['target_id'] = reset($valid_unit_ids);
-        $event->event_state_reference[LANGUAGE_NONE][0]['state_id'] = end($state_ids);
+        $event->set('event_bat_unit_reference', reset($valid_unit_ids));
+        $event->set('event_state_reference', end($state_ids));
 
         $event->save();
 
@@ -103,9 +103,9 @@ class BookingConfirmationForm extends FormBase {
           'label' => 'Example Booking',
         ));
 
-        $booking->booking_start_date[LANGUAGE_NONE][0]['value'] = $start_date->format('Y-m-d H:i:s');
-        $booking->booking_end_date[LANGUAGE_NONE][0]['value'] = $end_date->format('Y-m-d H:i:s');
-        $booking->booking_event_reference[LANGUAGE_NONE][0]['target_id'] = $event->event_id;
+        $booking->set('booking_start_date', $start_date->format('Y-m-d H:i:s'));
+        $booking->set('booking_end_date', $end_date->format('Y-m-d H:i:s'));
+        $booking->set('booking_event_reference', $event->id());
 
         $booking->save();
 
