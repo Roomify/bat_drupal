@@ -17,5 +17,12 @@ function bat_fullcalendar_requirements($phase) {
   $library = \Drupal::service('library.discovery')->getLibraryByName('bat_fullcalendar', 'fullcalendar');
   $library_exists = file_exists(DRUPAL_ROOT . '/' . $library['js'][0]['data']);
 
-  return [];
+  return [
+    'fullcalendar_library_downloaded' => [
+      'title' => t('Fullcalendar library'),
+      'value' => $library_exists ? t('Installed') : t('Not installed'),
+      'description' => $library_exists ? '' : t('The Fullcalendar library needs to be <a href="@url">downloaded</a> and extracted into the /libraries/fullcalendar folder in your Drupal installation directory.', ['@url' => 'https://fullcalendar.io/download']),
+      'severity' => $library_exists ? REQUIREMENT_OK : REQUIREMENT_ERROR,
+    ],
+  ];
 }
