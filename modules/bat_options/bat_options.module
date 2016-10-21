@@ -571,16 +571,17 @@ function bat_options_get_option_price($booking_price, $option, $quantity, $night
       $price -= $option['value'] * $nights;
       break;
 
+    // NB: This will only be correctly calculated for a single add-on with the replace price operation per order.
     case BAT_OPTIONS_REPLACE:
       $price = $option['value'] - $booking_price;
       break;
 
     case BAT_OPTIONS_INCREASE:
-      $price += $booking_price * $option['value'] / 100;
+      $price += $booking_price * ($option['value'] / 100);
       break;
 
     case BAT_OPTIONS_DECREASE:
-      $price -= $booking_price * $option['value'] / 100;
+      $price -= $booking_price * ($option['value'] / 100);
       break;
   }
 
