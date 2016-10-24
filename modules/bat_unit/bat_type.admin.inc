@@ -357,6 +357,20 @@ function bat_type_edit_form($form, &$form_state, $type) {
     '#title' => t('Published'),
     '#default_value' => $type->status,
   );
+  if (!empty($type->type_id)) {
+    $form['options']['revision'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Create new revision on update'),
+      '#description' => t('If an update log message is entered, a revision will be created even if this is unchecked.'),
+      '#default_value' => 0,
+    );
+  }
+  $form['options']['log'] = array(
+    '#type' => 'textarea',
+    '#title' => !empty($type->type_id) ? t('Update log message') : t('Creation log message'),
+    '#rows' => 4,
+    '#description' => t('Provide an explanation of the changes you are making. This will provide a meaningful history of changes to this type.'),
+  );
 
   $form['actions'] = array(
     '#type' => 'actions',
@@ -406,6 +420,14 @@ function bat_type_edit_form_submit(&$form, &$form_state) {
 
   if ($type->type_id !== '') {
     $type->changed = time();
+  }
+
+  // Trigger a new revision if the checkbox was enabled or a log message supplied.
+  if (!empty($form_state['values']['revision']) ||
+      !empty($form['change_history']['revision']['#default_value']) ||
+      !empty($form_state['values']['log'])) {
+    $type->revision = TRUE;
+    $type->log = $form_state['values']['log'];
   }
 
   if (isset($type->author_name)) {

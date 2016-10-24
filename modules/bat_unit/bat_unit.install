@@ -157,6 +157,13 @@ function bat_unit_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
+      'revision_id' => array(
+        'description' => 'The current {bat_types_revision}.revision_id version identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
       'type' => array(
         'description' => 'The {type_bundle}.type of this Type.',
         'type' => 'varchar',
@@ -214,6 +221,51 @@ function bat_unit_schema() {
     'indexes' => array(
       'type' => array('type'),
     ),
+  );
+
+  $schema['bat_types_revision'] = array(
+    'description' => 'The base table for Types.',
+    'fields' => array(
+      'type_id' => array(
+        'description' => 'Unique Type id (entity id).',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'revision_id' => array(
+        'description' => 'The current {bat_types_revision}.revision_id version identifier.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'description' => 'The name of this type for this revision',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'revision_uid' => array(
+        'description' => 'The {users}.uid that created this Type at this revision.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'log' => array(
+        'description' => 'The log entry explaining the changes in this version.',
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'big',
+      ),
+      'revision_timestamp' => array(
+        'description' => 'The Unix timestamp when the Type was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('revision_id'),
   );
 
   $schema['bat_type_bundle'] = array(
@@ -295,8 +347,6 @@ function bat_unit_install_create_default_unit_bundle() {
 /**
  * Units should have type_id set to null if saved without a reference
  * to a type_id.
- *
- * Implements hook_update
  */
 function bat_unit_update_7100() {
   db_change_field('bat_units', 'type_id', 'type_id',
@@ -307,4 +357,21 @@ function bat_unit_update_7100() {
       'default' => NULL,
     )
   );
+}
+
+/**
+ * Create table 'bat_types_revision'.
+ */
+function bat_unit_update_7101() {
+  db_create_table('bat_types_revision', drupal_get_schema_unprocessed('bat_unit', 'bat_types_revision'));
+
+  $field = array(
+    'description' => 'The current {bat_types_revision}.revision_id version identifier.',
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+  );
+
+  db_add_field('bat_types', 'revision_id', $field);
 }

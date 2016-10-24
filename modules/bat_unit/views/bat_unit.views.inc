@@ -134,4 +134,127 @@ function bat_unit_views_data_alter(&$data) {
   );
 
   $data['views_entity_bat_unit']['megarow_links']['field']['handler'] = 'bat_unit_handler_field_megarow_links';
+
+
+  $data['bat_types_revision']['table']['entity type'] = 'bat_type';
+  $data['bat_types_revision']['table']['group']  = t('Type revision');
+
+  $data['bat_types_revision']['table']['base'] = array(
+    'field' => 'revision_id',
+    'title' => t('Type revision'),
+    'help' => t('Type revision is a history of changes to a type.'),
+    'defaults' => array(
+      'field' => 'name',
+    ),
+  );
+
+  $data['bat_types_revision']['table']['join'] = array(
+    'bat_types' => array(
+      'left_field' => 'revision_id',
+      'field' => 'revision_id',
+    )
+  );
+
+  $data['bat_types_revision']['table']['default_relationship'] = array(
+    'bat_types' => array(
+      'table' => 'bat_types',
+      'field' => 'revision_id',
+    ),
+  );
+
+  $data['bat_types_revision']['type_id'] = array(
+    'title' => t('Type ID'),
+    'help' => t('The unique internal identifier of the type.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
+    ),
+  );
+
+  $data['bat_types_revision']['revision_id'] = array(
+    'title' => t('Revision ID'),
+    'help' => t('The revision ID of the type revision.'),
+    'field' => array(
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'relationship' => array(
+      'handler' => 'views_handler_relationship',
+      'base' => 'bat_types',
+      'base field' => 'revision_id',
+      'title' => t('Type'),
+      'label' => t('Latest type revision'),
+    ),
+  );
+
+  $data['bat_types_revision']['name'] = array(
+    'title' => t('Name'),
+    'help' => t('The name of the type revision used for administrative display.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['bat_types_revision']['revision_uid'] = array(
+    'title' => t('User'),
+    'help' => t('Relate a type revision to the user who created the revision.'),
+    'relationship' => array(
+      'handler' => 'views_handler_relationship',
+      'base' => 'users',
+      'base field' => 'uid',
+      'field' => 'revision_uid',
+      'field_name' => 'revision_uid',
+      'label' => t('Revision user'),
+    ),
+  );
+
+  $data['bat_types_revision']['log'] = array(
+    'title' => t('Log message'),
+    'help' => t('The log message entered when the revision was created.'),
+    'field' => array(
+      'handler' => 'views_handler_field_xss',
+     ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+  );
+
+  $data['bat_types_revision']['revision_timestamp'] = array(
+    'title' => t('Revision date'),
+    'help' => t('The date the type revision was created.'),
+    'field' => array(
+      'handler' => 'views_handler_field_date',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_date',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
+    ),
+  );
 }

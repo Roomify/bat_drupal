@@ -136,6 +136,8 @@ function bat_unit_entity_info() {
     'entity class' => 'BatType',
     'controller class' => 'BatTypeController',
     'base table' => 'bat_types',
+    'revision table' => 'bat_types_revision',
+    'revision' => 'vid',
     'fieldable' => TRUE,
     'entity keys' => array(
       'id' => 'type_id',
@@ -1774,6 +1776,37 @@ class BatTypeController extends EntityAPIController {
     $type = parent::create($values);
 
     return $type;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save($entity) {
+    global $user;
+
+    parent::save($entity);
+
+    if (!empty($entity->revision)) {
+      $revision_id = db_insert('bat_types_revision')
+                      ->useDefaults(array('revision_id'))
+                      ->fields(array(
+                        'type_id' => $entity->type_id,
+                        'name' => $entity->name,
+                        'revision_uid' => $user->uid,
+                        'log' => $entity->log,
+                        'revision_timestamp' => REQUEST_TIME,
+                      ))
+                      ->execute();
+
+      $entity->revision_id = $revision_id;
+
+      db_update('bat_types')
+        ->condition('type_id', $entity->type_id)
+        ->fields(array(
+          'revision_id' => $entity->revision_id,
+        ))
+        ->execute();
+    }
   }
 
   /**
