@@ -2,7 +2,7 @@
 
 api = 2
 core = 7.x
-projects[drupal][version] = 7.50
+projects[drupal][version] = 7.51
 
 defaults[projects][subdir] = contrib
 
@@ -17,13 +17,13 @@ projects[bat_api][subdir] = bat
 
 projects[composer_manager][version] = 1.8
 
-projects[ctools][version] = 1.10
+projects[ctools][version] = 1.11
 
 projects[date][version] = 2.9
 
-projects[entity][version] = 1.7
+projects[entity][version] = 1.8
 
-projects[entityreference][version] = 1.1
+projects[entityreference][version] = 1.2
 
 projects[facetapi][version] = 1.5
 
@@ -60,7 +60,7 @@ libraries[fullcalendar][directory_name] = fullcalendar
 libraries[fullcalendar][type] = library
 libraries[fullcalendar][destination] = libraries
 libraries[fullcalendar][download][type] = get
-libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v3.0.0/fullcalendar-3.0.0.zip
+libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v3.0.1/fullcalendar-3.0.1.zip
 
 ; scheduler
 libraries[scheduler][directory_name] = fullcalendar-scheduler
