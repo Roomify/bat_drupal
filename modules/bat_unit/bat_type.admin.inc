@@ -64,6 +64,37 @@ class BatTypeUIController extends EntityDefaultUIController {
       'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     );
 
+    $items[$this->path . '/type/' . $wildcard . '/revisions/%/view'] = array(
+      'title' => 'View Revision',
+      'page callback' => 'bat_type_revision_view',
+      'page arguments' => array($id_count + 1, $id_count + 3),
+      'access callback' => 'bat_type_access_revision',
+      'access arguments' => array('view', $id_count + 1, $id_count + 3),
+      'type' => MENU_LOCAL_TASK,
+      'weight' => -10,
+      'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+      'file' => 'bat_type.admin.inc',
+      'file path' => drupal_get_path('module', $this->entityInfo['module']),
+    );
+
+    $items[$this->path . '/type/' . $wildcard . '/revisions/%/revert'] = array(
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('bat_type_revision_revert_confirm', $id_count + 1, $id_count + 3),
+      'access callback' => 'bat_type_access_revision',
+      'access arguments' => array('revert', $id_count + 1, $id_count + 3),
+      'file' => 'bat_type.admin.inc',
+      'file path' => drupal_get_path('module', $this->entityInfo['module']),
+    );
+
+    $items[$this->path . '/type/' . $wildcard . '/revisions/%/delete'] = array(
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('bat_type_revision_delete_confirm', $id_count + 1, $id_count + 3),
+      'access callback' => 'bat_type_access_revision',
+      'access arguments' => array('delete', $id_count + 1, $id_count + 3),
+      'file' => 'bat_type.admin.inc',
+      'file path' => drupal_get_path('module', $this->entityInfo['module']),
+    );
+
     $items[$this->path . '/type/' . $wildcard . '/edit'] = array(
       'title' => 'Edit',
       'page callback' => 'bat_type_form_wrapper',
@@ -658,4 +689,57 @@ function bat_type_add_units_form_submit($form, &$form_state) {
   }
 
   $form_state['redirect'] = 'admin/bat/config/types/type/' . $type_id . '/units';
+}
+
+/**
+ * @param $type
+ * @param $revision
+ */
+function bat_type_revision_view($type, $revision) {
+  return entity_view('bat_type', array(bat_type_load_revision($revision)));
+}
+
+/**
+ * @param $type
+ * @param $revision
+ */
+function bat_type_revision_revert_confirm($form, $form_state, $type, $revision) {
+  $type_revision = entity_revision_load('bat_type', $revision);
+  $form['#type_revision'] = $type_revision;
+
+  return confirm_form($form, t('Are you sure you want to revert to the revision from %revision-date?', array('%revision-date' => format_date($type_revision->revision_timestamp))), 'admin/bat/config/types/manage/' . $type_revision->type_id . '/revisions', '', t('Revert'), t('Cancel'));
+}
+
+/**
+ * Form submission handler for bat_type_revision_revert_confirm().
+ */
+function bat_type_revision_revert_confirm_submit($form, &$form_state) {
+  $type_revision = $form['#type_revision'];
+
+  $type_revision->revision = TRUE;
+  $type_revision->default_revision = TRUE;
+  $type_revision->save();
+
+  $form_state['redirect'] = 'admin/bat/config/types/manage/' . $type_revision->type_id . '/revisions';
+}
+
+/**
+ * @param $type
+ * @param $revision
+ */
+function bat_type_revision_delete_confirm($form, $form_state, $type, $revision) {
+  $type_revision = entity_revision_load('bat_type', $revision);
+  $form['#type_revision'] = $type_revision;
+
+  return confirm_form($form, t('Are you sure you want to delete the revision from %revision-date?', array('%revision-date' => format_date($type_revision->revision_timestamp))), 'admin/bat/config/types/manage/' . $type_revision->type_id . '/revisions', t('This action cannot be undone.'), t('Delete'), t('Cancel'));
+}
+
+/**
+ * Form submission handler for bat_type_revision_delete_confirm().
+ */
+function bat_type_revision_delete_confirm_submit($form, &$form_state) {
+  $type_revision = $form['#type_revision'];
+  entity_revision_delete('bat_type', $type_revision->revision_id);
+
+  $form_state['redirect'] = 'admin/bat/config/types/manage/' . $type_revision->type_id . '/revisions';
 }

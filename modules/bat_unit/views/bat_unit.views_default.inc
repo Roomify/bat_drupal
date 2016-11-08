@@ -317,6 +317,12 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['fields']['log']['id'] = 'log';
   $handler->display->display_options['fields']['log']['table'] = 'bat_types_revision';
   $handler->display->display_options['fields']['log']['field'] = 'log';
+  /* Field: Type revision: Operations links */
+  $handler->display->display_options['fields']['operations']['id'] = 'operations';
+  $handler->display->display_options['fields']['operations']['table'] = 'bat_types_revision';
+  $handler->display->display_options['fields']['operations']['field'] = 'operations';
+  $handler->display->display_options['fields']['operations']['label'] = '';
+  $handler->display->display_options['fields']['operations']['element_label_colon'] = FALSE;
   /* Contextual filter: Type revision: Type ID */
   $handler->display->display_options['arguments']['type_id']['id'] = 'type_id';
   $handler->display->display_options['arguments']['type_id']['table'] = 'bat_types_revision';

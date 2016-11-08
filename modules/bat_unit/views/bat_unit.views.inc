@@ -257,4 +257,12 @@ function bat_unit_views_data_alter(&$data) {
       'handler' => 'views_handler_filter_date',
     ),
   );
+
+  $data['bat_types_revision']['operations'] = array(
+    'field' => array(
+      'title' => t('Operations links'),
+      'help' => t('Display all operations available for this type revision.'),
+      'handler' => 'bat_type_handler_type_revision_operations_field',
+    ),
+  );
 }
