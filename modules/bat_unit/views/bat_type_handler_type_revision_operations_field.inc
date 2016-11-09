@@ -24,7 +24,7 @@ class bat_type_handler_type_revision_operations_field extends views_handler_fiel
     $type_id = $this->get_value($values, 'type_id');
     $revision_id = $this->get_value($values, 'revision_id');
 
-    $type = entity_revision_load('bat_type', $revision_id);
+    $type = bat_type_load_revision($revision_id);
     if (entity_revision_is_default('bat_type', $type)) {
       return '<b>' . t('This is the published revision.') . '</b>';
     }
@@ -33,21 +33,21 @@ class bat_type_handler_type_revision_operations_field extends views_handler_fiel
 
       if (bat_type_access_revision('view', $type, $revision_id)) {
         $links[] = array(
-          'href'  => 'admin/bat/config/types/type/' . $type_id . '/revisions/' . $revision_id . '/view',
+          'href'  => 'admin/bat/config/types/type/' . $type_id . '/revision/' . $revision_id . '/view',
           'title' => t('View'),
         );
       }
 
       if (bat_type_access_revision('revert', $type, $revision_id)) {
         $links[] = array(
-          'href'  => 'admin/bat/config/types/type/' . $type_id . '/revisions/' . $revision_id . '/revert',
+          'href'  => 'admin/bat/config/types/type/' . $type_id . '/revision/' . $revision_id . '/revert',
           'title' => t('Revert'),
         );
       }
 
       if (bat_type_access_revision('delete', $type, $revision_id)) {
         $links[] = array(
-          'href'  => 'admin/bat/config/types/type/' . $type_id . '/revisions/' . $revision_id . '/delete',
+          'href'  => 'admin/bat/config/types/type/' . $type_id . '/revision/' . $revision_id . '/delete',
           'title' => t('Delete'),
         );
       }

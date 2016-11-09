@@ -250,12 +250,14 @@ function bat_unit_views_default_views() {
     'name_1' => 'name_1',
     'name' => 'name',
     'log' => 'log',
+    'status' => 'status',
+    'operations' => 'operations',
   );
   $handler->display->display_options['style_options']['default'] = 'revision_id';
   $handler->display->display_options['style_options']['info'] = array(
     'revision_id' => array(
       'sortable' => 1,
-      'default_sort_order' => 'asc',
+      'default_sort_order' => 'desc',
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
@@ -282,6 +284,16 @@ function bat_unit_views_default_views() {
       'empty_column' => 0,
     ),
     'log' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'status' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'operations' => array(
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
@@ -317,6 +329,11 @@ function bat_unit_views_default_views() {
   $handler->display->display_options['fields']['log']['id'] = 'log';
   $handler->display->display_options['fields']['log']['table'] = 'bat_types_revision';
   $handler->display->display_options['fields']['log']['field'] = 'log';
+  /* Field: Type revision: Revision status */
+  $handler->display->display_options['fields']['status']['id'] = 'status';
+  $handler->display->display_options['fields']['status']['table'] = 'bat_types_revision';
+  $handler->display->display_options['fields']['status']['field'] = 'status';
+  $handler->display->display_options['fields']['status']['label'] = 'Status';
   /* Field: Type revision: Operations links */
   $handler->display->display_options['fields']['operations']['id'] = 'operations';
   $handler->display->display_options['fields']['operations']['table'] = 'bat_types_revision';

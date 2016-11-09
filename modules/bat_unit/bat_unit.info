@@ -32,3 +32,4 @@ files[] = views/bat_type_handler_type_calendars_field.inc
 files[] = views/bat_type_handler_type_operations_field.inc
 files[] = views/bat_unit_handler_field_megarow_links.inc
 files[] = views/bat_type_handler_type_revision_operations_field.inc
+files[] = views/bat_type_handler_type_revision_status_field.inc

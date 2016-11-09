@@ -258,6 +258,14 @@ function bat_unit_views_data_alter(&$data) {
     ),
   );
 
+  $data['bat_types_revision']['status'] = array(
+    'field' => array(
+      'title' => t('Revision status'),
+      'help' => t(''),
+      'handler' => 'bat_type_handler_type_revision_status_field',
+    ),
+  );
+
   $data['bat_types_revision']['operations'] = array(
     'field' => array(
       'title' => t('Operations links'),

@@ -64,7 +64,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     );
 
-    $items[$this->path . '/type/' . $wildcard . '/revisions/%/view'] = array(
+    $items[$this->path . '/type/' . $wildcard . '/revision/%/view'] = array(
       'title' => 'View Revision',
       'page callback' => 'bat_type_revision_view',
       'page arguments' => array($id_count + 1, $id_count + 3),
@@ -77,7 +77,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
     );
 
-    $items[$this->path . '/type/' . $wildcard . '/revisions/%/revert'] = array(
+    $items[$this->path . '/type/' . $wildcard . '/revision/%/revert'] = array(
       'page callback' => 'drupal_get_form',
       'page arguments' => array('bat_type_revision_revert_confirm', $id_count + 1, $id_count + 3),
       'access callback' => 'bat_type_access_revision',
@@ -86,7 +86,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
     );
 
-    $items[$this->path . '/type/' . $wildcard . '/revisions/%/delete'] = array(
+    $items[$this->path . '/type/' . $wildcard . '/revision/%/delete'] = array(
       'page callback' => 'drupal_get_form',
       'page arguments' => array('bat_type_revision_delete_confirm', $id_count + 1, $id_count + 3),
       'access callback' => 'bat_type_access_revision',
@@ -370,6 +370,65 @@ function bat_type_edit_form($form, &$form_state, $type) {
     '#default_value' => !empty($type->date) ? $type->date : '',
   );
 
+  $form['revisions'] = array(
+    '#type' => 'fieldset',
+    '#access' => user_access('bypass bat_type entities access'),
+    '#title' => t('Revision information'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#group' => 'additional_settings',
+    '#attributes' => array(
+      'class' => array('type-form-revisions'),
+    ),
+    '#weight' => 95,
+  );
+
+  if (module_exists('revisioning')) {
+    $form['revisions']['log'] = array(
+      '#type' => 'textarea',
+      '#title' => !empty($type->type_id) ? t('Update log message') : t('Creation log message'),
+      '#rows' => 4,
+      '#description' => t('Provide an explanation of the changes you are making. This will provide a meaningful history of changes to this type.'),
+    );
+
+    $options = array();
+    if (!empty($type->type_id)) {
+      $options[REVISIONING_NO_REVISION] = t('Modify current revision, no moderation');
+    }
+    $options[REVISIONING_NEW_REVISION_NO_MODERATION]  = t('Create new revision, no moderation');
+    $options[REVISIONING_NEW_REVISION_WITH_MODERATION] = t('Create new revision and moderate');
+
+    $form['revisions']['revision_operation'] = array(
+      '#title' => t('Revision creation and moderation options'),
+      '#description' => t('Moderation means that the new revision is not publicly visible until approved by someone with the appropriate permissions.'),
+      '#type' => 'radios',
+      '#options' => $options,
+      '#default_value' => isset($type->type_id)
+        ? REVISIONING_NEW_REVISION_WITH_MODERATION
+        : REVISIONING_NEW_REVISION_NO_MODERATION,
+    );
+
+    if (variable_get('revisioning_no_moderation_by_default', FALSE)) {
+      $form['revisions']['revision_operation']['#default_value'] = REVISIONING_NEW_REVISION_NO_MODERATION;
+    }
+  }
+  else {
+    if (!empty($type->type_id)) {
+      $form['revisions']['revision'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Create new revision on update'),
+        '#description' => t('If an update log message is entered, a revision will be created even if this is unchecked.'),
+        '#default_value' => 0,
+      );
+    }
+    $form['revisions']['log'] = array(
+      '#type' => 'textarea',
+      '#title' => !empty($type->type_id) ? t('Update log message') : t('Creation log message'),
+      '#rows' => 4,
+      '#description' => t('Provide an explanation of the changes you are making. This will provide a meaningful history of changes to this type.'),
+    );
+  }
+
   // Type publishing options for administrators.
   $form['options'] = array(
     '#type' => 'fieldset',
@@ -387,20 +446,6 @@ function bat_type_edit_form($form, &$form_state, $type) {
     '#type' => 'checkbox',
     '#title' => t('Published'),
     '#default_value' => $type->status,
-  );
-  if (!empty($type->type_id)) {
-    $form['options']['revision'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Create new revision on update'),
-      '#description' => t('If an update log message is entered, a revision will be created even if this is unchecked.'),
-      '#default_value' => 0,
-    );
-  }
-  $form['options']['log'] = array(
-    '#type' => 'textarea',
-    '#title' => !empty($type->type_id) ? t('Update log message') : t('Creation log message'),
-    '#rows' => 4,
-    '#description' => t('Provide an explanation of the changes you are making. This will provide a meaningful history of changes to this type.'),
   );
 
   $form['actions'] = array(
@@ -453,12 +498,22 @@ function bat_type_edit_form_submit(&$form, &$form_state) {
     $type->changed = time();
   }
 
-  // Trigger a new revision if the checkbox was enabled or a log message supplied.
-  if (!empty($form_state['values']['revision']) ||
-      !empty($form['change_history']['revision']['#default_value']) ||
-      !empty($form_state['values']['log'])) {
-    $type->revision = TRUE;
-    $type->log = $form_state['values']['log'];
+  if (module_exists('revisioning')) {
+    if (isset($type->revision_operation)) {
+      $type->revision = ($type->revision_operation > REVISIONING_NO_REVISION);
+      if ($type->revision_operation == REVISIONING_NEW_REVISION_WITH_MODERATION) {
+        $type->default_revision = FALSE;
+      }
+    }
+  }
+  else {
+    // Trigger a new revision if the checkbox was enabled or a log message supplied.
+    if (!empty($form_state['values']['revision']) ||
+        !empty($form['change_history']['revision']['#default_value']) ||
+        !empty($form_state['values']['log'])) {
+      $type->revision = TRUE;
+      $type->log = $form_state['values']['log'];
+    }
   }
 
   if (isset($type->author_name)) {
@@ -704,7 +759,7 @@ function bat_type_revision_view($type, $revision) {
  * @param $revision
  */
 function bat_type_revision_revert_confirm($form, $form_state, $type, $revision) {
-  $type_revision = entity_revision_load('bat_type', $revision);
+  $type_revision = bat_type_load_revision($revision);
   $form['#type_revision'] = $type_revision;
 
   return confirm_form($form, t('Are you sure you want to revert to the revision from %revision-date?', array('%revision-date' => format_date($type_revision->revision_timestamp))), 'admin/bat/config/types/manage/' . $type_revision->type_id . '/revisions', '', t('Revert'), t('Cancel'));
@@ -728,7 +783,7 @@ function bat_type_revision_revert_confirm_submit($form, &$form_state) {
  * @param $revision
  */
 function bat_type_revision_delete_confirm($form, $form_state, $type, $revision) {
-  $type_revision = entity_revision_load('bat_type', $revision);
+  $type_revision = bat_type_load_revision($revision);
   $form['#type_revision'] = $type_revision;
 
   return confirm_form($form, t('Are you sure you want to delete the revision from %revision-date?', array('%revision-date' => format_date($type_revision->revision_timestamp))), 'admin/bat/config/types/manage/' . $type_revision->type_id . '/revisions', t('This action cannot be undone.'), t('Delete'), t('Cancel'));
