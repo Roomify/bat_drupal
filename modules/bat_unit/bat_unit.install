@@ -375,3 +375,30 @@ function bat_unit_update_7101() {
 
   db_add_field('bat_types', 'revision_id', $field);
 }
+
+/**
+ * Add revisions for all existing types.
+ */
+function bat_unit_update_7102() {
+  db_update('bat_types')
+    ->expression('revision_id', 'type_id')
+    ->execute();
+
+  $types = db_select('bat_types', 'p')
+                  ->fields('p', array('type_id', 'name', 'uid', 'created'))
+                  ->execute()
+                  ->fetchAll();
+
+  foreach ($types as $type) {
+    db_insert('bat_types_revision')
+      ->fields(array(
+        'type_id' => $type->type_id,
+        'revision_id' => $type->type_id,
+        'name' => $type->name,
+        'revision_uid' => $type->uid,
+        'revision_timestamp' => $type->created,
+        'log' => '',
+      ))
+      ->execute();
+  }
+}
