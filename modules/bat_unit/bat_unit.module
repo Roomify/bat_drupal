@@ -40,8 +40,8 @@ function bat_unit_module_implements_alter(&$implementations, $hook) {
  * Implements hook_menu_alter().
  */
 function bat_unit_menu_alter(&$items) {
-  $items['admin/bat/config/types/type/%bat_type/units']['access callback'] = 'bat_type_access';
-  $items['admin/bat/config/types/type/%bat_type/units']['access arguments'] = array('update', 5);
+  $items['admin/bat/config/types/manage/%bat_type/units']['access callback'] = 'bat_type_access';
+  $items['admin/bat/config/types/manage/%bat_type/units']['access arguments'] = array('update', 5);
 }
 
 /**
@@ -176,7 +176,7 @@ function bat_unit_entity_info() {
     // the EntityDefaultUIController).
     'translation' => array(
       'entity_translation' => array(
-        'base path' => 'admin/bat/config/types/type/%bat_type',
+        'base path' => 'admin/bat/config/types/manage/%bat_type',
         'path wildcard' => '%bat_type',
         'path schemes' => array(
           'default' => array(),
@@ -484,7 +484,7 @@ function bat_unit_menu_local_tasks_alter(&$data, $router_item, $root_path) {
   }
 
   // Create an action link on the Units admin page for adding new units.
-  if ($root_path == 'admin/bat/config/types/type/%/units') {
+  if ($root_path == 'admin/bat/config/types/manage/%/units') {
     $item = menu_get_item($router_item['href'] . '/add');
     if ($item['access']) {
       $data['actions']['output'][] = array(

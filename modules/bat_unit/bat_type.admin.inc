@@ -47,7 +47,7 @@ class BatTypeUIController extends EntityDefaultUIController {
     }
 
     // Loading and editing type entities.
-    $items[$this->path . '/type/' . $wildcard] = array(
+    $items[$this->path . '/manage/' . $wildcard] = array(
       'title callback' => 'bat_type_page_title',
       'title arguments' => array($id_count + 1),
       'page callback' => 'bat_type_page_view',
@@ -57,7 +57,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     );
 
-    $items[$this->path . '/type/' . $wildcard . '/view'] = array(
+    $items[$this->path . '/manage/' . $wildcard . '/view'] = array(
       'title' => 'View',
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => -10,
@@ -65,7 +65,7 @@ class BatTypeUIController extends EntityDefaultUIController {
     );
 
     if (module_exists('diff')) {
-      $items[$this->path . '/type/' . $wildcard . '/revisions/view'] = array(
+      $items[$this->path . '/manage/' . $wildcard . '/revisions/view'] = array(
         'title' => '',
         'page callback' => 'bat_type_compare_revisions',
         'page arguments' => array($id_count + 1, $id_count + 4, $id_count + 5),
@@ -76,20 +76,17 @@ class BatTypeUIController extends EntityDefaultUIController {
       );
     }
 
-    $items[$this->path . '/type/' . $wildcard . '/revision/%/view'] = array(
+    $items[$this->path . '/manage/' . $wildcard . '/revision/%/view'] = array(
       'title' => 'View Revision',
       'page callback' => 'bat_type_revision_view',
       'page arguments' => array($id_count + 1, $id_count + 3),
       'access callback' => 'bat_type_access_revision',
       'access arguments' => array('view', $id_count + 1, $id_count + 3),
-      'type' => MENU_LOCAL_TASK,
-      'weight' => -10,
-      'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
       'file' => 'bat_type.admin.inc',
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
     );
 
-    $items[$this->path . '/type/' . $wildcard . '/revision/%/revert'] = array(
+    $items[$this->path . '/manage/' . $wildcard . '/revision/%/revert'] = array(
       'page callback' => 'drupal_get_form',
       'page arguments' => array('bat_type_revision_revert_confirm', $id_count + 1, $id_count + 3),
       'access callback' => 'bat_type_access_revision',
@@ -98,7 +95,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
     );
 
-    $items[$this->path . '/type/' . $wildcard . '/revision/%/delete'] = array(
+    $items[$this->path . '/manage/' . $wildcard . '/revision/%/delete'] = array(
       'page callback' => 'drupal_get_form',
       'page arguments' => array('bat_type_revision_delete_confirm', $id_count + 1, $id_count + 3),
       'access callback' => 'bat_type_access_revision',
@@ -107,7 +104,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
     );
 
-    $items[$this->path . '/type/' . $wildcard . '/edit'] = array(
+    $items[$this->path . '/manage/' . $wildcard . '/edit'] = array(
       'title' => 'Edit',
       'page callback' => 'bat_type_form_wrapper',
       'page arguments' => array($id_count + 1),
@@ -120,7 +117,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       'file path' => drupal_get_path('module', $this->entityInfo['module']),
     );
 
-    $items[$this->path . '/type/' . $wildcard . '/delete'] = array(
+    $items[$this->path . '/manage/' . $wildcard . '/delete'] = array(
       'title' => 'Delete',
       'page callback' => 'bat_type_delete_form_wrapper',
       'page arguments' => array($id_count + 1),
@@ -144,7 +141,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       'type' => MENU_CALLBACK,
     );
 
-    $items[$this->path . '/type/' . $wildcard . '/units/add'] = array(
+    $items[$this->path . '/manage/' . $wildcard . '/units/add'] = array(
       'title' => 'Add Units',
       'page callback' => 'bat_type_add_units_page',
       'page arguments' => array(5),
@@ -154,7 +151,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       'type' => MENU_CALLBACK,
     );
     foreach (bat_unit_get_bundles() as $bundle) {
-      $items[$this->path . '/type/' . $wildcard . '/units/add/' . $bundle->type] = array(
+      $items[$this->path . '/manage/' . $wildcard . '/units/add/' . $bundle->type] = array(
         'title' => 'Add @unit_bundle_label unit',
         'title arguments' => array('@unit_bundle_label' => $bundle->label),
         'page callback' => 'bat_type_add_units_form_wrapper',
@@ -553,7 +550,7 @@ function bat_type_form_submit_delete(&$form, &$form_state) {
     unset($_GET['destination']);
   }
 
-  $form_state['redirect'] = array('admin/bat/config/types/type/' . $form_state['bat_type']->type_id . '/delete', array('query' => $destination));
+  $form_state['redirect'] = array('admin/bat/config/types/manage/' . $form_state['bat_type']->type_id . '/delete', array('query' => $destination));
 }
 
 /**
@@ -755,7 +752,7 @@ function bat_type_add_units_form_submit($form, &$form_state) {
     $unit->save();
   }
 
-  $form_state['redirect'] = 'admin/bat/config/types/type/' . $type_id . '/units';
+  $form_state['redirect'] = 'admin/bat/config/types/manage/' . $type_id . '/units';
 }
 
 /**
@@ -763,6 +760,8 @@ function bat_type_add_units_form_submit($form, &$form_state) {
  * @param $revision
  */
 function bat_type_revision_view($type, $revision) {
+  drupal_set_title(t('Revision of %title from %date', array('%title' => $type->name, '%date' => format_date($type->revision_timestamp))), PASS_THROUGH);
+
   return entity_view('bat_type', array(bat_type_load_revision($revision)));
 }
 

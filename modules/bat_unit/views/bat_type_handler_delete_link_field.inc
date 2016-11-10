@@ -30,7 +30,7 @@ class bat_type_handler_delete_link_field extends bat_type_handler_link_field {
       $options = array('query' => drupal_get_destination());
     }
 
-    return l($text, 'admin/bat/config/types/type/' . $type_id . '/delete', $options);
+    return l($text, 'admin/bat/config/types/manage/' . $type_id . '/delete', $options);
   }
 
 }
