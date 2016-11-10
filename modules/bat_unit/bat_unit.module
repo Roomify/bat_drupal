@@ -314,6 +314,18 @@ function bat_unit_permission() {
       'title' => t('View own unpublished types'),
       'description' => t('Allows users to view own unpublished types.'),
     ),
+    'view bat_type revisions' => array(
+      'title' => t('View type revisions'),
+      'description' => t('Allows users to view type revisions.'),
+    ),
+    'revert bat_type revisions' => array(
+      'title' => t('Revert type revisions'),
+      'description' => t('Allows users to revert type revisions.'),
+    ),
+    'delete bat_type revisions' => array(
+      'title' => t('Delete type revisions'),
+      'description' => t('Allows users to delete type revisions.'),
+    ),
   );
 
   $permissions += bat_entity_access_permissions('bat_type');
@@ -1120,25 +1132,39 @@ class BatUnitBundleController extends EntityAPIControllerExportable {
  */
 
 /**
- * @param $op
+ * Determines whether the given user has access to a type revision.
+ *
+ * @param string $op
+ *   The operation being performed. One of 'view', 'revert', 'delete'.
  * @param BatType $type
  * @param $revision_id
- * @param $account
+ * @param object $account
+ *   The user to check for. Leave it to NULL to check for the global user.
+ *
+ * @return boolean
+ *   Whether access is allowed or not.
  */
 function bat_type_access_revision($op, $type, $revision_id, $account = NULL) {
+  global $user;
+  $account = isset($account) ? $account : $user;
+
   if ($revision_type = bat_type_load_revision($revision_id)) {
     if ($type->type_id != $revision_type->type_id) {
       return FALSE;
     }
     else {
+      if (user_access('bypass bat_type entities access')) {
+        return TRUE;
+      }
+
       if ($op == 'view') {
-        return user_access('bypass bat_type entities access');
+        return user_access('view bat_type revisions');
       }
       elseif ($op == 'revert') {
-        return user_access('bypass bat_type entities access');
+        return user_access('revert bat_type revisions');
       }
       elseif ($op == 'delete') {
-        return user_access('bypass bat_type entities access');
+        return user_access('delete bat_type revisions');
       }
     }
   }
