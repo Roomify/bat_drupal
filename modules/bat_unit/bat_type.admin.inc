@@ -64,6 +64,18 @@ class BatTypeUIController extends EntityDefaultUIController {
       'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     );
 
+    if (module_exists('diff')) {
+      $items[$this->path . '/type/' . $wildcard . '/revisions/view'] = array(
+        'title' => '',
+        'page callback' => 'bat_type_compare_revisions',
+        'page arguments' => array($id_count + 1, $id_count + 4, $id_count + 5),
+        'access callback' => TRUE,
+        'type' => MENU_LOCAL_TASK,
+        'file' => 'bat_type.diff.inc',
+        'file path' => drupal_get_path('module', $this->entityInfo['module']),
+      );
+    }
+
     $items[$this->path . '/type/' . $wildcard . '/revision/%/view'] = array(
       'title' => 'View Revision',
       'page callback' => 'bat_type_revision_view',

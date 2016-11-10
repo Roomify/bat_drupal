@@ -1335,6 +1335,19 @@ function bat_type_load_revision($revision_id) {
 }
 
 /**
+ * @param BatType $type
+ */
+function bat_type_revision_list($type) {
+  $revisions = array();
+  $result = db_query('SELECT r.revision_id, r.name, r.log, r.revision_uid, n.revision_id AS current_vid, r.revision_timestamp, u.name FROM {bat_types_revision} r LEFT JOIN {bat_types} n ON n.revision_id = r.revision_id INNER JOIN {users} u ON u.uid = r.revision_uid WHERE r.type_id = :type_id ORDER BY r.revision_id DESC', array(':type_id' => $type->type_id));
+  foreach ($result as $revision) {
+    $revisions[$revision->revision_id] = $revision;
+  }
+
+  return $revisions;
+}
+
+/**
  * Loads multiple Bat Types based on certain conditions.
  *
  * @param array $type_ids
