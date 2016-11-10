@@ -1862,6 +1862,10 @@ class BatTypeController extends EntityAPIController {
     $entity->revision_uid = $user->uid;
     $entity->revision_timestamp = REQUEST_TIME;
 
+    if (!isset($entity->log)) {
+      $entity->log = '';
+    }
+
     parent::save($entity);
 
     $entity->revision = FALSE;
