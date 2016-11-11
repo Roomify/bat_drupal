@@ -36,6 +36,14 @@ class bat_type_handler_type_revision_operations_field extends views_handler_fiel
           'href'  => 'admin/bat/config/types/manage/' . $type_id . '/revision/' . $revision_id . '/view',
           'title' => t('View'),
         );
+
+        $current_revision = bat_type_load($type_id);
+        $current_revision_id = $current_revision->revision_id;
+
+        $links[] = array(
+          'href'  => 'admin/bat/config/types/manage/' . $type_id . '/revisions/view/' . $revision_id . '/' . $current_revision_id,
+          'title' => t('Compare'),
+        );
       }
 
       if (bat_type_access_revision('revert', $type, $revision_id)) {

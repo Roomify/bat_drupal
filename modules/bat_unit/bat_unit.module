@@ -6,6 +6,9 @@
  * (e.g. rooms - but also villas bungalows, cars, drills, you-get-the-idea etc.)
  */
 
+if (module_exists('rules')) {
+  include_once('bat_unit.rules.inc');
+}
 
 /**
  * @section Drupal Hooks
@@ -1374,6 +1377,45 @@ function bat_type_revision_list($type) {
 }
 
 /**
+ * Retrieve a list of revisions with a revision_id greater than the current.
+ *
+ * @param int $type_id
+ *   The type id to retrieve.
+ *
+ * @return array
+ *   An array of revisions (latest first), each containing revision_id, name and
+ *   bundle.
+ */
+function bat_type_get_pending_revisions($type_id) {
+  $sql = "SELECT r.revision_id, r.name, n.type FROM {bat_types} n INNER JOIN {bat_types_revision} r ON n.type_id = r.type_id WHERE (r.revision_id > n.revision_id AND n.type_id = :type_id) ORDER BY r.revision_id DESC";
+  $result = db_query($sql, array(
+    ':type_id' => $type_id)
+  );
+  $revisions = array();
+  foreach ($result as $revision) {
+    $revisions[$revision->revision_id] = $revision;
+  }
+  return $revisions;
+}
+
+/**
+ * Get the id of the current revision that the supplied type is pointing to.
+ *
+ * Used in cases where the type object wasn't fully loaded or was loaded
+ * with a different revision.
+ *
+ * @param int $type_id
+ *   The id of the type whose current revision id is to be returned.
+ *
+ * @return int
+ *   A single number being the current revision id (revision_id).
+ */
+function bat_type_get_current_type_revision_id($type_id) {
+  $result = db_query("SELECT revision_id FROM {bat_types} WHERE type_id = :type_id", array(':type_id' => $type_id));
+  return $result->fetchField();
+}
+
+/**
  * Loads multiple Bat Types based on certain conditions.
  *
  * @param array $type_ids
@@ -1534,6 +1576,60 @@ function bat_type_page_view($type, $view_mode = 'full') {
   drupal_set_title($type->name);
 
   return $content;
+}
+
+/**
+ * @param $op
+ * @param $type
+ */
+function bat_type_revisioning_event($op, $type) {
+  switch ($op) {
+    case 'post update':
+      if (module_exists('rules')) {
+        rules_invoke_event('bat_type_revisioning_post_update', $type);
+      }
+      break;
+
+    case 'pre publish':
+      if (module_exists('rules')) {
+        rules_invoke_event('bat_type_revisioning_pre_publish', $type);
+      }
+      break;
+
+    case 'post publish':
+      if (module_exists('rules')) {
+        rules_invoke_event('bat_type_revisioning_post_publish', $type);
+      }
+      break;
+
+    case 'post unpublish':
+      if (module_exists('rules')) {
+        rules_invoke_event('bat_type_revisioning_post_unpublish', $type);
+      }
+      break;
+
+    case 'pre revert':
+      if (module_exists('rules')) {
+        rules_invoke_event('bat_type_revisioning_pre_revert', $type);
+      }
+      break;
+
+    case 'post revert':
+      if (module_exists('rules')) {
+        rules_invoke_event('bat_type_revisioning_post_revert', $type);
+      }
+      break;
+
+    case 'pre delete':
+      if (module_exists('rules')) {
+        rules_invoke_event('bat_type_revisioning_pre_delete', $type);
+      }
+
+    case 'post delete':
+      if (module_exists('rules')) {
+        rules_invoke_event('bat_type_revisioning_post_delete', $type);
+      }
+  }
 }
 
 /**
@@ -1866,9 +1962,13 @@ class BatTypeController extends EntityAPIController {
       $entity->log = '';
     }
 
+    bat_type_revisioning_event('pre update', $entity);
+
     parent::save($entity);
 
     $entity->revision = FALSE;
+
+    bat_type_revisioning_event('post update', $entity);
   }
 
   /**

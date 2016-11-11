@@ -784,7 +784,12 @@ function bat_type_revision_revert_confirm_submit($form, &$form_state) {
 
   $type_revision->revision = TRUE;
   $type_revision->default_revision = TRUE;
+
+  bat_type_revisioning_event('pre revert', $type_revision);
+
   $type_revision->save();
+
+  bat_type_revisioning_event('post revert', $type_revision);
 
   $form_state['redirect'] = 'admin/bat/config/types/manage/' . $type_revision->type_id . '/revisions';
 }
@@ -805,7 +810,12 @@ function bat_type_revision_delete_confirm($form, $form_state, $type, $revision) 
  */
 function bat_type_revision_delete_confirm_submit($form, &$form_state) {
   $type_revision = $form['#type_revision'];
+
+  bat_type_revisioning_event('pre delete', $type_revision);
+
   entity_revision_delete('bat_type', $type_revision->revision_id);
+
+  bat_type_revisioning_event('post delete', $type_revision);
 
   $form_state['redirect'] = 'admin/bat/config/types/manage/' . $type_revision->type_id . '/revisions';
 }
