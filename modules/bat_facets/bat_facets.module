@@ -150,7 +150,7 @@ function bat_facets_search_api_query_alter($query) {
     $info = entity_get_info($query->getIndex()->getEntityType());
 
     // Only modify the query if this query is against bat units.
-    if ($info['base table'] = 'bat_types') {
+    if ($info['base table'] == 'bat_types') {
       // Get this widget's settings.
       $index = $query->getIndex();
       $facets = facetapi_get_enabled_facets('search_api@' . $index->machine_name);
