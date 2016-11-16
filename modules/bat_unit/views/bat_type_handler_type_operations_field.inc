@@ -20,7 +20,7 @@ class bat_type_handler_type_operations_field extends views_handler_field {
   }
 
   function render($values) {
-    $links = menu_contextual_links('bat_unit', 'admin/bat/config/types/type', array($this->get_value($values, 'type_id')));
+    $links = menu_contextual_links('bat_unit', 'admin/bat/config/types/manage', array($this->get_value($values, 'type_id')));
 
     // Unset the "view" link, as this is provided separately.
     if (array_key_exists('bat_unit-view', $links)) {

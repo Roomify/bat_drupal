@@ -209,7 +209,7 @@ class FeatureContext extends DrupalSubContextBase implements CustomSnippetAccept
    */
   protected function iAmDoingOnTheType($action, $type_name) {
     $unit_id = $this->findTypeByName($type_name);
-    $url = "admin/bat/config/types/type/$type_id/$action";
+    $url = "admin/bat/config/types/manage/$type_id/$action";
     $this->getSession()->visit($this->locatePath($url));
   }
 
