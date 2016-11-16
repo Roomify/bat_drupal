@@ -420,6 +420,23 @@ function bat_type_edit_form($form, &$form_state, $type) {
     if (variable_get('revisioning_no_moderation_by_default', FALSE)) {
       $form['revisions']['revision_operation']['#default_value'] = REVISIONING_NEW_REVISION_NO_MODERATION;
     }
+
+    if (!empty($type->type_id)) {
+      $revision_count = db_query("SELECT COUNT(revision_id) FROM {bat_types_revision} WHERE type_id = :type_id AND revision_id > :revision_id",
+        array(
+          ':revision_id' => $type->revision_id,
+          ':type_id' => $type->type_id,
+        )
+      )->fetchField();
+
+      if ($revision_count == 1) {
+        drupal_set_message(t('Please note there is one revision more recent than the one you are about to edit.'), 'warning');
+      }
+      elseif ($revision_count > 1) {
+        drupal_set_message(t('Please note there are @count revisions more recent than the one you are about to edit.',
+          array('@count' => $revision_count)), 'warning');
+      }
+    }
   }
   else {
     if (!empty($type->type_id)) {
