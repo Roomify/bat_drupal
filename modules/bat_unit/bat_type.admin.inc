@@ -440,11 +440,13 @@ function bat_type_edit_form($form, &$form_state, $type) {
   }
   else {
     if (!empty($type->type_id)) {
+      $type_bundle = bat_type_bundle_load($type->type);
+
       $form['revisions']['revision'] = array(
         '#type' => 'checkbox',
         '#title' => t('Create new revision on update'),
         '#description' => t('If an update log message is entered, a revision will be created even if this is unchecked.'),
-        '#default_value' => 0,
+        '#default_value' => (isset($type_bundle->data['revision'])) ? $type_bundle->data['revision'] : 0,
       );
     }
     $form['revisions']['log'] = array(

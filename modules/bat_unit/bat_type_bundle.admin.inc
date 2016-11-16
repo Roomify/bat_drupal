@@ -78,6 +78,20 @@ function bat_type_bundle_form($form, &$form_state, $type_bundle, $op = 'edit') {
     '#weight' => 99,
   );
 
+  $form['publishing_options'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Publishing options'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#group' => 'additional_settings',
+  );
+
+  $form['publishing_options']['revision'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Create new revision'),
+    '#default_value' => (isset($type_bundle->data['revision'])) ? $type_bundle->data['revision'] : 0,
+  );
+
   $form['actions'] = array(
     '#type' => 'actions',
     '#tree' => FALSE,
@@ -108,6 +122,9 @@ function bat_type_bundle_form_validate(&$form, &$form_state) {
  */
 function bat_type_bundle_form_submit($form, &$form_state) {
   $type_bundle = entity_ui_form_submit_build_entity($form, $form_state);
+
+  $type_bundle->data['revision'] = $form_state['values']['revision'];
+
   // Save and go back.
   $type_bundle->save();
 
