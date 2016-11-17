@@ -58,7 +58,8 @@ class BatTypeUIController extends EntityDefaultUIController {
     );
 
     $items[$this->path . '/manage/' . $wildcard . '/view'] = array(
-      'title' => 'View',
+      'title callback' => 'bat_type_title_callback',
+      'title arguments' => array($id_count + 1, 'view'),
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => -10,
       'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
@@ -105,7 +106,8 @@ class BatTypeUIController extends EntityDefaultUIController {
     );
 
     $items[$this->path . '/manage/' . $wildcard . '/edit'] = array(
-      'title' => 'Edit',
+      'title callback' => 'bat_type_title_callback',
+      'title arguments' => array($id_count + 1, 'edit'),
       'page callback' => 'bat_type_form_wrapper',
       'page arguments' => array($id_count + 1),
       'access callback' => 'bat_type_access',
@@ -506,12 +508,7 @@ function bat_type_edit_form($form, &$form_state, $type) {
     }
 
     if (!empty($type->type_id)) {
-      $revision_count = db_query("SELECT COUNT(revision_id) FROM {bat_types_revision} WHERE type_id = :type_id AND revision_id > :revision_id",
-        array(
-          ':revision_id' => $type->revision_id,
-          ':type_id' => $type->type_id,
-        )
-      )->fetchField();
+      $revision_count = bat_type_get_number_of_revisions_newer_than($type->revision_id, $type->type_id);
 
       if ($revision_count == 1) {
         drupal_set_message(t('Please note there is one revision more recent than the one you are about to edit.'), 'warning');
@@ -859,8 +856,8 @@ function bat_type_add_units_form_submit($form, &$form_state) {
 }
 
 /**
- * @param $type
- * @param $revision
+ * @param BatType $type
+ * @param int $revision
  */
 function bat_type_revision_view($type, $revision) {
   drupal_set_title(t('Revision of %title from %date', array('%title' => $type->name, '%date' => format_date($type->revision_timestamp))), PASS_THROUGH);
@@ -869,8 +866,8 @@ function bat_type_revision_view($type, $revision) {
 }
 
 /**
- * @param $type
- * @param $revision
+ * @param BatType $type
+ * @param int $revision
  */
 function bat_type_revision_revert_confirm($form, $form_state, $type, $revision) {
   $type_revision = bat_type_load_revision($revision);
@@ -898,8 +895,8 @@ function bat_type_revision_revert_confirm_submit($form, &$form_state) {
 }
 
 /**
- * @param $type
- * @param $revision
+ * @param BatType $type
+ * @param int $revision
  */
 function bat_type_revision_delete_confirm($form, $form_state, $type, $revision) {
   $type_revision = bat_type_load_revision($revision);

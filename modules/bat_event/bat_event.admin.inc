@@ -135,7 +135,7 @@ class BatEventUIController extends EntityDefaultUIController {
 /**
  * Form callback wrapper: edit a Event.
  *
- * @param $event
+ * @param BatEvent $event
  *   The BatEvent object being edited by this form.
  *
  * @see bat_event_edit_form()
@@ -154,10 +154,7 @@ function bat_event_form_wrapper($event) {
 /**
  * Form callback wrapper: create a Event.
  *
- * @param $event
- *   The Event object being edited by this form.
- *
- * @see bat_event_edit_form()
+ * @param string $type
  */
 function bat_event_create_form_wrapper($type) {
   global $user;

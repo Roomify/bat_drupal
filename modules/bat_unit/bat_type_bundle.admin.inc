@@ -92,6 +92,30 @@ function bat_type_bundle_form($form, &$form_state, $type_bundle, $op = 'edit') {
     '#default_value' => (isset($type_bundle->data['revision'])) ? $type_bundle->data['revision'] : 0,
   );
 
+  if (module_exists('revisioning')) {
+    $form['publishing_options']['revision_moderation'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('New revision in draft, pending moderation (requires "Create new revision")'),
+      '#default_value' => (isset($type_bundle->data['revision_moderation'])) ? $type_bundle->data['revision_moderation'] : 0,
+    );
+
+    $form['publishing_options']['revisioning'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('New revision in draft'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+
+    $form['publishing_options']['revisioning']['new_revisions'] = array(
+      '#title' => t('Create new revision:'),
+      '#type' => 'radios',
+      '#options' => array(
+        REVISIONING_NEW_REVISION_WHEN_NOT_PENDING => t('Only when saving %type type that is not already in draft/pending moderation', array('%type' => $type_bundle->label)),
+        REVISIONING_NEW_REVISION_EVERY_SAVE => t('Every time %type type is updated, even when saving type in draft/pending moderation', array('%type' => $type_bundle->label))),
+      '#default_value' => (isset($type_bundle->data['new_revisions'])) ? $type_bundle->data['new_revisions'] : REVISIONING_NEW_REVISION_WHEN_NOT_PENDING,
+    );
+  }
+
   $form['actions'] = array(
     '#type' => 'actions',
     '#tree' => FALSE,
@@ -124,6 +148,12 @@ function bat_type_bundle_form_submit($form, &$form_state) {
   $type_bundle = entity_ui_form_submit_build_entity($form, $form_state);
 
   $type_bundle->data['revision'] = $form_state['values']['revision'];
+  if (isset($form_state['values']['revision_moderation'])) {
+    $type_bundle->data['revision_moderation'] = $form_state['values']['revision_moderation'];
+  }
+  if (isset($form_state['values']['new_revisions'])) {
+    $type_bundle->data['new_revisions'] = $form_state['values']['new_revisions'];
+  }
 
   // Save and go back.
   $type_bundle->save();

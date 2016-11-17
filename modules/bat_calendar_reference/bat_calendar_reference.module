@@ -369,8 +369,8 @@ function bat_calendar_reference_units_potential_references($field, $options = ar
 }
 
 /**
- * @param $field
- * @param $options
+ * @param array $field
+ * @param array $options
  *
  * @return array
  */
@@ -439,8 +439,8 @@ function _bat_calendar_reference_units_potential_references($field, $options) {
 }
 
 /**
- * @param $field
- * @param $options
+ * @param array $field
+ * @param array $options
  *
  * @return array
  */
@@ -474,8 +474,8 @@ function bat_calendar_reference_event_types_potential_references($field, $option
 }
 
 /**
- * @param $field
- * @param $options
+ * @param array $field
+ * @param array $options
  *
  * @return array
  */
@@ -537,8 +537,8 @@ function _bat_calendar_reference_event_types_potential_references($field, $optio
 }
 
 /**
- * @param $field
- * @param $options
+ * @param array $field
+ * @param array $options
  *
  * @return array
  */
@@ -572,8 +572,8 @@ function bat_calendar_reference_unit_types_potential_references($field, $options
 }
 
 /**
- * @param $field
- * @param $options
+ * @param array $field
+ * @param array $options
  *
  * @return array
  */

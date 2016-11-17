@@ -279,7 +279,7 @@ function bat_event_form_views_exposed_form_alter(&$form, &$form_state) {
 }
 
 /**
- * @param $event_type
+ * @param string $event_type
  *
  * @return array
  */
@@ -323,7 +323,7 @@ function bat_event_get_states($event_type = NULL) {
 /**
  * Returns information about the configuration of a given fixed event state.
  *
- * @param $state_id
+ * @param int $state_id
  *
  * @return array
  */
@@ -340,7 +340,7 @@ function bat_event_load_state($state_id) {
 /**
  * Returns information about the configuration of a given fixed event state.
  *
- * @param $state_id
+ * @param string $state_machine_name
  *
  * @return array|false
  */
@@ -361,7 +361,7 @@ function bat_event_load_state_by_machine_name($state_machine_name) {
 }
 
 /**
- * @param $event_type
+ * @param string $event_type
  *
  * @return array
  */
@@ -552,7 +552,8 @@ function bat_event_states_form_submit($form, &$form_state) {
 }
 
 /**
- * @param $event_state
+ * @param array $event_state
+ * @param string $event_type
  */
 function bat_event_save_state($event_state, $event_type) {
   if (!empty($event_state['id'])) {
@@ -1478,7 +1479,7 @@ class BatEventTypeController extends EntityAPIControllerExportable {
   }
 
   /**
-   * @param $entity
+   * @param object $entity
    */
   public function save($entity) {
     if (empty($entity->{$this->idKey})) {
@@ -1499,7 +1500,7 @@ class BatEventTypeController extends EntityAPIControllerExportable {
   }
 
   /**
-   * @param $ids
+   * @param array $ids
    */
   public function delete($ids) {
     parent::delete($ids);
@@ -1514,8 +1515,8 @@ class BatEventTypeController extends EntityAPIControllerExportable {
   }
 
   /**
-   * @param $entity
-   * @param $prefix
+   * @param object $entity
+   * @param string $prefix
    */
   public function export($entity, $prefix = '') {
     $vars = get_object_vars($entity);
@@ -1731,8 +1732,8 @@ function bat_event_field_validate($entity_type, $entity, $field, $instance, $lan
 }
 
 /**
- * @param $field
- * @param $options
+ * @param array $field
+ * @param array $options
  *
  * @return array
  */
@@ -1956,7 +1957,7 @@ function bat_event_field_widget_error($element, $error, $form, &$form_state) {
 /**
  * Given an event machine name drop all the tables that store event data for that event.
  *
- * @param $machine_name
+ * @param string $machine_name
  */
 function bat_event_delete_event_type_schema($machine_name) {
   foreach (bat_event_get_event_type_tables($machine_name) as $name) {
@@ -1967,7 +1968,7 @@ function bat_event_delete_event_type_schema($machine_name) {
 /**
  * Delete the states associated with $type.
  *
- * @param $type
+ * @param string $type
  */
 function bat_event_delete_states_by_type($type) {
   db_delete('bat_event_state')

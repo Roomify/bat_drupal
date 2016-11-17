@@ -24,8 +24,8 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
   private $background;
 
   /**
-   * @param $event_type
-   * @param $background
+   * @param string $event_type
+   * @param bool $background
    */
   public function __construct($event_type, $background = TRUE) {
     $this->event_type = $event_type;

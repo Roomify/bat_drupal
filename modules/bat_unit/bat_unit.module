@@ -529,6 +529,45 @@ function bat_unit_bat_event_target_entity_types() {
   return array('bat_unit');
 }
 
+/**
+ * Callback for the type View and Edit titles.
+ *
+ * @param object $type
+ * @param string $op
+ *
+ * @return string
+ *   translatable title string
+ */
+function bat_type_title_callback($type, $op) {
+  if ($op == 'view') {
+    return (bat_type_get_number_of_revisions_newer_than($type->revision_id, $type->type_id)) ? t('View current') : t('View');
+  }
+  elseif ($op == 'edit') {
+    return (bat_type_get_number_of_revisions_newer_than($type->revision_id, $type->type_id)) ? t('Edit current') : t('Edit');
+  }
+}
+
+/**
+ * Return a count of the number of revisions newer than the supplied revision_id.
+ *
+ * @param int $revision_id
+ *   The reference revision_id.
+ * @param int $type_id
+ *   The id of the type.
+ *
+ * @return int
+ *   count of the number of revisions newer than the supplied revision_id
+ */
+function bat_type_get_number_of_revisions_newer_than($revision_id, $type_id) {
+  $revision_count = db_query("SELECT COUNT(revision_id) FROM {bat_types_revision} WHERE type_id = :type_id AND revision_id > :revision_id",
+    array(
+      ':revision_id' => $revision_id,
+      ':type_id' => $type_id,
+    )
+  )->fetchField();
+
+  return $revision_count;
+}
 
 /**
  * @section Bat Unit
@@ -691,7 +730,7 @@ function bat_unit_types_ids() {
 /**
  * Menu argument loader; Load a unit bundle by string.
  *
- * @param $bundle
+ * @param string $bundle
  *   The machine-readable name of a unit bundle to load.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
@@ -864,8 +903,8 @@ function bat_unit_page_view($unit, $view_mode = 'full') {
 /**
  * Helper function to generate a list of available unit states for select lists.
  *
- * @param $event_type
- * @param $conditions
+ * @param string $event_type
+ * @param array $conditions
  *
  * @return array
  *   Array of available unit states keyed by id.
@@ -928,7 +967,7 @@ class BatUnit extends Entity {
   }
 
   /**
-   * @param $event_type
+   * @param string $event_type
    *
    * @return mixed
    */
@@ -939,7 +978,7 @@ class BatUnit extends Entity {
   }
 
   /**
-   * @param $event_type
+   * @param string $event_type
    * @param $value
    *
    * @return mixed
@@ -1357,7 +1396,7 @@ function bat_type_load($type_id, $reset = FALSE) {
 }
 
 /**
- * @param $revision_id
+ * @param int $revision_id
  */
 function bat_type_load_revision($revision_id) {
   return entity_revision_load('bat_type', $revision_id);
@@ -1809,7 +1848,7 @@ class BatType extends Entity {
   }
 
   /**
-   * @param $event_type
+   * @param string $event_type
    *
    * @return mixed
    */
@@ -1836,7 +1875,7 @@ class BatType extends Entity {
   }
 
   /**
-   * @param $event_type
+   * @param string $event_type
    *
    * @return string|FALSE
    */
@@ -1853,7 +1892,7 @@ class BatType extends Entity {
   }
 
   /**
-   * @param $event_type
+   * @param string $event_type
    *
    * @return string|FALSE
    */

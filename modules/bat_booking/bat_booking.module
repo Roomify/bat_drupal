@@ -373,7 +373,7 @@ function bat_booking_type_create($values = array()) {
 /**
  * Menu argument loader; Load a booking type by string.
  *
- * @param $type
+ * @param string $type
  *   The machine-readable name of a booking type to load.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.

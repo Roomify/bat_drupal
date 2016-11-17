@@ -171,7 +171,7 @@ function bat_booking_form($form, &$form_state, $booking, $op = 'edit') {
 /**
  * Form callback wrapper: create a Booking.
  *
- * @param $type
+ * @param string $type
  *   The Booking type for the booking to be created.
  */
 function bat_booking_create_form_wrapper($type) {

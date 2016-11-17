@@ -145,7 +145,7 @@ function bat_unit_form($form, &$form_state, $unit, $op = 'edit') {
 /**
  * Form callback wrapper: edit a Unit.
  *
- * @param $unit
+ * @param BatUnit $unit
  *   The BatUnit object being edited by this form.
  *
  * @see bat_unit_edit_form()
@@ -389,7 +389,7 @@ function bat_unit_form_submit_delete(&$form, &$form_state) {
 /**
  * Form callback: confirmation form for deleting a unit.
  *
- * @param $unit
+ * @param BatUnit $unit
  *   The unit to delete.
  *
  * @see confirm_form()

@@ -60,7 +60,7 @@ function bat_fullcalendar_menu() {
  * The EventManager page access callback.
  *
  * @param $entity_id
- * @param $event_type
+ * @param string $event_type
  * @param $event_id
  * @param $start_date
  * @param $end_date
@@ -80,7 +80,7 @@ function bat_fullcalendar_event_management_access($entity_id, $event_type, $even
  * calendar - will allow a user to manipulate that event.
  *
  * @param $entity_id
- * @param $event_type
+ * @param string $event_type
  * @param $event_id
  * @param $start_date
  * @param $end_date
@@ -471,7 +471,8 @@ function bat_fullcalendar_library_loaded($name, $variant = 'minified') {
 /**
  * Fullcalendar settings.
  *
- * @param $user_settings
+ * @param array $user_settings
+ *
  * @return array
  */
 function bat_fullcalendar_configure($user_settings) {
