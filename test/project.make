@@ -2,7 +2,7 @@
 
 api = 2
 core = 7.x
-projects[drupal][version] = 7.51
+projects[drupal][version] = 7.52
 
 defaults[projects][subdir] = contrib
 
@@ -41,7 +41,7 @@ projects[views][version] = 3.14
 
 projects[views_bulk_operations][version] = 3.3
 
-projects[views_megarow][version] = 1.6
+projects[views_megarow][version] = 1.7
 
 projects[xautoload][version] = 5.7
 
