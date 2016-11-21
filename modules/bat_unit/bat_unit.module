@@ -572,6 +572,7 @@ function bat_type_get_number_of_revisions_newer_than($revision_id, $type_id) {
  *
  * The following code deals with Bat Units and their bundles. (entity types)
  */
+
 /**
  * Determines whether the given user has access to a unit.
  *
@@ -942,7 +943,7 @@ function bat_unit_unit_bundle_new() {
 }
 
 /**
- * The class used for unit entities
+ * The class used for unit entities.
  */
 class BatUnit extends Entity {
 
@@ -1425,8 +1426,8 @@ function bat_type_revision_list($type) {
 function bat_type_get_pending_revisions($type_id) {
   $sql = "SELECT r.revision_id, r.name, n.type FROM {bat_types} n INNER JOIN {bat_types_revision} r ON n.type_id = r.type_id WHERE (r.revision_id > n.revision_id AND n.type_id = :type_id) ORDER BY r.revision_id DESC";
   $result = db_query($sql, array(
-    ':type_id' => $type_id)
-  );
+    ':type_id' => $type_id,
+  ));
   $revisions = array();
   foreach ($result as $revision) {
     $revisions[$revision->revision_id] = $revision;
@@ -1826,6 +1827,9 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
  */
 class BatType extends Entity {
 
+  /**
+   *
+   */
   public function __construct($values = array()) {
     parent::__construct($values, 'bat_type');
   }
@@ -1924,6 +1928,9 @@ class BatTypeBundle extends Entity {
    */
   public $label;
 
+  /**
+   *
+   */
   public function __construct($values = array()) {
     parent::__construct($values, 'bat_type_bundle');
   }
@@ -1935,6 +1942,9 @@ class BatTypeBundle extends Entity {
  */
 class BatTypeMetadataController extends EntityDefaultMetadataController {
 
+  /**
+   *
+   */
   public function entityPropertyInfo() {
     $info = parent::entityPropertyInfo();
 
@@ -1957,6 +1967,9 @@ class BatTypeMetadataController extends EntityDefaultMetadataController {
  */
 class BatTypeController extends EntityAPIController {
 
+  /**
+   *
+   */
   public function __construct($entityType) {
     parent::__construct($entityType);
   }
@@ -2028,6 +2041,9 @@ class BatTypeController extends EntityAPIController {
     return array();
   }
 
+  /**
+   *
+   */
   protected function applyConditions($entities, $conditions = array()) {
     if ($conditions) {
       foreach ($entities as $key => $entity) {
@@ -2232,6 +2248,9 @@ if (module_exists('inline_entity_form')) {
  */
 class BatTypeBundleController extends EntityAPIControllerExportable {
 
+  /**
+   *
+   */
   public function __construct($entityType) {
     parent::__construct($entityType);
   }

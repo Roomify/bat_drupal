@@ -78,10 +78,12 @@ class BatBookingUIController extends EntityDefaultUIController {
 
     // Add a row for the exportable status.
     if (!empty($this->entityInfo['exportable'])) {
-      $row[] = array('data' => array(
-        '#theme' => 'entity_status',
-        '#status' => $entity->{$this->statusKey},
-      ));
+      $row[] = array(
+        'data' => array(
+          '#theme' => 'entity_status',
+          '#status' => $entity->{$this->statusKey},
+        ),
+      );
     }
     // In case this is a bundle, we add links to the field ui tabs.
     $field_ui = !empty($this->entityInfo['bundle of']) && entity_type_is_fieldable($this->entityInfo['bundle of']) && module_exists('field_ui');
@@ -151,6 +153,7 @@ class BatBookingUIController extends EntityDefaultUIController {
       '#content' => $items,
     );
   }
+
 }
 
 /**
@@ -287,7 +290,7 @@ function bat_booking_edit_form($form, &$form_state, $booking) {
   }
 
   // Depending on whether the form is in a popup or a normal page we need to change
-  // the behavior of the cancel button
+  // the behavior of the cancel button.
   if (isset($form_state['ajax']) && $form_state['ajax'] == TRUE) {
     unset($form['actions']['cancel']);
   }

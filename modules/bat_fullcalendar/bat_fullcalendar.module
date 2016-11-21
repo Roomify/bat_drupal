@@ -652,7 +652,7 @@ function theme_bat_fullcalendar($vars) {
     $css_files = bat_fullcalendar_set_css_files($vars['css_files']);
   }
   else {
-    $css_files =  bat_fullcalendar_set_css_files();
+    $css_files = bat_fullcalendar_set_css_files();
   }
 
   // Attributes
@@ -692,7 +692,7 @@ function theme_bat_fullcalendar($vars) {
   $settings['batCalendar'][0]['id'] = $attributes['id'];
   drupal_add_js($settings, 'setting');
 
-  $render_array =  array(
+  $render_array = array(
     '#markup' => '<div' . drupal_attributes($attributes) . '></div>',
   );
 

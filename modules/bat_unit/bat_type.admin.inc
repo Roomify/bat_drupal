@@ -261,7 +261,7 @@ class BatTypeUIController extends EntityDefaultUIController {
     $item = menu_get_item();
     $bundles = bat_unit_get_type_bundles();
 
-    // If there is only one unit bundle go straight to that page
+    // If there is only one unit bundle go straight to that page.
     if (count($bundles) == 1) {
       $bundle = reset($bundles);
       drupal_goto($this->path . '/add/' . $bundle->type);
@@ -677,7 +677,7 @@ function bat_type_delete_form($form, &$form_state, $type) {
 }
 
 /**
- * Submit callback for type_delete_form
+ * Submit callback for type_delete_form.
  */
 function bat_type_delete_form_submit($form, &$form_state) {
   $type = $form_state['bat_type'];
@@ -696,7 +696,7 @@ function bat_type_add_page() {
 }
 
 /**
- * Page to add Units to a Types
+ * Page to add Units to a Types.
  */
 function bat_type_add_units_page() {
   $controller = entity_ui_controller('bat_type');

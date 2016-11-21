@@ -7,6 +7,7 @@
  *
  * @ingroup views_field_handlers
  */
+
 class bat_event_handler_date_field extends views_handler_field_date {
 
   /**

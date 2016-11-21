@@ -1999,12 +1999,14 @@ function bat_event_delete_states_by_type($type) {
  * @param $machine_name
  */
 function bat_event_get_event_type_tables($machine_name) {
-  return array('bat_event_' . $machine_name . '_day_state',
-               'bat_event_' . $machine_name . '_day_event',
-               'bat_event_' . $machine_name . '_hour_state',
-               'bat_event_' . $machine_name . '_hour_event',
-               'bat_event_' . $machine_name . '_minute_state',
-               'bat_event_' . $machine_name . '_minute_event');
+  return array(
+    'bat_event_' . $machine_name . '_day_state',
+    'bat_event_' . $machine_name . '_day_event',
+    'bat_event_' . $machine_name . '_hour_state',
+    'bat_event_' . $machine_name . '_hour_event',
+    'bat_event_' . $machine_name . '_minute_state',
+    'bat_event_' . $machine_name . '_minute_event',
+  );
 }
 
 /**
@@ -2141,19 +2143,19 @@ function bat_event_create_event_type_schema($machine_name) {
  */
 function bat_event_generate_day_schema_fields() {
   $fields = array(
-      'unit_id' => array(
+    'unit_id' => array(
       'description' => 'Identifier for a unit.',
       'type' => 'int',
       'unsigned' => TRUE,
       'not null' => TRUE,
     ),
-      'year' => array(
+    'year' => array(
       'description' => 'The calendar year for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
     ),
-      'month' => array(
+    'month' => array(
       'description' => 'The month for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,

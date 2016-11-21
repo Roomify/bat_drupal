@@ -2,8 +2,7 @@
 
 /**
  * @file
- * Manages events for Units and displaying dates on the jquery
- * FullCalendar plugin.
+ * Manages events for Units and displaying dates on the jquery FullCalendar plugin.
  */
 
 define('BAT_EVENT_CALENDAR_ADMIN_STYLE', 1);

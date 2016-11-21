@@ -158,7 +158,7 @@ function bat_booking_confirmation_form_submit($form, &$form_state) {
  * Loads a DateTime object from a string.
  *
  * @param string $start_date
- *   Expects to see a date in the form Y-m-d
+ *   Expects to see a date in the form Y-m-d.
  *
  * @return DateTime
  *   Object or null if invalid
@@ -180,7 +180,7 @@ function start_date_load($start_date) {
  * Loads a DateTime object from a string.
  *
  * @param string $end_date
- *   Expects to see a date in the form Y-m-d
+ *   Expects to see a date in the form Y-m-d.
  *
  * @return DateTime
  *   Object or null if invalid

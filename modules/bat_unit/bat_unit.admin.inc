@@ -125,6 +125,7 @@ class BatUnitUIController extends EntityDefaultUIController {
       '#content' => $items,
     );
   }
+
 }
 
 /**
