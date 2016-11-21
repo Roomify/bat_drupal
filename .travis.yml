@@ -49,6 +49,10 @@ before_script:
   - composer -n global require drush/drush:8.*
   # Install drush composer extension.
   - drush dl composer-8.x-1.x
+  # Install code sniffer.
+  - composer -n global require drupal/coder
+  # Register Drupal coding standards.
+  - phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
 
   # Install required packages for behat.
   - cd ./test/behat
@@ -80,6 +84,9 @@ before_script:
   - sleep 5
 
 script:
+  # Check coding standards.
+  - phpcs --standard=Drupal --report-width=74 --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
+
   - cd $TRAVIS_BUILD_DIR/bat/test/behat
   # behat.yml includes behat.local.yml so it must exist
   - touch behat.local.yml
