@@ -7,7 +7,7 @@
  */
 
 if (module_exists('rules')) {
-  include_once('bat_unit.rules.inc');
+  include_once 'bat_unit.rules.inc';
 }
 
 /**
@@ -1750,9 +1750,10 @@ function bat_type_bundle_new() {
  * @param $label
  * @param $description
  * @param int $weight
- * @param bool|FALSE $locked
- * @param bool|FALSE $calculation
+ * @param bool|false $locked
+ * @param bool|false $calculation
  * @param array $display
+ *
  * @throws \Exception
  * @throws \FieldException
  */

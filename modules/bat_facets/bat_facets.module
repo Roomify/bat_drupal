@@ -167,7 +167,7 @@ function bat_facets_search_api_query_alter($query) {
             !empty($params['bat_end_date'])) {
           $start_date = new DateTime($params['bat_start_date']);
           $end_date = new DateTime($params['bat_end_date']);
-          // Remove a minute because BAT considers as included
+          // Remove a minute because BAT considers as included.
           $end_date->sub(new DateInterval('PT1M'));
 
           $event_type = $settings->settings['event_type'];

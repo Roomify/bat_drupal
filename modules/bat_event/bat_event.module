@@ -11,7 +11,7 @@ use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
 
 if (module_exists('rules')) {
-  include_once('bat_event.rules.inc');
+  include_once 'bat_event.rules.inc';
 }
 
 /**
@@ -1373,7 +1373,7 @@ class BatEventController extends EntityAPIController {
    * @param $granularity
    * @param $event_state
    * @param $event_id
-   * @param bool|FALSE $remove - set to TRUE if the event is to be removed (event_id set to zero)
+   * @param bool|false $remove - set to TRUE if the event is to be removed (event_id set to zero)
    */
   public function batStoreSave(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE) {
     global $databases;
@@ -2246,7 +2246,7 @@ function bat_event_generate_minute_schema_fields() {
 
   for ($i = 0; $i <= 59; $i++) {
     // PHP has no clean way to get the minutes without leading zeros so setting table
-    // fields names to contain the leading zeros to save strangeness in code elsewhere
+    // fields names to contain the leading zeros to save strangeness in code elsewhere.
     if ($i <= 9) { $m='0' . $i; } else { $m = $i; }
 
     $fields['m' . $m] = array(

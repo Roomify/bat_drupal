@@ -85,7 +85,7 @@ before_script:
 
 script:
   # Check coding standards.
-  - phpcs --standard=Drupal --report-width=74 --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
+  - phpcs --standard=Drupal --report-width=74 --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml --ignore=$TRAVIS_BUILD_DIR/bat/sites/all/modules/bat/test $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
 
   - cd $TRAVIS_BUILD_DIR/bat/test/behat
   # behat.yml includes behat.local.yml so it must exist

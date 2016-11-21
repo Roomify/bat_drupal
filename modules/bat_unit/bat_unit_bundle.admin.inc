@@ -25,6 +25,7 @@ class BatUnitBundleUIController extends EntityDefaultUIController {
 
     return $items;
   }
+
 }
 
 /**

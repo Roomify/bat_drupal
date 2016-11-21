@@ -345,7 +345,7 @@ function bat_event_update_7103() {
   // Get old field info.
   $old_field = field_info_field($old_name);
 
-  // Create new field
+  // Create new field.
   $new_field = $old_field;
   $new_field['field_name'] = $new_name;
 
@@ -371,7 +371,7 @@ function bat_event_update_7103() {
         field_update_instance($new_instance);
       }
 
-      // Migrate old fields' data to the new ones
+      // Migrate old fields' data to the new ones.
       $field_data = db_select('field_data_' . $old_name, 'old')
         ->fields('old')
         ->condition('entity_type', $entity_type)
@@ -407,10 +407,10 @@ function bat_event_update_7103() {
           ->execute();
       }
 
-      // Delete old instance
+      // Delete old instance.
       field_delete_instance($old_instance);
 
-      // Purge fields
+      // Purge fields.
       field_purge_batch(1000);
     }
   }

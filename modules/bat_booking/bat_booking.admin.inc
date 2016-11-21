@@ -9,6 +9,7 @@
  * UI controller.
  */
 class BatBookingUIController extends EntityDefaultUIController {
+
   /**
    * Overrides hook_menu() defaults.
    */
@@ -193,7 +194,7 @@ function bat_booking_create_form_wrapper($type) {
 function bat_booking_edit_form($form, &$form_state, $booking) {
   // Add the field related form elements.
   $form_state['bat_booking'] = $booking;
-  field_attach_form('bat_booking', $booking, $form, $form_state, isset($booking->language)? $booking->language : NULL);
+  field_attach_form('bat_booking', $booking, $form, $form_state, isset($booking->language) ? $booking->language : NULL);
   $form['additional_settings'] = array(
     '#type' => 'vertical_tabs',
     '#weight' => 99,

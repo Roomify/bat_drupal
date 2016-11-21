@@ -22,6 +22,7 @@ function bat_event_rules_data_info() {
  * Defines a bat_event_state_reference input form for Rules.
  */
 class RulesDataUIEventStateReference extends RulesDataUI implements RulesDataDirectInputFormInterface {
+
   public static function getDefaultMode() {
     return 'input';
   }
@@ -52,4 +53,5 @@ class RulesDataUIEventStateReference extends RulesDataUI implements RulesDataDir
       ),
     );
   }
+
 }

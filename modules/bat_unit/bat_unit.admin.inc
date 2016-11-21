@@ -224,7 +224,7 @@ function bat_unit_edit_form($form, &$form_state, $unit) {
   );
   // Add the field related form elements.
   $form_state['bat_unit'] = $unit;
-  field_attach_form('bat_unit', $unit, $form, $form_state, isset($unit->language)? $unit->language : NULL);
+  field_attach_form('bat_unit', $unit, $form, $form_state, isset($unit->language) ? $unit->language : NULL);
   $form['additional_settings'] = array(
     '#type' => 'vertical_tabs',
     '#weight' => 99,
@@ -411,7 +411,7 @@ function bat_unit_delete_form($form, &$form_state, $unit) {
 }
 
 /**
- * Submit callback for unit_delete_form
+ * Submit callback for unit_delete_form.
  */
 function bat_unit_delete_form_submit($form, &$form_state) {
   $unit = $form_state['bat_unit'];

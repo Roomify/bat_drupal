@@ -367,7 +367,6 @@ function bat_fullcalendar_libraries_info() {
     'download url' => 'https://github.com/arshaw/fullcalendar/releases/download/v3.0.1/fullcalendar-3.0.1.zip',
     'version arguments' => array(
       'file' => 'fullcalendar.min.js',
-      // 3.0.0
       'pattern' => '/v(\d+\.\d+\.\d)/',
       'lines' => 3,
     ),
@@ -417,7 +416,6 @@ function bat_fullcalendar_libraries_info() {
     'download url' => 'https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.4.0/fullcalendar-scheduler-1.4.0.zip',
     'version arguments' => array(
       'file' => 'scheduler.min.js',
-      // 1.4.0
       'pattern' => '/(\d+\.\d+\.\d)/',
     ),
     'files' => array(
@@ -793,7 +791,7 @@ function bat_fullcalendar_modal_style($style = 'default') {
     ),
   );
 
-  // Allow other modules to change the modal style
+  // Allow other modules to change the modal style.
   drupal_alter('bat_fullcalendar_modal_style', $modal_style);
 
   // Add the ctool modal configuration to settings.

@@ -211,7 +211,9 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
       return $access;
     }
   }
-  else { // Non-view operations.
+  else {
+    // Non-view operations.
+
     // First grant access to the entity for the specified operation if no other
     // module denies it and at least one other module says to grant access.
     $access_results = module_invoke_all('bat_entity_access', $op, $entity, $account, $entity_type);
@@ -699,9 +701,9 @@ function bat_form_start_end_dates_validate($form, &$form_state) {
  * Checks the logical validity of date values.
  *
  * @param DateTime $start_date
- *   The start date
+ *   The start date.
  * @param DateTime $end_date
- *   The end date
+ *   The end date.
  *
  * @return array
  *   An array with error messages.

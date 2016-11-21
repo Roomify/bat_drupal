@@ -827,10 +827,10 @@ function bat_type_add_units_form_validate($form, &$form_state) {
 function bat_type_add_units_form_submit($form, &$form_state) {
   global $user;
 
-  // The Type this unit is associated too
+  // The Type this unit is associated too.
   $type_id = $form_state['values']['type_id'];
 
-  // The unit bundle this unit belongs to
+  // The unit bundle this unit belongs to.
   $unit_type = $form_state['values']['unit_type'];
 
   // Sanity check.
