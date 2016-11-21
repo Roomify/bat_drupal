@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * This field handler aggregates operations that can be done on a event
  * under a single field providing a more flexible way to present them in a view
  */
@@ -34,7 +35,7 @@ class bat_event_handler_event_operations_field extends views_handler_field {
         'attributes' => array(
           'class' => array('links',
             'inline',
-            'operations'
+            'operations',
           ),
         ),
       ));

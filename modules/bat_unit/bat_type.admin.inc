@@ -284,13 +284,13 @@ class BatTypeUIController extends EntityDefaultUIController {
 
   /**
    * Creates the markup for the add Bat Units pages when units are added through
-   * the Type configuration page
+   * the Type configuration page.
    */
   public function addUnitsPage() {
     $item = menu_get_item();
     $bundles = bat_unit_get_bundles();
 
-    // If there is only one unit bundle go straight to that page
+    // If there is only one unit bundle go straight to that page.
     if (count($bundles) == 1) {
       drupal_goto($item['href'] . '/' . array_shift($bundles)->type);
     }

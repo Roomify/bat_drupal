@@ -53,6 +53,8 @@ before_script:
   - composer -n global require drupal/coder
   # Register Drupal coding standards.
   - phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
+  # Don't display warnings.
+  - phpcs --config-set show_warnings 0
 
   # Install required packages for behat.
   - cd ./test/behat
@@ -85,7 +87,7 @@ before_script:
 
 script:
   # Check coding standards.
-  - phpcs --standard=Drupal --report-width=74 --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml --ignore=bat/sites/all/modules/bat/test $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
+  - phpcs --standard=Drupal --report-width=74 --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml --ignore=sites/all/modules/bat/test $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
 
   - cd $TRAVIS_BUILD_DIR/bat/test/behat
   # behat.yml includes behat.local.yml so it must exist

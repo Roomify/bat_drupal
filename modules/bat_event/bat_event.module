@@ -787,7 +787,7 @@ function bat_event_query_bat_event_access_alter(QueryAlterableInterface $query) 
  * Helper function to easily get event types in an array for use in forms, etc.
  *
  * @return array
- *  An array of event types keyed by type id and labels
+ *   An array of event types keyed by type id and labels
  */
 function bat_event_types_ids() {
   $event_types = array();
@@ -1140,7 +1140,7 @@ class BatEvent extends Entity {
   }
 
   /**
-   * Returns the formatter that can format the event value
+   * Returns the formatter that can format the event value.
    *
    * @return string|false
    */
@@ -1157,7 +1157,7 @@ class BatEvent extends Entity {
   }
 
   /**
-   * Determines which field holds the event value
+   * Determines which field holds the event value.
    *
    * @return string|false
    */
@@ -1372,7 +1372,8 @@ class BatEventController extends EntityAPIController {
   /**
    * Handles saving to the BatStore
    *
-   * @param \Roomify\Bat\Unit\Unit $unit - The unit to save
+   * @param \Roomify\Bat\Unit\Unit $unit
+   *   The unit to save
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $event_type
@@ -2365,7 +2366,7 @@ function bat_event_views_pre_render(&$view) {
  * @return array|bool
  */
 function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE, $use_costraints = TRUE) {
-  // Instantiate a BAT Calendar
+  // Instantiate a BAT Calendar.
   $calendar = bat_event_get_calendar($type_id, $event_type);
 
   return bat_event_get_matching_units_from_calendar($calendar, $start_date, $end_date, $valid_name_states, $intersect, TRUE, $use_costraints);

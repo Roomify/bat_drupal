@@ -382,7 +382,7 @@ function bat_event_edit_form($form, &$form_state, $event) {
   }
 
   // Depending on whether the form is in a popup or a normal page we need to change
-  // the behavior of the cancel button
+  // the behavior of the cancel button.
   if (isset($form_state['ajax']) && $form_state['ajax'] == TRUE) {
     unset($form['actions']['cancel']);
   }
@@ -484,7 +484,7 @@ function bat_event_edit_form_submit(&$form, &$form_state) {
     $event = entity_ui_controller('bat_event')->entityFormSubmitBuildEntity($form, $form_state);
   }
 
-  // Subtract one minute from the end date since BAT considers the last minute of an event included
+  // Subtract one minute from the end date since BAT considers the last minute of an event included.
   $end_date = new DateTime($event->end_date);
   $end_date->sub(new DateInterval('PT1M'));
   $event->end_date = $end_date->format('Y-m-d H:i');

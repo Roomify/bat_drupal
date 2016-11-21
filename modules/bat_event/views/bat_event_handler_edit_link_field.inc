@@ -22,7 +22,7 @@ class bat_event_handler_edit_link_field extends bat_event_handler_link_field {
   public function render($values) {
     $type = $values->{$this->aliases['type']};
 
-    // Creating a dummy event to check access against
+    // Creating a dummy event to check access against.
     $dummy_event = (object) array('type' => $type, 'event_id' => NULL);
     if (!bat_event_access('update', $dummy_event)) {
       return;

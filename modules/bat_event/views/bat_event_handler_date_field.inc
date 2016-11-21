@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * A extension of the views date handler to allow for some data
  * transformations
  *
@@ -11,14 +12,14 @@ class bat_event_handler_date_field extends views_handler_field_date {
   /**
    * {@inheritdoc}
    */
-  function construct() {
+  public function construct() {
     parent::construct();
   }
 
   /**
    * {@inheritdoc}
    */
-  function render($values) {
+  public function render($values) {
     $value = $this->get_value($values);
     $date = new DateTime($value);
 

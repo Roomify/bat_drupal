@@ -39,7 +39,7 @@ function bat_unit_views_data_alter(&$data) {
     ),
   );
   // The content of this field is decided based on the menu structure
-  // under bat/unit/%unit_id/op
+  // under bat/unit/%unit_id/op.
   $data['bat_units']['operations'] = array(
     'field' => array(
       'title' => t('Operations links'),
@@ -123,7 +123,7 @@ function bat_unit_views_data_alter(&$data) {
   );
 
   // The content of this field is decided based on the menu structure
-  // under bat/config/type/%type_id/op
+  // under bat/config/type/%type_id/op.
   $data['bat_types']['operations'] = array(
     'field' => array(
       'title' => t('Operations links'),
@@ -150,7 +150,7 @@ function bat_unit_views_data_alter(&$data) {
     'bat_types' => array(
       'left_field' => 'revision_id',
       'field' => 'revision_id',
-    )
+    ),
   );
 
   $data['bat_types_revision']['table']['default_relationship'] = array(
