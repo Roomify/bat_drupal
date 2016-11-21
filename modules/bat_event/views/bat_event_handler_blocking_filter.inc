@@ -5,13 +5,14 @@
  */
 
 class bat_event_handler_blocking_filter extends views_handler_filter_boolean_operator {
-  function construct() {
+
+  public function construct() {
     parent::construct();
 
     $this->value_value = t('State');
   }
 
-  function get_value_options() {
+  public function get_value_options() {
     $options = array(
       'blocking' => t('Blocking'),
       'not_blocking' => t('Not blocking'),
@@ -20,7 +21,7 @@ class bat_event_handler_blocking_filter extends views_handler_filter_boolean_ope
     $this->value_options = $options;
   }
 
-  function query() {
+  public function query() {
     $this->ensure_my_table();
 
     if ($this->value == 'not_blocking' || $this->value == 'blocking') {
@@ -51,7 +52,7 @@ class bat_event_handler_blocking_filter extends views_handler_filter_boolean_ope
     }
   }
 
-  function admin_summary() {
+  public function admin_summary() {
     if ($this->is_a_group()) {
       return t('grouped');
     }
@@ -64,4 +65,5 @@ class bat_event_handler_blocking_filter extends views_handler_filter_boolean_ope
 
     return $this->value_options[$this->value];
   }
+
 }

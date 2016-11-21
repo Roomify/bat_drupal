@@ -6,18 +6,18 @@
 
 class bat_booking_handler_night_field extends views_handler_field {
 
-  function construct() {
+  public function construct() {
     parent::construct();
 
     $this->additional_fields['booking_id'] = 'booking_id';
   }
 
-  function query() {
+  public function query() {
     $this->ensure_my_table();
     $this->add_additional_fields();
   }
 
-  function render($values) {
+  public function render($values) {
     $booking = bat_booking_load($values->{$this->aliases['booking_id']});
 
     $start_date = new DateTime($booking->booking_start_date[LANGUAGE_NONE][0]['value']);

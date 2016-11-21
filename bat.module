@@ -6,7 +6,6 @@
  * by all BAT modules
  */
 
-
 /**
  * Implements hook_permission().
  */

@@ -120,7 +120,7 @@ function bat_options_data_property_info($name = NULL) {
  */
 function bat_options_field_is_empty($item, $field) {
   return empty($item['name']) ||
-         empty($item['quantity']) || !(is_numeric($item['quantity']) && is_integer((int) $item['quantity'])) ||
+         empty($item['quantity']) || !(is_numeric($item['quantity']) && is_int((int) $item['quantity'])) ||
          ((empty($item['value']) || !is_numeric($item['value'])) && $item['operation'] != 'no_charge') ||
          empty($item['operation']) || !in_array($item['operation'], array_keys(bat_options_price_options()));
 }

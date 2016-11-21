@@ -7,14 +7,15 @@
  */
 
 class bat_event_handler_link_field extends views_handler_field {
-  function construct() {
+
+  public function construct() {
     parent::construct();
 
     $this->additional_fields['event_id'] = 'event_id';
     $this->additional_fields['type'] = 'type';
   }
 
-  function option_definition() {
+  public function option_definition() {
     $options = parent::option_definition();
 
     $options['text'] = array('default' => '', 'translatable' => TRUE);
@@ -22,7 +23,7 @@ class bat_event_handler_link_field extends views_handler_field {
     return $options;
   }
 
-  function options_form(&$form, &$form_state) {
+  public function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
 
     $form['text'] = array(
@@ -32,15 +33,16 @@ class bat_event_handler_link_field extends views_handler_field {
     );
   }
 
-  function query() {
+  public function query() {
     $this->ensure_my_table();
     $this->add_additional_fields();
   }
 
-  function render($values) {
+  public function render($values) {
     $text = !empty($this->options['text']) ? $this->options['text'] : t('view');
     $event_id = $values->{$this->aliases['event_id']};
 
     return l($text, 'event/' . $event_id);
   }
+
 }

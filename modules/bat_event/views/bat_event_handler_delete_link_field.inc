@@ -7,6 +7,7 @@
  */
 
 class bat_event_handler_delete_link_field extends bat_event_handler_link_field {
+
   function construct() {
     parent::construct();
     $this->additional_fields['type'] = 'type';
@@ -26,4 +27,5 @@ class bat_event_handler_delete_link_field extends bat_event_handler_link_field {
 
     return l($text, 'admin/bat/events/event/' . $event_id . '/delete');
   }
+
 }

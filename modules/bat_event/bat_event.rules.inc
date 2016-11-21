@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @file
+ */
 
 /**
  * Implements hook_rules_data_info().

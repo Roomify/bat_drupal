@@ -5,15 +5,16 @@
  */
 
 class bat_event_handler_value_field extends views_handler_field {
-  function construct() {
+
+  public function construct() {
     parent::construct();
   }
 
-  function query() {
+  public function query() {
     $this->field_alias = 'event_id';
   }
 
-  function render($values) {
+  public function render($values) {
     $event = bat_event_load($this->get_value($values));
     $event_type = bat_event_type_load($event->type);
 
@@ -31,4 +32,5 @@ class bat_event_handler_value_field extends views_handler_field {
       return $field_view_value['#markup'];
     }
   }
+
 }

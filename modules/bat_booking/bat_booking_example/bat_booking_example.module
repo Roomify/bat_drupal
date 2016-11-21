@@ -13,7 +13,7 @@ function bat_booking_example_menu() {
 
   $items['booking/%start_date/%end_date/%'] = array(
     'title' => 'Booking',
-    'page callback' =>  'bat_booking_confirmation_page',
+    'page callback' => 'bat_booking_confirmation_page',
     'page arguments' => array(1, 2, 3),
     'access arguments' => array('book units'),
     'type' => MENU_CALLBACK,

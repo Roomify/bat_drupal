@@ -6,7 +6,6 @@
  * Field handlers for BAT units.
  */
 
-
 /**
  * Implements hook_views_data_alter().
  */
@@ -134,7 +133,6 @@ function bat_unit_views_data_alter(&$data) {
   );
 
   $data['views_entity_bat_unit']['megarow_links']['field']['handler'] = 'bat_unit_handler_field_megarow_links';
-
 
   $data['bat_types_revision']['table']['entity type'] = 'bat_type';
   $data['bat_types_revision']['table']['group']  = t('Type revision');

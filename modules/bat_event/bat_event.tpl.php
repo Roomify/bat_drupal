@@ -37,8 +37,8 @@
 
   <div class="content"<?php print $content_attributes; ?>>
     <?php
-      unset ($content['state']);
-      unset ($content['type']);
+      unset($content['state']);
+      unset($content['type']);
       print render($content);
     ?>
   </div>

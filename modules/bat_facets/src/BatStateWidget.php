@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 class BatStateWidget extends FacetapiWidget {
 
   /**

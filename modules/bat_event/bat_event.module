@@ -198,7 +198,7 @@ function bat_event_type_add_target_entity_field($entity) {
   $entity_info = entity_get_info($entity->target_entity_type);
   $field_name = 'event_' . $entity->target_entity_type . '_reference';
 
-  // field for this target entity type.
+  // Field for this target entity type.
   if (field_read_field($field_name) === FALSE) {
     $field = array(
       'field_name' => $field_name,
@@ -214,7 +214,7 @@ function bat_event_type_add_target_entity_field($entity) {
 
   field_cache_clear();
 
-  // field instance for this target entity type.
+  // Field instance for this target entity type.
   if (field_read_instance('bat_event', $field_name, $entity->type) === FALSE) {
     $instance = array(
       'field_name' => $field_name,
@@ -1139,7 +1139,7 @@ class BatEvent extends Entity {
   /**
    * Returns the formatter that can format the event value
    *
-   * @return string|FALSE
+   * @return string|false
    */
   public function getEventValueFormatter() {
     if ($field = $this->getEventValueDefaultField()) {
@@ -1156,7 +1156,7 @@ class BatEvent extends Entity {
   /**
    * Determines which field holds the event value
    *
-   * @return string|FALSE
+   * @return string|false
    */
   public function getEventValueField() {
     $type_bundle = bat_event_type_load($this->type);
@@ -1375,7 +1375,7 @@ class BatEventController extends EntityAPIController {
    * @param $event_id
    * @param bool|FALSE $remove - set to TRUE if the event is to be removed (event_id set to zero)
    */
-  public function batStoreSave(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE ) {
+  public function batStoreSave(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE) {
     global $databases;
 
     $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';

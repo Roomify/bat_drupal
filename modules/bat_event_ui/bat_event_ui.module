@@ -9,8 +9,6 @@
 define('BAT_EVENT_CALENDAR_ADMIN_STYLE', 1);
 define('BAT_EVENT_CALENDAR_GENERIC_STYLE', 2);
 
-
-
 /**
  * Implements hook_menu().
  */
@@ -28,7 +26,6 @@ function bat_event_ui_menu() {
 
   return $items;
 }
-
 
 /**
  * Callback for admin/bat/calendar/
@@ -61,7 +58,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
   // Set the page title.
   drupal_set_title(t('View Event Data'));
 
-  // Pick what modal style to use
+  // Pick what modal style to use.
   $calendar_settings['modal_style'] = 'default';
 
   if ($type = bat_event_type_load($event_type)) {
@@ -77,7 +74,7 @@ function bat_event_ui_calendar_page($unit_type, $event_type) {
       array(
         'unitType' => $unit_type,
         'eventType' => $event_type,
-        'eventGranularity' =>  $event_granularity,
+        'eventGranularity' => $event_granularity,
       ),
     ),
   );

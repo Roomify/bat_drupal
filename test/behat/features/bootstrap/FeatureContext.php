@@ -18,7 +18,6 @@ use Behat\Behat\Context\CustomSnippetAcceptingContext;
 
 use Drupal\DrupalDriverManager;
 
-
 /**
  * Features context.
  */

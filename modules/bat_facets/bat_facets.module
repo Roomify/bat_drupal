@@ -81,7 +81,6 @@ function bat_facets_availability($form, &$form_state, $elements) {
     '#type' => 'date_popup',
     '#description' => '',
     '#date_format' => variable_get('bat_date_format', 'Y-m-d H:i'),
-    //'#title' => t('Arrival date'),
     '#default_value' => isset($arrival) ? $arrival : '',
     '#datepicker_options' => array_merge($datepicker_options, array('endDateSelector' => $end_date_selector)),
     '#required' => TRUE,
@@ -91,7 +90,6 @@ function bat_facets_availability($form, &$form_state, $elements) {
     '#type' => 'date_popup',
     '#description' => '',
     '#date_format' => variable_get('bat_date_format', 'Y-m-d H:i'),
-    //'#title' => t('Departure date'),
     '#default_value' => isset($departure) ? $departure : '',
     '#datepicker_options' => array_merge($datepicker_options, array('startDateSelector' => $start_date_selector)),
     '#required' => TRUE,
@@ -171,7 +169,7 @@ function bat_facets_search_api_query_alter($query) {
           $end_date = new DateTime($params['bat_end_date']);
           // Remove a minute because BAT considers as included
           $end_date->sub(new DateInterval('PT1M'));
-          
+
           $event_type = $settings->settings['event_type'];
 
           $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);

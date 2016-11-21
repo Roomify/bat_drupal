@@ -7,7 +7,6 @@
  * to easily modify it.
  */
 
-
 /**
  * Implements hook_permission().
  */
@@ -485,15 +484,19 @@ function bat_fullcalendar_configure($user_settings) {
       case 'gpl':
         $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
         break;
+
       case 'non-commercial':
         $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
         break;
+
       case 'commercial':
         $schedulerlicensekey = variable_get('bat_fullcalendar_scheduler_commercial_key', '');
         break;
+
       case 'none':
         $schedulerlicensekey = '';
         break;
+
       default:
         $schedulerlicensekey = '';
         break;
@@ -585,6 +588,7 @@ function bat_fullcalendar_configure($user_settings) {
  * Sets up JS files for fullcalendar and calls an alter to allow other modules to change them
  *
  * @param array $user_js_files
+ *
  * @return array
  */
 function bat_fullcalendar_set_js_files($user_js_files = array()) {
@@ -608,6 +612,7 @@ function bat_fullcalendar_set_js_files($user_js_files = array()) {
  * Sets up CSS files for fullcalendar and calls an alter to allow other modules to change them
  *
  * @param array $user_css_files
+ *
  * @return array
  */
 function bat_fullcalendar_set_css_files($user_css_files = array()) {
@@ -790,7 +795,6 @@ function bat_fullcalendar_modal_style($style = 'default') {
 
   // Allow other modules to change the modal style
   drupal_alter('bat_fullcalendar_modal_style', $modal_style);
-
 
   // Add the ctool modal configuration to settings.
   drupal_add_js($modal_style, 'setting');

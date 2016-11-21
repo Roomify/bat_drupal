@@ -9,6 +9,7 @@
  * UI controller.
  */
 class BatBookingTypeUIController extends EntityDefaultUIController {
+
   /**
    * Overrides hook_menu() defaults.
    */
@@ -22,6 +23,7 @@ class BatBookingTypeUIController extends EntityDefaultUIController {
 
     return $items;
   }
+
 }
 
 /**

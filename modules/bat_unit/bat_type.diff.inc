@@ -104,7 +104,7 @@ function bat_type_compare_revisions($type, $old_revision_id, $new_revision_id) {
  * @param int $vid
  *   Version ID to look for.
  *
- * @return boolean|integer
+ * @return bool|int
  *   Returns FALSE if $vid is the last entry.
  */
 function bat_type_diff_get_next_vid($type_revisions, $vid) {
@@ -126,7 +126,7 @@ function bat_type_diff_get_next_vid($type_revisions, $vid) {
  * @param integer $vid
  *   Version ID to look for.
  *
- * @return boolean|integer
+ * @return bool|int
  *   Returns FALSE if $vid is the first entry.
  */
 function bat_type_diff_get_previous_vid($type_revisions, $vid) {
@@ -147,7 +147,7 @@ function bat_type_diff_get_previous_vid($type_revisions, $vid) {
  *   BatType for comparison which will be displayed on the left side.
  * @param object $new_type
  *   BatType for comparison which will be displayed on the right side.
- * @param boolean $state
+ * @param bool $state
  *   The state to render for the diff.
  */
 function bat_type_diff_body_rows($old_type, $new_type, $state = 'raw') {

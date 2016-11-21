@@ -8,19 +8,19 @@
 
 class bat_type_handler_type_revision_operations_field extends views_handler_field {
 
-  function construct() {
+  public function construct() {
     parent::construct();
 
     $this->additional_fields['type_id'] = 'type_id';
     $this->additional_fields['revision_id'] = 'revision_id';
   }
 
-  function query() {
+  public function query() {
     $this->ensure_my_table();
     $this->add_additional_fields();
   }
 
-  function render($values) {
+  public function render($values) {
     $type_id = $this->get_value($values, 'type_id');
     $revision_id = $this->get_value($values, 'revision_id');
 

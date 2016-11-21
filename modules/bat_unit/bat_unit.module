@@ -512,8 +512,6 @@ function bat_unit_entity_delete($entity, $type) {
   }
 }
 
-
-
 /**
  * @section Bat Hooks
  *
@@ -586,7 +584,7 @@ function bat_type_get_number_of_revisions_newer_than($revision_id, $type_id) {
  * @param object $account
  *   The user to check for. Leave it to NULL to check for the global user.
  *
- * @return boolean
+ * @return bool
  *   Whether access is allowed or not.
  */
 function bat_unit_access($op, $unit = NULL, $account = NULL) {
@@ -698,7 +696,7 @@ function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
  *
  * @return array
  *   An array of unit bundles keyed by bundle name and labels
-*/
+ */
 function bat_unit_bundles_ids() {
   $unit_bundles = array();
 
@@ -715,7 +713,7 @@ function bat_unit_bundles_ids() {
  *
  * @return array
  *   An array of unit types keyed by type id and labels
-*/
+ */
 function bat_unit_types_ids() {
   $unit_types = array();
 
@@ -1162,7 +1160,6 @@ class BatUnitBundleController extends EntityAPIControllerExportable {
 
 }
 
-
 /**
  * @section Bat Type
  *
@@ -1183,7 +1180,7 @@ class BatUnitBundleController extends EntityAPIControllerExportable {
  * @param object $account
  *   The user to check for. Leave it to NULL to check for the global user.
  *
- * @return boolean
+ * @return bool
  *   Whether access is allowed or not.
  */
 function bat_type_access_revision($op, $type, $revision_id, $account = NULL) {
@@ -1226,7 +1223,7 @@ function bat_type_access_revision($op, $type, $revision_id, $account = NULL) {
  * @param object $account
  *   The user to check for. Leave it to NULL to check for the global user.
  *
- * @return boolean
+ * @return bool
  *   Whether access is allowed or not.
  */
 function bat_type_access($op, $type = NULL, $account = NULL) {
@@ -1352,7 +1349,7 @@ function bat_unit_get_types($bundle_name = NULL) {
  *
  * @return array
  *   An array of type bundles keyed by bundle name and labels
-*/
+ */
 function bat_type_bundles_ids() {
   $type_bundles = array();
   $bundles = bat_unit_get_type_bundles();
@@ -1823,7 +1820,6 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
   }
 }
 
-
 /**
  * The class used for Bat Type entities
  */
@@ -1877,7 +1873,7 @@ class BatType extends Entity {
   /**
    * @param string $event_type
    *
-   * @return string|FALSE
+   * @return string|false
    */
   public function getEventValueFormatter($event_type) {
     if ($field = $this->getEventValueDefaultField($event_type)) {
@@ -1894,7 +1890,7 @@ class BatType extends Entity {
   /**
    * @param string $event_type
    *
-   * @return string|FALSE
+   * @return string|false
    */
   public function getEventValueDefaultField($event_type) {
     $type_bundle = bat_type_bundle_load($this->type);
@@ -2053,7 +2049,6 @@ class BatTypeController extends EntityAPIController {
   }
 
 }
-
 
 /**
  * The Inline Entity Form Controller for RoomifyType entities.
