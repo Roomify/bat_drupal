@@ -8,11 +8,17 @@
 
 class bat_event_handler_event_type_field extends views_handler_field {
 
-  function construct() {
+  /**
+   * {@inheritdoc}
+   */
+  public function construct() {
     parent::construct();
   }
 
-  function render($values) {
+  /**
+   * {@inheritdoc}
+   */
+  public function render($values) {
     $event_type = bat_event_type_load($this->get_value($values));
     return $event_type->label;
   }

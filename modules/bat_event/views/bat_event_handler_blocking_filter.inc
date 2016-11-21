@@ -6,12 +6,18 @@
 
 class bat_event_handler_blocking_filter extends views_handler_filter_boolean_operator {
 
+  /**
+   * {@inheritdoc}
+   */
   public function construct() {
     parent::construct();
 
     $this->value_value = t('State');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function get_value_options() {
     $options = array(
       'blocking' => t('Blocking'),
@@ -21,6 +27,9 @@ class bat_event_handler_blocking_filter extends views_handler_filter_boolean_ope
     $this->value_options = $options;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function query() {
     $this->ensure_my_table();
 
@@ -52,6 +61,9 @@ class bat_event_handler_blocking_filter extends views_handler_filter_boolean_ope
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function admin_summary() {
     if ($this->is_a_group()) {
       return t('grouped');

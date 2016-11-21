@@ -8,17 +8,26 @@
 
 class bat_type_handler_type_operations_field extends views_handler_field {
 
+  /**
+   * {@inheritdoc}
+   */
   public function construct() {
     parent::construct();
 
     $this->additional_fields['type_id'] = 'type_id';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function query() {
     $this->ensure_my_table();
     $this->add_additional_fields();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function render($values) {
     $links = menu_contextual_links('bat_unit', 'admin/bat/config/types/manage', array($this->get_value($values, 'type_id')));
 

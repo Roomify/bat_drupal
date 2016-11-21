@@ -8,12 +8,18 @@
 
 class bat_unit_handler_edit_link_field extends bat_unit_handler_link_field {
 
-  function construct() {
+  /**
+   * {@inheritdoc}
+   */
+  public function construct() {
     parent::construct();
     $this->additional_fields['type'] = 'type';
   }
 
-  function render($values) {
+  /**
+   * {@inheritdoc}
+   */
+  public function render($values) {
     $type = $values->{$this->aliases['type']};
 
     // Creating a dummy unit to check access against.

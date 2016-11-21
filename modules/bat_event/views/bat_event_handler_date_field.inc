@@ -8,10 +8,16 @@
  */
 class bat_event_handler_date_field extends views_handler_field_date {
 
+  /**
+   * {@inheritdoc}
+   */
   function construct() {
     parent::construct();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   function render($values) {
     $value = $this->get_value($values);
     $date = new DateTime($value);

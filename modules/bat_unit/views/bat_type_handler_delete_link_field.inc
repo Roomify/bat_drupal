@@ -8,12 +8,18 @@
 
 class bat_type_handler_delete_link_field extends bat_type_handler_link_field {
 
-  function construct() {
+  /**
+   * {@inheritdoc}
+   */
+  public function construct() {
     parent::construct();
     $this->additional_fields['type'] = 'type';
   }
 
-  function render($values) {
+  /**
+   * {@inheritdoc}
+   */
+  public function render($values) {
     $type = $values->{$this->aliases['type']};
 
     // Creating a dummy type to check access against.

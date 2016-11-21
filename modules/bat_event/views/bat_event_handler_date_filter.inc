@@ -7,7 +7,10 @@
 
 class bat_event_handler_date_filter extends views_handler_filter_date {
 
-  function op_simple($field) {
+  /**
+   * {@inheritdoc}
+   */
+  public function op_simple($field) {
     $query_substitutions = views_views_query_substitutions($this->view);
 
     $value = date('Y-m-d', intval(strtotime($this->value['value'], $query_substitutions['***CURRENT_TIME***'])));
@@ -15,7 +18,10 @@ class bat_event_handler_date_filter extends views_handler_filter_date {
     $this->query->add_where_expression($this->options['group'], "$field $this->operator '$value'");
   }
 
-  function op_between($field) {
+  /**
+   * {@inheritdoc}
+   */
+  public function op_between($field) {
     // Use the substitutions to ensure a consistent timestamp.
     $query_substitutions = views_views_query_substitutions($this->view);
     $a = date('Y-m-d', intval(strtotime($this->value['min'], $query_substitutions['***CURRENT_TIME***'])));

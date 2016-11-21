@@ -23,10 +23,16 @@ function bat_event_rules_data_info() {
  */
 class RulesDataUIEventStateReference extends RulesDataUI implements RulesDataDirectInputFormInterface {
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getDefaultMode() {
     return 'input';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
     $settings += array($name => isset($info['default value']) ? $info['default value'] : array('state' => ''));
     $value = $settings[$name];
@@ -46,6 +52,9 @@ class RulesDataUIEventStateReference extends RulesDataUI implements RulesDataDir
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function render($value) {
     return array(
       'content' => array(

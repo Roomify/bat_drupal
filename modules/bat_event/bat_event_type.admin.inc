@@ -26,6 +26,9 @@ class BatEventTypeUIController extends EntityDefaultUIController {
     return $items;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function overviewTableRow($conditions, $id, $entity, $additional_cols = array()) {
     $row = parent::overviewTableRow($conditions, $id, $entity, $additional_cols);
     $row[] = l(t('manage states'), $this->path . '/manage/' . $id . '/states');
@@ -33,6 +36,9 @@ class BatEventTypeUIController extends EntityDefaultUIController {
     return $row;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function operationCount() {
     return parent::operationCount() + 1;
   }

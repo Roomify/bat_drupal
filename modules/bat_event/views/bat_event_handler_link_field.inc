@@ -8,6 +8,9 @@
 
 class bat_event_handler_link_field extends views_handler_field {
 
+  /**
+   * {@inheritdoc}
+   */
   public function construct() {
     parent::construct();
 
@@ -15,6 +18,9 @@ class bat_event_handler_link_field extends views_handler_field {
     $this->additional_fields['type'] = 'type';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function option_definition() {
     $options = parent::option_definition();
 
@@ -23,6 +29,9 @@ class bat_event_handler_link_field extends views_handler_field {
     return $options;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
 
@@ -33,11 +42,17 @@ class bat_event_handler_link_field extends views_handler_field {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function query() {
     $this->ensure_my_table();
     $this->add_additional_fields();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function render($values) {
     $text = !empty($this->options['text']) ? $this->options['text'] : t('view');
     $event_id = $values->{$this->aliases['event_id']};

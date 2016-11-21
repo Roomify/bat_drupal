@@ -665,7 +665,7 @@ function bat_event_states_edit_event_form($form, &$form_state, $event_id) {
 }
 
 /**
- * Form submit for editing of a single event state
+ * Form submit for editing of a single event state.
  */
 function bat_event_states_edit_event_form_submit($form, &$form_state) {
   db_update('bat_event_state')
@@ -682,7 +682,7 @@ function bat_event_states_edit_event_form_submit($form, &$form_state) {
 }
 
 /**
- * Handle the deletion of a single event state
+ * Handle the deletion of a single event state.
  */
 function bat_event_states_delete_event_form($form, &$form_state, $event_id) {
   $state_event = bat_event_load_state($event_id);
@@ -788,7 +788,7 @@ function bat_event_query_bat_event_access_alter(QueryAlterableInterface $query) 
  *
  * @return array
  *  An array of event types keyed by type id and labels
-*/
+ */
 function bat_event_types_ids() {
   $event_types = array();
 
@@ -1106,6 +1106,9 @@ class BatEvent extends Entity {
     return '';
   }
 
+  /**
+   *
+   */
   protected function defaultUri() {
     return array('path' => 'event/' . $this->event_id);
   }
@@ -1182,6 +1185,9 @@ class BatEventType extends Entity {
   public $type;
   public $label;
 
+  /**
+   * {@inheritdoc}
+   */
   public function __construct($values = array()) {
     parent::__construct($values, 'bat_event_type');
   }
@@ -1399,6 +1405,9 @@ class BatEventController extends EntityAPIController {
     $event_calendar->addEvents(array($event_id_event), $granularity);
   }
 
+  /**
+   * @param $ids
+   */
   public function delete($ids) {
     foreach ($ids as $id) {
       $event = bat_event_load($id);
@@ -1408,6 +1417,9 @@ class BatEventController extends EntityAPIController {
     parent::delete($ids);
   }
 
+  /**
+   * @param $event
+   */
   public function deleteEvent($event) {
     $event_type = bat_event_type_load($event->type);
 
@@ -2247,7 +2259,12 @@ function bat_event_generate_minute_schema_fields() {
   for ($i = 0; $i <= 59; $i++) {
     // PHP has no clean way to get the minutes without leading zeros so setting table
     // fields names to contain the leading zeros to save strangeness in code elsewhere.
-    if ($i <= 9) { $m='0' . $i; } else { $m = $i; }
+    if ($i <= 9) {
+      $m = '0' . $i;
+    }
+    else {
+      $m = $i;
+    }
 
     $fields['m' . $m] = array(
       'description' => 'M' . $m,

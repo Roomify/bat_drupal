@@ -26,7 +26,6 @@ class BatEventUIController extends EntityDefaultUIController {
    * parent class hook_menu() is optimized for entity type administration.
    */
   public function hook_menu() {
-
     $items = array();
     $id_count = count(explode('/', $this->path));
     $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%' . $this->entityType;

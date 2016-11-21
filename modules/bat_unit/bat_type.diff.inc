@@ -123,7 +123,7 @@ function bat_type_diff_get_next_vid($type_revisions, $vid) {
  *
  * @param array $type_revisions
  *   Array of type revision IDs in descending order.
- * @param integer $vid
+ * @param int $vid
  *   Version ID to look for.
  *
  * @return bool|int
