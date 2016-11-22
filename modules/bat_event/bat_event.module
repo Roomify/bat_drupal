@@ -288,7 +288,7 @@ function bat_event_get_states($event_type = NULL) {
 
   if (empty($event_states)) {
     $query = db_select('bat_event_state', 'n')
-              ->fields('n', array());
+      ->fields('n', array());
     $states = $query->execute()->fetchAll();
 
     foreach ($states as $event_state) {
@@ -367,11 +367,11 @@ function bat_event_load_state_by_machine_name($state_machine_name) {
  */
 function bat_event_states_get_default($event_type) {
   $state_id = db_select('bat_event_state', 'n')
-                ->fields('n', array('id'))
-                ->condition('event_type', $event_type)
-                ->condition('default_state', 1)
-                ->execute()
-                ->fetchField();
+    ->fields('n', array('id'))
+    ->condition('event_type', $event_type)
+    ->condition('default_state', 1)
+    ->execute()
+    ->fetchField();
 
   return bat_event_load_state($state_id);
 }
@@ -513,8 +513,8 @@ function bat_event_states_form($form, &$form_state, $event_type) {
 }
 
 /**
- * Sets the default value for the event
- * @TODO - this may no longer be required
+ * Sets the default value for the event.
+ * @TODO - this may no longer be required.
  */
 function bat_event_states_form_set_default($form, &$form_state) {
   $state = $form_state['values']['states'];
@@ -535,7 +535,7 @@ function bat_event_states_form_set_default($form, &$form_state) {
 }
 
 /**
- * Form submit for event states management
+ * Form submit for event states management.
  */
 function bat_event_states_form_submit($form, &$form_state) {
   $event_type = $form_state['values']['event_type'];
@@ -875,7 +875,7 @@ function bat_event_load_multiple($event_ids = array(), $conditions = array(), $r
  * Deletes a event.
  *
  * @param BatEvent $event
- *   The BatEvent object that represents the event to delete
+ *   The BatEvent object that represents the event to delete.
  */
 function bat_event_delete(BatEvent $event) {
   bat_event_delete_multiple(array($event->event_id));
@@ -954,7 +954,7 @@ function bat_event_ids($conditions = array()) {
   $query = new EntityFieldQuery();
 
   $result = $query->entityCondition('entity_type', 'bat_event')
-                    ->execute();
+    ->execute();
 
   if (count($result) > 0) {
     $entities = bat_event_load_multiple(array_keys($result['bat_event']), $conditions);
@@ -1121,7 +1121,7 @@ class BatEvent extends Entity {
   }
 
   /**
-   * Returns the value stored for this event in a way that BAT can work with it
+   * Returns the value stored for this event in a way that BAT can work with it.
    * @return mixed
    */
   public function getEventValue() {
@@ -1377,7 +1377,7 @@ class BatEventController extends EntityAPIController {
   }
 
   /**
-   * Handles saving to the BatStore
+   * Handles saving to the BatStore.
    *
    * @param \Roomify\Bat\Unit\Unit $unit
    *   The unit to save.
@@ -1387,7 +1387,8 @@ class BatEventController extends EntityAPIController {
    * @param $granularity
    * @param $event_state
    * @param $event_id
-   * @param bool|false $remove - set to TRUE if the event is to be removed (event_id set to zero)
+   * @param bool|false $remove
+   *   Set to TRUE if the event is to be removed (event_id set to zero).
    */
   public function batStoreSave(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE) {
     global $databases;
