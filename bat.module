@@ -166,7 +166,7 @@ function bat_entity_access($op, $entity, $account, $entity_type) {
   $cid = is_object($entity) ? $entity->{$entity_info['entity keys']['id']} : $entity;
 
   // If we are creating a new entity make sure we set the type so permissions get
-  // applied
+  // applied.
   if ($op == 'create' && $cid == '') {
     $cid = $entity->type;
   }
@@ -723,7 +723,7 @@ function bat_check_dates_validity(DateTime $start_date, DateTime $end_date) {
  * Loads a DateTime object from a string.
  *
  * @param string $date_string
- *   Expects to see a date in the form Y-m-d H:i:s
+ *   Expects to see a date in the form Y-m-d H:i:s.
  *
  * @return DateTime
  *   Object or null if invalid

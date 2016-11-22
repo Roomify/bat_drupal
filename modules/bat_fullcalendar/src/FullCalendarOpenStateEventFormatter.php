@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Class FullCalendarOpenStateEventFormatter
+ * Class FullCalendarOpenStateEventFormatter.
  */
 
 namespace Drupal\bat_fullcalendar;

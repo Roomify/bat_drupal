@@ -13,6 +13,7 @@
  * UI controller.
  */
 class BatUnitUIController extends EntityDefaultUIController {
+
   /**
    * Overrides hook_menu() defaults.
    */

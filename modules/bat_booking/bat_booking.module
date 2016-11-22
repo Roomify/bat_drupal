@@ -186,10 +186,13 @@ function bat_booking_add_access() {
 }
 
 /**
- * The class used for booking entities
+ * The class used for booking entities.
  */
 class BatBooking extends Entity {
 
+  /**
+   *
+   */
   public function __construct($values = array()) {
     parent::__construct($values, 'bat_booking');
   }
@@ -226,7 +229,7 @@ class BatBooking extends Entity {
 }
 
 /**
- * The class used for booking type entities
+ * The class used for booking type entities.
  */
 class BatBookingType extends Entity {
 
@@ -244,6 +247,9 @@ class BatBookingType extends Entity {
    */
   public $label;
 
+  /**
+   *
+   */
   public function __construct($values = array()) {
     parent::__construct($values, 'bat_booking_type');
   }
@@ -255,6 +261,9 @@ class BatBookingType extends Entity {
  */
 class BatBookingMetadataController extends EntityDefaultMetadataController {
 
+  /**
+   *
+   */
   public function entityPropertyInfo() {
     $info = parent::entityPropertyInfo();
 
@@ -273,10 +282,13 @@ class BatBookingMetadataController extends EntityDefaultMetadataController {
 }
 
 /**
- * The Controller for BatBooking entities
+ * The Controller for BatBooking entities.
  */
 class BatBookingController extends EntityAPIController {
 
+  /**
+   *
+   */
   public function __construct($entityType) {
     parent::__construct($entityType);
   }
@@ -327,14 +339,20 @@ class BatBookingController extends EntityAPIController {
 }
 
 /**
- * The Controller for BatBookingType entities
+ * The Controller for BatBookingType entities.
  */
 class BatBookingTypeController extends EntityAPIControllerExportable {
 
+  /**
+   *
+   */
   public function __construct($entityType) {
     parent::__construct($entityType);
   }
 
+  /**
+   *
+   */
   public function create(array $values = array()) {
     $values += array(
       'id' => '',

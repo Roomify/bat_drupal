@@ -748,6 +748,7 @@ function bat_unit_bundle_load($bundle, $reset = FALSE) {
  *   Integer specifying the unit id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
+ *
  * @return BatUnit|false
  *   A fully-loaded $unit object or FALSE if it cannot be loaded.
  *
@@ -1042,10 +1043,13 @@ class BatUnitBundle extends Entity {
 }
 
 /**
- * The MetadataController for BatUnit entities
+ * The MetadataController for BatUnit entities.
  */
 class BatUnitMetadataController extends EntityDefaultMetadataController {
 
+  /**
+   *
+   */
   public function entityPropertyInfo() {
     $info = parent::entityPropertyInfo();
 
@@ -1068,6 +1072,9 @@ class BatUnitMetadataController extends EntityDefaultMetadataController {
  */
 class BatUnitController extends EntityAPIController {
 
+  /**
+   *
+   */
   public function __construct($entityType) {
     parent::__construct($entityType);
   }
@@ -1096,6 +1103,9 @@ class BatUnitController extends EntityAPIController {
     return $unit;
   }
 
+  /**
+   *
+   */
   public function getReferencedIds($unit_type, $ids = array()) {
     $query = db_select('bat_units', 'n')
             ->fields('n', array('unit_id', 'type_id', 'type', 'name'));
@@ -1133,6 +1143,9 @@ class BatUnitController extends EntityAPIController {
  */
 class BatUnitBundleController extends EntityAPIControllerExportable {
 
+  /**
+   *
+   */
   public function __construct($entityType) {
     parent::__construct($entityType);
   }
@@ -1672,7 +1685,7 @@ function bat_type_revisioning_event($op, $type) {
 /**
  * Implements hook_form_FORM_ID_alter().
  *
- * FORM_ID = views_form_units_page
+ * FORM_ID = views_form_units_page.
  */
 function bat_unit_form_views_form_units_page_alter(&$form, &$form_state) {
   $query = drupal_get_query_parameters($_GET, array('q'));
@@ -1823,7 +1836,7 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
 }
 
 /**
- * The class used for Bat Type entities
+ * The class used for Bat Type entities.
  */
 class BatType extends Entity {
 
@@ -1910,7 +1923,7 @@ class BatType extends Entity {
 }
 
 /**
- * The class used for Bat Type bundle entities
+ * The class used for Bat Type bundle entities.
  */
 class BatTypeBundle extends Entity {
 
@@ -1938,7 +1951,7 @@ class BatTypeBundle extends Entity {
 }
 
 /**
- * The MetadataController for BatType entities
+ * The MetadataController for BatType entities.
  */
 class BatTypeMetadataController extends EntityDefaultMetadataController {
 
@@ -1963,7 +1976,7 @@ class BatTypeMetadataController extends EntityDefaultMetadataController {
 }
 
 /**
- * The Controller for BatType entities
+ * The Controller for BatType entities.
  */
 class BatTypeController extends EntityAPIController {
 

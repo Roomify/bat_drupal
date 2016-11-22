@@ -403,7 +403,7 @@ function bat_options_remove_submit($form, &$form_state) {
   // the 3, the order of the two 3s now is undefined and may not match what
   // the user had selected.
   $input = drupal_array_get_nested_value($form_state['input'], $address);
-  // Sort by weight
+  // Sort by weight.
   uasort($input, '_field_sort_items_helper');
 
   // Reweight everything in the correct order.
@@ -493,54 +493,47 @@ function bat_options_get_operation_label($option) {
       $label = t('+@amount@currency_symbol to price', array(
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        )
-      );
+      ));
       break;
 
     case 'add-daily':
       $label = t('+@amount@currency_symbol per night to price', array(
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        )
-      );
+      ));
       break;
 
     case 'sub-daily':
       $label = t('-@amount@currency_symbol per night from price', array(
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        )
-      );
+      ));
       break;
 
     case 'replace':
       $label = t('Replace price with @amount@currency_symbol', array(
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        )
-      );
+      ));
       break;
 
     case 'increase':
       $label = t('Increase price by @amount%', array(
         '@amount' => $option['value'],
-        )
-      );
+      ));
       break;
 
     case 'decrease':
       $label = t('Decrease price by @amount%', array(
         '@amount' => $option['value'],
-        )
-      );
+      ));
       break;
 
     case 'sub':
       $label = t('-@amount@currency_symbol from price', array(
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        )
-      );
+      ));
       break;
 
   }

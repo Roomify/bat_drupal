@@ -194,12 +194,14 @@ class BatTypeUIController extends EntityDefaultUIController {
 
     $row[] = $id;
 
-    $row[] = array('data' => array(
-      '#theme' => 'entity_ui_overview_item',
-      '#label' => entity_label($this->entityType, $entity),
-      '#name' => !empty($this->entityInfo['exportable']) ? entity_id($this->entityType, $entity) : FALSE,
-      '#url' => $entity_uri ? $entity_uri : FALSE,
-      '#entity_type' => $this->entityType),
+    $row[] = array(
+      'data' => array(
+        '#theme' => 'entity_ui_overview_item',
+        '#label' => entity_label($this->entityType, $entity),
+        '#name' => !empty($this->entityInfo['exportable']) ? entity_id($this->entityType, $entity) : FALSE,
+        '#url' => $entity_uri ? $entity_uri : FALSE,
+        '#entity_type' => $this->entityType,
+      ),
     );
 
     $type_bundle = bat_type_bundle_load($entity->type);
@@ -207,10 +209,12 @@ class BatTypeUIController extends EntityDefaultUIController {
 
     // Add a row for the exportable status.
     if (!empty($this->entityInfo['exportable'])) {
-      $row[] = array('data' => array(
-        '#theme' => 'entity_status',
-        '#status' => $entity->{$this->statusKey},
-      ));
+      $row[] = array(
+        'data' => array(
+          '#theme' => 'entity_status',
+          '#status' => $entity->{$this->statusKey},
+        ),
+      );
     }
     // In case this is a bundle, we add links to the field ui tabs.
     $field_ui = !empty($this->entityInfo['bundle of']) && entity_type_is_fieldable($this->entityInfo['bundle of']) && module_exists('field_ui');

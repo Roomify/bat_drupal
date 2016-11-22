@@ -65,12 +65,14 @@ class BatBookingUIController extends EntityDefaultUIController {
 
     $row[] = $id;
 
-    $row[] = array('data' => array(
-      '#theme' => 'entity_ui_overview_item',
-      '#label' => entity_label($this->entityType, $entity),
-      '#name' => !empty($this->entityInfo['exportable']) ? entity_id($this->entityType, $entity) : FALSE,
-      '#url' => $entity_uri ? $entity_uri : FALSE,
-      '#entity_type' => $this->entityType),
+    $row[] = array(
+      'data' => array(
+        '#theme' => 'entity_ui_overview_item',
+        '#label' => entity_label($this->entityType, $entity),
+        '#name' => !empty($this->entityInfo['exportable']) ? entity_id($this->entityType, $entity) : FALSE,
+        '#url' => $entity_uri ? $entity_uri : FALSE,
+        '#entity_type' => $this->entityType,
+      ),
     );
 
     $booking_type = bat_booking_type_load($entity->type);

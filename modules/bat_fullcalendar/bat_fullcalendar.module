@@ -2,7 +2,6 @@
 
 /**
  * @file
- *
  * Manages the display of FullCalendar and provides ways for other modules
  * to easily modify it.
  */
@@ -107,7 +106,7 @@ function bat_fullcalendar_event_management($entity_id, $event_type, $event_id, $
 }
 
 /**
- * Implements hook_bat_fullcalendar_modal_content();
+ * Implements hook_bat_fullcalendar_modal_content().
  */
 function bat_fullcalendar_bat_fullcalendar_modal_content($entity_id, $event_type, $event_id, $start_date, $end_date) {
   if ($event_id > 0) {
@@ -476,7 +475,7 @@ function bat_fullcalendar_configure($user_settings) {
   $settings = array();
 
   foreach ($user_settings['batCalendar'] as $id => $user_setting) {
-    // Set the scheduler license
+    // Set the scheduler license.
     $schedulerlicense = variable_get('bat_fullcalendar_scheduler_key', '');
     switch ($schedulerlicense) {
       case 'gpl':
@@ -583,7 +582,7 @@ function bat_fullcalendar_configure($user_settings) {
 }
 
 /**
- * Sets up JS files for fullcalendar and calls an alter to allow other modules to change them
+ * Sets up JS files for fullcalendar and calls an alter to allow other modules to change them.
  *
  * @param array $user_js_files
  *
@@ -607,7 +606,7 @@ function bat_fullcalendar_set_js_files($user_js_files = array()) {
 }
 
 /**
- * Sets up CSS files for fullcalendar and calls an alter to allow other modules to change them
+ * Sets up CSS files for fullcalendar and calls an alter to allow other modules to change them.
  *
  * @param array $user_css_files
  *
@@ -625,21 +624,21 @@ function bat_fullcalendar_set_css_files($user_css_files = array()) {
     );
   }
 
-  // Provide alter hook to change calendar css files
+  // Provide alter hook to change calendar css files.
   drupal_alter('bat_fullcalendar_render_css', $css_files);
 
   return $css_files;
 }
 
 /**
- * Theme function for FullCalendar
+ * Theme function for FullCalendar.
  */
 function theme_bat_fullcalendar($vars) {
   $calendar_id = $vars['calendar_settings']['calendar_id'];
   $modal_style = $vars['calendar_settings']['modal_style'];
   $user_settings = $vars['calendar_settings']['user_settings'];
 
-  // Check if user has defined js files and swap those in
+  // Check if user has defined js files and swap those in.
   if (!empty($vars['js_files'])) {
     $js_files = bat_fullcalendar_set_js_files($vars['js_files']);
   }
@@ -647,7 +646,7 @@ function theme_bat_fullcalendar($vars) {
     $js_files = bat_fullcalendar_set_js_files();
   }
 
-  // Check for CSS fiels
+  // Check for CSS fiels.
   if (!empty($vars['css_files'])) {
     $css_files = bat_fullcalendar_set_css_files($vars['css_files']);
   }
@@ -655,7 +654,7 @@ function theme_bat_fullcalendar($vars) {
     $css_files = bat_fullcalendar_set_css_files();
   }
 
-  // Attributes
+  // Attributes.
   if (!empty($vars['attributes'])) {
     $attributes = $vars['attributes'];
   }
@@ -673,7 +672,7 @@ function theme_bat_fullcalendar($vars) {
     }
   }
 
-  // Override default settings with ones coming form user
+  // Override default settings with ones coming form user.
   $settings = bat_fullcalendar_configure($vars['calendar_settings']['user_settings']);
 
   // Add FullCalendar JS.
@@ -716,7 +715,7 @@ function bat_fullcalendar_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Allows us to define the license to use with Scheduler
+ * Allows us to define the license to use with Scheduler.
  */
 function bat_fullcalendar_settings($form, &$form_state) {
   $form['bat_fullcalendar_scheduler'] = array(
