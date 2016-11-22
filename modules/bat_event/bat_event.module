@@ -258,7 +258,7 @@ function bat_event_permission() {
 /**
  * Implements hook_form_FORM_ID_alter().
  *
- * FORM_ID = views_exposed_form
+ * FORM_ID = views_exposed_form.
  */
 function bat_event_form_views_exposed_form_alter(&$form, &$form_state) {
   // Events admin view exposed filters.
@@ -349,10 +349,10 @@ function bat_event_load_state_by_machine_name($state_machine_name) {
 
   if (!isset($event_states[$state_machine_name])) {
     $state_id = db_select('bat_event_state', 'n')
-                  ->fields('n', array('id'))
-                  ->condition('machine_name', $state_machine_name)
-                  ->execute()
-                  ->fetchField();
+      ->fields('n', array('id'))
+      ->condition('machine_name', $state_machine_name)
+      ->execute()
+      ->fetchField();
 
     $event_states[$state_machine_name] = bat_event_load_state($state_id);
   }
@@ -377,7 +377,7 @@ function bat_event_states_get_default($event_type) {
 }
 
 /**
- * Implements form that handles the definition of states for fixed state events
+ * Implements form that handles the definition of states for fixed state events.
  */
 function bat_event_states_form($form, &$form_state, $event_type) {
   if ($event_type->fixed_event_states) {
@@ -593,14 +593,14 @@ function bat_event_save_state($event_state, $event_type) {
 }
 
 /**
- * Form to allow user to edit a single event
+ * Form to allow user to edit a single event.
  */
 function bat_event_states_edit_event_form($form, &$form_state, $event_id) {
   $state = db_select('bat_event_state', 'n')
-                    ->fields('n', array())
-                    ->condition('id', $event_id)
-                    ->execute()
-                    ->fetchAssoc();
+    ->fields('n', array())
+    ->condition('id', $event_id)
+    ->execute()
+    ->fetchAssoc();
 
   $form['state_id'] = array(
     '#type' => 'hidden',
@@ -1051,6 +1051,7 @@ class BatEvent extends Entity {
    * @var DateTime
    */
   public $start_date_object;
+
   /**
    * DateTime object calculated from end date.
    *
@@ -1058,6 +1059,9 @@ class BatEvent extends Entity {
    */
   public $end_date_object;
 
+  /**
+   *
+   */
   public function __construct($values = array()) {
     parent::__construct($values, 'bat_event');
     if (isset($this->start_date)) {
@@ -1068,6 +1072,9 @@ class BatEvent extends Entity {
     }
   }
 
+  /**
+   *
+   */
   public function delete_event() {
     entity_get_controller($this->entityType)->delete_event($this);
   }
@@ -1195,7 +1202,7 @@ class BatEventType extends Entity {
 }
 
 /**
- * The MetadataController for BatEvent entities
+ * The MetadataController for BatEvent entities.
  */
 class BatEventMetadataController extends EntityDefaultMetadataController {
 
@@ -1373,7 +1380,7 @@ class BatEventController extends EntityAPIController {
    * Handles saving to the BatStore
    *
    * @param \Roomify\Bat\Unit\Unit $unit
-   *   The unit to save
+   *   The unit to save.
    * @param \DateTime $start_date
    * @param \DateTime $end_date
    * @param $event_type
@@ -1464,7 +1471,7 @@ class BatEventController extends EntityAPIController {
 }
 
 /**
- * The Controller for Event Type entities
+ * The Controller for Event Type entities.
  */
 class BatEventTypeController extends EntityAPIControllerExportable {
 

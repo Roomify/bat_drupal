@@ -235,7 +235,7 @@ function bat_unit_views_data_alter(&$data) {
     'help' => t('The log message entered when the revision was created.'),
     'field' => array(
       'handler' => 'views_handler_field_xss',
-     ),
+    ),
     'filter' => array(
       'handler' => 'views_handler_filter_string',
     ),

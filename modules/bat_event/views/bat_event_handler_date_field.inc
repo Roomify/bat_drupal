@@ -2,8 +2,7 @@
 
 /**
  * @file
- * A extension of the views date handler to allow for some data
- * transformations
+ * A extension of the views date handler to allow for some data transformations.
  *
  * @ingroup views_field_handlers
  */
@@ -31,7 +30,17 @@ class bat_event_handler_date_field extends views_handler_field_date {
 
     $value = $date->getTimestamp();
     $format = $this->options['date_format'];
-    if (in_array($format, array('custom', 'raw time ago', 'time ago', 'raw time span', 'time span', 'raw time span', 'inverse time span', 'time span'))) {
+    $date_formats = array(
+      'custom',
+      'raw time ago',
+      'time ago',
+      'raw time span',
+      'time span',
+      'raw time span',
+      'inverse time span',
+      'time span',
+    );
+    if (in_array($format, $date_formats)) {
       $custom_format = $this->options['custom_date_format'];
     }
 

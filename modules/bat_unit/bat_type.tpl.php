@@ -2,7 +2,7 @@
 
 /**
  * @file
- * A basic template for unit entities
+ * A basic template for unit entities.
  *
  * Available variables:
  * - $content: An array of comment items. Use render($content) to print them

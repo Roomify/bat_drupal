@@ -112,7 +112,8 @@ function bat_type_bundle_form($form, &$form_state, $type_bundle, $op = 'edit') {
       '#type' => 'radios',
       '#options' => array(
         REVISIONING_NEW_REVISION_WHEN_NOT_PENDING => t('Only when saving %type type that is not already in draft/pending moderation', array('%type' => $type_bundle->label)),
-        REVISIONING_NEW_REVISION_EVERY_SAVE => t('Every time %type type is updated, even when saving type in draft/pending moderation', array('%type' => $type_bundle->label))),
+        REVISIONING_NEW_REVISION_EVERY_SAVE => t('Every time %type type is updated, even when saving type in draft/pending moderation', array('%type' => $type_bundle->label)),
+      ),
       '#default_value' => (isset($type_bundle->data['new_revisions'])) ? $type_bundle->data['new_revisions'] : REVISIONING_NEW_REVISION_WHEN_NOT_PENDING,
     );
   }

@@ -105,7 +105,7 @@ class BatUnitUIController extends EntityDefaultUIController {
     $item = menu_get_item();
     $bundles = bat_unit_get_bundles();
 
-    // If there is only one unit bundle go straight to that page
+    // If there is only one unit bundle go straight to that page.
     if (count($bundles) == 1) {
       $bundle = reset($bundles);
       drupal_goto($this->path . '/add/' . $bundle->type);

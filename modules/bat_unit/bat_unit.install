@@ -385,9 +385,9 @@ function bat_unit_update_7102() {
     ->execute();
 
   $types = db_select('bat_types', 'p')
-                  ->fields('p', array('type_id', 'name', 'uid', 'created'))
-                  ->execute()
-                  ->fetchAll();
+    ->fields('p', array('type_id', 'name', 'uid', 'created'))
+    ->execute()
+    ->fetchAll();
 
   foreach ($types as $type) {
     db_insert('bat_types_revision')

@@ -238,7 +238,9 @@ function bat_event_edit_form($form, &$form_state, $event) {
   $startdate = '';
   if (isset($_GET['startdate'])) {
     $startdate = (is_numeric(check_plain($_GET['startdate']))) ? check_plain($_GET['startdate']) : '';
-    if ($startdate != '') $form['bat_date_range']['bat_start_date']['#default_value'] = gmdate('Y-m-d', $startdate);
+    if ($startdate != '') {
+      $form['bat_date_range']['bat_start_date']['#default_value'] = gmdate('Y-m-d', $startdate);
+    }
   }
   $enddate = '';
   if (isset($_GET['enddate'])) {

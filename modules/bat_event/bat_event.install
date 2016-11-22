@@ -13,9 +13,9 @@ function bat_event_uninstall() {
   drupal_load('module', 'bat_event');
 
   $event_types = db_select('bat_event_type', 'b')
-                  ->fields('b', array('type'))
-                  ->execute()
-                  ->fetchAll();
+    ->fields('b', array('type'))
+    ->execute()
+    ->fetchAll();
 
   foreach ($event_types as $event_type) {
     bat_event_delete_event_type_schema($event_type->type);
