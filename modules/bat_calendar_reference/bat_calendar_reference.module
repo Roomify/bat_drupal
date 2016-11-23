@@ -789,7 +789,7 @@ function bat_calendar_reference_field_widget_form(&$form, &$form_state, $field, 
  *
  * Replace the unit id with a unit name.
  */
-function bat_calendar_reference_unit_autocomplete_value($element, $input = FALSE, $form_state) {
+function bat_calendar_reference_unit_autocomplete_value($element, $input = FALSE, $form_state = array()) {
   if ($input === FALSE) {
     $unit_id = $element['#default_value'];
 
@@ -812,7 +812,7 @@ function bat_calendar_reference_unit_autocomplete_value($element, $input = FALSE
  *
  * Replace the unit type id with a unit type name.
  */
-function bat_calendar_reference_unit_type_autocomplete_value($element, $input = FALSE, $form_state) {
+function bat_calendar_reference_unit_type_autocomplete_value($element, $input = FALSE, $form_state = array()) {
   if ($input === FALSE) {
     $type_id = $element['#default_value'];
 
@@ -835,7 +835,7 @@ function bat_calendar_reference_unit_type_autocomplete_value($element, $input = 
  *
  * Replace the event type id with a event type label.
  */
-function bat_calendar_reference_event_type_autocomplete_value($element, $input = FALSE, $form_state) {
+function bat_calendar_reference_event_type_autocomplete_value($element, $input = FALSE, $form_state = array()) {
   if ($input === FALSE) {
     $event_type = $element['#default_value'];
 

@@ -1193,7 +1193,7 @@ class BatUnitBundleController extends EntityAPIControllerExportable {
  * @param string $op
  *   The operation being performed. One of 'view', 'revert', 'delete'.
  * @param BatType $type
- * @param $revision_id
+ * @param int $revision_id
  * @param object $account
  *   The user to check for. Leave it to NULL to check for the global user.
  *
@@ -1635,7 +1635,7 @@ function bat_type_page_view($type, $view_mode = 'full') {
 }
 
 /**
- * @param $op
+ * @param string $op
  * @param $type
  */
 function bat_type_revisioning_event($op, $type) {
@@ -1768,7 +1768,7 @@ function bat_type_bundle_new() {
  * @param $entity_type
  * @param $bundle
  * @param $label
- * @param $description
+ * @param string $description
  * @param int $weight
  * @param bool|false $locked
  * @param bool|false $calculation
@@ -2090,6 +2090,9 @@ class BatTypeController extends EntityAPIController {
  * The Inline Entity Form Controller for RoomifyType entities.
  */
 if (module_exists('inline_entity_form')) {
+  /**
+   *
+   */
   class RoomifyTypeInlineEntityFormController extends EntityInlineEntityFormController {
 
     /**

@@ -745,7 +745,7 @@ function theme_bat_type_unit_add_list($variables) {
   if ($bundles) {
     $output = '<dl class="unit-type-list">';
     foreach ($bundles as $unit_bundle) {
-      $output .= '<dt>' . l('Add ' . $unit_bundle->label, $item['href'] . '/' . $unit_bundle->type) . '</dt>';
+      $output .= '<dt>' . l(t('Add @unit_bundle', array('@unit_bundle' => $unit_bundle->label)), $item['href'] . '/' . $unit_bundle->type) . '</dt>';
       $output .= '<dd>' . filter_xss_admin($item['description']) . '</dd>';
     }
     $output .= '</dl>';

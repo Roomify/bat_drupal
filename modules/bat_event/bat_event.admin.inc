@@ -172,12 +172,12 @@ function bat_event_create_form_wrapper($type) {
 /**
  * Form callback wrapper: delete a event.
  *
- * @param $event
+ * @param BatEvent $event
  *   The event object being edited by this form.
  *
  * @see bat_event_edit_form()
  */
-function bat_event_delete_form_wrapper($event) {
+function bat_event_delete_form_wrapper(BatEvent $event) {
   // Add the breadcrumb for the form's location.
   bat_event_set_breadcrumb();
 
@@ -187,11 +187,11 @@ function bat_event_delete_form_wrapper($event) {
 /**
  * Form callback: create or edit a event.
  *
- * @param $event
+ * @param BatEvent $event
  *   The BatEvent object to edit, or for a new event form, an empty event object
  *     with only an event type defined.
  */
-function bat_event_edit_form($form, &$form_state, $event) {
+function bat_event_edit_form($form, &$form_state, BatEvent $event) {
   $event->date = format_date($event->created, 'custom', 'Y-m-d H:i:s O');
   $account = user_load($event->uid);
   $event->owner_name = $account->name;
@@ -535,12 +535,12 @@ function bat_event_form_submit_delete($form, &$form_state) {
 /**
  * Form callback: confirmation form for deleting a event.
  *
- * @param $event
+ * @param BatEvent $event
  *   The event to delete.
  *
  * @see confirm_form()
  */
-function bat_event_delete_form($form, &$form_state, $event) {
+function bat_event_delete_form($form, &$form_state, BatEvent $event) {
   $form_state['bat_event'] = $event;
 
   $form['#submit'][] = 'bat_event_delete_form_submit';

@@ -1383,10 +1383,10 @@ class BatEventController extends EntityAPIController {
    *   The unit to save.
    * @param \DateTime $start_date
    * @param \DateTime $end_date
-   * @param $event_type
-   * @param $granularity
-   * @param $event_state
-   * @param $event_id
+   * @param string $event_type
+   * @param string $granularity
+   * @param string $event_state
+   * @param int $event_id
    * @param bool|false $remove
    *   Set to TRUE if the event is to be removed (event_id set to zero).
    */
@@ -1415,7 +1415,7 @@ class BatEventController extends EntityAPIController {
   }
 
   /**
-   * @param $ids
+   * @param array $ids
    */
   public function delete($ids) {
     foreach ($ids as $id) {
@@ -1427,9 +1427,9 @@ class BatEventController extends EntityAPIController {
   }
 
   /**
-   * @param $event
+   * @param BatEvent $event
    */
-  public function deleteEvent($event) {
+  public function deleteEvent(BatEvent $event) {
     $event_type = bat_event_type_load($event->type);
 
     // Construct target entity reference field name using this event type's target entity type.
@@ -1568,7 +1568,7 @@ class BatEventTypeController extends EntityAPIControllerExportable {
   }
 
   /**
-   * @param $export
+   * @param string $export
    */
   public function import($export) {
     $vars = drupal_json_decode($export);
@@ -1897,7 +1897,7 @@ function bat_event_field_widget_form(&$form, &$form_state, $field, $instance, $l
 /**
  * Value callback for a bat_event_reference autocomplete element.
  */
-function bat_event_autocomplete_value($element, $input = FALSE, $form_state) {
+function bat_event_autocomplete_value($element, $input = FALSE, $form_state = array()) {
   if ($input === FALSE) {
     $state_id = $element['#default_value'];
 
@@ -2004,7 +2004,9 @@ function bat_event_delete_states_by_type($type) {
  * Utility function to return the table names
  * required to start an event using BAT conventions.
  *
- * @param $machine_name
+ * @param string $machine_name
+ *
+ * @return array
  */
 function bat_event_get_event_type_tables($machine_name) {
   return array(
@@ -2020,7 +2022,7 @@ function bat_event_get_event_type_tables($machine_name) {
 /**
  * Create 6 tables for store events of type $machine_name.
  *
- * @param $machine_name
+ * @param string $machine_name
  */
 function bat_event_create_event_type_schema($machine_name) {
   $schema = array();
@@ -2367,11 +2369,11 @@ function bat_event_views_pre_render(&$view) {
  *
  * @param DateTime $start_date
  * @param DateTime $end_date
- * @param $valid_name_states
+ * @param array $valid_name_states
  * @param $type_id
  * @param $event_type
- * @param $intersect
- * @param $use_costraints
+ * @param bool $intersect
+ * @param bool $use_costraints
  *
  * @return array|bool
  */
@@ -2418,10 +2420,10 @@ function bat_event_get_calendar($type_id, $event_type) {
  * @param $calendar
  * @param DateTime $start_date
  * @param DateTime $end_date
- * @param $valid_name_states
- * @param $intersect
- * @param $reset
- * @param $use_costraints
+ * @param array $valid_name_states
+ * @param bool $intersect
+ * @param bool $reset
+ * @param bool $use_costraints
  *
  * @return array|bool
  */
@@ -2456,11 +2458,11 @@ function bat_event_get_matching_units_from_calendar($calendar, DateTime $start_d
  *
  * @param DateTime $start_date
  * @param DateTime $end_date
- * @param $valid_name_states
+ * @param array $valid_name_states
  * @param $type_id
  * @param $event_type
- * @param $intersect
- * @param $use_costraints
+ * @param bool $intersect
+ * @param bool $use_costraints
  *
  * @return array
  */
