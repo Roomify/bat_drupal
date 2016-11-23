@@ -6,6 +6,9 @@
  * as fields.
  */
 
+/**
+ *
+ */
 class bat_booking_handler_edit_link_field extends views_handler_field {
 
   /**

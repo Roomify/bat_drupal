@@ -5,6 +5,9 @@
  * Filter to handle dates stored as a string.
  */
 
+/**
+ *
+ */
 class bat_event_handler_date_filter extends views_handler_filter_date {
 
   /**

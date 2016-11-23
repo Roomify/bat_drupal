@@ -4,6 +4,9 @@
  * @file
  */
 
+/**
+ *
+ */
 class bat_event_handler_value_field extends views_handler_field {
 
   /**

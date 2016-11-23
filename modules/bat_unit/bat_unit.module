@@ -1018,7 +1018,7 @@ class BatUnit extends Entity {
 }
 
 /**
- * The class used for unit bundle entities
+ * The class used for unit bundle entities.
  */
 class BatUnitBundle extends Entity {
 
@@ -1036,6 +1036,9 @@ class BatUnitBundle extends Entity {
    */
   public $label;
 
+  /**
+   *
+   */
   public function __construct($values = array()) {
     parent::__construct($values, 'bat_unit_bundle');
   }
@@ -1068,7 +1071,7 @@ class BatUnitMetadataController extends EntityDefaultMetadataController {
 }
 
 /**
- * The Controller for BatUnit entities
+ * The Controller for BatUnit entities.
  */
 class BatUnitController extends EntityAPIController {
 
@@ -1108,7 +1111,7 @@ class BatUnitController extends EntityAPIController {
    */
   public function getReferencedIds($unit_type, $ids = array()) {
     $query = db_select('bat_units', 'n')
-            ->fields('n', array('unit_id', 'type_id', 'type', 'name'));
+      ->fields('n', array('unit_id', 'type_id', 'type', 'name'));
     if (!empty($ids)) {
       $query->condition('unit_id', $ids, 'IN');
     }
@@ -1396,6 +1399,7 @@ function bat_type_bundle_load($bundle, $reset = FALSE) {
  *   Integer specifying the type id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
+ *
  * @return BatType|false
  *   A fully-loaded $type object or FALSE if it cannot be loaded.
  *
@@ -1725,7 +1729,7 @@ function bat_unit_form_bat_type_bundle_operation_form_alter(&$form, &$form_state
     $query = new EntityFieldQuery();
 
     $query->entityCondition('entity_type', 'bat_type')
-          ->propertyCondition('type', $type_bundle->type);
+      ->propertyCondition('type', $type_bundle->type);
     $types = $query->execute();
     if (isset($types['bat_type']) && count($types['bat_type'])) {
 
@@ -2062,7 +2066,7 @@ class BatTypeController extends EntityAPIController {
       foreach ($entities as $key => $entity) {
         $entity_values = (array) $entity;
         // We cannot use array_diff_assoc() here because condition values can
-        // also be arrays, e.g. '$conditions = array('status' => array(1, 2))'
+        // also be arrays, e.g. '$conditions = array('status' => array(1, 2))'.
         foreach ($conditions as $condition_key => $condition_value) {
           if (is_array($condition_value)) {
             if (!isset($entity_values[$condition_key]) || !in_array($entity_values[$condition_key], $condition_value)) {

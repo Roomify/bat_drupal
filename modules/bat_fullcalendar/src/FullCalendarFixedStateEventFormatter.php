@@ -11,6 +11,9 @@ use Roomify\Bat\Event\Event;
 use Roomify\Bat\Event\EventInterface;
 use Roomify\Bat\EventFormatter\AbstractEventFormatter;
 
+/**
+ *
+ */
 class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
 
   /**

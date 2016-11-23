@@ -3,7 +3,7 @@
 /**
  * @file
  * Provides basic underlying functionality and configuration options used
- * by all BAT modules
+ * by all BAT modules.
  */
 
 /**

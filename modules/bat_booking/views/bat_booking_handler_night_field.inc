@@ -4,6 +4,9 @@
  * @file
  */
 
+/**
+ *
+ */
 class bat_booking_handler_night_field extends views_handler_field {
 
   /**

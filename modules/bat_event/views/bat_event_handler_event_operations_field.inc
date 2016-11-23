@@ -6,6 +6,9 @@
  * under a single field providing a more flexible way to present them in a view
  */
 
+/**
+ *
+ */
 class bat_event_handler_event_operations_field extends views_handler_field {
 
   /**

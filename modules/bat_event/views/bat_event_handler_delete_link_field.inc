@@ -6,6 +6,9 @@
  * as fields
  */
 
+/**
+ *
+ */
 class bat_event_handler_delete_link_field extends bat_event_handler_link_field {
 
   /**

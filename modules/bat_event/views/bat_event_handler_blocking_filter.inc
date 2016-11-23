@@ -4,6 +4,9 @@
  * @file
  */
 
+/**
+ *
+ */
 class bat_event_handler_blocking_filter extends views_handler_filter_boolean_operator {
 
   /**

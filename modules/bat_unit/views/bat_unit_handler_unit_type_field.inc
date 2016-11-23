@@ -6,6 +6,9 @@
  * for unit bundles.
  */
 
+/**
+ *
+ */
 class bat_unit_handler_unit_bundle_field extends views_handler_field {
 
   /**

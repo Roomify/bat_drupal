@@ -6,6 +6,9 @@
  * under a single field.
  */
 
+/**
+ *
+ */
 class bat_type_handler_type_calendars_field extends views_handler_field {
 
   /**

@@ -6,6 +6,9 @@
  * for event bundles.
  */
 
+/**
+ *
+ */
 class bat_event_handler_event_type_field extends views_handler_field {
 
   /**

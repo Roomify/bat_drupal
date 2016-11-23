@@ -6,6 +6,9 @@
  * for unit bundles.
  */
 
+/**
+ *
+ */
 class bat_unit_handler_type_id_filter extends views_handler_filter_many_to_one {
 
   /**

@@ -4,6 +4,9 @@
  * @file
  */
 
+/**
+ *
+ */
 class bat_unit_handler_field_megarow_links extends views_handler_field_megarow_links {
 
   /**

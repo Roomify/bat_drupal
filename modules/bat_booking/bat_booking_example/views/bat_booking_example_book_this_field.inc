@@ -4,6 +4,9 @@
  * @file
  */
 
+/**
+ *
+ */
 class bat_booking_example_book_this_field extends entity_views_handler_field_text {
 
   /**
