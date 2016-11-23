@@ -10,8 +10,8 @@
 /**
  * Allow modules to alter results from faceted search.
  *
- * @param $units
- * @param $context
+ * @param array $units
+ * @param array $context
  */
 function hook_bat_facets_search_results_alter(&$units, $context) {
   unset($units[0]);
@@ -42,7 +42,7 @@ function hook_bat_event_constraints_info() {
 /**
  * Allow modules to alter defined event constraints.
  *
- * @param $constraints_info
+ * @param array $constraints_info
  */
 function hook_bat_event_constraints_info_alter($constraints_info) {
   // No example.

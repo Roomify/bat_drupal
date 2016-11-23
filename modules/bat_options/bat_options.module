@@ -449,7 +449,7 @@ function bat_options_price_options() {
  * @return array
  *   The available options for the given type.
  */
-function bat_options_get_type_options($type) {
+function bat_options_get_type_options(BatType $type) {
   $options = &drupal_static(__FUNCTION__);
 
   if (isset($options['types'][$type->type_id])) {

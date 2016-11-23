@@ -10,7 +10,7 @@
 /**
  * Allow other modules to alter calendar settings.
  *
- * @param $calendar_settings
+ * @param array $calendar_settings
  */
 function hook_bat_calendar_settings_alter(&$calendar_settings) {
   // No example.
@@ -19,7 +19,7 @@ function hook_bat_calendar_settings_alter(&$calendar_settings) {
 /**
  * Provide alter hook to change calendar js files.
  *
- * @param $js_files
+ * @param array $js_files
  */
 function hook_bat_fullcalendar_render_js_alter(&$js_files) {
   // No example.
@@ -28,7 +28,7 @@ function hook_bat_fullcalendar_render_js_alter(&$js_files) {
 /**
  * Provide alter hook to change calendar css files.
  *
- * @param $css_files
+ * @param array $css_files
  */
 function hook_bat_fullcalendar_render_css_alter(&$css_files) {
   // No example.
@@ -37,7 +37,7 @@ function hook_bat_fullcalendar_render_css_alter(&$css_files) {
 /**
  * Allow other modules to change the modal style.
  *
- * @param $modal_style
+ * @param array $modal_style
  */
 function hook_bat_fullcalendar_modal_style_alter(&$modal_style) {
   // No example.
@@ -59,7 +59,8 @@ function hook_bat_fullcalendar_modal_content($unit, $event_type, $event_id, $sta
 /**
  * Allow other modules to change calendar events.
  *
- * @param $formatted_event
+ * @param array $formatted_event
+ * @param array $context
  */
 function hook_bat_fullcalendar_formatted_event_alter(&$formatted_event, $context) {
   // Hide booking names for non-privileged users.

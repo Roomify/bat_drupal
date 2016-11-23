@@ -588,7 +588,7 @@ function bat_type_get_number_of_revisions_newer_than($revision_id, $type_id) {
  * @return bool
  *   Whether access is allowed or not.
  */
-function bat_unit_access($op, $unit = NULL, $account = NULL) {
+function bat_unit_access($op, BatUnit $unit = NULL, $account = NULL) {
   return bat_entity_access($op, $unit, $account, 'bat_unit');
 }
 
@@ -1200,7 +1200,7 @@ class BatUnitBundleController extends EntityAPIControllerExportable {
  * @return bool
  *   Whether access is allowed or not.
  */
-function bat_type_access_revision($op, $type, $revision_id, $account = NULL) {
+function bat_type_access_revision($op, BatType $type, $revision_id, $account = NULL) {
   global $user;
   $account = isset($account) ? $account : $user;
 
@@ -1243,7 +1243,7 @@ function bat_type_access_revision($op, $type, $revision_id, $account = NULL) {
  * @return bool
  *   Whether access is allowed or not.
  */
-function bat_type_access($op, $type = NULL, $account = NULL) {
+function bat_type_access($op, BatType $type = NULL, $account = NULL) {
   return bat_entity_access($op, $type, $account, 'bat_type');
 }
 
@@ -1419,8 +1419,10 @@ function bat_type_load_revision($revision_id) {
 
 /**
  * @param BatType $type
+ *
+ * @return array
  */
-function bat_type_revision_list($type) {
+function bat_type_revision_list(BatType $type) {
   $revisions = array();
   $result = db_query('SELECT r.revision_id, r.name, r.log, r.revision_uid, n.revision_id AS current_vid, r.revision_timestamp, u.name FROM {bat_types_revision} r LEFT JOIN {bat_types} n ON n.revision_id = r.revision_id INNER JOIN {users} u ON u.uid = r.revision_uid WHERE r.type_id = :type_id ORDER BY r.revision_id DESC', array(':type_id' => $type->type_id));
   foreach ($result as $revision) {

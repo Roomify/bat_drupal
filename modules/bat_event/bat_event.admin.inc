@@ -139,7 +139,7 @@ class BatEventUIController extends EntityDefaultUIController {
  *
  * @see bat_event_edit_form()
  */
-function bat_event_form_wrapper($event) {
+function bat_event_form_wrapper(BatEvent $event) {
   // Add the breadcrumb for the form's location.
   bat_event_set_breadcrumb();
 

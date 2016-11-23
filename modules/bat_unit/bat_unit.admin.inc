@@ -152,7 +152,7 @@ function bat_unit_form($form, &$form_state, $unit, $op = 'edit') {
  *
  * @see bat_unit_edit_form()
  */
-function bat_unit_form_wrapper($unit) {
+function bat_unit_form_wrapper(BatUnit $unit) {
   // Add the breadcrumb for the form's location.
   bat_unit_set_breadcrumb();
   drupal_set_title(t('Edit @unit_name', array('@unit_name' => $unit->name)));
@@ -167,7 +167,7 @@ function bat_unit_form_wrapper($unit) {
 /**
  * Form callback wrapper: create a Unit.
  *
- * @param $type
+ * @param string $type
  *   The Unit type for the unit to be created.
  */
 function bat_unit_create_form_wrapper($type) {
@@ -191,7 +191,7 @@ function bat_unit_create_form_wrapper($type) {
  *
  * @see bat_unit_edit_form()
  */
-function bat_unit_delete_form_wrapper($unit) {
+function bat_unit_delete_form_wrapper(BatUnit $unit) {
   // Add the breadcrumb for the form's location.
   bat_unit_set_breadcrumb();
 
@@ -205,7 +205,7 @@ function bat_unit_delete_form_wrapper($unit) {
  *   The BatUnit object to edit or for a create form an empty unit object
  *   with only a unit type defined.
  */
-function bat_unit_edit_form($form, &$form_state, $unit) {
+function bat_unit_edit_form($form, &$form_state, BatUnit $unit) {
   $form['#attributes']['class'][] = 'bat-management-form bat-unit-edit-form';
   $form['#attached']['css'] = array(
     drupal_get_path('module', 'bat_unit') . '/css/bat_unit.css',
@@ -396,7 +396,7 @@ function bat_unit_form_submit_delete(&$form, &$form_state) {
  *
  * @see confirm_form()
  */
-function bat_unit_delete_form($form, &$form_state, $unit) {
+function bat_unit_delete_form($form, &$form_state, BatUnit $unit) {
   $form_state['bat_unit'] = $unit;
 
   $form['#submit'][] = 'bat_unit_delete_form_submit';

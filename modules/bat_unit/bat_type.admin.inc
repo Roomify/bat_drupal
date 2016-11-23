@@ -393,7 +393,7 @@ function bat_type_add_units_form_wrapper($type, $unit_type) {
  *
  * @see bat_type_edit_form()
  */
-function bat_type_delete_form_wrapper($type) {
+function bat_type_delete_form_wrapper(BatType $type) {
   // Add the breadcrumb for the form's location.
   bat_type_set_breadcrumb();
   return drupal_get_form('bat_type_delete_form', $type);
@@ -406,7 +406,7 @@ function bat_type_delete_form_wrapper($type) {
  *   The BatType object to edit or, for a creation form, an empty type object
  *   with only a type bundle defined.
  */
-function bat_type_edit_form($form, &$form_state, $type) {
+function bat_type_edit_form($form, &$form_state, BatType $type) {
   $form['#attributes']['class'][] = 'bat-management-form bat-type-edit-form';
 
   $form['type'] = array(
@@ -503,9 +503,7 @@ function bat_type_edit_form($form, &$form_state, $type) {
       '#description' => t('Moderation means that the new revision is not publicly visible until approved by someone with the appropriate permissions.'),
       '#type' => 'radios',
       '#options' => $options,
-      '#default_value' => isset($type->type_id)
-        ? REVISIONING_NEW_REVISION_WITH_MODERATION
-        : REVISIONING_NEW_REVISION_NO_MODERATION,
+      '#default_value' => isset($type->type_id) ? REVISIONING_NEW_REVISION_WITH_MODERATION : REVISIONING_NEW_REVISION_NO_MODERATION,
     );
 
     if (variable_get('revisioning_no_moderation_by_default', FALSE)) {
@@ -864,7 +862,7 @@ function bat_type_add_units_form_submit($form, &$form_state) {
  * @param BatType $type
  * @param int $revision
  */
-function bat_type_revision_view($type, $revision) {
+function bat_type_revision_view(BatType $type, $revision) {
   drupal_set_title(t('Revision of %title from %date', array('%title' => $type->name, '%date' => format_date($type->revision_timestamp))), PASS_THROUGH);
 
   return entity_view('bat_type', array(bat_type_load_revision($revision)));
@@ -874,7 +872,7 @@ function bat_type_revision_view($type, $revision) {
  * @param BatType $type
  * @param int $revision
  */
-function bat_type_revision_revert_confirm($form, $form_state, $type, $revision) {
+function bat_type_revision_revert_confirm($form, $form_state, BatType $type, $revision) {
   $type_revision = bat_type_load_revision($revision);
   $form['#type_revision'] = $type_revision;
 
@@ -903,7 +901,7 @@ function bat_type_revision_revert_confirm_submit($form, &$form_state) {
  * @param BatType $type
  * @param int $revision
  */
-function bat_type_revision_delete_confirm($form, $form_state, $type, $revision) {
+function bat_type_revision_delete_confirm($form, $form_state, BatType $type, $revision) {
   $type_revision = bat_type_load_revision($revision);
   $form['#type_revision'] = $type_revision;
 

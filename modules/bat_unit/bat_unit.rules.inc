@@ -1,6 +1,10 @@
 <?php
 
 /**
+ * @file
+ */
+
+/**
  * Implements hook_rules_event_info().
  */
 function bat_unit_rules_event_info() {

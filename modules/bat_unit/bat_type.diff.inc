@@ -1,6 +1,10 @@
 <?php
 
 /**
+ * @file
+ */
+
+/**
  * Create a comparison for the type between versions 'old_revision_id' and 'new_revision_id'.
  *
  * @param object $type

@@ -20,16 +20,16 @@
  * If no modules return FALSE but none return TRUE either, normal permission
  * based checking will apply.
  *
- * @param $op
+ * @param string $op
  *   The request operation: update, create, or delete.
- * @param $entity
+ * @param object $entity
  *   The entity to perform the operation on.
- * @param $account
+ * @param object $account
  *   The user account whose access should be determined.
- * @param $entity_type
+ * @param string $entity_type
  *   The machine-name of the entity type of the given $entity.
  *
- * @return
+ * @return bool
  *   TRUE or FALSE indicating an explicit denial of permission or a grant in the
  *   presence of no other denials; NULL to not affect the access check at all.
  */
