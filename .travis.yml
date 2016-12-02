@@ -80,9 +80,11 @@ before_script:
   # Link test dir into working dir.
   - ln -s $TRAVIS_BUILD_DIR/test .
 
+  - jdk_switcher use oraclejdk8
+
   - mkdir -p $HOME/.cache
   - wget -nc -O $HOME/.cache/selenium-server-standalone-3.0.1.jar http://selenium-release.storage.googleapis.com/3.0/selenium-server-standalone-3.0.1.jar || true
-  - java -jar $HOME/.cache/selenium-server-standalone-3.0.1.jar -p 4444 &> /tmp/selenium.log &
+  - java -jar $HOME/.cache/selenium-server-standalone-3.0.1.jar -port 4444 &> /tmp/selenium.log &
   - sleep 5
 
 script:
