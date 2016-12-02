@@ -2,12 +2,6 @@ language: php
 
 sudo: required
 dist: trusty
-addons:
-  apt:
-    packages:
-    - mysql-server-5.6
-    - mysql-client-core-5.6
-    - mysql-client-5.6
 
 php:
   - 5.4
@@ -37,6 +31,12 @@ install:
   - if [ "${TRAVIS_PHP_VERSION}" != '7.0' ]; then mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini /tmp/xdebug.ini; fi;
 
 before_script:
+  # Create drupal database.
+  - mysql -u root -e "CREATE DATABASE drupal;"
+  # Set up DB user.
+  - mysql -uroot -e "CREATE USER drupal@localhost IDENTIFIED BY 'drupal';"
+  - mysql -uroot -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
+
   # Set github access token for composer if available.
   - if [[ $GITHUB_OAUTH_TOKEN ]]; then git config --global github.accesstoken $GITHUB_OAUTH_TOKEN; fi
   # Copy module to tmp dir for later use.
@@ -68,7 +68,7 @@ before_script:
   - mv /tmp/bat bat/sites/all/modules/bat
 
   - cd bat
-  - php -d sendmail_path=$(which true) ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://root:@127.0.0.1/drupal --account-name=admin --account-pass=test --site-mail=webmaster@roomify.us --site-name="bat"
+  - php -d sendmail_path=$(which true) ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://drupal:drupal@127.0.0.1/drupal --account-name=admin --account-pass=test --site-mail=webmaster@roomify.us --site-name="bat"
   # Following step with -y should also run composer install.
   - drush -y en bat bat_api bat_calendar_reference bat_event bat_event_ui bat_facets bat_fullcalendar bat_unit composer_manager
   - drush cc all --yes
@@ -81,8 +81,8 @@ before_script:
   - ln -s $TRAVIS_BUILD_DIR/test .
 
   - mkdir -p $HOME/.cache
-  - wget -nc -O $HOME/.cache/selenium-server-standalone-2.53.1.jar http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar || true
-  - java -jar $HOME/.cache/selenium-server-standalone-2.53.1.jar -p 4444 &> /tmp/selenium.log &
+  - wget -nc -O $HOME/.cache/selenium-server-standalone-3.0.1.jar http://selenium-release.storage.googleapis.com/3.0/selenium-server-standalone-3.0.1.jar || true
+  - java -jar $HOME/.cache/selenium-server-standalone-3.0.1.jar -p 4444 &> /tmp/selenium.log &
   - sleep 5
 
 script:
@@ -96,9 +96,6 @@ script:
   # Set path to drupal root
   - export BEHAT_PARAMS="{\"extensions\":{\"Drupal\\\DrupalExtension\":{\"drupal\":{\"drupal_root\":\"$TRAVIS_BUILD_DIR/bat\"}}}}"
   - ./bin/behat
-
-# after_script:
-# - bash $TRAVIS_BUILD_DIR/scripts/upload.sh
 
 after_failure:
   - echo "### DB LOG ###"
