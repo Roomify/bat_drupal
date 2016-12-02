@@ -17,7 +17,7 @@ projects[bat_api][subdir] = bat
 
 projects[composer_manager][version] = 1.8
 
-projects[ctools][version] = 1.11
+projects[ctools][version] = 1.12
 
 projects[date][version] = 2.9
 

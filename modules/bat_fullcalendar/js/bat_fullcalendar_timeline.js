@@ -72,7 +72,7 @@ Drupal.behaviors.bat_event = {
           }
         },
         defaultTimedEventDuration: Drupal.settings.batCalendar[key].defaultTimedEventDuration,
-        customButtons: Drupal.settings.batCalendar[key].customButtons,
+        customButtons: $.extend(Drupal.settings.batCalendar[key].customButtons, { datepicker: { text: Drupal.t('Go to Date'), click: datepicker } }),
         eventOrder: Drupal.settings.batCalendar[key].eventOrder,
         titleFormat: Drupal.settings.batCalendar[key].titleFormat,
         resourceAreaWidth: Drupal.settings.batCalendar[key].resourceAreaWidth,
@@ -223,6 +223,36 @@ Drupal.behaviors.bat_event = {
         }
       });
     });
+
+    function datepicker() {
+      var calendar = $(this).parent().parent().parent();
+
+      $(this).after('<input type="hidden" id="hiddenDate" class="datepicker" />');
+
+      $(calendar).find('#hiddenDate').datepicker({
+        dateFormat: 'mm/dd/yy',
+        beforeShow: function(input, inst) {
+          var cal = inst.dpDiv;
+          var button = $(calendar).find('.fc-datepicker-button');
+          var top  = button.offset().top + button.outerHeight() + 4;
+          var left = button.offset().left;
+          setTimeout(function() {
+            cal.css({
+              top: top,
+              left: left
+            });
+          }, 10);
+        },
+        onSelect: function(date) {
+          $(calendar).fullCalendar('gotoDate', date);
+        },
+        onClose: function(date) {
+          $(this).remove();
+        }
+      })
+      .datepicker('setDate', $(calendar).fullCalendar('getDate').format('MM/DD/YYYY'))
+      .datepicker('show');
+    }
 
     function isInsideBusinessHour(business_hours, day, start, end) {
       for (business_hour of business_hours) {

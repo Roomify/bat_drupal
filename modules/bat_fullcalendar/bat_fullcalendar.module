@@ -537,7 +537,7 @@ function bat_fullcalendar_configure($user_settings) {
       'calendarHeight' => 500,
       'editable' => TRUE,
       'selectable' => TRUE,
-      'headerLeft' => 'today, prev, next',
+      'headerLeft' => 'prev, today, datepicker, next',
       'headerCenter' => 'title',
       'headerRight' => $calendar_views,
       'views' => $calendar_views,
