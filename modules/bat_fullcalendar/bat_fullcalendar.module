@@ -578,6 +578,8 @@ function bat_fullcalendar_configure($user_settings) {
     drupal_alter('bat_calendar_settings', $settings);
   }
 
+  date_popup_add();
+
   return $settings;
 }
 
