@@ -26,7 +26,7 @@ class bat_unit_handler_edit_link_field extends bat_unit_handler_link_field {
     $type = $values->{$this->aliases['type']};
 
     // Creating a dummy unit to check access against.
-    $dummy_unit = (object) array('type' => $type, 'unit_id' => NULL);
+    $dummy_unit = bat_unit_create(array('type' => $type));
     if (!bat_unit_access('update', $dummy_unit)) {
       return;
     }
