@@ -28,6 +28,8 @@ Drupal.behaviors.bat_event = {
         editable: Drupal.settings.batCalendar[key].editable,
         selectable: Drupal.settings.batCalendar[key].selectable,
         displayEventTime: false,
+        eventStartEditable: Drupal.settings.batCalendar[key].eventStartEditable,
+        eventDurationEditable: Drupal.settings.batCalendar[key].eventDurationEditable,
         dayNamesShort:[Drupal.t('Sun'), Drupal.t('Mon'), Drupal.t('Tue'), Drupal.t('Wed'), Drupal.t('Thu'), Drupal.t('Fri'), Drupal.t('Sat')],
         monthNames:[Drupal.t('January'), Drupal.t('February'), Drupal.t('March'), Drupal.t('April'), Drupal.t('May'), Drupal.t('June'), Drupal.t('July'), Drupal.t('August'), Drupal.t('September'), Drupal.t('October'), Drupal.t('November'), Drupal.t('December')],
         header: {
