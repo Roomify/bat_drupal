@@ -362,7 +362,7 @@ function bat_unit_edit_form_submit(&$form, &$form_state) {
 
   // If the form is being used in a views megarow, reload the page on
   // submission.
-  if (strpos($form['#action'], '/display_megarow/') === 0) {
+  if (strpos($form['#action'], '/display_megarow/') !== FALSE) {
     ctools_include('ajax');
     ctools_add_js('ajax-responder');
     $commands = array();
