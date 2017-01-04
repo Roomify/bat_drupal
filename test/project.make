@@ -2,7 +2,7 @@
 
 api = 2
 core = 7.x
-projects[drupal][version] = 7.52
+projects[drupal][version] = 7.53
 
 defaults[projects][subdir] = contrib
 
@@ -33,7 +33,7 @@ projects[libraries][version] = 2.3
 
 projects[search_api][version] = 1.20
 
-projects[services][version] = 3.17
+projects[services][version] = 3.18
 
 projects[variable][version] = 2.5
 
