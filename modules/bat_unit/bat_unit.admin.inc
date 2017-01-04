@@ -20,7 +20,7 @@ class BatUnitUIController extends EntityDefaultUIController {
   public function hook_menu() {
     $items = parent::hook_menu();
 
-    $items['admin/bat/config/units']['access callback']  = FALSE;
+    $items['admin/bat/config/units']['access callback'] = FALSE;
 
     $id_count = count(explode('/', $this->path));
     $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%' . $this->entityType;
