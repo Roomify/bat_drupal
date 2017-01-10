@@ -71,6 +71,12 @@ function bat_unit_entity_info() {
     'bundle keys' => array(
       'bundle' => 'type',
     ),
+    'view modes' => array(
+      'display' => array(
+        'label' => t('Display'),
+        'custom settings' => FALSE,
+      ),
+    ),
     'label callback' => 'entity_class_label',
     'uri callback' => 'entity_class_uri',
     'creation callback' => 'bat_unit_create',
@@ -154,6 +160,12 @@ function bat_unit_entity_info() {
     // objects.
     'bundle keys' => array(
       'bundle' => 'type',
+    ),
+    'view modes' => array(
+      'display' => array(
+        'label' => t('Display'),
+        'custom settings' => FALSE,
+      ),
     ),
     'label callback' => 'entity_class_label',
     'uri callback' => 'entity_class_uri',
