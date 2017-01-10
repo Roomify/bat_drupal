@@ -226,6 +226,13 @@ class BatBooking extends Entity {
     return $this->label;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function defaultUri() {
+    return array('path' => 'admin/bat/config/booking/manage/' . $this->booking_id);
+  }
+
 }
 
 /**
@@ -484,6 +491,15 @@ function bat_booking_load_multiple($booking_ids = array(), $conditions = array()
  */
 function bat_booking_delete(BatBooking $booking) {
   $booking->delete();
+}
+
+/**
+ * URI callback for Bat Bookings.
+ */
+function bat_booking_uri(BatBooking $booking) {
+  return array(
+    'path' => 'admin/bat/config/booking/manage/' . $booking->booking_id,
+  );
 }
 
 /**
