@@ -48,28 +48,33 @@ Drupal.behaviors.bat_event = {
           timelineDay: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineDayButtonText,
             slotDuration: Drupal.settings.batCalendar[key].viewsTimelineDaySlotDuration,
+            slotLabelFormat: Drupal.settings.batCalendar[key].viewsTimelineDaySlotLabelFormat,
           },
           timelineSevenDay: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineSevenDayButtonText,
             duration: Drupal.settings.batCalendar[key].viewsTimelineSevenDayDuration,
             slotDuration: Drupal.settings.batCalendar[key].viewsTimelineSevenDaySlotDuration,
+            slotLabelFormat: Drupal.settings.batCalendar[key].viewsTimelineSevenDaySlotLabelFormat,
             type: 'timeline',
           },
           timelineTenDay: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineTenDayButtonText,
             duration: Drupal.settings.batCalendar[key].viewsTimelineTenDayDuration,
             slotDuration: Drupal.settings.batCalendar[key].viewsTimelineTenDaySlotDuration,
+            slotLabelFormat: Drupal.settings.batCalendar[key].viewsTimelineTenDaySlotLabelFormat,
             type: 'timeline',
           },
           timelineThirtyDay: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineThirtyDayButtonText,
             duration: Drupal.settings.batCalendar[key].viewsTimelineThirtyDayDuration,
             slotDuration: Drupal.settings.batCalendar[key].viewsTimelineThirtyDaySlotDuration,
+            slotLabelFormat: Drupal.settings.batCalendar[key].viewsTimelineThirtyDaySlotLabelFormat,
             type: 'timeline',
           },
           timeline365Day: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimeline365DayButtonText,
             duration: Drupal.settings.batCalendar[key].viewsTimeline365DaySlotDuration,
+            slotLabelFormat: Drupal.settings.batCalendar[key].viewsTimeline365DaySlotLabelFormat,
             type: 'timeline',
           }
         },
@@ -77,6 +82,7 @@ Drupal.behaviors.bat_event = {
         customButtons: $.extend(Drupal.settings.batCalendar[key].customButtons, { datepicker: { text: Drupal.t('Go to Date'), click: datepicker } }),
         eventOrder: Drupal.settings.batCalendar[key].eventOrder,
         titleFormat: Drupal.settings.batCalendar[key].titleFormat,
+        slotLabelFormat: Drupal.settings.batCalendar[key].slotLabelFormat,
         resourceAreaWidth: Drupal.settings.batCalendar[key].resourceAreaWidth,
         resourceLabelText: Drupal.settings.batCalendar[key].resourceLabelText,
         resources: Drupal.settings.basePath + '?q=bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[key].unitType + '&event_type=' + Drupal.settings.batCalendar[key].eventType,
