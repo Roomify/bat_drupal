@@ -47,6 +47,9 @@ function bat_event_views_data_alter(&$data) {
       'handler' => 'bat_event_handler_date_field',
       'click sortable' => TRUE,
     ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_date',
+    ),
     'filter' => array(
       'handler' => 'bat_event_handler_date_filter',
     ),
@@ -58,6 +61,9 @@ function bat_event_views_data_alter(&$data) {
       'float' => TRUE,
       'handler' => 'bat_event_handler_date_field',
       'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_date',
     ),
     'filter' => array(
       'handler' => 'bat_event_handler_date_filter',
