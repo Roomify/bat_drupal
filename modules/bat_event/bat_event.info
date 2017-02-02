@@ -6,6 +6,7 @@ package = BAT
 
 dependencies[] = bat_unit
 dependencies[] = entityreference
+dependencies[] = composer_manager
 
 files[] = bat_event.admin.inc
 files[] = bat_event_type.admin.inc
