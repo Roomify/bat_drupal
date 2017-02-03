@@ -283,6 +283,37 @@ function bat_event_schema() {
 }
 
 /**
+ * Implements hook_requirements().
+ */
+function bat_event_requirements($phase) {
+  $requirements = array();
+  $t = get_t();
+  switch ($phase) {
+    case 'runtime':
+      module_load_include('inc', 'composer_manager', 'composer_manager.admin');
+
+      $composer_manager_installed_packages = composer_manager_installed_packages();
+
+      if (!isset($composer_manager_installed_packages['roomify/bat'])) {
+        $requirements['bat_library'] = array(
+          'title' => $t('BAT PHP Library'),
+          'value' => $t('BAT PHP Library missing'),
+          'severity' => REQUIREMENT_ERROR,
+        );
+      }
+      else {
+        $requirements['bat_library'] = array(
+          'title' => $t('BAT PHP Library'),
+          'value' => $t('BAT PHP Library installed'),
+          'severity' => REQUIREMENT_OK,
+        );
+      }
+  }
+
+  return $requirements;
+}
+
+/**
  * Add default label name field.
  */
 function bat_event_update_7100() {

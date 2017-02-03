@@ -406,6 +406,18 @@ function bat_event_edit_form($form, &$form_state, BatEvent $event) {
   $form['#validate'][] = 'bat_form_start_end_dates_validate';
   $form['#validate'][] = 'bat_event_edit_form_validate';
 
+  module_load_include('inc', 'composer_manager', 'composer_manager.admin');
+  $composer_manager_installed_packages = composer_manager_installed_packages();
+
+  if (!isset($composer_manager_installed_packages['roomify/bat'])) {
+    drupal_set_message(t('Please install the BAT PHP Library. For instructions click <a target="_blank" href="@link">here</a>.', array('@link' => 'http://docs.roomify.us/bat/drupal/installation.html#install-bat-php-library')), 'error');
+
+    $form['actions']['submit']['#disabled'] = TRUE;
+    if (isset($form['actions']['delete'])) {
+      $form['actions']['delete']['#disabled'] = TRUE;
+    }
+  }
+
   return $form;
 }
 

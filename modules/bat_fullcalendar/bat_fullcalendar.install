@@ -25,7 +25,7 @@ function bat_fullcalendar_requirements($phase) {
         $requirements['fullcalendar'] = array(
           'title' => $t('FullCalendar'),
           'description' => implode('<br />', $description),
-          'value' => 'FullCalendar Scheduler Libraries Missing',
+          'value' => $t('FullCalendar Scheduler Libraries Missing'),
           'severity' => REQUIREMENT_ERROR,
         );
       }
@@ -33,7 +33,7 @@ function bat_fullcalendar_requirements($phase) {
         $requirements['fullcalendar'] = array(
           'title' => $t('FullCalendar'),
           'description' => $t('The FullCalendar, FullCalendar Scheduler and the Moment Library are installed'),
-          'value' => 'FullCalendar, Scheduler and Moment Installed',
+          'value' => $t('FullCalendar, Scheduler and Moment Installed'),
           'severity' => REQUIREMENT_OK,
         );
       }

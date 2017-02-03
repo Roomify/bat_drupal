@@ -30,6 +30,15 @@ function bat_event_ui_menu() {
  * Callback for admin/bat/calendar.
  */
 function bat_event_ui_calendar_page($unit_type, $event_type) {
+  module_load_include('inc', 'composer_manager', 'composer_manager.admin');
+  $composer_manager_installed_packages = composer_manager_installed_packages();
+
+  if (!isset($composer_manager_installed_packages['roomify/bat'])) {
+    drupal_set_message(t('Please install the BAT PHP Library. For instructions click <a target="_blank" href="@link">here</a>.', array('@link' => 'http://docs.roomify.us/bat/drupal/installation.html#install-bat-php-library')), 'error');
+
+    return '';
+  }
+
   $ev_type = bat_event_type_load($event_type);
 
   // Check if current type support this event type.
