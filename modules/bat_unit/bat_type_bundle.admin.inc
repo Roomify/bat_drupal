@@ -149,6 +149,10 @@ function bat_type_bundle_form_validate(&$form, &$form_state) {
 function bat_type_bundle_form_submit($form, &$form_state) {
   $type_bundle = entity_ui_form_submit_build_entity($form, $form_state);
 
+  if ($type_bundle->data === '0') {
+    $type_bundle->data = array();
+  }
+
   $type_bundle->data['revision'] = $form_state['values']['revision'];
   if (isset($form_state['values']['revision_moderation'])) {
     $type_bundle->data['revision_moderation'] = $form_state['values']['revision_moderation'];
