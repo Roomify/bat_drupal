@@ -37,9 +37,9 @@ projects[services][version] = 3.18
 
 projects[variable][version] = 2.5
 
-projects[views][version] = 3.14
+projects[views][version] = 3.15
 
-projects[views_bulk_operations][version] = 3.3
+projects[views_bulk_operations][version] = 3.4
 
 projects[views_megarow][version] = 1.7
 
