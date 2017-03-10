@@ -12,7 +12,7 @@ class BatStateSearchAPIQuery implements FacetapiQueryTypeInterface {
   /**
    * Implements FacetapiQueryTypeInterface::getType().
    */
-  static public function getType() {
+  public static function getType() {
     return 'bat_state';
   }
 

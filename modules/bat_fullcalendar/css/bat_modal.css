@@ -33,7 +33,7 @@
   -webkit-box-shadow: -1em 1em 1em rgba(0, 0, 0, 0.5);
   -moz-box-shadow: -1em 1em 1em rgba(0, 0, 0, 0.5);
   box-shadow: -1em 1em 1em rgba(0, 0, 0, 0.5);
-  background: #FFF;
+  background: #fff;
   height: 100% !important;
 }
 .page-admin-bat .ctools-modal-content .modal-header {

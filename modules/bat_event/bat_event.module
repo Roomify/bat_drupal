@@ -2391,7 +2391,7 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
  * @param $type_id
  * @param $event_type
  *
- * @return Calendar
+ * @return Roomify\Bat\Calendar\Calendar
  */
 function bat_event_get_calendar($type_id, $event_type) {
   global $databases;
