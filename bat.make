@@ -9,13 +9,13 @@ projects[date][version] = 2.9
 projects[entity][version] = 1.8
 projects[entityreference][version] = 1.2
 projects[ctools][version] = 1.12
-projects[jquery_update][version] = 3.0-alpha3
+projects[jquery_update][version] = 3.0-alpha4
 projects[libraries][version] = 2.3
 projects[views][version] = 3.15
 projects[views_megarow][version] = 1.7
 projects[views_bulk_operations][version] = 3.4
 projects[search_api][version] = 1.20
-projects[services][version] = 3.18
+projects[services][version] = 3.19
 projects[facetapi][version] = 1.5
 projects[facetapi][patch][] = https://www.drupal.org/files/issues/facetapi-cur-search-block-not-exported-1469002_2.patch
 
