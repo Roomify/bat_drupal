@@ -374,6 +374,7 @@ function bat_fullcalendar_libraries_info() {
         'lib/moment.min.js',
         'fullcalendar.js',
         'gcal.js',
+        'locale-all.js',
       ),
       'css' => array(
         'fullcalendar.css',
@@ -386,6 +387,7 @@ function bat_fullcalendar_libraries_info() {
             'lib/moment.min.js',
             'fullcalendar.min.js',
             'gcal.js',
+            'locale-all.js',
           ),
           'css' => array(
             'fullcalendar.min.css',
@@ -399,6 +401,7 @@ function bat_fullcalendar_libraries_info() {
             'lib/moment.min.js',
             'fullcalendar.js',
             'gcal.js',
+            'locale-all.js',
           ),
           'css' => array(
             'fullcalendar.css',
@@ -472,6 +475,8 @@ function bat_fullcalendar_library_loaded($name, $variant = 'minified') {
  * @return array
  */
 function bat_fullcalendar_configure($user_settings) {
+  global $language;
+
   $settings = array();
 
   foreach ($user_settings['batCalendar'] as $id => $user_setting) {
@@ -533,6 +538,7 @@ function bat_fullcalendar_configure($user_settings) {
       'unitType' => '',
       'eventType' => '',
       'eventGranularity' => $user_setting['eventGranularity'],
+      'locale' => $language->language,
       'slotWidth' => FALSE,
       'calendarHeight' => 500,
       'editable' => TRUE,
