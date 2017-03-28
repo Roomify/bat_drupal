@@ -85,6 +85,9 @@ Drupal.behaviors.bat_event = {
             type: 'timeline',
           }
         },
+        groupByResource: Drupal.settings.batCalendar[key].groupByResource,
+        groupByDateAndResource: Drupal.settings.batCalendar[key].groupByDateAndResource,
+        allDaySlot: Drupal.settings.batCalendar[key].allDaySlot,
         defaultTimedEventDuration: Drupal.settings.batCalendar[key].defaultTimedEventDuration,
         customButtons: $.extend(Drupal.settings.batCalendar[key].customButtons, { datepicker: { text: Drupal.t('Go to Date'), click: datepicker } }),
         eventOrder: Drupal.settings.batCalendar[key].eventOrder,
