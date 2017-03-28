@@ -130,3 +130,19 @@ function bat_event_views_data_alter(&$data) {
     ),
   );
 }
+
+/**
+ * Implements hook_field_views_data().
+ */
+function bat_event_field_views_data($field) {
+  $data = field_views_field_default_views_data($field);
+  $field_name = $field['field_name'];
+
+  if (isset($data['field_data_' . $field_name])) {
+    if ($field['type'] == 'bat_event_state_reference') {
+      $data['field_data_' . $field_name][$field_name . '_state_id']['filter']['handler'] = 'bat_event_handler_event_state_filter';
+    }
+  }
+
+  return $data;
+}
