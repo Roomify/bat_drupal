@@ -187,7 +187,7 @@ class BatTypeUIController extends EntityDefaultUIController {
   }
 
   /**
-   * Overrides overviewTableHeaders() defaults.
+   * Overrides overviewTableRow() defaults.
    */
   protected function overviewTableRow($conditions, $id, $entity, $additional_cols = array()) {
     $entity_uri = entity_uri($this->entityType, $entity);

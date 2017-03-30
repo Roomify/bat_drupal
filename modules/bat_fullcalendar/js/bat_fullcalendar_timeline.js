@@ -245,9 +245,9 @@ Drupal.behaviors.bat_event = {
     function datepicker() {
       var calendar = $(this).parent().parent().parent();
 
-      $(this).after('<input type="hidden" id="hiddenDate" class="datepicker" />');
+      $(this).after('<input type="text" style="height: 0px; border: 0px;" id="hiddenDate" class="datepicker" />');
 
-      $(calendar).find('#hiddenDate').datepicker({
+      $(this).next().datepicker({
         dateFormat: 'mm/dd/yy',
         beforeShow: function(input, inst) {
           var cal = inst.dpDiv;
