@@ -45,6 +45,7 @@ Drupal.behaviors.bat_event = {
         minTime: Drupal.settings.batCalendar[key].minTime,
         maxTime: Drupal.settings.batCalendar[key].maxTime,
         hiddenDays: Drupal.settings.batCalendar[key].hiddenDays,
+        validRange: Drupal.settings.batCalendar[key].validRange,
         defaultDate: $.fullCalendar.moment(Drupal.settings.batCalendar[key].defaultDate),
         views: {
           timelineDay: {

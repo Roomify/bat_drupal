@@ -582,6 +582,7 @@ function bat_fullcalendar_configure($user_settings) {
       'minTime' => '00:00:00',
       'maxTime' => '24:00:00',
       'hiddenDays' => array(),
+      'validRange' => NULL,
       'defaultDate' => $default_date,
       'repeatEventTitle' => TRUE,
       'customButtons' => array(),
