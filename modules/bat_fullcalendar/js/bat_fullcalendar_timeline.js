@@ -90,7 +90,7 @@ Drupal.behaviors.bat_event = {
         groupByDateAndResource: Drupal.settings.batCalendar[key].groupByDateAndResource,
         allDaySlot: Drupal.settings.batCalendar[key].allDaySlot,
         defaultTimedEventDuration: Drupal.settings.batCalendar[key].defaultTimedEventDuration,
-        customButtons: $.extend(Drupal.settings.batCalendar[key].customButtons, { datepicker: { text: Drupal.t('Go to Date'), click: datepicker } }),
+        customButtons: $.extend(Drupal.settings.batCalendar[key].customButtons, { datepickerinline: { text: ' ' }, datepicker: { text: Drupal.t('Go to Date'), click: datepicker } }),
         eventOrder: Drupal.settings.batCalendar[key].eventOrder,
         titleFormat: Drupal.settings.batCalendar[key].titleFormat,
         slotLabelFormat: Drupal.settings.batCalendar[key].slotLabelFormat,
@@ -187,6 +187,22 @@ Drupal.behaviors.bat_event = {
           else {
             revertFunc();
           }
+        },
+        viewRender: function(view, element) {
+          var calendar = $(element).parent().parent();
+
+          $(calendar).find('button.fc-datepickerinline-button').replaceWith('<div class="inline-datepicker"></div>')
+
+          $(calendar).find('.inline-datepicker').datepicker({
+            dateFormat: 'mm/dd/yy',
+            onSelect: function(date) {
+              $(calendar).fullCalendar('gotoDate', date);
+            },
+            onClose: function(date) {
+              $(this).remove();
+            }
+          })
+          .datepicker('setDate', $(calendar).fullCalendar('getDate').format('MM/DD/YYYY'));
         },
         eventAfterRender: function(event, element, view) {
           // Append event title when rendering as background.
