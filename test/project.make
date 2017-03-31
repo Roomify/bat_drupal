@@ -27,7 +27,7 @@ projects[entityreference][version] = 1.2
 
 projects[facetapi][version] = 1.5
 
-projects[jquery_update][version] = 3.0-alpha4
+projects[jquery_update][version] = 3.0-alpha5
 
 projects[libraries][version] = 2.3
 
