@@ -435,8 +435,8 @@ function saveBatEvent(event, revertFunc, calendars, key) {
           url: events_url + '/' + event.bat_id,
           data: JSON.stringify({start_date: event.start.format('YYYY-MM-DD HH:mm'), end_date: event.end.format('YYYY-MM-DD HH:mm'), target_id: unit_id}),
           dataType: 'json',
-          beforeSend: function (request) {
-            request.setRequestHeader('X-CSRF-Token', token);
+          headers: {
+            'X-CSRF-Token': token
           },
           contentType: 'application/json',
           error: function (jqXHR, textStatus, errorThrown) {
