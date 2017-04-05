@@ -52,7 +52,7 @@ Drupal.behaviors.bat_event = {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineDayButtonText,
             slotDuration: Drupal.settings.batCalendar[key].viewsTimelineDaySlotDuration,
             slotLabelFormat: Drupal.settings.batCalendar[key].viewsTimelineDaySlotLabelFormat,
-            titleFormat: Drupal.settings.batCalendar[key].viewsTimelineDayTitleFormat,
+            titleFormat: Drupal.settings.batCalendar[key].viewsTimelineDayTitleFormat
           },
           timelineSevenDay: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineSevenDayButtonText,
@@ -60,7 +60,7 @@ Drupal.behaviors.bat_event = {
             slotDuration: Drupal.settings.batCalendar[key].viewsTimelineSevenDaySlotDuration,
             slotLabelFormat: Drupal.settings.batCalendar[key].viewsTimelineSevenDaySlotLabelFormat,
             titleFormat: Drupal.settings.batCalendar[key].viewsTimelineSevenDayTitleFormat,
-            type: 'timeline',
+            type: 'timeline'
           },
           timelineTenDay: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineTenDayButtonText,
@@ -68,7 +68,7 @@ Drupal.behaviors.bat_event = {
             slotDuration: Drupal.settings.batCalendar[key].viewsTimelineTenDaySlotDuration,
             slotLabelFormat: Drupal.settings.batCalendar[key].viewsTimelineTenDaySlotLabelFormat,
             titleFormat: Drupal.settings.batCalendar[key].viewsTimelineTenDayTitleFormat,
-            type: 'timeline',
+            type: 'timeline'
           },
           timelineThirtyDay: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimelineThirtyDayButtonText,
@@ -76,14 +76,24 @@ Drupal.behaviors.bat_event = {
             slotDuration: Drupal.settings.batCalendar[key].viewsTimelineThirtyDaySlotDuration,
             slotLabelFormat: Drupal.settings.batCalendar[key].viewsTimelineThirtyDaySlotLabelFormat,
             titleFormat: Drupal.settings.batCalendar[key].viewsTimelineThirtyDayTitleFormat,
-            type: 'timeline',
+            type: 'timeline'
           },
           timeline365Day: {
             buttonText: Drupal.settings.batCalendar[key].viewsTimeline365DayButtonText,
-            duration: Drupal.settings.batCalendar[key].viewsTimeline365DaySlotDuration,
+            duration: Drupal.settings.batCalendar[key].viewsTimeline365DayDuration,
             slotLabelFormat: Drupal.settings.batCalendar[key].viewsTimeline365DaySlotLabelFormat,
             titleFormat: Drupal.settings.batCalendar[key].viewsTimeline365DayTitleFormat,
-            type: 'timeline',
+            type: 'timeline'
+          },
+          agendaOneDay: {
+            buttonText: Drupal.settings.batCalendar[key].viewsAgendaOneDayButtonText,
+            duration: Drupal.settings.batCalendar[key].viewsAgendaOneDayDuration,
+            type: 'agenda'
+          },
+          agendaSevenDay: {
+            buttonText: Drupal.settings.batCalendar[key].viewsAgendaSevenDayButtonText,
+            duration: Drupal.settings.batCalendar[key].viewsAgendaSevenDayDuration,
+            type: 'agenda'
           }
         },
         groupByResource: Drupal.settings.batCalendar[key].groupByResource,
