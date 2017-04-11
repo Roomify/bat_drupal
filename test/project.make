@@ -19,7 +19,7 @@ projects[composer_manager][version] = 1.8
 
 projects[ctools][version] = 1.12
 
-projects[date][version] = 2.9
+projects[date][version] = 2.10
 
 projects[entity][version] = 1.8
 
