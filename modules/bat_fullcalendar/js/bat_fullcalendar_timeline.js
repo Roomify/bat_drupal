@@ -216,53 +216,60 @@ Drupal.behaviors.bat_event = {
         },
         eventAfterRender: function(event, element, view) {
           // Append event title when rendering as background.
-          if (event.rendering == 'background' && event.fixed == 0) {
-            if ((view.type == 'timelineThirtyDay' || view.type == 'timelineMonth' || view.type == 'timelineYear' || view.type == 'timeline365Day') && Drupal.settings.batCalendar[key].repeatEventTitle) {
-              var start = event.start.clone();
-              start.subtract(start.hour(), 'hours').subtract(start.minute(), 'minutes');
+          if (event.rendering == 'background') {
+            if (event.fixed == 0) {
+              if ((view.type == 'timelineThirtyDay' || view.type == 'timelineMonth' || view.type == 'timelineYear' || view.type == 'timeline365Day') && Drupal.settings.batCalendar[key].repeatEventTitle) {
+                var start = event.start.clone();
+                start.subtract(start.hour(), 'hours').subtract(start.minute(), 'minutes');
 
-              if (start < view.start) {
-                start = view.start.clone();
-              }
-
-              if (event.end === null) {
-                var end = event.start.clone();
-              }
-              else {
-                var end = event.end.clone();
-
-                if (end > view.end) {
-                  end = view.end.clone();
+                if (start < view.start) {
+                  start = view.start.clone();
                 }
-                else if (end.unix() != view.end.unix()) {
-                  end.add(1, 'minute');
+
+                if (event.end === null) {
+                  var end = event.start.clone();
                 }
-              }
+                else {
+                  var end = event.end.clone();
 
-              var index = 0;
+                  if (end > view.end) {
+                    end = view.end.clone();
+                  }
+                  else if (end.unix() != view.end.unix()) {
+                    end.add(1, 'minute');
+                  }
+                }
 
-              // Event width.
-              var width = element.width();
-              // Event colspan number.
-              var colspan = element.get(0).colSpan;
+                var index = 0;
 
-              if (event.end != null) {
-                // Single cell width.
-                var cell_width = width/(end.diff(start, 'days'));
+                // Event width.
+                var width = element.width();
+                // Event colspan number.
+                var colspan = element.get(0).colSpan;
 
-                while (start < end) {
-                  element.append('<span class="fc-title" style="position:absolute; top:8px; left:' + (index * cell_width + 3) + 'px;">' + (event.title || '&nbsp;') + '</span>');
+                if (event.end != null) {
+                  // Single cell width.
+                  var cell_width = width/(end.diff(start, 'days'));
+
+                  while (start < end) {
+                    element.append('<span class="fc-title" style="position:absolute; top:8px; left:' + (index * cell_width + 3) + 'px;">' + (event.title || '&nbsp;') + '</span>');
+                    start = start.add(1, 'day');
+                    index++;
+                  }
+                }
+                else {
+                  element.append('<span class="fc-title" style="position:absolute; top:8px; left:3px;">' + (event.title || '&nbsp;') + '</span>');
                   start = start.add(1, 'day');
-                  index++;
                 }
               }
               else {
                 element.append('<span class="fc-title" style="position:absolute; top:8px; left:3px;">' + (event.title || '&nbsp;') + '</span>');
-                start = start.add(1, 'day');
               }
             }
             else {
-              element.append('<span class="fc-title" style="position:absolute; top:8px; left:3px;">' + (event.title || '&nbsp;') + '</span>');
+              if (event.title != null && Drupal.settings.batCalendar[key].showBackgroundEventTitle) {
+                element.append('<span class="fc-title" style="position:absolute; top:8px; left:3px;">' + (event.title || '&nbsp;') + '</span>');
+              }
             }
           }
         }
