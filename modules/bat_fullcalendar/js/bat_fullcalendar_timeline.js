@@ -141,7 +141,7 @@ Drupal.behaviors.bat_event = {
         },
         selectAllow: function(selectInfo) {
           if (Drupal.settings.batCalendar[key].selectAllowBusinessHours) {
-            var business_hours = $(this)[0].businessHours;
+            var business_hours = $(value[0]).fullCalendar('option', 'businessHours');
 
             var start_day = selectInfo.start.day();
             var end_day = selectInfo.end.clone().subtract(1, 'minute').day();
