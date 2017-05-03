@@ -8,6 +8,10 @@ define('BAT_OPTIONS_ADD', 'add');
 define('BAT_OPTIONS_ADD_DAILY', 'add-daily');
 define('BAT_OPTIONS_SUB', 'sub');
 define('BAT_OPTIONS_SUB_DAILY', 'sub-daily');
+define('BAT_OPTIONS_ADD_PERSON', 'add_person');
+define('BAT_OPTIONS_ADD_DAILY_PERSON', 'add-daily_person');
+define('BAT_OPTIONS_SUB_PERSON', 'sub_person');
+define('BAT_OPTIONS_SUB_DAILY_PERSON', 'sub-daily_person');
 define('BAT_OPTIONS_REPLACE', 'replace');
 define('BAT_OPTIONS_INCREASE', 'increase');
 define('BAT_OPTIONS_DECREASE', 'decrease');
@@ -119,10 +123,12 @@ function bat_options_data_property_info($name = NULL) {
  * Implements hook_field_is_empty().
  */
 function bat_options_field_is_empty($item, $field) {
+  $per_person = (isset($field['settings']['per_person'])) ? $field['settings']['per_person'] : FALSE;
+
   return empty($item['name']) ||
          empty($item['quantity']) || !(is_numeric($item['quantity']) && is_int((int) $item['quantity'])) ||
          ((empty($item['value']) || !is_numeric($item['value'])) && $item['operation'] != 'no_charge') ||
-         empty($item['operation']) || !in_array($item['operation'], array_keys(bat_options_price_options()));
+         empty($item['operation']) || !in_array($item['operation'], array_keys(bat_options_price_options($per_person)));
 }
 
 /**
@@ -201,6 +207,23 @@ function bat_options_field_formatter_view($entity_type, $entity, $field, $instan
 }
 
 /**
+ * Implements hook_field_settings_form().
+ */
+function bat_options_field_settings_form($field, $instance, $has_data) {
+  $settings = $field['settings'];
+
+  $form = array();
+
+  $form['per_person'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable "Per person" options'),
+    '#default_value' => isset($settings['per_person']) ? $settings['per_person'] : 0,
+  );
+
+  return $form;
+}
+
+/**
  * Implements hook_field_widget_form().
  */
 function bat_options_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
@@ -229,7 +252,10 @@ function bat_options_field_widget_form(&$form, &$form_state, $field, $instance, 
         'class' => array('bat_options-option--quantity'),
       ),
     );
-    $price_options = bat_options_price_options();
+
+    $per_person = (isset($field['settings']['per_person'])) ? $field['settings']['per_person'] : FALSE;
+    $price_options = bat_options_price_options($per_person);
+
     $element['operation'] = array(
       '#type' => 'select',
       '#title' => t('Operation'),
@@ -244,7 +270,7 @@ function bat_options_field_widget_form(&$form, &$form_state, $field, $instance, 
       '#title' => t('Value'),
       '#size' => 10,
       '#default_value' => (isset($items[$delta]['value']) && $items[$delta]['value'] != 0) ? $items[$delta]['value'] : NULL,
-      '#element_validate' => array('element_validate_integer_positive', 'bat_options_element_value_validate'),
+      '#element_validate' => array('bat_options_element_value_validate'),
       '#attributes' => array(
         'class' => array('bat_options-option--value'),
       ),
@@ -293,12 +319,16 @@ function bat_options_field_widget_form(&$form, &$form_state, $field, $instance, 
 }
 
 /**
- *
+ * Form element validation handler for numeric elements that must be positive.
  */
 function bat_options_element_value_validate($element, &$form_state) {
   $value = $element['#value'];
+
   if ($value == '') {
     form_set_value($element, 0, $form_state);
+  }
+  elseif (!is_numeric($value) || $value <= 0) {
+    form_error($element, t('%name must be a positive number.', array('%name' => $element['#title'])));
   }
 }
 
@@ -422,8 +452,12 @@ function bat_options_remove_submit($form, &$form_state) {
 
 /**
  * Returns the available price options for booking_unit options field.
+ *
+ * @param $per_person
+ *
+ * @return array
  */
-function bat_options_price_options() {
+function bat_options_price_options($per_person = FALSE) {
   $options = array(
     BAT_OPTIONS_ADD => t('Add to price'),
     BAT_OPTIONS_ADD_DAILY => t('Add to price per night'),
@@ -434,6 +468,13 @@ function bat_options_price_options() {
     BAT_OPTIONS_DECREASE => t('Decrease price by % amount'),
     BAT_OPTIONS_NOCHARGE => t('No charge'),
   );
+
+  if ($per_person) {
+    $options[BAT_OPTIONS_ADD_PERSON] = t('Add to price per person');
+    $options[BAT_OPTIONS_ADD_DAILY_PERSON] = t('Add to price per night per person');
+    $options[BAT_OPTIONS_SUB_PERSON] = t('Subtract from price per person');
+    $options[BAT_OPTIONS_SUB_DAILY_PERSON] = t('Subtract from price per night per person');
+  }
 
   drupal_alter('bat_options_price_options', $options);
 
@@ -481,6 +522,10 @@ function bat_options_get_machine_name($option_name, $pattern = '/[^a-z0-9_]+/', 
 
 /**
  * Given an option, return a string that explains the operation.
+ *
+ * @param $option
+ *
+ * @return string
  */
 function bat_options_get_operation_label($option) {
   $label = '';
@@ -536,6 +581,33 @@ function bat_options_get_operation_label($option) {
       ));
       break;
 
+    case 'add_person':
+      $label = t('+@amount@currency_symbol per person to price', array(
+        '@amount' => $option['value'],
+        '@currency_symbol' => $currency_symbol,
+      ));
+      break;
+
+    case 'add-daily_person':
+      $label = t('+@amount@currency_symbol per night per person to price', array(
+        '@amount' => $option['value'],
+        '@currency_symbol' => $currency_symbol,
+      ));
+      break;
+
+    case 'sub_person':
+      $label = t('-@amount@currency_symbol per person from price', array(
+        '@amount' => $option['value'],
+        '@currency_symbol' => $currency_symbol,
+      ));
+      break;
+
+    case 'sub-daily_person':
+      $label = t('-@amount@currency_symbol per night per person from price', array(
+        '@amount' => $option['value'],
+        '@currency_symbol' => $currency_symbol,
+      ));
+      break;
   }
 
   return $label;
@@ -543,8 +615,16 @@ function bat_options_get_operation_label($option) {
 
 /**
  * Calculate the price for an option.
+ *
+ * @param $booking_price
+ * @param $option
+ * @param $quantity
+ * @param $nights
+ * @param $persons
+ *
+ * @return float
  */
-function bat_options_get_option_price($booking_price, $option, $quantity, $nights) {
+function bat_options_get_option_price($booking_price, $option, $quantity, $nights, $persons = 0) {
   $price = 0;
 
   switch ($option['operation']) {
@@ -575,6 +655,22 @@ function bat_options_get_option_price($booking_price, $option, $quantity, $night
 
     case BAT_OPTIONS_DECREASE:
       $price -= $booking_price * ($option['value'] / 100);
+      break;
+
+    case BAT_OPTIONS_ADD_PERSON:
+      $price += $option['value'] * $persons;
+      break;
+
+    case BAT_OPTIONS_ADD_DAILY_PERSON:
+      $price += $option['value'] * $nights * $persons;
+      break;
+
+    case BAT_OPTIONS_SUB_PERSON:
+      $price -= $option['value'] * $persons;
+      break;
+
+    case BAT_OPTIONS_SUB_DAILY_PERSON:
+      $price -= $option['value'] * $nights * $persons;
       break;
   }
 
