@@ -228,7 +228,7 @@ class BatTypeUIController extends EntityDefaultUIController {
       $row[] = array('data' => l(t('clone'), $this->path . '/manage/' . $id . '/clone'), 'colspan' => $this->operationCount());
     }
     else {
-      $row[] = l(t('edit'), $this->path . '/manage/' . $id);
+      $row[] = l(t('edit'), $this->path . '/manage/' . $id . '/edit');
 
       if ($field_ui) {
         $row[] = l(t('manage fields'), $this->path . '/manage/' . $id . '/fields');
