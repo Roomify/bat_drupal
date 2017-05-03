@@ -106,7 +106,20 @@ Drupal.behaviors.bat_event = {
         slotLabelFormat: Drupal.settings.batCalendar[key].slotLabelFormat,
         resourceAreaWidth: Drupal.settings.batCalendar[key].resourceAreaWidth,
         resourceLabelText: Drupal.settings.batCalendar[key].resourceLabelText,
-        resources: Drupal.settings.basePath + '?q=bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[key].unitType + '&event_type=' + Drupal.settings.batCalendar[key].eventType,
+        resources: function(callback) {
+          $.ajax({
+            url: Drupal.settings.basePath + '?q=bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[key].unitType + '&event_type=' + Drupal.settings.batCalendar[key].eventType
+          })
+          .done(function(resources) {
+            if (Drupal.settings.batCalendar[key].hideResourceTypes) {
+              resources = $.map(resources, function(e, i) {
+                return e.children;
+              });
+            }
+
+            callback(resources);
+          });
+        },
         selectOverlap: function(event) {
           // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';

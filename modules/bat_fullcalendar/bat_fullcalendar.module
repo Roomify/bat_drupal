@@ -599,6 +599,7 @@ function bat_fullcalendar_configure($user_settings) {
       'groupByResource' => FALSE,
       'groupByDateAndResource' => FALSE,
       'allDaySlot' => TRUE,
+      'hideResourceTypes' => FALSE,
     );
 
     $settings['batCalendar'][$id] = array_replace_recursive($config, $user_setting);
