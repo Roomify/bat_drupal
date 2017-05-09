@@ -94,11 +94,21 @@ Drupal.behaviors.bat_event = {
             buttonText: Drupal.settings.batCalendar[key].viewsAgendaSevenDayButtonText,
             duration: Drupal.settings.batCalendar[key].viewsAgendaSevenDayDuration,
             type: 'agenda'
+          },
+          agenda: {
+            buttonText: Drupal.settings.batCalendar[key].viewsAgendaButtonText
+          },
+          week: {
+            buttonText: Drupal.settings.batCalendar[key].viewsWeekButtonText
+          },
+          day: {
+            buttonText: Drupal.settings.batCalendar[key].viewsDayButtonText
           }
         },
         groupByResource: Drupal.settings.batCalendar[key].groupByResource,
         groupByDateAndResource: Drupal.settings.batCalendar[key].groupByDateAndResource,
         allDaySlot: Drupal.settings.batCalendar[key].allDaySlot,
+        firstDay: Drupal.settings.batCalendar[key].firstDay,
         defaultTimedEventDuration: Drupal.settings.batCalendar[key].defaultTimedEventDuration,
         customButtons: $.extend(Drupal.settings.batCalendar[key].customButtons, { datepickerinline: { text: ' ' }, datepicker: { text: Drupal.t('Go to Date'), click: datepicker } }),
         eventOrder: Drupal.settings.batCalendar[key].eventOrder,
