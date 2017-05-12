@@ -604,6 +604,7 @@ function bat_fullcalendar_configure($user_settings) {
       'viewsAgendaButtonText' => '',
       'viewsWeekButtonText' => '',
       'viewsDayButtonText' => '',
+      'allDayDefault' => NULL,
     );
 
     $settings['batCalendar'][$id] = array_replace_recursive($config, $user_setting);

@@ -25,6 +25,7 @@
             center: Drupal.settings.batCalendar[cal_id].headerCenter,
             right: Drupal.settings.batCalendar[cal_id].headerRight,
           },
+          allDayDefault: Drupal.settings.batCalendar[cal_id].allDayDefault,
           businessHours: Drupal.settings.batCalendar[cal_id].businessHours,
           defaultView: Drupal.settings.batCalendar[cal_id].defaultView,
           selectConstraint: (Drupal.settings.batCalendar[cal_id].selectConstraint == null) ? undefined : Drupal.settings.batCalendar[cal_id].selectConstraint,

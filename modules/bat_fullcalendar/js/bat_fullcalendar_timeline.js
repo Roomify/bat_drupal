@@ -38,6 +38,7 @@ Drupal.behaviors.bat_event = {
           center: Drupal.settings.batCalendar[key].headerCenter,
           right: Drupal.settings.batCalendar[key].headerRight,
         },
+        allDayDefault: Drupal.settings.batCalendar[key].allDayDefault,
         businessHours: Drupal.settings.batCalendar[key].businessHours,
         defaultView: Drupal.settings.batCalendar[key].defaultView,
         scrollTime: Drupal.settings.batCalendar[key].scrollTime,
