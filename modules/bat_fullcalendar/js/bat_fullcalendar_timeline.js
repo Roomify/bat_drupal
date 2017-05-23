@@ -119,7 +119,7 @@ Drupal.behaviors.bat_event = {
         resourceLabelText: Drupal.settings.batCalendar[key].resourceLabelText,
         resources: function(callback) {
           $.ajax({
-            url: Drupal.settings.basePath + '?q=bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[key].unitType + '&event_type=' + Drupal.settings.batCalendar[key].eventType
+            url: Drupal.settings.basePath + '?q=' + Drupal.settings.pathPrefix + 'bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[key].unitType + '&event_type=' + Drupal.settings.batCalendar[key].eventType
           })
           .done(function(resources) {
             if (Drupal.settings.batCalendar[key].hideResourceTypes) {
@@ -135,7 +135,7 @@ Drupal.behaviors.bat_event = {
           // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';
         },
-        events: Drupal.settings.basePath + '?q=bat/v2/events-calendar&unit_types=' + Drupal.settings.batCalendar[key].unitType + '&event_types=' + Drupal.settings.batCalendar[key].eventType,
+        events: Drupal.settings.basePath + '?q=' + Drupal.settings.pathPrefix + 'bat/v2/events-calendar&unit_types=' + Drupal.settings.batCalendar[key].unitType + '&event_types=' + Drupal.settings.batCalendar[key].eventType,
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
@@ -391,7 +391,7 @@ Drupal.batCalendar.Modal = function(element, key, eid, sd, ed, $unit_id) {
   Drupal.CTools.Modal.show('bat-modal-style');
 
   // The base url (which doesn't change) is used to identify our ajax instance.
-  var base = Drupal.settings.basePath + '?q=admin/bat/fullcalendar/';
+  var base = Drupal.settings.basePath + '?q=' + Drupal.settings.pathPrefix + 'admin/bat/fullcalendar/';
   // Create a drupal ajax object that points to the event form.
   var element_settings = {
     url : base + $unit_id + '/event/' + Drupal.settings.batCalendar[key].eventType + '/' + eid + '/' + sd + '/' + ed,
