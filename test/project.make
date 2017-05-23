@@ -23,7 +23,7 @@ projects[date][version] = 2.10
 
 projects[entity][version] = 1.8
 
-projects[entityreference][version] = 1.2
+projects[entityreference][version] = 1.3
 
 projects[facetapi][version] = 1.5
 
