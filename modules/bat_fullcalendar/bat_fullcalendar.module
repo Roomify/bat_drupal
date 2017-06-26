@@ -537,6 +537,8 @@ function bat_fullcalendar_configure($user_settings) {
       'schedulerLicenseKey' => $schedulerlicensekey,
       'unitType' => '',
       'eventType' => '',
+      'grouping_entity_type' => '',
+      'grouping_ids' => '',
       'eventGranularity' => $user_setting['eventGranularity'],
       'locale' => $language->language,
       'slotWidth' => FALSE,
