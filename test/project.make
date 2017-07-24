@@ -33,7 +33,7 @@ projects[libraries][version] = 2.3
 
 projects[search_api][version] = 1.20
 
-projects[services][version] = 3.19
+projects[services][version] = 3.20
 
 projects[variable][version] = 2.5
 
