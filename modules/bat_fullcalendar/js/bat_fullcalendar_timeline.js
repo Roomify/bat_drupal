@@ -119,7 +119,7 @@ Drupal.behaviors.bat_event = {
         resourceLabelText: Drupal.settings.batCalendar[key].resourceLabelText,
         resources: function(callback) {
           $.ajax({
-            url: Drupal.settings.basePath + '?q=' + Drupal.settings.pathPrefix + 'bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[key].unitType + '&event_type=' + Drupal.settings.batCalendar[key].eventType + '&grouping_entity_type=' + Drupal.settings.batCalendar[key].grouping_entity_type + '&grouping_ids=' + Drupal.settings.batCalendar[key].grouping_ids
+            url: Drupal.settings.basePath + '?q=' + Drupal.settings.pathPrefix + 'bat/v2/units-calendar&types=' + Drupal.settings.batCalendar[key].unitType + '&event_type=' + Drupal.settings.batCalendar[key].eventType + '&grouping_entity_type=' + Drupal.settings.batCalendar[key].grouping_entity_type + '&grouping_ids=' + Drupal.settings.batCalendar[key].grouping_ids + '&collapse_childrens=' + Drupal.settings.batCalendar[key].collapse_childrens
           })
           .done(function(resources) {
             if (Drupal.settings.batCalendar[key].hideResourceTypes) {
