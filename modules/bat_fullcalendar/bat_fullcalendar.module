@@ -535,6 +535,7 @@ function bat_fullcalendar_configure($user_settings) {
 
     $config = array(
       'schedulerLicenseKey' => $schedulerlicensekey,
+      'themeSystem' => 'standard',
       'unitType' => '',
       'eventType' => '',
       'grouping_entity_type' => '',
