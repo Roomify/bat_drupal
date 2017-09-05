@@ -93,8 +93,17 @@ function bat_fullcalendar_event_management($entity_id, $event_type, $event_id, $
     drupal_set_message(t('Unable to load event.'), 'error');
   }
 
-  $modal_content = module_invoke_all('bat_fullcalendar_modal_content', $entity_id, $event_type, $event_id, $start_date, $end_date);
-  $modal_content = array_pop($modal_content);
+  $args = array($entity_id, $event_type, $event_id, $start_date, $end_date);
+  foreach (array_reverse(module_implements('bat_fullcalendar_modal_content')) as $module) {
+    $function = $module . '_bat_fullcalendar_modal_content';
+    if (function_exists($function)) {
+      $result = call_user_func_array($function, $args);
+      if (isset($result) && is_array($result)) {
+        $modal_content = reset($result);
+        break;
+      }
+    }
+  }
 
   if (isset($modal_content['title']) && isset($modal_content['content'])) {
     ctools_modal_render($modal_content['title'], $modal_content['content']);
