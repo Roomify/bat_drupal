@@ -549,7 +549,7 @@ function bat_fullcalendar_configure($user_settings) {
       'eventType' => '',
       'grouping_entity_type' => '',
       'grouping_ids' => '',
-      'collapse_childrens' => FALSE,
+      'collapse_childrens' => 0,
       'eventGranularity' => $user_setting['eventGranularity'],
       'locale' => $language->language,
       'slotWidth' => FALSE,
