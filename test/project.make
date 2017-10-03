@@ -23,7 +23,7 @@ projects[date][version] = 2.10
 
 projects[entity][version] = 1.8
 
-projects[entityreference][version] = 1.3
+projects[entityreference][version] = 1.5
 
 projects[facetapi][version] = 1.5
 
@@ -31,13 +31,13 @@ projects[jquery_update][version] = 3.0-alpha5
 
 projects[libraries][version] = 2.3
 
-projects[search_api][version] = 1.20
+projects[search_api][version] = 1.22
 
 projects[services][version] = 3.20
 
 projects[variable][version] = 2.5
 
-projects[views][version] = 3.16
+projects[views][version] = 3.18
 
 projects[views_bulk_operations][version] = 3.4
 
