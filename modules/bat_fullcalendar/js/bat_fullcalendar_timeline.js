@@ -141,7 +141,7 @@ Drupal.behaviors.bat_event = {
           $(this).fullCalendar('refetchEvents');
         },
         eventClick: function(event, jsEvent, view) {
-          if (event.editable) {
+          if (event.editable && Drupal.settings.batCalendar[key].enableModal) {
             var unit_id = event.resourceId.substring(1);
             var sd = event.start.format('YYYY-MM-DD HH:mm');
             event.end.add(1, 'm');
@@ -152,7 +152,7 @@ Drupal.behaviors.bat_event = {
           }
         },
         select: function(start, end, jsEvent, view, resource) {
-          if (resource.create_event) {
+          if (resource.create_event && Drupal.settings.batCalendar[key].enableModal) {
             var unit_id = resource.id.substring(1);
 
             var ed = end.format('YYYY-MM-DD HH:mm');

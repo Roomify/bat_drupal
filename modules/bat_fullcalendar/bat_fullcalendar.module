@@ -603,6 +603,7 @@ function bat_fullcalendar_configure($user_settings) {
       'defaultDate' => $default_date,
       'repeatEventTitle' => TRUE,
       'showBackgroundEventTitle' => FALSE,
+      'enableModal' => TRUE,
       'customButtons' => array(),
       'eventOrder' => 'title',
       'titleFormat' => '',
