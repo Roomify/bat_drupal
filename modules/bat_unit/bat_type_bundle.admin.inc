@@ -149,7 +149,7 @@ function bat_type_bundle_form_validate(&$form, &$form_state) {
 function bat_type_bundle_form_submit($form, &$form_state) {
   $type_bundle = entity_ui_form_submit_build_entity($form, $form_state);
 
-  if ($type_bundle->data === '0') {
+  if ($type_bundle->data === '') {
     $type_bundle->data = array();
   }
 
