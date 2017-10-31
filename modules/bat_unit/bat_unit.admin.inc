@@ -135,7 +135,7 @@ class BatUnitUIController extends EntityDefaultUIController {
 function bat_unit_form($form, &$form_state, $unit, $op = 'edit') {
   // Add the breadcrumb for the form's location.
   bat_unit_set_breadcrumb();
-  drupal_set_title(t('Edit @unit_name', array('@unit_name' => $unit->name)));
+  drupal_set_title(t('Edit !unit_name', array('!unit_name' => $unit->name)));
 
   $unit->date = format_date($unit->created, 'custom', 'Y-m-d H:i:s O');
   $account = user_load($unit->uid);
@@ -155,7 +155,7 @@ function bat_unit_form($form, &$form_state, $unit, $op = 'edit') {
 function bat_unit_form_wrapper(BatUnit $unit) {
   // Add the breadcrumb for the form's location.
   bat_unit_set_breadcrumb();
-  drupal_set_title(t('Edit @unit_name', array('@unit_name' => $unit->name)));
+  drupal_set_title(t('Edit !unit_name', array('!unit_name' => $unit->name)));
 
   $unit->date = format_date($unit->created, 'custom', 'Y-m-d H:i:s O');
   $account = user_load($unit->uid);

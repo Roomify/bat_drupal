@@ -145,7 +145,7 @@ function bat_event_form_wrapper(BatEvent $event) {
 
   // Set the page title.
   $type = bat_event_get_types($event->type);
-  drupal_set_title(t('#@event_id - @event_type', array('@event_type' => $type->label, '@event_id' => $event->event_id)));
+  drupal_set_title(t('#!event_id - !event_type', array('@event_type' => $type->label, '@event_id' => $event->event_id)));
 
   return drupal_get_form('bat_event_edit_form', $event);
 }

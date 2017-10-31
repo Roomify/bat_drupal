@@ -165,7 +165,7 @@ function bat_booking_form($form, &$form_state, $booking, $op = 'edit') {
   global $user;
   // Add the breadcrumb for the form's location.
   bat_booking_set_breadcrumb();
-  drupal_set_title(t('Edit @booking_label', array('@booking_label' => $booking->label)));
+  drupal_set_title(t('Edit !booking_label', array('!booking_label' => $booking->label)));
 
   $booking->date = format_date($booking->created, 'custom', 'Y-m-d H:i:s O');
   $account = user_load($booking->uid);
