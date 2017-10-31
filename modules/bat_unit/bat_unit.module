@@ -136,8 +136,6 @@ function bat_unit_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
   }
 }
 
-
-
 /**
  * @section Bat Hooks
  *
@@ -152,7 +150,6 @@ function bat_unit_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
 function bat_unit_bat_event_target_entity_types() {
   return array('bat_unit');
 }
-
 
 /**
  * @section Bat Unit
@@ -607,7 +604,7 @@ function bat_unit_get_types($bundle_name = NULL) {
  *
  * @return array
  *   An array of type bundles keyed by bundle name and labels
-*/
+ */
 function bat_type_bundles_ids() {
   $type_bundles = [];
   $bundles = bat_unit_get_type_bundles();
@@ -644,6 +641,7 @@ function bat_type_bundle_load($bundle, $reset = FALSE) {
  *   Integer specifying the type id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
+ *
  * @return UnitType|false
  *   A fully-loaded $type object or FALSE if it cannot be loaded.
  *

@@ -99,8 +99,8 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
     // be an integer, use either nid or type as the static cache id.
     $cid = is_object($entity) ? $entity->id() : $entity;
 
-    // If we are creating a new entity make sure we set the type so permissions get
-    // applied
+    // If we are creating a new entity make sure we set the type
+    // so permissions get applied.
     if ($operation == 'create' && $cid == '') {
       $cid = $entity->getEntityType()->id();
     }

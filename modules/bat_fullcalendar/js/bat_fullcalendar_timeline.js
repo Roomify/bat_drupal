@@ -25,11 +25,15 @@ Drupal.behaviors.bat_event = {
 
       $(value[0]).once().fullCalendar({
         schedulerLicenseKey: drupalSettings.batCalendar[key].schedulerLicenseKey,
+        themeSystem: drupalSettings.batCalendar[key].themeSystem,
+        locale: drupalSettings.batCalendar[key].locale,
         slotWidth: drupalSettings.batCalendar[key].slotWidth,
         height: drupalSettings.batCalendar[key].calendarHeight,
         editable: drupalSettings.batCalendar[key].editable,
         selectable: drupalSettings.batCalendar[key].selectable,
         displayEventTime: false,
+        eventStartEditable: drupalSettings.batCalendar[key].eventStartEditable,
+        eventDurationEditable: drupalSettings.batCalendar[key].eventDurationEditable,
         dayNamesShort:[Drupal.t('Sun'), Drupal.t('Mon'), Drupal.t('Tue'), Drupal.t('Wed'), Drupal.t('Thu'), Drupal.t('Fri'), Drupal.t('Sat')],
         monthNames:[Drupal.t('January'), Drupal.t('February'), Drupal.t('March'), Drupal.t('April'), Drupal.t('May'), Drupal.t('June'), Drupal.t('July'), Drupal.t('August'), Drupal.t('September'), Drupal.t('October'), Drupal.t('November'), Drupal.t('December')],
         header: {
@@ -37,12 +41,14 @@ Drupal.behaviors.bat_event = {
           center: drupalSettings.batCalendar[key].headerCenter,
           right: drupalSettings.batCalendar[key].headerRight,
         },
+        allDayDefault: drupalSettings.batCalendar[key].allDayDefault,
         businessHours: drupalSettings.batCalendar[key].businessHours,
         defaultView: drupalSettings.batCalendar[key].defaultView,
         selectConstraint: (drupalSettings.batCalendar[key].selectConstraint == null) ? undefined : drupalSettings.batCalendar[key].selectConstraint,
         minTime: drupalSettings.batCalendar[key].minTime,
         maxTime: drupalSettings.batCalendar[key].maxTime,
         hiddenDays: drupalSettings.batCalendar[key].hiddenDays,
+        validRange: drupalSettings.batCalendar[key].validRange,
         defaultDate: $.fullCalendar.moment(drupalSettings.batCalendar[key].defaultDate),
         views: {
           timelineDay: {
@@ -73,10 +79,15 @@ Drupal.behaviors.bat_event = {
             type: 'timeline',
           }
         },
+        groupByResource: drupalSettings.batCalendar[key].groupByResource,
+        groupByDateAndResource: drupalSettings.batCalendar[key].groupByDateAndResource,
+        allDaySlot: drupalSettings.batCalendar[key].allDaySlot,
+        firstDay: drupalSettings.batCalendar[key].firstDay,
         defaultTimedEventDuration: drupalSettings.batCalendar[key].defaultTimedEventDuration,
         customButtons: drupalSettings.batCalendar[key].customButtons,
         eventOrder: drupalSettings.batCalendar[key].eventOrder,
         titleFormat: drupalSettings.batCalendar[key].titleFormat,
+        slotLabelFormat: drupalSettings.batCalendar[key].slotLabelFormat,
         resourceAreaWidth: drupalSettings.batCalendar[key].resourceAreaWidth,
         resourceLabelText: drupalSettings.batCalendar[key].resourceLabelText,
         resources: '/bat_api/calendar-units?_format=json&types=' + drupalSettings.batCalendar[key].unitType + '&event_type=' + drupalSettings.batCalendar[key].eventType,

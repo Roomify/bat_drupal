@@ -110,6 +110,7 @@ function bat_fullcalendar_configure($user_settings) {
 
     $config = array(
       'schedulerLicenseKey' => $schedulerlicensekey,
+      'themeSystem' => 'standard',
       'unitType' => '',
       'eventType' => '',
       'eventGranularity' => $user_setting['eventGranularity'],
@@ -117,6 +118,8 @@ function bat_fullcalendar_configure($user_settings) {
       'calendarHeight' => 500,
       'editable' => TRUE,
       'selectable' => TRUE,
+      'eventStartEditable' => TRUE,
+      'eventDurationEditable' => TRUE,
       'headerLeft' => 'today, prev, next',
       'headerCenter' => 'title',
       'headerRight' => $calendar_views,
@@ -148,7 +151,11 @@ function bat_fullcalendar_configure($user_settings) {
       'customButtons' => [],
       'eventOrder' => 'title',
       'titleFormat' => '',
+      'slotLabelFormat' => FALSE,
       'defaultTimedEventDuration' => '00:00:00',
+      'groupByResource' => FALSE,
+      'groupByDateAndResource' => FALSE,
+      'firstDay' => 0,
       'dialogOptions' => bat_fullcalendar_modal_style('default'),
     );
 
