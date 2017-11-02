@@ -13,7 +13,7 @@
         "behat/mink-extension": "*",
         "symfony/http-kernel": "*",
         "fabpot/goutte": "2.0.4",
-        "roomify/roomify-extension": "~1.0"
+        "roomify/roomify-extension": "~2.0"
     },
     "minimum-stability": "dev",
     "config": {

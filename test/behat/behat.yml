@@ -1,8 +1,9 @@
 default:
   suites:
     default:
+      paths:
+        - %paths.base%/features
       contexts:
-        - FeatureContext
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\DrushContext
