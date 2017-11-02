@@ -10,12 +10,12 @@ use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Event\Event;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
-
+use\Drupal\search_api\Query\QueryInterface;
 
 /**
  * Implements hook_search_api_query_alter().
  */
-function bat_facets_search_api_query_alter(\Drupal\search_api\Query\QueryInterface &$query) {
+function bat_facets_search_api_query_alter(QueryInterface &$query) {
   $database = Database::getConnectionInfo('default');
 
   $prefix = (isset($database['default']['prefix']['default'])) ? $database['default']['prefix']['default'] : '';
