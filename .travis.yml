@@ -70,7 +70,7 @@ before_script:
   - php -d sendmail_path=$(which true) ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://drupal:drupal@127.0.0.1/drupal --account-name=admin --account-pass=test --site-mail=webmaster@roomify.us --site-name="bat"
   # Following step with -y should also run composer install.
   - drush -y en bat bat_api bat_calendar_reference bat_event bat_event_ui bat_facets bat_fullcalendar bat_unit
-  - drush cc all --yes
+  - drush cr all --yes
 
   # Run a webserver and wait until it is started up.
   - drush --debug runserver "http://127.0.0.1" > ~/debug.txt 2>&1 &
