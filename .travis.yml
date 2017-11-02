@@ -63,6 +63,7 @@ before_script:
   - drush make test/project.make bat
 
   # Copy the bat module into the Drupal site.
+  - mkdir -p bat/sites/all/modules/bat
   - mv /tmp/bat bat/sites/all/modules/bat
 
   - cd bat
