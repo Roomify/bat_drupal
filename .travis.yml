@@ -1,0 +1,124 @@
+language: php
+
+sudo: required
+dist: trusty
+
+php:
+  - 7.0
+  - 7.1
+
+mysql:
+  database: drupal
+  username: root
+  encoding: utf8
+
+before_install:
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  - sudo dpkg -i google-chrome*.deb
+  - sh -e /etc/init.d/xvfb start
+  - wget http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip && unzip chromedriver_linux64.zip && sudo mv chromedriver /usr/bin
+
+install:
+  # Set unlimited memory_limit.
+  - if [ "${TRAVIS_PHP_VERSION}" != 'hhvm' ]; then INI_FILE=~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini; else INI_FILE=/etc/hhvm/php.ini; fi;
+  - echo "memory_limit = -1" >> "${INI_FILE}"
+
+  # Remove xdebug for the moment. We aren't generating code coverage, and it slows us down.
+  - if [ "${TRAVIS_PHP_VERSION}" != '7.0' ]; then mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini /tmp/xdebug.ini; fi;
+
+before_script:
+  # Create drupal database.
+  - mysql -u root -e "CREATE DATABASE drupal;"
+  # Set up DB user.
+  - mysql -uroot -e "CREATE USER drupal@localhost IDENTIFIED BY 'drupal';"
+  - mysql -uroot -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
+
+  # Set github access token for composer if available.
+  - if [[ $GITHUB_OAUTH_TOKEN ]]; then git config --global github.accesstoken $GITHUB_OAUTH_TOKEN; fi
+  # Copy module to tmp dir for later use.
+  - mkdir /tmp/bat; cp -r * /tmp/bat
+  # Update composer.
+  - composer -n self-update
+
+  # Install drush.
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - composer -n global require drush/drush:8.*
+  # Install drush composer extension.
+  - drush dl composer-8.x-1.x
+  # Install code sniffer.
+  - composer -n global require drupal/coder
+  # Register Drupal coding standards.
+  - phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
+  # Don't display warnings.
+  - phpcs --config-set show_warnings 0
+
+  # Install required packages for behat.
+  - cd ./test/behat
+  - composer -n install
+
+  # Make the site.
+  - cd $TRAVIS_BUILD_DIR
+  - drush make test/project.make bat
+
+  # Copy the bat module into the Drupal site.
+  - mv /tmp/bat bat/sites/all/modules/bat
+
+  - cd bat
+  - php -d sendmail_path=$(which true) ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://drupal:drupal@127.0.0.1/drupal --account-name=admin --account-pass=test --site-mail=webmaster@roomify.us --site-name="bat"
+  # Following step with -y should also run composer install.
+  - drush -y en bat bat_api bat_calendar_reference bat_event bat_event_ui bat_facets bat_fullcalendar bat_unit
+  - drush cc all --yes
+
+  # Run a webserver and wait until it is started up.
+  - drush --debug runserver "http://127.0.0.1" > ~/debug.txt 2>&1 &
+  - sleep 10
+
+  # Link test dir into working dir.
+  - ln -s $TRAVIS_BUILD_DIR/test .
+
+  - jdk_switcher use oraclejdk8
+
+  - mkdir -p $HOME/.cache
+  - wget -nc -O $HOME/.cache/selenium-server-standalone-3.4.0.jar http://selenium-release.storage.googleapis.com/3.4/selenium-server-standalone-3.4.0.jar || true
+  - java -jar $HOME/.cache/selenium-server-standalone-3.4.0.jar -port 4444 &> /tmp/selenium.log &
+  - sleep 5
+
+script:
+  - cd $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
+  # Check coding standards.
+  - phpcs --standard=Drupal --exclude=Drupal.Array.Array,Drupal.Commenting.FunctionComment,Drupal.Commenting.DocComment,Drupal.Commenting.FileComment,Drupal.NamingConventions.ValidClassName,Drupal.NamingConventions.ValidFunctionName,Drupal.NamingConventions.ValidVariableName,Drupal.InfoFiles.AutoAddedKeys,Drupal.InfoFiles.ClassFiles --report-width=74 --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml --ignore=test $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
+
+  - cd $TRAVIS_BUILD_DIR/bat/test/behat
+  # behat.yml includes behat.local.yml so it must exist
+  - touch behat.local.yml
+  # Set path to drupal root
+  - export BEHAT_PARAMS="{\"extensions\":{\"Drupal\\\DrupalExtension\":{\"drupal\":{\"drupal_root\":\"$TRAVIS_BUILD_DIR/bat\"}}}}"
+  - ./bin/behat
+
+after_failure:
+  - echo "### DB LOG ###"
+  - cd $TRAVIS_BUILD_DIR/bat
+  - drush sqlq 'SELECT * FROM watchdog\G'
+  - echo "### Server log ###"
+  - cat ~/debug.txt
+  - echo "### Selenium log ###"
+  - cat /tmp/selenium.log
+
+notifications:
+    slack: roomify:Z9qyI59J2b9NAF0XvdCn8VhH
+
+env:
+  global:
+    secure: "PUOYps+ygWErjAmF91vh909N927PQad879Kl2X1bZlBpbG5tRgMTdodeG39XxbWjziwnNI+1cybuCg3bqkhAxpf7OmxyIPRbehsIpjIIcVuV+wlkZ7vh0CKlk5fhZA80M3rwqyby6hYxmEj3UpHn4BKJAeH7kwEFGz8DKH96xYfNlmQflAeNCpiGfIFyz1duaWJvLPhw7e2PFpUp3Jt42Sig6w08Ja41v98uagBZ490ZZbZcM6B7GWLNWUcMA5FNCzj1jRHMg7dOZOlw/s1BJkKLE67DDjm0dQVIh5SL/3dZoPbQCqpoW1A6gZxbO61F4EALqfDsEb1LGnTRvzZqqhIQA9zNdrIGgSZzIeHAUGlRaknWjAS+y0WfilSrtvWha2pGYvif5NB2sfhr7wa27C3a6i4L5OZoNzaxxuaS8QJgYIneeESNkiD7/IyT4at0bK0BpV+KFGsa6dO6dWhI3UM7A6PuhSLo8P4CThA0X+US2nHegRgM0slLVC8b0E/ONaEMpHFiygSjf3+z2k2+ETLAa38iQuSLuhrhhUH5luYvim1xlgFvMliCLBk5SCCnTCw2BOLJxq03AdlbAmspw5yrjcOFDov80sTrujSZU98I1dkR8w7nrtuJ7CnRXGPPkbybv1QfYvKIdtzSI0dcsuzNV5kNrvmBRqPgcX3bdCA="
+
+# Cache composer/drush files
+cache:
+  directories:
+    - $HOME/.cache
+    - $HOME/.composer/cache
+    - vendor
+    - test/behat/bin
+    - test/behat/vendor
+    - $HOME/.drush/cache
