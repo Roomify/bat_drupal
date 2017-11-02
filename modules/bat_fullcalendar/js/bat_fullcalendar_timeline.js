@@ -181,11 +181,14 @@ Drupal.behaviors.bat_event = {
                 return false;
               }
 
-              for (date of enumerateDaysBetweenDates(selectInfo.start, selectInfo.end)) {
+              var dates = enumerateDaysBetweenDates(selectInfo.start, selectInfo.end);
+              for (id in dates) {
+                var date = business_hours[id];
+
                 if (!isInsideBusinessHour(business_hours, date.day(), '00:00', '24:00')) {
                   return false;
                 }
-              }
+              };
 
               if (!isInsideBusinessHour(business_hours, end_day, '00:00', selectInfo.end.format('HH:mm'))) {
                 return false;
@@ -332,7 +335,9 @@ Drupal.behaviors.bat_event = {
     }
 
     function isInsideBusinessHour(business_hours, day, start, end) {
-      for (business_hour of business_hours) {
+      for (id in business_hours) {
+        var business_hour = business_hours[id];
+
         if (business_hour.dow.indexOf(day) >= 0) {
           var business_start = moment.duration(business_hour.start);
           var business_end = moment.duration(business_hour.end);
@@ -344,7 +349,7 @@ Drupal.behaviors.bat_event = {
             return true;
           }
         }
-      }
+      };
 
       return false;
     }
