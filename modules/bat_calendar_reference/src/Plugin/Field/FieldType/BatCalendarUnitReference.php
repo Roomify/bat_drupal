@@ -33,7 +33,7 @@ class BatCalendarUnitReference extends FieldItemBase {
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => FALSE,
-        ),
+        ],
         'event_type_id' => [
           'type' => 'varchar_ascii',
           'length' => 255,

@@ -26,15 +26,12 @@ class EventTypeAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         return AccessResult::allowedIfHasPermission($account, 'access content');
-        break;
 
       case 'delete':
         return parent::checkAccess($entity, $operation, $account)->addCacheableDependency($entity);
-        break;
 
       default:
         return parent::checkAccess($entity, $operation, $account);
-        break;
     }
   }
 

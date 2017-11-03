@@ -411,7 +411,7 @@ function bat_unit_bundle_create($values = []) {
 /**
  * Saves a unit bundle to the db.
  *
- * @param UnitBundle $bundle
+ * @param \Drupal\bat_unit\Entity\UnitBundle $bundle
  *   The unit bundle to save.
  */
 function bat_unit_bundle_save(UnitBundle $bundle) {
@@ -732,7 +732,7 @@ function bat_type_bundle_create($values = []) {
 /**
  * Saves a Bat Type bundle to the db.
  *
- * @param TypeBundle $bundle
+ * @param \Drupal\bat_unit\Entity\TypeBundle $bundle
  *   The type bundle to save.
  */
 function bat_type_bundle_save(TypeBundle $bundle) {

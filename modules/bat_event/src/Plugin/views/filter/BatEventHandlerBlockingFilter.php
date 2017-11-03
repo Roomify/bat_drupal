@@ -14,7 +14,7 @@ use Drupal\views\Plugin\views\filter\BooleanOperator;
  */
 class BatEventHandlerBlockingFilter extends BooleanOperator {
 
-  function construct() {
+  public function construct() {
     parent::construct();
 
     $this->value_value = t('State');
