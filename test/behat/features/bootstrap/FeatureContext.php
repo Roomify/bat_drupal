@@ -1,6 +1,6 @@
 <?php
 
-use Drupal\DrupalExtension\Context\DrupalSubContextBase,
+use Drupal\DrupalExtension\Context\RawDrupalContext,
     Drupal\Component\Utility\Random;
 
 use Behat\Behat\Context\ClosuredContextInterface,
@@ -21,7 +21,7 @@ use Drupal\DrupalDriverManager;
 /**
  * Features context.
  */
-class FeatureContext extends DrupalSubContextBase implements CustomSnippetAcceptingContext {
+class FeatureContext extends RawDrupalContext implements CustomSnippetAcceptingContext {
 
   /**
    * The Mink context
@@ -78,17 +78,6 @@ class FeatureContext extends DrupalSubContextBase implements CustomSnippetAccept
    * @var array
    */
   public $fields = array();
-
-  /**
-   * Initializes context.
-   * Every scenario gets its own context object.
-   *
-   * @param \Drupal\DrupalDriverManager $drupal
-   *   The Drupal driver manager.
-   */
-  public function __construct(DrupalDriverManager $drupal) {
-    parent::__construct($drupal);
-  }
 
   public static function getAcceptedSnippetType() { return 'regex'; }
 
