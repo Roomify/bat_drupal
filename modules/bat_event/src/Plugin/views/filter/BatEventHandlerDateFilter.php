@@ -14,7 +14,7 @@ use Drupal\views\Plugin\views\filter\Date;
  */
 class BatEventHandlerDateFilter extends Date {
 
-  function opSimple($field) {
+  protected function opSimple($field) {
     $query_substitutions = views_views_query_substitutions($this->view);
 
     $value = date('Y-m-d', intval(strtotime($this->value['value'], $query_substitutions['***CURRENT_TIME***'])));
@@ -22,7 +22,7 @@ class BatEventHandlerDateFilter extends Date {
     $this->query->addWhereExpression($this->options['group'], "$field $this->operator '$value'");
   }
 
-  function opBetween($field) {
+  protected function opBetween($field) {
     // Use the substitutions to ensure a consistent timestamp.
     $query_substitutions = views_views_query_substitutions($this->view);
     $a = date('Y-m-d', intval(strtotime($this->value['min'], $query_substitutions['***CURRENT_TIME***'])));

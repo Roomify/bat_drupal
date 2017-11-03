@@ -48,7 +48,7 @@ class BookingConfirmationForm extends FormBase {
 
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => 'Confirm booking', 
+      '#value' => 'Confirm booking',
     ];
 
     return $form;

@@ -86,54 +86,47 @@ function bat_options_get_operation_label($option) {
       $label = t('+@amount@currency_symbol to price', [
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        ]
-      );
+      ]);
       break;
 
     case 'add-daily':
       $label = t('+@amount@currency_symbol per night to price', [
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        ]
-      );
+      ]);
       break;
 
     case 'sub-daily':
       $label = t('-@amount@currency_symbol per night from price', [
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        ]
-      );
+      ]);
       break;
 
     case 'replace':
       $label = t('Replace price with @amount@currency_symbol', [
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        ]
-      );
+      ]);
       break;
 
     case 'increase':
       $label = t('Increase price by @amount%', [
         '@amount' => $option['value'],
-        ]
-      );
+      ]);
       break;
 
     case 'decrease':
       $label = t('Decrease price by @amount%', [
         '@amount' => $option['value'],
-        ]
-      );
+      ]);
       break;
 
     case 'sub':
       $label = t('-@amount@currency_symbol from price', [
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        ]
-      );
+      ]);
       break;
 
   }

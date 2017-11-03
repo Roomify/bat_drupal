@@ -17,9 +17,9 @@ function bat_unit_install() {
  * Create default unit bundle.
  */
 function bat_unit_install_create_default_unit_bundle() {
-  $default_unit_bundle = bat_unit_bundle_create(array(
+  $default_unit_bundle = bat_unit_bundle_create([
     'type'  => 'default',
     'name' => 'Default',
-  ));
+  ]);
   $default_unit_bundle->save();
 }

@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 class BatEventUIController extends ControllerBase {
 
-  function calendarPage($unit_type, $event_type) {
+  public function calendarPage($unit_type, $event_type) {
     $ev_type = bat_event_type_load($event_type);
 
     // Check if current type support this event type.

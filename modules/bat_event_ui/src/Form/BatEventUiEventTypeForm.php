@@ -82,7 +82,7 @@ class BatEventUiEventTypeForm extends FormBase {
   /**
    * Ajax callback for bat_event_ui_event_type_form form.
    */
-  function eventTypeFormCallback($form, &$form_state) {
+  public function eventTypeFormCallback($form, &$form_state) {
     return $form['unit_type'];
   }
 

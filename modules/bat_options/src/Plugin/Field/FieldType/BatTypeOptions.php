@@ -28,7 +28,7 @@ class BatTypeOptions extends FieldItemBase {
   public static function schema(FieldStorageDefinitionInterface $field) {
     return [
       'columns' => [
-       'name' => [
+        'name' => [
           'type' => 'varchar',
           'length' => 255,
           'not null' => TRUE,

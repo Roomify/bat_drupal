@@ -48,5 +48,5 @@ class BookingPermissions implements ContainerInjectionInterface {
 
     return $permissions;
   }
-  
+
 }

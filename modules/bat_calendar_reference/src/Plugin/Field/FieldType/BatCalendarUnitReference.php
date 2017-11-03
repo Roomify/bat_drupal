@@ -30,7 +30,7 @@ class BatCalendarUnitReference extends FieldItemBase {
     return [
       'columns' => [
         'unit_id' => [
-          'type'     => 'int',
+          'type' => 'int',
           'unsigned' => TRUE,
           'not null' => FALSE,
         ),

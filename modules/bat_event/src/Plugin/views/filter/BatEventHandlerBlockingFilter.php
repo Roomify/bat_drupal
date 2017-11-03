@@ -20,7 +20,7 @@ class BatEventHandlerBlockingFilter extends BooleanOperator {
     $this->value_value = t('State');
   }
 
-  function getValueOptions() {
+  public function getValueOptions() {
     $options = [
       'blocking' => t('Blocking'),
       'not_blocking' => t('Not blocking'),
@@ -29,7 +29,7 @@ class BatEventHandlerBlockingFilter extends BooleanOperator {
     $this->valueOptions = $options;
   }
 
-  function query() {
+  public function query() {
     $this->ensureMyTable();
 
     if ($this->value == 'not_blocking' || $this->value == 'blocking') {
@@ -64,7 +64,7 @@ class BatEventHandlerBlockingFilter extends BooleanOperator {
     }
   }
 
-  function adminSummary() {
+  public function adminSummary() {
     if ($this->isAGroup()) {
       return t('grouped');
     }

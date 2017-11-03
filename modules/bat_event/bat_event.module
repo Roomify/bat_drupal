@@ -414,12 +414,14 @@ function bat_event_delete_event_type_schema($machine_name) {
  * @param $machine_name
  */
 function bat_event_get_event_type_tables($machine_name) {
-  return ['bat_event_' . $machine_name . '_day_state',
-               'bat_event_' . $machine_name . '_day_event',
-               'bat_event_' . $machine_name . '_hour_state',
-               'bat_event_' . $machine_name . '_hour_event',
-               'bat_event_' . $machine_name . '_minute_state',
-               'bat_event_' . $machine_name . '_minute_event'];
+  return [
+    'bat_event_' . $machine_name . '_day_state',
+    'bat_event_' . $machine_name . '_day_event',
+    'bat_event_' . $machine_name . '_hour_state',
+    'bat_event_' . $machine_name . '_hour_event',
+    'bat_event_' . $machine_name . '_minute_state',
+    'bat_event_' . $machine_name . '_minute_event',
+  ];
 }
 
 /**
@@ -556,19 +558,19 @@ function bat_event_create_event_type_schema($machine_name) {
  */
 function bat_event_generate_day_schema_fields() {
   $fields = [
-      'unit_id' => [
+    'unit_id' => [
       'description' => 'Identifier for a unit.',
       'type' => 'int',
       'unsigned' => TRUE,
       'not null' => TRUE,
     ],
-      'year' => [
+    'year' => [
       'description' => 'The calendar year for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
     ],
-      'month' => [
+    'month' => [
       'description' => 'The month for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
@@ -674,7 +676,7 @@ function bat_event_generate_minute_schema_fields() {
 
   for ($i = 0; $i <= 59; $i++) {
     // PHP has no clean way to get the minutes without leading zeros so setting table
-    // fields names to contain the leading zeros to save strangeness in code elsewhere
+    // fields names to contain the leading zeros to save strangeness in code elsewhere.
     if ($i <= 9) {
       $m = '0' . $i;
     }
@@ -776,7 +778,7 @@ function bat_event_views_pre_render(ViewExecutable $view) {
  * @return array|bool
  */
 function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE) {
-  // Instantiate a BAT Calendar
+  // Instantiate a BAT Calendar.
   $calendar = bat_event_get_calendar($type_id, $event_type);
 
   return bat_event_get_matching_units_from_calendar($calendar, $start_date, $end_date, $valid_name_states, $intersect);
