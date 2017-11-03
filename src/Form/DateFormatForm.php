@@ -10,6 +10,9 @@ namespace Drupal\bat\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ *
+ */
 class DateFormatForm extends ConfigFormBase {
 
   /**
@@ -68,5 +71,5 @@ class DateFormatForm extends ConfigFormBase {
 
     parent::submitForm($form, $form_state);
   }
-  
+
 }

@@ -105,7 +105,7 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
    *
    */
   public function addUnits(UnitTypeInterface $unit_type) {
-    
+
   }
 
 }

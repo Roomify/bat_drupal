@@ -12,6 +12,9 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html;
 
+/**
+ *
+ */
 class FacetsAvailabilityForm extends FormBase {
 
   /**

@@ -149,7 +149,8 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
         return AccessResult::allowed();
       }
     }
-    else { // Non-view operations.
+    else {
+      // Non-view operations.
       // First grant access to the entity for the specified operation if no other
       // module denies it and at least one other module says to grant access.
       $access_results = \Drupal::moduleHandler()->invokeAll('bat_entity_access', [$entity, $operation, $account]);

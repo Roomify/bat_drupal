@@ -59,6 +59,7 @@ use Drupal\field\Entity\FieldStorageConfig;
  */
 class UnitType extends ContentEntityBase implements UnitTypeInterface {
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */

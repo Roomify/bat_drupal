@@ -11,6 +11,9 @@ use Roomify\Bat\Event\Event;
 use Roomify\Bat\Event\EventInterface;
 use Roomify\Bat\EventFormatter\AbstractEventFormatter;
 
+/**
+ *
+ */
 class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
 
   /**
@@ -40,7 +43,7 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
     // Load the unit entity from Drupal.
     $bat_unit = bat_unit_load($event->getUnitId());
 
-    // Get the unit entity default value
+    // Get the unit entity default value.
     $default_value = $bat_unit->getEventDefaultValue($this->event_type->id());
 
     // Get the default state info which will provide the default value for formatting.

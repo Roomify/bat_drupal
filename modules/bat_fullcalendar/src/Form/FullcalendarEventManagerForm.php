@@ -12,6 +12,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
 
+/**
+ *
+ */
 class FullcalendarEventManagerForm extends FormBase {
 
   /**

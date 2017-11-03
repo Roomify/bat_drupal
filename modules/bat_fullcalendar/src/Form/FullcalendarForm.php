@@ -5,6 +5,9 @@ namespace Drupal\bat_fullcalendar\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ *
+ */
 class FullcalendarForm extends ConfigFormBase {
 
   /**

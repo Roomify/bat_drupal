@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 class BatUnitAutocompleteController extends ControllerBase {
 
-	/**
+  /**
    * The autocomplete matcher for entity references.
    *
    * @var \Drupal\Core\Entity\EntityAutocompleteMatcher

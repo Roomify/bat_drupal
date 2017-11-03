@@ -10,6 +10,9 @@ namespace Drupal\bat_event_ui\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ *
+ */
 class BatEventUiBulkUpdateForm extends FormBase {
 
   /**

@@ -60,6 +60,7 @@ use Drupal\commerce_price\Price;
  */
 class Unit extends ContentEntityBase implements UnitInterface {
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */

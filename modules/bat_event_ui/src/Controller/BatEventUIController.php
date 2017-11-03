@@ -11,6 +11,9 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+/**
+ *
+ */
 class BatEventUIController extends ControllerBase {
 
   function calendarPage($unit_type, $event_type) {

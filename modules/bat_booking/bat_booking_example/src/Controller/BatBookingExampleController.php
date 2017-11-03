@@ -10,6 +10,9 @@ namespace Drupal\bat_booking_example\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 
+/**
+ *
+ */
 class BatBookingExampleController extends ControllerBase implements ContainerInjectionInterface {
 
   /**

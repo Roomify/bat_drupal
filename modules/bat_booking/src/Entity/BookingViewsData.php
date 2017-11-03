@@ -10,6 +10,9 @@ namespace Drupal\bat_booking\Entity;
 use Drupal\views\EntityViewsData;
 use Drupal\views\EntityViewsDataInterface;
 
+/**
+ *
+ */
 class BookingViewsData extends EntityViewsData implements EntityViewsDataInterface {
 
   /**

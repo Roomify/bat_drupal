@@ -56,6 +56,7 @@ use Drupal\user\UserInterface;
  */
 class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */
