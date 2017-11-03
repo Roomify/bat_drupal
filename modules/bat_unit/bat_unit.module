@@ -163,7 +163,7 @@ function bat_unit_bat_event_target_entity_types() {
  * @param string $op
  *   The operation being performed. One of 'view', 'update', 'create', 'delete'
  *   or just 'edit' (being the same as 'create' or 'update').
- * @param Unit $unit
+ * @param \Drupal\bat_unit\Entity\Unit $unit
  *   Optionally a unit or a unit bundle to check access for. If nothing is
  *   given, access for all units is determined.
  * @param object $account
@@ -234,7 +234,7 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
  * @param bool $reset
  *   A boolean indicating that the internal cache should be reset.
  *
- * @return UnitBundle[]
+ * @return \Drupal\bat_unit\Entity\UnitBundle[]
  *   Depending whether $bundle isset, an array of unit bundles or a single one.
  */
 function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
@@ -306,7 +306,7 @@ function bat_unit_bundle_load($bundle, $reset = FALSE) {
  *   Integer specifying the unit id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
- * @return Unit|false
+ * @return \Drupal\bat_unit\Entity\Unit|false
  *   A fully-loaded $unit object or FALSE if it cannot be loaded.
  *
  * @see bat_unit_load_multiple()
@@ -357,7 +357,7 @@ function bat_unit_load_multiple($unit_ids = [], $conditions = [], $reset = FALSE
 /**
  * Deletes a unit.
  *
- * @param Unit $unit
+ * @param \Drupal\bat_unit\Entity\Unit $unit
  *   The Unit object that represents the unit to delete.
  */
 function bat_unit_delete(Unit $unit) {
@@ -391,7 +391,7 @@ function bat_unit_create($values = []) {
 /**
  * Saves a unit to the database.
  *
- * @param Unit $unit
+ * @param \Drupal\bat_unit\Entity\Unit $unit
  *   The Unit object.
  */
 function bat_unit_save(Unit $unit) {
@@ -495,7 +495,7 @@ function bat_unit_state_options($event_type = NULL, $conditions = []) {
  * @param string $op
  *   The operation being performed. One of 'view', 'update', 'create', 'delete'
  *   or just 'edit' (being the same as 'create' or 'update').
- * @param UnitType $type
+ * @param \Drupal\bat_unit\Entity\UnitType $type
  *   Optionally a type or a type bundle to check access for. If nothing is
  *   given, access for all types is determined.
  * @param object $account
@@ -548,13 +548,6 @@ function bat_type_bat_entity_access_view_condition_bat_type_alter(&$conditions, 
   $conditions = db_and();
 
   if ($account->id() && $account->hasPermission('view own bat_type unpublished entities')) {
-    /*$or = new Condition('AND')
-      ->condition($context['base_table'] . '.status', 0)
-      ->condition($context['base_table'] . '.uid', $account->id());
-    $conditions->condition(new Condition('OR')
-      ->condition($or)
-      ->condition($context['base_table'] . '.status', 1)
-    );*/
   }
   else {
     $conditions->condition($context['base_table'] . '.status', 1);
@@ -571,7 +564,7 @@ function bat_type_bat_entity_access_view_condition_bat_type_alter(&$conditions, 
  * @param string $bundle_name
  *   If set, the bundle with the given name is returned.
  *
- * @return TypeBundle[]
+ * @return \Drupal\bat_unit\Entity\TypeBundle[]
  *   Depending whether $bundle isset, an array of type bundles or a single one.
  */
 function bat_unit_get_type_bundles($bundle_name = NULL) {
@@ -584,7 +577,7 @@ function bat_unit_get_type_bundles($bundle_name = NULL) {
  * @param string $bundle_name
  *   If set, the bundle with the given name is returned.
  *
- * @return UnitType[]
+ * @return \Drupal\bat_unit\Entity\UnitType[]
  *   Depending whether $bundle isset, an array of types or a single one.
  */
 function bat_unit_get_types($bundle_name = NULL) {
@@ -634,7 +627,7 @@ function bat_type_bundle_load($bundle, $reset = FALSE) {
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
  *
- * @return UnitType|false
+ * @return \Drupal\bat_unit\Entity\UnitType|false
  *   A fully-loaded $type object or FALSE if it cannot be loaded.
  *
  * @see bat_type_load_multiple()
@@ -685,7 +678,7 @@ function bat_type_load_multiple($type_ids = [], $conditions = [], $reset = FALSE
 /**
  * Deletes a Bat Type.
  *
- * @param UnitType $type
+ * @param \Drupal\bat_unit\Entity\UnitType $type
  *   The UnitType object that represents the type to delete.
  */
 function bat_type_delete(UnitType $type) {
@@ -719,7 +712,7 @@ function bat_type_create($values = []) {
 /**
  * Saves a Bat Type to the database.
  *
- * @param UnitType $type
+ * @param \Drupal\bat_unit\Entity\UnitType $type
  *   The type object.
  */
 function bat_type_save(UnitType $type) {

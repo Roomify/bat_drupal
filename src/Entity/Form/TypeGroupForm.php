@@ -183,7 +183,7 @@ class TypeGroupForm extends ContentEntityForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  function updateStatus($entity_type_id, TypeGroupInterface $type_group, array $form, FormStateInterface $form_state) {
+  public function updateStatus($entity_type_id, TypeGroupInterface $type_group, array $form, FormStateInterface $form_state) {
     $element = $form_state->getTriggeringElement();
     if (isset($element['#published_status'])) {
       $type_group->setStatus($element['#published_status']);

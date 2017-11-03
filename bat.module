@@ -506,7 +506,7 @@ function template_preprocess_bat_type_group(array &$variables) {
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
  *
- * @return TypeGroup|false
+ * @return \Drupal\bat\Entity\TypeGroup|false
  *   A fully-loaded $type_group object or FALSE if it cannot be loaded.
  *
  * @see bat_type_group_load_multiple()
@@ -557,7 +557,7 @@ function bat_type_group_load_multiple($group_ids = [], $conditions = [], $reset 
 /**
  * Saves a type group to the database.
  *
- * @param TypeGroup $group
+ * @param \Drupal\bat\Entity\TypeGroup $group
  *   The TypeGroup object.
  */
 function bat_type_group_save(TypeGroup $group) {
@@ -567,7 +567,7 @@ function bat_type_group_save(TypeGroup $group) {
 /**
  * Deletes a type group.
  *
- * @param TypeGroup $group
+ * @param \Drupal\bat\Entity\TypeGroup $group
  *   The TypeGroup object that represents the group to delete.
  */
 function bat_type_group_delete(TypeGroup $group) {
@@ -596,7 +596,7 @@ function bat_type_group_delete_multiple(array $group_ids) {
  * @param bool $reset
  *   A boolean indicating that the internal cache should be reset.
  *
- * @return TypeGroupBundle[]
+ * @return \Drupal\bat\Entity\TypeGroupBundle[]
  *   Depending whether $bundle isset, an array of type group bundles or a single one.
  */
 function bat_type_group_get_bundles($bundle_name = NULL, $reset = FALSE) {

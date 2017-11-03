@@ -221,7 +221,7 @@ function bat_event_types_ids() {
  * @param bool $reset
  *   A boolean indicating that the internal cache should be reset.
  *
- * @return EventType[]
+ * @return \Drupal\bat_event\Entity\EventType[]
  *   Depending whether $type isset, an array of event types or a single one.
  */
 function bat_event_get_types($type_name = NULL, $reset = FALSE) {
@@ -293,7 +293,7 @@ function bat_event_load_multiple(array $event_ids = NULL, $reset = FALSE) {
 /**
  * Deletes a event.
  *
- * @param Event $event
+ * @param \Drupal\bat_event\Entity\Event $event
  *   The Event object that represents the event to delete
  */
 function bat_event_delete(Event $event) {
@@ -324,7 +324,7 @@ function bat_event_create($values = []) {
 /**
  * Saves a event to the database.
  *
- * @param Event $event
+ * @param \Drupal\bat_event\Entity\Event $event
  *   The Event object.
  */
 function bat_event_save(Event $event) {
@@ -791,7 +791,7 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
  * @param $type_id
  * @param $event_type
  *
- * @return Calendar
+ * @return \Roomify\Bat\Calendar\Calendar
  */
 function bat_event_get_calendar($type_id, $event_type) {
   $database = Database::getConnectionInfo('default');

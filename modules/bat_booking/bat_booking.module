@@ -18,7 +18,7 @@ use Drupal\bat_booking\Entity\BookingBundle;
  * @param string $op
  *   The operation being performed. One of 'view', 'update', 'create', 'delete'
  *   or just 'edit' (being the same as 'create' or 'update').
- * @param Booking $booking
+ * @param \Drupal\bat_booking\Entity\Booking $booking
  *   Optionally a booking to check access for. If nothing is
  *   given, access for all bookings is determined.
  * @param object $account
@@ -75,7 +75,7 @@ function bat_booking_type_load($type, $reset = FALSE) {
  * @param bool $reset
  *   A boolean indicating that the internal cache should be reset.
  *
- * @return BookingBundle[]
+ * @return \Drupal\bat_booking\Entity\BookingBundle[]
  *   Depending whether $type isset, an array of booking types or a single one.
  */
 function bat_booking_get_types($type_name = NULL, $reset = FALSE) {
@@ -90,7 +90,7 @@ function bat_booking_get_types($type_name = NULL, $reset = FALSE) {
 /**
  * Saves a booking type to the db.
  *
- * @param BookingBundle $booking_type
+ * @param \Drupal\bat_booking\Entity\BookingBundle $booking_type
  *   The booking type to save.
  */
 function bat_booking_type_save(BookingBundle $booking_type) {
@@ -111,7 +111,7 @@ function bat_booking_type_delete(BookingBundle $bundle) {
  *   Integer specifying the booking id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
- * @return Booking|false
+ * @return \Drupal\bat_booking\Entity\Booking|false
  *   A fully-loaded $booking object or FALSE if it cannot be loaded.
  *
  * @see bat_booking_load_multiple()
@@ -159,7 +159,7 @@ function bat_booking_load_multiple($booking_ids = [], $conditions = [], $reset =
 /**
  * Deletes a Bat Booking.
  *
- * @param Booking $booking
+ * @param \Drupal\bat_booking\Entity\Booking $booking
  *   The Booking object that represents the booking to delete.
  */
 function bat_booking_delete(Booking $booking) {
