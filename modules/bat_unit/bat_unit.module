@@ -125,7 +125,7 @@ function bat_unit_views_pre_render(ViewExecutable $view) {
 /**
  * Implements hook_entity_delete().
  */
-function bat_unit_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+function bat_unit_entity_delete(EntityInterface $entity) {
   if ($entity->getEntityTypeId() == 'bat_unit_type') {
     // When delete a Type remove all related Units.
     $units = bat_unit_load_multiple(FALSE, ['unit_type_id' => $entity->id()]);

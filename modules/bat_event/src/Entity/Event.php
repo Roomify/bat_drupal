@@ -21,6 +21,7 @@ use Drupal\user\UserInterface;
 use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
+use Roomify\Bat\Event\Event as BatEvent;
 
 /**
  * Defines the Event entity.
@@ -371,12 +372,12 @@ class Event extends ContentEntityBase implements EventInterface {
     $state_calendar = new Calendar($units, $state_store);
     $event_calendar = new Calendar($units, $event_store);
 
-    $state_event = new \Roomify\Bat\Event\Event($start_date, $end_date, $unit, $event_state);
+    $state_event = new BatEvent($start_date, $end_date, $unit, $event_state);
     if (!$remove) {
-      $event_id_event = new \Roomify\Bat\Event\Event($start_date, $end_date, $unit, $event_id);
+      $event_id_event = new BatEvent($start_date, $end_date, $unit, $event_id);
     }
     else {
-      $event_id_event = new \Roomify\Bat\Event\Event($start_date, $end_date, $unit, 0);
+      $event_id_event = new BatEvent($start_date, $end_date, $unit, 0);
     }
 
     $state_calendar->addEvents([$state_event], $granularity);
