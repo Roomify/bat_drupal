@@ -38,7 +38,7 @@ class BatEventUIController extends ControllerBase {
       throw new AccessDeniedHttpException();
     }
 
-    // Pick what modal style to use
+    // Pick what modal style to use.
     $calendar_settings['modal_style'] = 'default';
 
     if ($type = bat_event_type_load($event_type)) {
@@ -49,43 +49,43 @@ class BatEventUIController extends ControllerBase {
     }
 
     // All Drupal JS settings inside the batCalendar object.
-    $fc_user_settings = array(
-      'batCalendar' => array(
-        array(
+    $fc_user_settings = [
+      'batCalendar' => [
+        [
           'unitType' => $unit_type,
           'eventType' => $event_type,
           'eventGranularity' => $event_granularity,
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
     $calendar_settings['user_settings'] = $fc_user_settings;
     $calendar_settings['calendar_id'] = 'fullcalendar-scheduler';
 
     if ($ev_type->getFixedEventStates()) {
-      $calendar_settings['class'] = array('fixed_event_states');
+      $calendar_settings['class'] = ['fixed_event_states'];
     }
     else {
-      $calendar_settings['class'] = array('open_event_states');
+      $calendar_settings['class'] = ['open_event_states'];
     }
 
-    $render_array = array(
+    $render_array = [
       'event_type_form' => \Drupal::formBuilder()->getForm('Drupal\bat_event_ui\Form\BatEventUiEventTypeForm', $unit_type, $event_type),
       'bulk_update_form' => [],
-      'calendar' => array(
+      'calendar' => [
         '#theme' => 'bat_fullcalendar',
         '#calendar_settings' => $calendar_settings,
-        '#attached' => array('library' => array('bat_event_ui/bat_event_ui', 'bat_fullcalendar/bat-fullcalendar-scheduler')),
-      ),
-    );
+        '#attached' => ['library' => ['bat_event_ui/bat_event_ui', 'bat_fullcalendar/bat-fullcalendar-scheduler']],
+      ],
+    ];
 
     if ($ev_type->getFixedEventStates()) {
       $render_array['bulk_update_form'] = \Drupal::formBuilder()->getForm('Drupal\bat_event_ui\Form\BatEventUiBulkUpdateForm', $unit_type, $event_type);
     }
 
-    $page['calendar_page'] = array(
+    $page['calendar_page'] = [
       '#markup' => render($render_array),
-    );
+    ];
 
     return $page;
   }

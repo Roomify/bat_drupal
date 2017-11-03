@@ -73,9 +73,9 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
    *   An event submission form.
    */
   public function add(EventTypeInterface $event_type) {
-    $type = $this->entityTypeManager()->getStorage('bat_event')->create(array(
+    $type = $this->entityTypeManager()->getStorage('bat_event')->create([
       'type' => $event_type->id(),
-    ));
+    ]);
 
     $form = $this->entityFormBuilder()->getForm($type);
 
@@ -109,7 +109,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
     $programmed = isset($input['form_id']);
     $input['form_id'] = 'bat_event_' . $event->bundle() . '_edit_form';
 
-    $form = $this->entityFormBuilder()->getForm($event, 'default', array('programmed' => $programmed, 'input' => $input));
+    $form = $this->entityFormBuilder()->getForm($event, 'default', ['programmed' => $programmed, 'input' => $input]);
 
     return $form;
   }

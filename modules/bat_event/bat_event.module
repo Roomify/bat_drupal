@@ -40,9 +40,9 @@ function bat_event_type_add_event_state_reference($entity) {
       'type' => 'entity_reference',
       'cardinality' => 1,
       'locked' => 1,
-      'settings' => array(
+      'settings' => [
         'target_type' => 'state',
-      ),
+      ],
     ]);
     $field_storage->save();
   }
@@ -97,9 +97,9 @@ function bat_event_type_add_target_entity_field($entity) {
       'type' => 'entity_reference',
       'cardinality' => 1,
       'locked' => 1,
-      'settings' => array(
+      'settings' => [
         'target_type' => $entity->target_entity_type,
-      ),
+      ],
     ]);
     $field_storage->save();
   }
@@ -261,7 +261,7 @@ function bat_event_type_load($type) {
  */
 function bat_event_load($event_id = NULL, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityTypeManager()->getStorage('bat_event')->resetCache(array($nid));
+    \Drupal::entityTypeManager()->getStorage('bat_event')->resetCache([$nid]);
   }
 
   return Event::load($event_id);
@@ -356,9 +356,9 @@ function bat_event_type_delete(EventType $type) {
  * URI callback for events.
  */
 function bat_event_uri(Event $event) {
-  return array(
+  return [
     'path' => 'event/' . $event->event_id,
-  );
+  ];
 }
 
 /**
@@ -414,12 +414,12 @@ function bat_event_delete_event_type_schema($machine_name) {
  * @param $machine_name
  */
 function bat_event_get_event_type_tables($machine_name) {
-  return array('bat_event_' . $machine_name . '_day_state',
+  return ['bat_event_' . $machine_name . '_day_state',
                'bat_event_' . $machine_name . '_day_event',
                'bat_event_' . $machine_name . '_hour_state',
                'bat_event_' . $machine_name . '_hour_event',
                'bat_event_' . $machine_name . '_minute_state',
-               'bat_event_' . $machine_name . '_minute_event');
+               'bat_event_' . $machine_name . '_minute_event'];
 }
 
 /**
@@ -430,119 +430,119 @@ function bat_event_get_event_type_tables($machine_name) {
 function bat_event_create_event_type_schema($machine_name) {
   $schema = [];
 
-  $schema['bat_event_' . $machine_name . '_day_state'] = array(
+  $schema['bat_event_' . $machine_name . '_day_state'] = [
     'description' => 'Holds the state of each unit for a given day',
     'fields' => bat_event_generate_day_schema_fields(),
-    'indexes' => array(
-      'unit_id' => array('unit_id'),
-      'year' => array('year'),
-      'month' => array('month'),
-    ),
-    'unique keys' => array(
-      'month_key' => array('unit_id', 'year', 'month'),
-    ),
-    'foreign keys' => array(
-      'unit_id' => array(
+    'indexes' => [
+      'unit_id' => ['unit_id'],
+      'year' => ['year'],
+      'month' => ['month'],
+    ],
+    'unique keys' => [
+      'month_key' => ['unit_id', 'year', 'month'],
+    ],
+    'foreign keys' => [
+      'unit_id' => [
         'table' => 'unit',
-        'columns' => array('unit_id' => 'id'),
-      ),
-    ),
-  );
+        'columns' => ['unit_id' => 'id'],
+      ],
+    ],
+  ];
 
-  $schema['bat_event_' . $machine_name . '_day_event'] = array(
+  $schema['bat_event_' . $machine_name . '_day_event'] = [
     'description' => 'Holds the event that determined the state of a unit',
     'fields' => bat_event_generate_day_schema_fields(),
-    'indexes' => array(
-      'unit_id' => array('unit_id'),
-      'year' => array('year'),
-      'month' => array('month'),
-    ),
-    'unique keys' => array(
-      'month_key' => array('unit_id', 'year', 'month'),
-    ),
-    'foreign keys' => array(
-      'unit_id' => array(
+    'indexes' => [
+      'unit_id' => ['unit_id'],
+      'year' => ['year'],
+      'month' => ['month'],
+    ],
+    'unique keys' => [
+      'month_key' => ['unit_id', 'year', 'month'],
+    ],
+    'foreign keys' => [
+      'unit_id' => [
         'table' => 'unit',
-        'columns' => array('unit_id' => 'id'),
-      ),
-    ),
-  );
+        'columns' => ['unit_id' => 'id'],
+      ],
+    ],
+  ];
 
-  $schema['bat_event_' . $machine_name . '_hour_state'] = array(
+  $schema['bat_event_' . $machine_name . '_hour_state'] = [
     'description' => 'Holds the state of the unit',
     'fields' => bat_event_generate_hour_schema_fields(),
-    'indexes' => array(
-      'unit_id' => array('unit_id'),
-      'year' => array('year'),
-      'month' => array('month'),
-    ),
-    'unique keys' => array(
-      'day_key' => array('unit_id', 'year', 'month', 'day'),
-    ),
-    'foreign keys' => array(
-      'unit_id' => array(
+    'indexes' => [
+      'unit_id' => ['unit_id'],
+      'year' => ['year'],
+      'month' => ['month'],
+    ],
+    'unique keys' => [
+      'day_key' => ['unit_id', 'year', 'month', 'day'],
+    ],
+    'foreign keys' => [
+      'unit_id' => [
         'table' => 'unit',
-        'columns' => array('unit_id' => 'id'),
-      ),
-    ),
-  );
+        'columns' => ['unit_id' => 'id'],
+      ],
+    ],
+  ];
 
-  $schema['bat_event_' . $machine_name . '_hour_event'] = array(
+  $schema['bat_event_' . $machine_name . '_hour_event'] = [
     'description' => 'Holds the event that determined the state of a unit',
     'fields' => bat_event_generate_hour_schema_fields(),
-    'indexes' => array(
-      'unit_id' => array('unit_id'),
-      'year' => array('year'),
-      'month' => array('month'),
-    ),
-    'unique keys' => array(
-      'day_key' => array('unit_id', 'year', 'month', 'day'),
-    ),
-    'foreign keys' => array(
-      'unit_id' => array(
+    'indexes' => [
+      'unit_id' => ['unit_id'],
+      'year' => ['year'],
+      'month' => ['month'],
+    ],
+    'unique keys' => [
+      'day_key' => ['unit_id', 'year', 'month', 'day'],
+    ],
+    'foreign keys' => [
+      'unit_id' => [
         'table' => 'unit',
-        'columns' => array('unit_id' => 'id'),
-      ),
-    ),
-  );
+        'columns' => ['unit_id' => 'id'],
+      ],
+    ],
+  ];
 
-  $schema['bat_event_' . $machine_name . '_minute_state'] = array(
+  $schema['bat_event_' . $machine_name . '_minute_state'] = [
     'description' => 'Holds the state of the unit',
     'fields' => bat_event_generate_minute_schema_fields(),
-    'indexes' => array(
-      'unit_id' => array('unit_id'),
-      'year' => array('year'),
-      'month' => array('month'),
-    ),
-    'unique keys' => array(
-      'day_key' => array('unit_id', 'year', 'month', 'day', 'hour'),
-    ),
-    'foreign keys' => array(
-      'unit_id' => array(
+    'indexes' => [
+      'unit_id' => ['unit_id'],
+      'year' => ['year'],
+      'month' => ['month'],
+    ],
+    'unique keys' => [
+      'day_key' => ['unit_id', 'year', 'month', 'day', 'hour'],
+    ],
+    'foreign keys' => [
+      'unit_id' => [
         'table' => 'unit',
-        'columns' => array('unit_id' => 'id'),
-      ),
-    ),
-  );
+        'columns' => ['unit_id' => 'id'],
+      ],
+    ],
+  ];
 
-  $schema['bat_event_' . $machine_name . '_minute_event'] = array(
+  $schema['bat_event_' . $machine_name . '_minute_event'] = [
     'description' => 'Holds the event that determined the state of a unit',
     'fields' => bat_event_generate_minute_schema_fields(),
-    'indexes' => array(
-      'unit_id' => array('unit_id'),
-      'year' => array('year'),
-      'month' => array('month'),
-    ),
-    'unique keys' => array(
-      'day_key' => array('unit_id', 'year', 'month', 'day', 'hour'),
-    ),
-    'foreign keys' => array(
-      'unit_id' => array(
+    'indexes' => [
+      'unit_id' => ['unit_id'],
+      'year' => ['year'],
+      'month' => ['month'],
+    ],
+    'unique keys' => [
+      'day_key' => ['unit_id', 'year', 'month', 'day', 'hour'],
+    ],
+    'foreign keys' => [
+      'unit_id' => [
         'table' => 'unit',
-        'columns' => array('unit_id' => 'id'),
-      ),
-    ),
-  );
+        'columns' => ['unit_id' => 'id'],
+      ],
+    ],
+  ];
 
   foreach ($schema as $name => $table) {
     db_create_table($name, $table);
@@ -555,34 +555,34 @@ function bat_event_create_event_type_schema($machine_name) {
  * @return array
  */
 function bat_event_generate_day_schema_fields() {
-  $fields = array(
-      'unit_id' => array(
+  $fields = [
+      'unit_id' => [
       'description' => 'Identifier for a unit.',
       'type' => 'int',
       'unsigned' => TRUE,
       'not null' => TRUE,
-    ),
-      'year' => array(
+    ],
+      'year' => [
       'description' => 'The calendar year for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    ),
-      'month' => array(
+    ],
+      'month' => [
       'description' => 'The month for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    ),
-  );
+    ],
+  ];
 
   for ($i = 1; $i <= 31; $i++) {
-    $fields['d' . $i] = array(
+    $fields['d' . $i] = [
       'description' => 'D' . $i,
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    );
+    ];
   }
 
   return $fields;
@@ -594,40 +594,40 @@ function bat_event_generate_day_schema_fields() {
  * @return array
  */
 function bat_event_generate_hour_schema_fields() {
-  $fields = array(
-    'unit_id' => array(
+  $fields = [
+    'unit_id' => [
       'description' => 'Identifier for a unit.',
       'type' => 'int',
       'unsigned' => TRUE,
       'not null' => TRUE,
-    ),
-    'year' => array(
+    ],
+    'year' => [
       'description' => 'The calendar year for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    ),
-    'month' => array(
+    ],
+    'month' => [
       'description' => 'The month for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    ),
-    'day' => array(
+    ],
+    'day' => [
       'description' => 'The day for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    ),
-  );
+    ],
+  ];
 
   for ($i = 0; $i <= 23; $i++) {
-    $fields['h' . $i] = array(
+    $fields['h' . $i] = [
       'description' => 'H' . $i,
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    );
+    ];
   }
 
   return $fields;
@@ -639,50 +639,55 @@ function bat_event_generate_hour_schema_fields() {
  * @return array
  */
 function bat_event_generate_minute_schema_fields() {
-  $fields = array(
-    'unit_id' => array(
+  $fields = [
+    'unit_id' => [
       'description' => 'Identifier for a unit.',
       'type' => 'int',
       'unsigned' => TRUE,
       'not null' => TRUE,
-    ),
-    'year' => array(
+    ],
+    'year' => [
       'description' => 'The calendar year for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    ),
-    'month' => array(
+    ],
+    'month' => [
       'description' => 'The month for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    ),
-    'day' => array(
+    ],
+    'day' => [
       'description' => 'The day for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    ),
-    'hour' => array(
+    ],
+    'hour' => [
       'description' => 'The hour for which this availability row is relevant',
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    ),
-  );
+    ],
+  ];
 
   for ($i = 0; $i <= 59; $i++) {
     // PHP has no clean way to get the minutes without leading zeros so setting table
     // fields names to contain the leading zeros to save strangeness in code elsewhere
-    if ($i <= 9) { $m = '0' . $i; } else { $m = $i; }
+    if ($i <= 9) {
+      $m = '0' . $i;
+    }
+    else {
+      $m = $i;
+    }
 
-    $fields['m' . $m] = array(
+    $fields['m' . $m] = [
       'description' => 'M' . $m,
       'type' => 'int',
       'not null' => TRUE,
       'default' => '0',
-    );
+    ];
   }
 
   return $fields;
@@ -705,23 +710,23 @@ function bat_event_form_bat_type_bundle_edit_form_alter(&$form, FormStateInterfa
     }
   }
 
-  $form['events'] = array(
+  $form['events'] = [
     '#type' => 'details',
     '#group' => 'advanced',
     '#title' => t('Events'),
     '#tree' => TRUE,
     '#weight' => 80,
-  );
+  ];
 
   $event_types = bat_event_get_types();
   foreach ($event_types as $event_type) {
-    $form['events'][$event_type->id()] = array(
+    $form['events'][$event_type->id()] = [
       '#type' => 'select',
       '#title' => t('Select your default @event field', ['@event' => $event_type->label()]),
       '#options' => $fields_options,
       '#default_value' => isset($type_bundle->default_event_value_field_ids[$event_type->id()]) ? $type_bundle->default_event_value_field_ids[$event_type->id()] : NULL,
       '#empty_option' => t('- Select a field -'),
-    );
+    ];
   }
 
   $form['actions']['submit']['#submit'][] = 'bat_event_form_bat_type_bundle_form_submit';
@@ -793,7 +798,7 @@ function bat_event_get_calendar($type_id, $event_type) {
 
   $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
 
-  $drupal_units = bat_unit_load_multiple(FALSE, array('type_id' => $type_id));
+  $drupal_units = bat_unit_load_multiple(FALSE, ['type_id' => $type_id]);
   $bat_units = [];
 
   foreach ($drupal_units as $unit_id => $unit) {
@@ -855,10 +860,10 @@ function bat_event_get_matching_units_from_calendar($calendar, DateTime $start_d
  * @return array
  */
 function bat_event_get_calendar_response(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE) {
-  $results = array(
+  $results = [
     'included' => [],
     'excluded' => [],
-  );
+  ];
 
   $calendar = bat_event_get_calendar($start_date, $end_date, $type_id, $event_type);
 
@@ -927,10 +932,10 @@ function template_preprocess_bat_event_add_list(&$variables) {
   $variables['types'] = [];
   if (!empty($variables['content'])) {
     foreach ($variables['content'] as $type) {
-      $variables['types'][$type->id()] = array(
+      $variables['types'][$type->id()] = [
         'type' => $type->id(),
         'add_link' => \Drupal::l($type->label(), new Url('entity.bat_event.add_form', ['event_type' => $type->id()])),
-      );
+      ];
     }
   }
 }

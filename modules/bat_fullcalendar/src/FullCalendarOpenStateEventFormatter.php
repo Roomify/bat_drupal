@@ -39,16 +39,16 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
 
     $editable = FALSE;
 
-    // Load the target entity from Drupal
+    // Load the target entity from Drupal.
     $target_entity = entity_load($this->event_type->target_entity_type, $event->getUnitId());
 
-    // Get the target entity default value
+    // Get the target entity default value.
     $default_value = $target_entity->getEventDefaultValue($this->event_type->id());
 
     if ($event->getValue()) {
       $bat_event = bat_event_load($event->getValue());
 
-      // Change the default value to the one that the event actually stores in the entity
+      // Change the default value to the one that the event actually stores in the entity.
       $default_value = $bat_event->getEventValue();
 
       if (bat_event_access($bat_event, 'update', \Drupal::currentUser())) {
@@ -56,14 +56,14 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
       }
     }
 
-    $formatted_event = array(
+    $formatted_event = [
       'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00',
       'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00',
       'title' => $target_entity->formatEventValue($this->event_type->id(), $default_value),
       'blocking' => 0,
       'fixed' => 0,
       'editable' => $editable,
-    );
+    ];
 
     if ($event->getValue() == 0) {
       $formatted_event['color'] = $config->get('bat_open_state_default_zero_color');

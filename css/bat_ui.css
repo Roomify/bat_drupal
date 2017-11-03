@@ -55,10 +55,7 @@
   display: none;
 }
 
-@media
-  screen and (min-width: 780px),
-  (orientation: landscape) and (min-device-height: 780px) {
-
+@media screen and (min-width: 780px), (orientation: landscape) and (min-device-height: 780px) {
   .layout-region-type-main,
   .layout-region-type-footer {
     float: left; /* LTR */
@@ -105,9 +102,7 @@
  * toolbar is on, we need to suppress layout for the original media width + the
  * toolbar width (240px). In this case, 240px + 780px.
  */
-@media
-  screen and (max-width: 1020px) {
-
+@media screen and (max-width: 1020px) {
   .toolbar-vertical.toolbar-tray-open .layout-region-type-main,
   .toolbar-vertical.toolbar-tray-open .layout-region-type-footer,
   .toolbar-vertical.toolbar-tray-open .layout-region-type-secondary {

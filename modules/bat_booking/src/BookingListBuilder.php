@@ -76,32 +76,32 @@ class BookingListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header = array(
-      'id' => array(
+    $header = [
+      'id' => [
         'data' => $this->t('Booking ID'),
         'field' => 'id',
         'specifier' => 'id',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'name' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'name' => [
         'data' => $this->t('Name'),
         'field' => 'name',
         'specifier' => 'name',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'type' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'type' => [
         'data' => $this->t('Type'),
         'field' => 'type',
         'specifier' => 'type',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'status' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'status' => [
         'data' => $this->t('Status'),
         'field' => 'status',
         'specifier' => 'status',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-    );
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+    ];
     return $header + parent::buildHeader();
   }
 

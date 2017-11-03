@@ -30,16 +30,16 @@ class BatOptionsPrice extends FormatterBase {
     $currency_symbol = '$';
 
     foreach ($items as $delta => $item) {
-      $price = t('@currency_symbol@amount', array(
+      $price = t('@currency_symbol@amount', [
         '@currency_symbol' => $currency_symbol,
         '@amount' => number_format($item->value, 2, '.', ''),
-      ));
+      ]);
 
       if ($item->value > 0) {
-        $element[$delta] = array('#markup' => "{$item->quantity} x {$item->name} - {$price}");
+        $element[$delta] = ['#markup' => "{$item->quantity} x {$item->name} - {$price}"];
       }
       else {
-        $element[$delta] = array('#markup' => "{$item->quantity} x {$item->name}");
+        $element[$delta] = ['#markup' => "{$item->quantity} x {$item->name}"];
       }
     }
 

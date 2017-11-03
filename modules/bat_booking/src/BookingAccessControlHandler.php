@@ -42,7 +42,7 @@ class BookingAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $type_bundle = NULL) {
-    return bat_booking_access(bat_booking_create(array('type' => $type_bundle)), 'create', $account);
+    return bat_booking_access(bat_booking_create(['type' => $type_bundle]), 'create', $account);
   }
 
 }

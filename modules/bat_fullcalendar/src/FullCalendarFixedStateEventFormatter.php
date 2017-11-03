@@ -37,13 +37,13 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
   public function format(EventInterface $event) {
     $editable = FALSE;
 
-    // Load the unit entity from Drupal
+    // Load the unit entity from Drupal.
     $bat_unit = bat_unit_load($event->getUnitId());
 
     // Get the unit entity default value
     $default_value = $bat_unit->getEventDefaultValue($this->event_type->id());
 
-    // Get the default state info which will provide the default value for formatting
+    // Get the default state info which will provide the default value for formatting.
     $state_info = bat_event_load_state($default_value);
 
     $calendar_label = $state_info->getCalendarLabel();
@@ -62,7 +62,7 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
       }
     }
 
-    $formatted_event = array(
+    $formatted_event = [
       'start' => $event->startYear() . '-' . $event->startMonth('m') . '-' . $event->startDay('d') . 'T' . $event->startHour('H') . ':' . $event->startMinute() . ':00',
       'end' => $event->endYear() . '-' . $event->endMonth('m') . '-' . $event->endDay('d') . 'T' . $event->endHour('H') . ':' . $event->endMinute() . ':00',
       'title' => $calendar_label,
@@ -70,7 +70,7 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
       'blocking' => 1,
       'fixed' => 1,
       'editable' => $editable,
-    );
+    ];
 
     // Render non blocking events in the background.
     if ($state_info->getBlocking() == 0) {

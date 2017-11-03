@@ -32,7 +32,7 @@ class BatEventHandlerDateField extends Date {
 
     $value = $date->getTimestamp();
     $format = $this->options['date_format'];
-    if (in_array($format, array('custom', 'raw time ago', 'time ago', 'raw time span', 'time span', 'raw time span', 'inverse time span', 'time span'))) {
+    if (in_array($format, ['custom', 'raw time ago', 'time ago', 'raw time span', 'time span', 'raw time span', 'inverse time span', 'time span'])) {
       $custom_format = $this->options['custom_date_format'];
     }
 
@@ -43,13 +43,13 @@ class BatEventHandlerDateField extends Date {
           return format_interval($time_diff, is_numeric($custom_format) ? $custom_format : 2);
 
         case 'time ago':
-          return t('%time ago', array('%time' => format_interval($time_diff, is_numeric($custom_format) ? $custom_format : 2)));
+          return t('%time ago', ['%time' => format_interval($time_diff, is_numeric($custom_format) ? $custom_format : 2)]);
 
         case 'raw time hence':
           return format_interval(-$time_diff, is_numeric($custom_format) ? $custom_format : 2);
 
         case 'time hence':
-          return t('%time hence', array('%time' => format_interval(-$time_diff, is_numeric($custom_format) ? $custom_format : 2)));
+          return t('%time hence', ['%time' => format_interval(-$time_diff, is_numeric($custom_format) ? $custom_format : 2)]);
 
         case 'raw time span':
           return ($time_diff < 0 ? '-' : '') . format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2);
@@ -58,7 +58,7 @@ class BatEventHandlerDateField extends Date {
           return ($time_diff > 0 ? '-' : '') . format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2);
 
         case 'time span':
-          return t(($time_diff < 0 ? '%time hence' : '%time ago'), array('%time' => format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2)));
+          return t(($time_diff < 0 ? '%time hence' : '%time ago'), ['%time' => format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2)]);
 
         case 'custom':
           if ($custom_format == 'r') {

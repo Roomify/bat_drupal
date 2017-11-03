@@ -54,7 +54,7 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
     // Bypass the add listing if only one unit bundle is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.bat_unit.add_form', array('unit_bundle' => $type->id()));
+      return $this->redirect('entity.bat_unit.add_form', ['unit_bundle' => $type->id()]);
     }
 
     $build['#content'] = $content;
@@ -72,9 +72,9 @@ class UnitController extends ControllerBase implements ContainerInjectionInterfa
    *   A unit submission form.
    */
   public function add(UnitBundleInterface $unit_bundle) {
-    $unit = $this->entityTypeManager()->getStorage('bat_unit')->create(array(
+    $unit = $this->entityTypeManager()->getStorage('bat_unit')->create([
       'type' => $unit_bundle->id(),
-    ));
+    ]);
 
     $form = $this->entityFormBuilder()->getForm($unit);
 

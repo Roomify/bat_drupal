@@ -52,11 +52,11 @@ class BatEventTypeAutocomplete extends EntityAutocomplete {
     }
 
     $element['#autocomplete_route_name'] = 'bat_calendar_reference.bat_event_type_autocomplete';
-    $element['#autocomplete_route_parameters'] = array(
+    $element['#autocomplete_route_parameters'] = [
       'target_type' => $element['#target_type'],
       'selection_handler' => $element['#selection_handler'],
       'selection_settings_key' => $selection_settings_key,
-    );
+    ];
 
     return $element;
   }

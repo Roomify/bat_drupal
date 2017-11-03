@@ -76,32 +76,32 @@ class UnitTypeListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header = array(
-      'id' => array(
+    $header = [
+      'id' => [
         'data' => $this->t('Unit type ID'),
         'field' => 'id',
         'specifier' => 'id',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'name' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'name' => [
         'data' => $this->t('Name'),
         'field' => 'name',
         'specifier' => 'name',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'type' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'type' => [
         'data' => $this->t('Type'),
         'field' => 'type',
         'specifier' => 'type',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'status' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'status' => [
         'data' => $this->t('Status'),
         'field' => 'status',
         'specifier' => 'status',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-    );
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+    ];
     return $header + parent::buildHeader();
   }
 
@@ -114,9 +114,9 @@ class UnitTypeListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $this->getLabel($entity),
       new Url(
-        'entity.bat_unit_type.edit_form', array(
+        'entity.bat_unit_type.edit_form', [
           'bat_unit_type' => $entity->id(),
-        )
+        ]
       )
     );
     $row['bundle'] = bat_type_bundle_load($entity->bundle())->label();

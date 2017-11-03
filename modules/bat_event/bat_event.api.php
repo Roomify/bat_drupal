@@ -29,7 +29,7 @@ function hook_bat_facets_search_results_alter(&$units, $context) {
  *   Single-dimensional array with machine names of entity types.
  */
 function hook_bat_event_target_entity_types() {
-  return array('bat_unit');
+  return ['bat_unit'];
 }
 
 /**

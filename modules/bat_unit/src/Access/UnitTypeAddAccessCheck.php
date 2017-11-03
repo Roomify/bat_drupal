@@ -63,7 +63,7 @@ class UnitTypeAddAccessCheck implements AccessInterface {
 
     $bundles = bat_unit_get_type_bundles();
     foreach ($bundles as $bundle) {
-      if (bat_type_access(bat_type_create(array('type' => $bundle->id(), 'uid' => 0)), 'create', $account->getAccount())) {
+      if (bat_type_access(bat_type_create(['type' => $bundle->id(), 'uid' => 0]), 'create', $account->getAccount())) {
         return AccessResult::allowed();
       }
     }

@@ -32,10 +32,10 @@ class EventTypeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['title'] = array(
+    $row['title'] = [
       'data' => $entity->label(),
-      'class' => array('menu-label'),
-    );
+      'class' => ['menu-label'],
+    ];
     $row['fixed_event_states'] = ($entity->getFixedEventStates()) ? t('Fixed states') : t('Open states');
     $row['event_granularity'] = ($entity->getEventGranularity() == 'bat_daily') ? t('Daily') : t('Hourly');
     return $row + parent::buildRow($entity);

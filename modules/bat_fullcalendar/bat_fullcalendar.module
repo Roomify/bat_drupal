@@ -12,7 +12,6 @@ use Drupal\Core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 use Drupal\bat_event\Controller\EventController;
 
-
 /**
  * Implements hook_bat_fullcalendar_modal_content();
  */
@@ -22,28 +21,28 @@ function bat_fullcalendar_bat_fullcalendar_modal_content($entity_id, $event_type
 
     $event_form = (new EventController())->editEvent($event);
     if (isset($event_form['#validated']) && $event_form['#validated']) {
-      return array(
-        'bat_fullcalendar' => array(
-          'commands' => array(new CloseModalDialogCommand()),
-        ),
-      );
+      return [
+        'bat_fullcalendar' => [
+          'commands' => [new CloseModalDialogCommand()],
+        ],
+      ];
     }
     else {
-      return array(
-        'bat_fullcalendar' => array(
+      return [
+        'bat_fullcalendar' => [
           'title' => t('Edit event'),
           'content' => $event_form,
-        ),
-      );
+        ],
+      ];
     }
   }
   else {
-    return array(
-      'bat_fullcalendar' => array(
+    return [
+      'bat_fullcalendar' => [
         'title' => t('Event Management'),
         'content' => \Drupal::formBuilder()->getForm('Drupal\bat_fullcalendar\Form\FullcalendarEventManagerForm', $entity_id, $event_type, $event_id, $start_date, $end_date),
-      ),
-    );
+      ],
+    ];
   }
 }
 
@@ -59,21 +58,25 @@ function bat_fullcalendar_configure($user_settings) {
   $config = \Drupal::config('bat_fullcalendar.settings');
 
   foreach ($user_settings['batCalendar'] as $id => $user_setting) {
-    // Set the scheduler license
+    // Set the scheduler license.
     $schedulerlicense = $config->get('bat_fullcalendar_scheduler_key');
     switch ($schedulerlicense) {
       case 'gpl':
         $schedulerlicensekey = 'GPL-My-Project-Is-Open-Source';
         break;
+
       case 'non-commercial':
         $schedulerlicensekey = 'CC-Attribution-NonCommercial-NoDerivatives';
         break;
+
       case 'commercial':
         $schedulerlicensekey = $config->get('bat_fullcalendar_scheduler_commercial_key');
         break;
+
       case 'none':
         $schedulerlicensekey = '';
         break;
+
       default:
         $schedulerlicensekey = '';
         break;
@@ -102,13 +105,13 @@ function bat_fullcalendar_configure($user_settings) {
       $default_view = $user_setting['defaultView'];
     }
 
-    $business_hours = array(
+    $business_hours = [
       'start' => '00:00',
       'end' => '24:00',
-      'dow' => array(0, 1, 2, 3, 4, 5, 6),
-    );
+      'dow' => [0, 1, 2, 3, 4, 5, 6],
+    ];
 
-    $config = array(
+    $config = [
       'schedulerLicenseKey' => $schedulerlicensekey,
       'themeSystem' => 'standard',
       'unitType' => '',
@@ -128,16 +131,16 @@ function bat_fullcalendar_configure($user_settings) {
       'viewsTimelineDayButtonText' => ':15 slots',
       'viewsTimelineDaySlotDuration' => '00:15',
       'viewsTimelineSevenDayButtonText' => '7 days',
-      'viewsTimelineSevenDayDuration' => array('days' => 7),
+      'viewsTimelineSevenDayDuration' => ['days' => 7],
       'viewsTimelineSevenDaySlotDuration' => '01:00',
       'viewsTimelineTenDayButtonText' => '10 days',
-      'viewsTimelineTenDayDuration' => array('days' => 10),
+      'viewsTimelineTenDayDuration' => ['days' => 10],
       'viewsTimelineTenDaySlotDuration' => '01:00',
       'viewsTimelineThirtyDayButtonText' => '30 days',
-      'viewsTimelineThirtyDayDuration' => array('days' => 30),
+      'viewsTimelineThirtyDayDuration' => ['days' => 30],
       'viewsTimelineThirtyDaySlotDuration' => '01:00',
       'viewsTimeline365DayButtonText' => '1 year',
-      'viewsTimeline365DaySlotDuration' => array('days' => 365),
+      'viewsTimeline365DaySlotDuration' => ['days' => 365],
       'resourceAreaWidth' => '25%',
       'resourceLabelText' => 'Types',
       'errorMessage' => t('Action not allowed. User may not have the right permissions.'),
@@ -157,7 +160,7 @@ function bat_fullcalendar_configure($user_settings) {
       'groupByDateAndResource' => FALSE,
       'firstDay' => 0,
       'dialogOptions' => bat_fullcalendar_modal_style('default'),
-    );
+    ];
 
     $settings['batCalendar'][$id] = array_replace_recursive($config, $user_setting);
 
@@ -175,37 +178,37 @@ function template_preprocess_bat_fullcalendar(&$variables) {
   $calendar_id = $variables['calendar_settings']['calendar_id'];
   $user_settings = $variables['calendar_settings']['user_settings'];
 
-  // Attributes
+  // Attributes.
   if (!empty($variables['attributes'])) {
     $attributes = $variables['attributes'];
   }
   else {
-    $attributes = array(
+    $attributes = [
       'id' => Html::getUniqueId('calendar'),
-      'class' => array(
+      'class' => [
         'calendar-set',
         'clearfix',
-      ),
-    );
+      ],
+    ];
 
     if (isset($variables['calendar_settings']['class']) && !empty($variables['calendar_settings']['class'])) {
       $attributes['class'] = array_merge($attributes['class'], $variables['calendar_settings']['class']);
     }
   }
 
-  // Override default settings with ones coming form user
+  // Override default settings with ones coming form user.
   $settings = bat_fullcalendar_configure($variables['calendar_settings']['user_settings']);
 
   $settings['batCalendar'][0]['id'] = $attributes['id'];
 
   $attributes = new Attribute($attributes);
 
-  $variables['#attached'] = array(
-    'library' => array('bat_fullcalendar/fullcalendar-scheduler'),
+  $variables['#attached'] = [
+    'library' => ['bat_fullcalendar/fullcalendar-scheduler'],
     'drupalSettings' => $settings,
-  );
+  ];
 
-  $variables['content'] = array('#markup' => '<div' . $attributes->__toString() . '></div>');
+  $variables['content'] = ['#markup' => '<div' . $attributes->__toString() . '></div>'];
 }
 
 /**
@@ -231,16 +234,16 @@ function bat_fullcalendar_modal_style($style = 'default') {
   global $base_path;
 
   // Styles to use for the modal.
-  $modal_style = array(
+  $modal_style = [
     'buttons' => FALSE,
     'modal' => TRUE,
     'width' => 520,
     'height' => 520,
     'title' => t('Loading...'),
     'loading' => '<img class="loading" src="' . $base_path . drupal_get_path('module', 'bat_fullcalendar') . '/images/throbber.gif">',
-  );
+  ];
 
-  // Allow other modules to change the modal style
+  // Allow other modules to change the modal style.
   \Drupal::moduleHandler()->alter('bat_fullcalendar_modal_style', $modal_style);
 
   return $modal_style;

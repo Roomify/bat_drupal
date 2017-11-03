@@ -22,11 +22,11 @@ class BatBookingExampleController extends ControllerBase implements ContainerInj
     $header = $start_date->format('Y-m-d') . ' - ' . $end_date->format('Y-m-d');
     $form = \Drupal::formBuilder()->getForm('Drupal\bat_booking_example\Form\BookingConfirmationForm', $start_date, $end_date, $type_id);
 
-    return array(
+    return [
       '#theme' => 'booking_confirmation_page',
       '#header' => $header,
       '#form' => $form,
-    );
+    ];
   }
 
 }

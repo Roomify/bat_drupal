@@ -5,10 +5,3 @@
  * Sets up the base table for our entity and a table to store information about
  * the entity types.
  */
-
-/**
- * Implements hook_uninstall().
- */
-function bat_event_uninstall() {
-
-}

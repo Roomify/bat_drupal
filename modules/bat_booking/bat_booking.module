@@ -117,7 +117,7 @@ function bat_booking_type_delete(BookingBundle $bundle) {
  * @see bat_booking_load_multiple()
  */
 function bat_booking_load($booking_id, $reset = FALSE) {
-  $bookings = bat_booking_load_multiple(array($booking_id), [], $reset);
+  $bookings = bat_booking_load_multiple([$booking_id], [], $reset);
   return reset($bookings);
 }
 
@@ -190,10 +190,10 @@ function template_preprocess_bat_booking_add_list(&$variables) {
   $variables['types'] = [];
   if (!empty($variables['content'])) {
     foreach ($variables['content'] as $type) {
-      $variables['types'][$type->id()] = array(
+      $variables['types'][$type->id()] = [
         'type' => $type->id(),
         'add_link' => \Drupal::l($type->label(), new Url('entity.bat_booking.add', ['booking_bundle' => $type->id()])),
-      );
+      ];
     }
   }
 }
@@ -214,21 +214,21 @@ function bat_booking_add_start_date_field($bundle) {
       'type' => 'datetime',
       'cardinality' => 1,
       'locked' => 1,
-      'settings' => array(
+      'settings' => [
         'cache_count' => 4,
         'cache_enabled' => 0,
-        'granularity' => array(
+        'granularity' => [
           'day' => 'day',
           'hour' => 'hour',
           'minute' => 'minute',
           'month' => 'month',
           'second' => 0,
           'year' => 'year',
-        ),
+        ],
         'timezone_db' => '',
         'todate' => '',
         'tz_handling' => 'none',
-      ),
+      ],
     ]);
     $field_storage->save();
   }
@@ -240,13 +240,13 @@ function bat_booking_add_start_date_field($bundle) {
       'label' => 'Start Date',
       'bundle' => $bundle,
       'required' => FALSE,
-      'settings' => array(
+      'settings' => [
         'default_value' => 'blank',
         'default_value2' => 'same',
         'default_value_code' => '',
         'default_value_code2' => '',
         'user_register_form' => FALSE,
-      ),
+      ],
     ]);
     $field->save();
   }
@@ -268,21 +268,21 @@ function bat_booking_add_end_date_field($bundle) {
       'type' => 'datetime',
       'cardinality' => 1,
       'locked' => 1,
-      'settings' => array(
+      'settings' => [
         'cache_count' => 4,
         'cache_enabled' => 0,
-        'granularity' => array(
+        'granularity' => [
           'day' => 'day',
           'hour' => 'hour',
           'minute' => 'minute',
           'month' => 'month',
           'second' => 0,
           'year' => 'year',
-        ),
+        ],
         'timezone_db' => '',
         'todate' => '',
         'tz_handling' => 'none',
-      ),
+      ],
     ]);
     $field_storage->save();
   }
@@ -294,13 +294,13 @@ function bat_booking_add_end_date_field($bundle) {
       'label' => 'End Date',
       'bundle' => $bundle,
       'required' => FALSE,
-      'settings' => array(
+      'settings' => [
         'default_value' => 'blank',
         'default_value2' => 'same',
         'default_value_code' => '',
         'default_value_code2' => '',
         'user_register_form' => FALSE,
-      ),
+      ],
     ]);
     $field->save();
   }
@@ -322,9 +322,9 @@ function bat_booking_add_event_reference_field($bundle) {
       'type' => 'entity_reference',
       'cardinality' => 1,
       'locked' => 1,
-      'settings' => array(
+      'settings' => [
         'target_type' => 'bat_event',
-      ),
+      ],
     ]);
     $field_storage->save();
   }

@@ -52,26 +52,26 @@ class TypeGroupBundleForm extends BundleEntityFormBase {
 
     $type = $this->entity;
 
-    $form['name'] = array(
+    $form['name'] = [
       '#title' => t('Name'),
       '#type' => 'textfield',
       '#default_value' => $type->label(),
       '#description' => t('The human-readable name of this type.'),
       '#required' => TRUE,
       '#size' => 30,
-    );
+    ];
 
-    $form['type'] = array(
+    $form['type'] = [
       '#type' => 'machine_name',
       '#default_value' => $type->id(),
       '#maxlength' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
       '#disabled' => FALSE,
-      '#machine_name' => array(
+      '#machine_name' => [
         'exists' => ['Drupal\bat\Entity\TypeGroupBundle', 'load'],
-        'source' => array('name'),
-      ),
+        'source' => ['name'],
+      ],
       '#description' => t('A unique machine-readable name for this type. It must only contain lowercase letters, numbers, and underscores.'),
-    );
+    ];
 
     return $this->protectBundleIdElement($form);
   }
@@ -95,7 +95,7 @@ class TypeGroupBundleForm extends BundleEntityFormBase {
     $id = trim($form_state->getValue('type'));
     // '0' is invalid, since elsewhere we check it using empty().
     if ($id == '0') {
-      $form_state->setErrorByName('type', $this->t("Invalid machine-readable name. Enter a name other than %invalid.", array('%invalid' => $id)));
+      $form_state->setErrorByName('type', $this->t("Invalid machine-readable name. Enter a name other than %invalid.", ['%invalid' => $id]));
     }
   }
 
@@ -110,7 +110,7 @@ class TypeGroupBundleForm extends BundleEntityFormBase {
 
     $status = $type->save();
 
-    $t_args = array('%name' => $type->label());
+    $t_args = ['%name' => $type->label()];
 
     if ($status == SAVED_UPDATED) {
       drupal_set_message(t('The type group bundle %name has been updated.', $t_args));

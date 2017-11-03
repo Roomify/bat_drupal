@@ -27,65 +27,65 @@ class BookingForm extends ContentEntityForm {
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
 
-    $form['changed'] = array(
+    $form['changed'] = [
       '#type' => 'hidden',
       '#default_value' => $entity->getChangedTime(),
-    );
+    ];
 
-    $form['langcode'] = array(
+    $form['langcode'] = [
       '#title' => $this->t('Language'),
       '#type' => 'language_select',
       '#default_value' => $entity->getUntranslated()->language()->getId(),
       '#languages' => Language::STATE_ALL,
-    );
+    ];
 
-    $form['#theme'] = array('bat_entity_edit_form');
+    $form['#theme'] = ['bat_entity_edit_form'];
     $form['#attached']['library'][] = 'bat/bat_ui';
 
-    $form['advanced'] = array(
+    $form['advanced'] = [
       '#type' => 'container',
-      '#attributes' => array('class' => array('entity-meta')),
+      '#attributes' => ['class' => ['entity-meta']],
       '#weight' => 99,
-    );
+    ];
 
     $is_new = !$entity->isNew() ? format_date($entity->getChangedTime(), 'short') : t('Not saved yet');
-    $form['meta'] = array(
-      '#attributes' => array('class' => array('entity-meta__header')),
+    $form['meta'] = [
+      '#attributes' => ['class' => ['entity-meta__header']],
       '#type' => 'container',
       '#group' => 'advanced',
       '#weight' => -100,
-      'published' => array(
+      'published' => [
         '#type' => 'html_tag',
         '#tag' => 'h3',
         '#value' => $entity->getStatus() ? t('Published') : t('Not published'),
         '#access' => !$entity->isNew(),
-        '#attributes' => array(
+        '#attributes' => [
           'class' => 'entity-meta__title',
-        ),
-      ),
-      'changed' => array(
+        ],
+      ],
+      'changed' => [
         '#type' => 'item',
-        '#wrapper_attributes' => array('class' => array('entity-meta__last-saved', 'container-inline')),
+        '#wrapper_attributes' => ['class' => ['entity-meta__last-saved', 'container-inline']],
         '#markup' => '<h4 class="label inline">' . t('Last saved') . '</h4> ' . $is_new,
-      ),
-      'author' => array(
+      ],
+      'author' => [
         '#type' => 'item',
-        '#wrapper_attributes' => array('class' => array('author', 'container-inline')),
+        '#wrapper_attributes' => ['class' => ['author', 'container-inline']],
         '#markup' => '<h4 class="label inline">' . t('Author') . '</h4> ' . $entity->getOwner()->getUsername(),
-      ),
-    );
+      ],
+    ];
 
-    $form['author'] = array(
+    $form['author'] = [
       '#type' => 'details',
       '#title' => t('Authoring information'),
       '#group' => 'advanced',
-      '#attributes' => array(
-        'class' => array('type-form-author'),
-      ),
+      '#attributes' => [
+        'class' => ['type-form-author'],
+      ],
       '#weight' => 90,
       '#optional' => TRUE,
       '#open' => TRUE,
-    );
+    ];
 
     if (isset($form['uid'])) {
       $form['uid']['#group'] = 'author';

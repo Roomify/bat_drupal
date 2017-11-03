@@ -42,7 +42,7 @@ class UnitAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $unit_bundle = NULL) {
-    return bat_unit_access(bat_unit_create(array('type' => $unit_bundle)), 'create', $account);
+    return bat_unit_access(bat_unit_create(['type' => $unit_bundle]), 'create', $account);
   }
 
 }

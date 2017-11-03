@@ -44,10 +44,7 @@ class BookingController extends ControllerBase implements ContainerInjectionInte
 
     // Only use type bundles the user has access to.
     foreach ($this->entityTypeManager()->getStorage('bat_booking_bundle')->loadMultiple() as $type) {
-      //$access = $this->entityTypeManager()->getAccessControlHandler('bat_booking')->createAccess($type->id(), NULL, [], TRUE);
-      //if ($access->isAllowed()) {
-        $content[$type->id()] = $type;
-      //}
+      $content[$type->id()] = $type;
     }
 
     // Bypass the add listing if only one booking bundle is available.
@@ -71,9 +68,9 @@ class BookingController extends ControllerBase implements ContainerInjectionInte
    *   A unit type submission form.
    */
   public function add(BookingBundleInterface $booking_bundle) {
-    $type = $this->entityTypeManager()->getStorage('bat_booking')->create(array(
+    $type = $this->entityTypeManager()->getStorage('bat_booking')->create([
       'type' => $booking_bundle->id(),
-    ));
+    ]);
 
     $form = $this->entityFormBuilder()->getForm($type);
 

@@ -63,7 +63,7 @@ class TypeGroupAddAccessCheck implements AccessInterface {
 
     $bundles = bat_type_group_get_bundles();
     foreach ($bundles as $bundle) {
-      if (bat_entity_access(bat_type_group_create(array('type' => $bundle->id(), 'uid' => 0)), 'create', $account->getAccount())) {
+      if (bat_entity_access(bat_type_group_create(['type' => $bundle->id(), 'uid' => 0]), 'create', $account->getAccount())) {
         return AccessResult::allowed();
       }
     }

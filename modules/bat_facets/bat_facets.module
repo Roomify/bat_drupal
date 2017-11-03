@@ -10,7 +10,7 @@ use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Event\Event;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
-use\Drupal\search_api\Query\QueryInterface;
+use Drupal\search_api\Query\QueryInterface;
 
 /**
  * Implements hook_search_api_query_alter().
@@ -38,7 +38,7 @@ function bat_facets_search_api_query_alter(QueryInterface &$query) {
             !empty($params['bat_end_date'])) {
           $start_date = new DateTime($params['bat_start_date']);
           $end_date = new DateTime($params['bat_end_date']);
-          // Remove a minute because BAT considers as included
+          // Remove a minute because BAT considers as included.
           $end_date->sub(new DateInterval('PT1M'));
 
           $event_type = $settings['event_type'];
@@ -57,7 +57,7 @@ function bat_facets_search_api_query_alter(QueryInterface &$query) {
           $units = [];
           foreach ($type_ids as $type_id => $name) {
             // Get the units of this type.
-            $drupal_units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $type_id));
+            $drupal_units = bat_unit_load_multiple(FALSE, ['unit_type_id' => $type_id]);
             $bat_units = [];
             foreach ($drupal_units as $unit_id => $unit) {
               $bat_units[] = new Unit($unit_id, $unit->getEventDefaultValue($event_type));
@@ -84,13 +84,13 @@ function bat_facets_search_api_query_alter(QueryInterface &$query) {
             }
           }
 
-          $context = array(
+          $context = [
             'types_before_search' => $type_ids,
             'start_date' => $start_date,
             'end_date' => $end_date,
             'event_type' => $event_type,
             'valid_states' => $valid_states,
-          );
+          ];
 
           \Drupal::moduleHandler()->alter('bat_facets_search_results', $valid_type_ids, $context);
 

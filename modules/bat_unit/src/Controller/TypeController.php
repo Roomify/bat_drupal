@@ -53,7 +53,7 @@ class TypeController extends ControllerBase implements ContainerInjectionInterfa
     // Bypass the add listing if only one unit type bundle is available.
     if (count($content) == 1) {
       $type = array_shift($content);
-      return $this->redirect('entity.bat_unit_type.add', array('type_bundle' => $type->id()));
+      return $this->redirect('entity.bat_unit_type.add', ['type_bundle' => $type->id()]);
     }
 
     $build['#content'] = $content;
@@ -71,9 +71,9 @@ class TypeController extends ControllerBase implements ContainerInjectionInterfa
    *   A unit type submission form.
    */
   public function add(TypeBundleInterface $type_bundle) {
-    $type = $this->entityTypeManager()->getStorage('bat_unit_type')->create(array(
+    $type = $this->entityTypeManager()->getStorage('bat_unit_type')->create([
       'type' => $type_bundle->id(),
-    ));
+    ]);
 
     $form = $this->entityFormBuilder()->getForm($type);
 
@@ -90,7 +90,7 @@ class TypeController extends ControllerBase implements ContainerInjectionInterfa
    *   The page title.
    */
   public function addPageTitle(TypeBundleInterface $type_bundle) {
-    return $this->t('Create @name', array('@name' => $type_bundle->label()));
+    return $this->t('Create @name', ['@name' => $type_bundle->label()]);
   }
 
 }

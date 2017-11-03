@@ -53,40 +53,40 @@ class EventTypeForm extends BundleEntityFormBase {
 
     $event_type = $this->entity;
 
-    $form['name'] = array(
+    $form['name'] = [
       '#title' => t('Label'),
       '#type' => 'textfield',
       '#default_value' => $event_type->label(),
       '#description' => t('The human-readable name of this event type.'),
       '#required' => TRUE,
       '#size' => 30,
-    );
+    ];
 
-    $form['type'] = array(
+    $form['type'] = [
       '#type' => 'machine_name',
       '#default_value' => $event_type->id(),
       '#maxlength' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
       '#disabled' => FALSE,
-      '#machine_name' => array(
+      '#machine_name' => [
         'exists' => ['Drupal\bat_event\Entity\EventType', 'load'],
-        'source' => array('name'),
-      ),
+        'source' => ['name'],
+      ],
       '#description' => t('A unique machine-readable name for this event type. It must only contain lowercase letters, numbers, and underscores.'),
-    );
+    ];
 
     if ($event_type->isNew()) {
-      $form['fixed_event_states'] = array(
+      $form['fixed_event_states'] = [
         '#type' => 'checkbox',
         '#title' => t('Fixed event states'),
-      );
+      ];
     }
 
-    $form['event_granularity'] = array(
+    $form['event_granularity'] = [
       '#type' => 'select',
       '#title' => t('Event Granularity'),
-      '#options' => array('bat_daily' => t('Daily'), 'bat_hourly' => t('Hourly')),
+      '#options' => ['bat_daily' => t('Daily'), 'bat_hourly' => t('Hourly')],
       '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granularity : 'bat_daily',
-    );
+    ];
 
     if ($event_type->isNew()) {
       // Check for available Target Entity types.
@@ -94,10 +94,10 @@ class EventTypeForm extends BundleEntityFormBase {
       if (count($target_entity_types) == 1) {
         // If there's only one target entity type, we simply store the value
         // without showing it to the user.
-        $form['target_entity_type'] = array(
+        $form['target_entity_type'] = [
           '#type' => 'value',
           '#value' => $target_entity_types[0],
-        );
+        ];
       }
       else {
         // Build option list.
@@ -106,22 +106,22 @@ class EventTypeForm extends BundleEntityFormBase {
           $target_entity_info = \Drupal::entityTypeManager()->getDefinition($target_entity_type);
           $options[$target_entity_type] = $target_entity_info['label'];
         }
-        $form['target_entity_type'] = array(
+        $form['target_entity_type'] = [
           '#type' => 'select',
           '#title' => t('Target Entity Type'),
           '#description' => t('Select the target entity type for this Event type. In most cases you will wish to leave this as "Unit".'),
           '#options' => $options,
           // Default to BAT Unit if available.
           '#default_value' => isset($target_entity_types['bat_unit']) ? 'bat_unit' : '',
-        );
+        ];
       }
     }
 
-    $form['advanced'] = array(
+    $form['advanced'] = [
       '#type' => 'vertical_tabs',
-      '#attributes' => array('class' => array('entity-meta')),
+      '#attributes' => ['class' => ['entity-meta']],
       '#weight' => 99,
-    );
+    ];
 
     if (!$event_type->isNew() && $event_type->getFixedEventStates() == 0) {
       $fields_options = [];
@@ -132,21 +132,21 @@ class EventTypeForm extends BundleEntityFormBase {
         }
       }
 
-      $form['events'] = array(
+      $form['events'] = [
         '#type' => 'details',
         '#group' => 'advanced',
         '#title' => t('Events'),
         '#tree' => TRUE,
         '#weight' => 80,
-      );
+      ];
 
-      $form['events'][$event_type->id()] = array(
+      $form['events'][$event_type->id()] = [
         '#type' => 'select',
         '#title' => t('Select your default @event field', ['@event' => $event_type->label()]),
         '#options' => $fields_options,
         '#default_value' => isset($event_type->default_event_value_field_ids) ? $event_type->default_event_value_field_ids : NULL,
         '#empty_option' => t('- Select a field -'),
-      );
+      ];
     }
 
     if (!$event_type->isNew()) {
@@ -158,22 +158,22 @@ class EventTypeForm extends BundleEntityFormBase {
         }
       }
 
-      $form['event_label'] = array(
+      $form['event_label'] = [
         '#type' => 'details',
         '#group' => 'advanced',
         '#title' => t('Label Source'),
         '#tree' => TRUE,
         '#weight' => 70,
-      );
+      ];
 
-      $form['event_label']['default_event_label_field_name'] = array(
+      $form['event_label']['default_event_label_field_name'] = [
         '#type' => 'select',
         '#title' => t('Select your label field', ['@event' => $event_type->label()]),
         '#default_value' => isset($event_type->default_event_label_field_name) ? $event_type->default_event_label_field_name : NULL,
         '#empty_option' => t('- Select a field -'),
         '#description' => t('If you select a field here, its value will be used as the label for your event. BAT will fall back to using the event state as the label if the field has no value.'),
         '#options' => $fields_options,
-      );
+      ];
     }
 
     return $this->protectBundleIdElement($form);
@@ -216,7 +216,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
     $status = $type->save();
 
-    $t_args = array('%name' => $type->label());
+    $t_args = ['%name' => $type->label()];
 
     if ($status == SAVED_UPDATED) {
       drupal_set_message(t('The event type %name has been updated.', $t_args));

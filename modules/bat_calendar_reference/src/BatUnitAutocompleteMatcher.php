@@ -35,11 +35,11 @@ class BatUnitAutocompleteMatcher extends EntityAutocompleteMatcher {
   public function getMatches($target_type, $selection_handler, $selection_settings, $string = '') {
     $matches = [];
 
-    $options = array(
+    $options = [
       'target_type' => $target_type,
       'handler' => $selection_handler,
       'handler_settings' => $selection_settings,
-    );
+    ];
     $handler = $this->selectionManager->getInstance($options);
 
     if (isset($string)) {
@@ -61,11 +61,11 @@ class BatUnitAutocompleteMatcher extends EntityAutocompleteMatcher {
             $unit = bat_unit_load($entity_id);
 
             if (in_array($unit->getUnitTypeId(), $selection_settings['unit_types'])) {
-              $matches[] = array('value' => $key, 'label' => $label);
+              $matches[] = ['value' => $key, 'label' => $label];
             }
           }
           else {
-            $matches[] = array('value' => $key, 'label' => $label);
+            $matches[] = ['value' => $key, 'label' => $label];
           }
         }
       }

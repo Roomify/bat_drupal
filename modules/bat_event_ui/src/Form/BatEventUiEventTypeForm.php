@@ -31,22 +31,22 @@ class BatEventUiEventTypeForm extends FormBase {
       }
     }
 
-    $form['event_types'] = array(
+    $form['event_types'] = [
       '#type' => 'select',
       '#title' => 'Event type',
       '#options' => $event_types_options,
       '#default_value' => $event_type,
-      '#ajax' => array(
+      '#ajax' => [
         'callback' => '::eventTypeFormCallback',
         'wrapper' => 'unit-type-wrapper',
-      ),
-    );
+      ],
+    ];
 
     $types = bat_unit_get_types();
     if (!empty($types)) {
-      $types_options = array(
+      $types_options = [
         'all' => t('All'),
-      );
+      ];
 
       foreach ($types as $type) {
         $type_bundle = bat_type_bundle_load($type->bundle());
@@ -58,20 +58,20 @@ class BatEventUiEventTypeForm extends FormBase {
         }
       }
 
-      $form['unit_type'] = array(
+      $form['unit_type'] = [
         '#type' => 'select',
         '#title' => 'Unit type',
         '#options' => $types_options,
         '#default_value' => $unit_type,
         '#prefix' => '<div id="unit-type-wrapper">',
         '#suffix' => '</div>',
-      );
+      ];
     }
 
-    $form['submit'] = array(
+    $form['submit'] = [
       '#type' => 'submit',
       '#value' => 'Change',
-    );
+    ];
 
     return $form;
   }
@@ -96,7 +96,7 @@ class BatEventUiEventTypeForm extends FormBase {
     $type = $form_state->getValue('unit_type');
     $event_type = $form_state->getValue('event_types');
 
-    $form_state->setRedirectUrl(Url::fromRoute('bat_event_ui.calendar', array('unit_type' => $type, 'event_type' => $event_type)));
+    $form_state->setRedirectUrl(Url::fromRoute('bat_event_ui.calendar', ['unit_type' => $type, 'event_type' => $event_type]));
   }
 
 }

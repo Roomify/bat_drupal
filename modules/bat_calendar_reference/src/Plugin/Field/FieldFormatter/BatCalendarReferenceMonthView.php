@@ -49,7 +49,7 @@ class BatCalendarReferenceMonthView extends FormatterBase {
         $header = '<div class="calendar-title"><h2>' . implode(', ', $unit_type_names) . '</h2></div>';
 
         // Inject settings in javascript that we will use.
-        $fc_user_settings[$calendar_id] = array(
+        $fc_user_settings[$calendar_id] = [
           'unitTypes' => $unit_type_ids,
           'unitIDs' => '',
           'eventType' => $event_type,
@@ -59,7 +59,7 @@ class BatCalendarReferenceMonthView extends FormatterBase {
           'editable' => FALSE,
           'selectable' => FALSE,
           'background' => '1',
-        );
+        ];
 
         if ($display['type'] == 'bat_calendar_reference_month_view') {
           $fc_user_settings[$calendar_id]['defaultView'] = 'month';
@@ -92,7 +92,7 @@ class BatCalendarReferenceMonthView extends FormatterBase {
         $header = '<div class="calendar-title"><h2>' . implode(', ', $unit_names) . '</h2></div>';
 
         // Inject settings in javascript that we will use.
-        $fc_user_settings[$calendar_id] = array(
+        $fc_user_settings[$calendar_id] = [
           'unitTypes' => 'all',
           'unitIDs' => $unit_ids,
           'eventType' => $event_type,
@@ -102,7 +102,7 @@ class BatCalendarReferenceMonthView extends FormatterBase {
           'editable' => FALSE,
           'selectable' => FALSE,
           'background' => '1',
-        );
+        ];
 
         if ($display['type'] == 'bat_calendar_reference_month_view') {
           $fc_user_settings[$calendar_id]['defaultView'] = 'month';
@@ -116,26 +116,26 @@ class BatCalendarReferenceMonthView extends FormatterBase {
     }
 
     if (!empty($fc_user_settings)) {
-      $calendar_settings = array(
+      $calendar_settings = [
         'modal_style' => 'default',
         'calendar_id' => 'fullcalendar-scheduler',
-        'user_settings' => array('batCalendar' => $fc_user_settings),
-      );
+        'user_settings' => ['batCalendar' => $fc_user_settings],
+      ];
 
-      return array(
+      return [
         '#theme' => 'bat_fullcalendar',
         '#calendar_settings' => $calendar_settings,
-        '#js_files' => array(drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js'),
-        '#css_files' => array(drupal_get_path('module', 'bat_fullcalendar') . '/css/fullcalendar.theme.css'),
-        '#attributes' => array(
+        '#js_files' => [drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js'],
+        '#css_files' => [drupal_get_path('module', 'bat_fullcalendar') . '/css/fullcalendar.theme.css'],
+        '#attributes' => [
           'id' => $calendar_id,
-          'class' => array(
+          'class' => [
             'cal',
             'clearfix',
-          ),
-        ),
+          ],
+        ],
         '#prefix' => $header,
-      );
+      ];
     }
     else {
       return [];

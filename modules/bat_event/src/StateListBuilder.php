@@ -83,44 +83,44 @@ class StateListBuilder extends EntityListBuilder {
     $header['blocking'] = $this->t('Blocking');
     $header['event_type'] = $this->t('Event type');
 
-    $header = array(
-      'id' => array(
+    $header = [
+      'id' => [
         'data' => $this->t('State ID'),
         'field' => 'id',
         'specifier' => 'id',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'name' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'name' => [
         'data' => $this->t('Name'),
         'field' => 'name',
         'specifier' => 'name',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'color' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'color' => [
         'data' => $this->t('Color'),
         'field' => 'color',
         'specifier' => 'color',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'calendar_label' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'calendar_label' => [
         'data' => $this->t('Calendar label'),
         'field' => 'calendar_label',
         'specifier' => 'calendar_label',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'blocking' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'blocking' => [
         'data' => $this->t('Blocking'),
         'field' => 'blocking',
         'specifier' => 'blocking',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'event_type' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'event_type' => [
         'data' => $this->t('Event type'),
         'field' => 'event_type',
         'specifier' => 'event_type',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-    );
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+    ];
 
     return $header + parent::buildHeader();
   }
@@ -133,9 +133,9 @@ class StateListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $this->getLabel($entity),
       new Url(
-        'entity.state.edit_form', array(
+        'entity.state.edit_form', [
           'state' => $entity->id(),
-        )
+        ]
       )
     );
     $row['color'] = $entity->getColor();

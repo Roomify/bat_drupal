@@ -23,7 +23,7 @@ class BatCalendarReferenceUnitTypeAutocomplete extends WidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $referenceable_event_types = array_filter($this->fieldDefinition->getSetting('referenceable_event_types'));
 
-    $element['unit_type_id'] = array(
+    $element['unit_type_id'] = [
       '#title' => t('Unit type'),
       '#type' => 'entity_autocomplete',
       '#target_type' => 'bat_unit_type',
@@ -31,9 +31,9 @@ class BatCalendarReferenceUnitTypeAutocomplete extends WidgetBase {
       '#size' => 60,
       '#maxlength' => 255,
       '#validate_reference' => FALSE,
-    );
+    ];
 
-    $element['event_type_id'] = array(
+    $element['event_type_id'] = [
       '#title' => t('Event type'),
       '#type' => 'bat_event_type_autocomplete',
       '#target_type' => 'bat_event_type',
@@ -42,7 +42,7 @@ class BatCalendarReferenceUnitTypeAutocomplete extends WidgetBase {
       '#size' => 60,
       '#maxlength' => 255,
       '#validate_reference' => FALSE,
-    );
+    ];
 
     return $element;
   }

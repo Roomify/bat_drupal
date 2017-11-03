@@ -34,12 +34,12 @@ class FacetsAvailabilityForm extends FormBase {
     // Month doesn't have a default selection.
     $default_month = '';
 
-    $form['container'] = array(
+    $form['container'] = [
       '#type' => 'container',
-      '#attributes' => array(
-        'class' => array('container-inline'),
-      ),
-    );
+      '#attributes' => [
+        'class' => ['container-inline'],
+      ],
+    ];
 
     if (isset($params['bat_start_date']) && !empty($params['bat_start_date'])) {
       $start_date = new \DateTime($params['bat_start_date']);
@@ -59,26 +59,26 @@ class FacetsAvailabilityForm extends FormBase {
 
     $date_format = \Drupal::config('bat.settings')->get('date_format') ?: 'Y-m-d H:i';
 
-    $form['container']['arrival'] = array(
+    $form['container']['arrival'] = [
       '#type' => 'date',
       '#description' => '',
       '#date_format' => $date_format,
       '#default_value' => isset($arrival) ? $arrival : '',
       '#required' => TRUE,
-    );
+    ];
 
-    $form['container']['departure'] = array(
+    $form['container']['departure'] = [
       '#type' => 'date',
       '#description' => '',
       '#date_format' => $date_format,
       '#default_value' => isset($departure) ? $departure : '',
       '#required' => TRUE,
-    );
+    ];
 
-    $form['container']['submit'] = array(
+    $form['container']['submit'] = [
       '#type' => 'submit',
       '#value' => 'Search',
-    );
+    ];
 
     return $form;
   }

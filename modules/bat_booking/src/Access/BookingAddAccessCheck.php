@@ -18,7 +18,7 @@ use Drupal\bat_booking\BookingBundleInterface;
  */
 class BookingAddAccessCheck implements AccessInterface {
 
-	/**
+  /**
    * The entity manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -63,7 +63,7 @@ class BookingAddAccessCheck implements AccessInterface {
 
     $bundles = bat_booking_get_bundles();
     foreach ($bundles as $bundle) {
-      if (bat_booking_access(bat_booking_create(array('type' => $bundle->id(), 'uid' => 0)), 'create', $account->getAccount())) {
+      if (bat_booking_access(bat_booking_create(['type' => $bundle->id(), 'uid' => 0]), 'create', $account->getAccount())) {
         return AccessResult::allowed();
       }
     }

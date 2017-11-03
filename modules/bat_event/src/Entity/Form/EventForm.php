@@ -31,51 +31,51 @@ class EventForm extends ContentEntityForm {
 
     $event_type = bat_event_type_load($entity->bundle());
 
-    $form['langcode'] = array(
+    $form['langcode'] = [
       '#title' => $this->t('Language'),
       '#type' => 'language_select',
       '#default_value' => $entity->getUntranslated()->language()->getId(),
       '#languages' => Language::STATE_ALL,
-    );
+    ];
 
-    $form['#theme'] = array('bat_entity_edit_form');
+    $form['#theme'] = ['bat_entity_edit_form'];
     $form['#attached']['library'][] = 'bat/bat_ui';
 
-    $form['advanced'] = array(
+    $form['advanced'] = [
       '#type' => 'container',
-      '#attributes' => array('class' => array('entity-meta')),
+      '#attributes' => ['class' => ['entity-meta']],
       '#weight' => 99,
-    );
+    ];
 
     $is_new = !$entity->isNew() ? format_date($entity->getChangedTime(), 'short') : t('Not saved yet');
-    $form['meta'] = array(
-      '#attributes' => array('class' => array('entity-meta__header')),
+    $form['meta'] = [
+      '#attributes' => ['class' => ['entity-meta__header']],
       '#type' => 'container',
       '#group' => 'advanced',
       '#weight' => -100,
-      'changed' => array(
+      'changed' => [
         '#type' => 'item',
-        '#wrapper_attributes' => array('class' => array('entity-meta__last-saved', 'container-inline')),
+        '#wrapper_attributes' => ['class' => ['entity-meta__last-saved', 'container-inline']],
         '#markup' => '<h4 class="label inline">' . t('Last saved') . '</h4> ' . $is_new,
-      ),
-      'author' => array(
+      ],
+      'author' => [
         '#type' => 'item',
-        '#wrapper_attributes' => array('class' => array('author', 'container-inline')),
+        '#wrapper_attributes' => ['class' => ['author', 'container-inline']],
         '#markup' => '<h4 class="label inline">' . t('Author') . '</h4> ' . $entity->getOwner()->getUsername(),
-      ),
-    );
+      ],
+    ];
 
-    $form['author'] = array(
+    $form['author'] = [
       '#type' => 'details',
       '#title' => t('Authoring information'),
       '#group' => 'advanced',
-      '#attributes' => array(
-        'class' => array('type-form-author'),
-      ),
+      '#attributes' => [
+        'class' => ['type-form-author'],
+      ],
       '#weight' => 90,
       '#optional' => TRUE,
       '#open' => TRUE,
-    );
+    ];
 
     if (isset($form['uid'])) {
       $form['uid']['#group'] = 'author';
@@ -145,9 +145,9 @@ class EventForm extends ContentEntityForm {
 
         $end_date->sub(new \DateInterval('PT1M'));
 
-        $bat_units = array(
+        $bat_units = [
           new Unit($values[$target_field_name][0]['target_id'], 0),
-        );
+        ];
 
         $calendar = new Calendar($bat_units, $event_store);
 

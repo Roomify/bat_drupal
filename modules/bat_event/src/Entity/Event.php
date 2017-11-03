@@ -68,9 +68,9 @@ class Event extends ContentEntityBase implements EventInterface {
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
-    $values += array(
+    $values += [
       'uid' => \Drupal::currentUser()->id(),
-    );
+    ];
   }
 
   /**
@@ -279,21 +279,21 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
       ->setTranslatable(TRUE)
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'author',
         'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'entity_reference_autocomplete',
         'weight' => 5,
-        'settings' => array(
+        'settings' => [
           'match_operator' => 'CONTAINS',
           'size' => '60',
           'autocomplete_type' => 'tags',
           'placeholder' => '',
-        ),
-      ))
+        ],
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
@@ -312,30 +312,30 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['start'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Start Date'))
       ->setDescription(t('The time that this event starts.'))
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'timestamp',
         'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'datetime_timestamp',
         'weight' => 0,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setRequired(TRUE);
 
     $fields['end'] = BaseFieldDefinition::create('created')
       ->setLabel(t('End Date'))
       ->setDescription(t('The time that this event ends.'))
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'timestamp',
         'weight' => 1,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'datetime_timestamp',
         'weight' => 1,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setRequired(TRUE);
 
@@ -367,7 +367,7 @@ class Event extends ContentEntityBase implements EventInterface {
     $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
     $event_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_EVENT, $prefix);
 
-    $units = array($unit);
+    $units = [$unit];
     $state_calendar = new Calendar($units, $state_store);
     $event_calendar = new Calendar($units, $event_store);
 
@@ -379,8 +379,8 @@ class Event extends ContentEntityBase implements EventInterface {
       $event_id_event = new \Roomify\Bat\Event\Event($start_date, $end_date, $unit, 0);
     }
 
-    $state_calendar->addEvents(array($state_event), $granularity);
-    $event_calendar->addEvents(array($event_id_event), $granularity);
+    $state_calendar->addEvents([$state_event], $granularity);
+    $event_calendar->addEvents([$event_id_event], $granularity);
   }
 
   public function getEventValue() {

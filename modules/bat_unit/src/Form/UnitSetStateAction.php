@@ -84,16 +84,16 @@ class UnitSetStateAction extends FormBase {
 
     $form += bat_date_range_fields();
 
-    $form['event_type'] = array(
+    $form['event_type'] = [
       '#type' => 'select',
       '#title' => t('Event type'),
       '#options' => $event_types_options,
       '#required' => TRUE,
-      '#ajax' => array(
+      '#ajax' => [
         'callback' => '::eventTypeChange',
         'wrapper' => 'event-state-wrapper',
-      ),
-    );
+      ],
+    ];
 
     if (isset($values['event_type'])) {
       $state_options = [];
@@ -101,26 +101,26 @@ class UnitSetStateAction extends FormBase {
         $state_options[$state->getMachineName()] = $state->label();
       }
 
-      $form['event_state'] = array(
+      $form['event_state'] = [
         '#type' => 'select',
         '#title' => t('Event state'),
         '#options' => $state_options,
         '#required' => TRUE,
         '#prefix' => '<div id="event-state-wrapper">',
         '#suffix' => '</div>',
-      );
+      ];
     }
     else {
-      $form['event_state'] = array(
+      $form['event_state'] = [
         '#prefix' => '<div id="event-state-wrapper">',
         '#suffix' => '</div>',
-      );
+      ];
     }
 
-    $form['submit'] = array(
+    $form['submit'] = [
       '#type' => 'submit',
       '#value' => t('Apply'),
-    );
+    ];
 
     return $form;
   }
@@ -152,7 +152,7 @@ class UnitSetStateAction extends FormBase {
       $end_date->sub(new \DateInterval('PT1M'));
 
       if (isset($type_bundle->default_event_value_field_ids[$event_type]) && !empty($type_bundle->default_event_value_field_ids[$event_type])) {
-        $event = bat_event_create(array('type' => $event_type));
+        $event = bat_event_create(['type' => $event_type]);
         $event->start = $start_date->getTimestamp();
         $event->end = $end_date->getTimestamp();
         $event->uid = $type->uid->entity->uid->value;

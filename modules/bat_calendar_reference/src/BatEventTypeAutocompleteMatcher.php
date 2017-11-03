@@ -35,11 +35,11 @@ class BatEventTypeAutocompleteMatcher extends EntityAutocompleteMatcher {
   public function getMatches($target_type, $selection_handler, $selection_settings, $string = '') {
     $matches = [];
 
-    $options = array(
+    $options = [
       'target_type' => $target_type,
       'handler' => $selection_handler,
       'handler_settings' => $selection_settings,
-    );
+    ];
     $handler = $this->selectionManager->getInstance($options);
 
     if (isset($string)) {
@@ -59,11 +59,11 @@ class BatEventTypeAutocompleteMatcher extends EntityAutocompleteMatcher {
 
           if (isset($selection_settings['event_types'])) {
             if (in_array($entity_id, $selection_settings['event_types'])) {
-              $matches[] = array('value' => $key, 'label' => $label);
+              $matches[] = ['value' => $key, 'label' => $label];
             }
           }
           else {
-            $matches[] = array('value' => $key, 'label' => $label);
+            $matches[] = ['value' => $key, 'label' => $label];
           }
         }
       }

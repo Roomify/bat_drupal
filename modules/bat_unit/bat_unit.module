@@ -83,10 +83,10 @@ function template_preprocess_bat_type_add_list(&$variables) {
   $variables['types'] = [];
   if (!empty($variables['content'])) {
     foreach ($variables['content'] as $type) {
-      $variables['types'][$type->id()] = array(
+      $variables['types'][$type->id()] = [
         'type' => $type->id(),
         'add_link' => \Drupal::l($type->label(), new Url('entity.bat_unit_type.add', ['type_bundle' => $type->id()])),
-      );
+      ];
     }
   }
 }
@@ -104,10 +104,10 @@ function template_preprocess_bat_unit_add_list(&$variables) {
   $variables['types'] = [];
   if (!empty($variables['content'])) {
     foreach ($variables['content'] as $type) {
-      $variables['types'][$type->id()] = array(
+      $variables['types'][$type->id()] = [
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_unit.add_form', array('unit_bundle' => $type->id()))),
-      );
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_unit.add_form', ['unit_bundle' => $type->id()])),
+      ];
     }
   }
 }
@@ -128,7 +128,7 @@ function bat_unit_views_pre_render(ViewExecutable $view) {
 function bat_unit_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
   if ($entity->getEntityTypeId() == 'bat_unit_type') {
     // When delete a Type remove all related Units.
-    $units = bat_unit_load_multiple(FALSE, array('unit_type_id' => $entity->id()));
+    $units = bat_unit_load_multiple(FALSE, ['unit_type_id' => $entity->id()]);
 
     foreach ($units as $unit) {
       $unit->delete();
@@ -148,7 +148,7 @@ function bat_unit_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
  * Register BAT Unit as a BAT event target entity type.
  */
 function bat_unit_bat_event_target_entity_types() {
-  return array('bat_unit');
+  return ['bat_unit'];
 }
 
 /**
@@ -216,14 +216,6 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
   $conditions = db_and();
 
   if ($account->id() && $account->hasPermission('view own bat_unit unpublished entities')) {
-    /*$or = new Condition('AND')
-      ->condition($context['base_table'] . '.status', 0)
-      ->condition($context['base_table'] . '.uid', $account->id());
-    $conditions->condition(new Condition('OR')
-      ->condition($or)
-      ->condition($context['base_table'] . '.status', 1)
-    );*/
-
   }
   else {
     $conditions->condition($context['base_table'] . '.status', 1);
@@ -259,7 +251,7 @@ function bat_unit_get_bundles($bundle_name = NULL, $reset = FALSE) {
  *
  * @return array
  *   An array of unit bundles keyed by bundle name and labels
-*/
+ */
 function bat_unit_bundles_ids() {
   $unit_bundles = [];
 
@@ -276,7 +268,7 @@ function bat_unit_bundles_ids() {
  *
  * @return array
  *   An array of unit types keyed by type id and labels
-*/
+ */
 function bat_unit_types_ids() {
   $unit_types = [];
 
@@ -301,7 +293,7 @@ function bat_unit_types_ids() {
  */
 function bat_unit_bundle_load($bundle, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityTypeManager()->getStorage('bat_unit_bundle')->resetCache(array($bundle));
+    \Drupal::entityTypeManager()->getStorage('bat_unit_bundle')->resetCache([$bundle]);
   }
 
   return UnitBundle::load($bundle);
@@ -321,7 +313,7 @@ function bat_unit_bundle_load($bundle, $reset = FALSE) {
  */
 function bat_unit_load($unit_id, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityTypeManager()->getStorage('bat_unit')->resetCache(array($unit_id));
+    \Drupal::entityTypeManager()->getStorage('bat_unit')->resetCache([$unit_id]);
   }
 
   return Unit::load($unit_id);
@@ -437,9 +429,9 @@ function bat_unit_bundle_delete(UnitBundle $bundle) {
  * URI callback for units.
  */
 function bat_unit_uri(Unit $unit) {
-  return array(
+  return [
     'path' => 'unit/' . $unit->id(),
-  );
+  ];
 }
 
 /**
@@ -628,7 +620,7 @@ function bat_type_bundles_ids() {
  */
 function bat_type_bundle_load($bundle, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityTypeManager()->getStorage('bat_type_bundle')->resetCache(array($bundle));
+    \Drupal::entityTypeManager()->getStorage('bat_type_bundle')->resetCache([$bundle]);
   }
 
   return TypeBundle::load($bundle);
@@ -649,7 +641,7 @@ function bat_type_bundle_load($bundle, $reset = FALSE) {
  */
 function bat_type_load($type_id, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityTypeManager()->getStorage('bat_unit_type')->resetCache(array($type_id));
+    \Drupal::entityTypeManager()->getStorage('bat_unit_type')->resetCache([$type_id]);
   }
 
   return UnitType::load($type_id);
@@ -765,9 +757,9 @@ function bat_type_bundle_delete(TypeBundle $bundle) {
  * URI callback for Bat Types.
  */
 function bat_type_uri(UnitType $type) {
-  return array(
+  return [
     'path' => 'type/' . $type->id(),
-  );
+  ];
 }
 
 /**
@@ -819,15 +811,15 @@ function bat_type_bundle_ids() {
  * consistently add BAT Type bundles.
  */
 function bat_type_bundle_new() {
-  return array(
+  return [
     'type' => '',
     'label' => '',
     'weight' => '0',
-    'data' => array(
+    'data' => [
       'hourly_availability' => 0,
-    ),
+    ],
     'bat_opening_time' => '',
-  );
+  ];
 }
 
 /**
@@ -852,19 +844,19 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
   $instance = FieldConfig::loadByName($entity_type, $bundle, $field_name);
 
   if (empty($field)) {
-    $field = array(
+    $field = [
       'field_name' => $field_name,
       'type' => 'commerce_price',
       'cardinality' => 1,
-      'entity_types' => array($entity_type),
+      'entity_types' => [$entity_type],
       'translatable' => FALSE,
       'locked' => $locked,
-    );
+    ];
     $field = field_create_field($field);
   }
 
   if (empty($instance)) {
-    $instance = array(
+    $instance = [
       'field_name' => $field_name,
       'entity_type' => $entity_type,
       'bundle' => $bundle,
@@ -876,32 +868,32 @@ function bat_type_add_price_field($field_name, $entity_type, $bundle, $label, $d
 
       // Because this widget is locked, we need it to use the full price widget
       // since the currency option can't be adjusted at the moment.
-      'widget' => array(
+      'widget' => [
         'type' => 'commerce_price_full',
         'weight' => $weight,
-        'settings' => array(
+        'settings' => [
           'currency_code' => 'default',
-        ),
-      ),
+        ],
+      ],
 
       'display' => [],
-    );
+    ];
 
     $entity_info = \Drupal::entityTypeManager()->getDefinition($entity_type);
 
-    $entity_info['view modes'] += array(
+    $entity_info['view modes'] += [
       'default' => [],
-    );
+    ];
 
     foreach ($entity_info['view modes'] as $view_mode => $data) {
-      $instance['display'][$view_mode] = $display + array(
+      $instance['display'][$view_mode] = $display + [
         'label' => 'hidden',
         'type' => 'commerce_price_formatted_amount',
-        'settings' => array(
+        'settings' => [
           'calculation' => $calculation,
-        ),
+        ],
         'weight' => $weight,
-      );
+      ];
     }
 
     field_create_instance($instance);
@@ -916,11 +908,11 @@ function bat_unit_entity_operation(EntityInterface $entity) {
   $entity_type = $entity->getEntityType();
   if ($entity_type->id() == 'bat_unit_type') {
     if (\Drupal::currentUser()->hasPermission('administer type_bundle entities')) {
-      $operations['units'] = array(
+      $operations['units'] = [
         'title' => t('Units'),
         'weight' => 1,
         'url' => Url::fromUserInput('/admin/bat/config/types/type/' . $entity->id() . '/units'),
-      );
+      ];
     }
   }
   return $operations;

@@ -56,44 +56,44 @@ class BatStateWidget extends LinksWidget {
       $ev_type = reset($ev_types);
     }
 
-    $form['event_type'] = array(
+    $form['event_type'] = [
       '#type' => 'select',
       '#title' => t('Event type'),
       '#options' => $event_types_options,
       '#default_value' => $ev_type,
-      '#ajax' => array(
+      '#ajax' => [
         'callback' => '::buildAjaxWidgetConfigForm',
         'wrapper' => 'facets-widget-config-form',
-      ),
-    );
+      ],
+    ];
 
     if ($event_types[$ev_type]->getFixedEventStates()) {
       $state_options = bat_unit_state_options($ev_type);
 
-      $form['state'] = array(
+      $form['state'] = [
         '#type' => 'select',
         '#title' => t('Event State'),
         '#options' => $state_options,
         '#multiple' => TRUE,
         '#default_value' => (isset($this->getConfiguration()['state'])) ? $this->getConfiguration()['state'] : '',
-      );
+      ];
     }
     else {
-      $form['first_state'] = array(
+      $form['first_state'] = [
         '#type' => 'textfield',
         '#title' => t('First state'),
         '#size' => 10,
         '#prefix' => '<div class="container-inline">',
         '#default_value' => (isset($this->getConfiguration()['first_state'])) ? $this->getConfiguration()['first_state'] : '',
-      );
+      ];
 
-      $form['second_state'] = array(
+      $form['second_state'] = [
         '#type' => 'textfield',
         '#title' => t('Second state'),
         '#size' => 10,
         '#suffix' => '</div>',
         '#default_value' => (isset($this->getConfiguration()['second_state'])) ? $this->getConfiguration()['second_state'] : '',
-      );
+      ];
     }
 
     return $form;

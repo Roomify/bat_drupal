@@ -27,50 +27,50 @@ class StateForm extends ContentEntityForm {
 
     $state = $this->entity;
 
-    $form['machine_name'] = array(
+    $form['machine_name'] = [
       '#type' => 'machine_name',
       '#default_value' => $state->getMachineName(),
       '#maxlength' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
       '#disabled' => FALSE,
-      '#machine_name' => array(
+      '#machine_name' => [
         'exists' => ['Drupal\bat_event\Entity\State', 'loadByMachineName'],
-        'source' => array('name', 'widget', '0', 'value'),
-      ),
+        'source' => ['name', 'widget', '0', 'value'],
+      ],
       '#description' => t('A unique machine-readable name for this state. It must only contain lowercase letters, numbers, and underscores.'),
-    );
+    ];
 
-    $form['color'] = array(
+    $form['color'] = [
       '#type' => 'textfield',
       '#title' => t('Color'),
       '#size' => 12,
       '#maxlength' => 7,
       '#default_value' => $state->getColor(),
-      '#dependency' => array('edit-row-options-colors-legend' => array('type')),
+      '#dependency' => ['edit-row-options-colors-legend' => ['type']],
       '#prefix' => '<div class="bat-colorpicker-wrapper form-wrapper">',
       '#suffix' => '<div class="bat-colorpicker"></div></div>',
-      '#attributes' => array('class' => array('bat-edit-colorpicker')),
-      '#attached' => array(
-        'library' => array(
+      '#attributes' => ['class' => ['bat-edit-colorpicker']],
+      '#attached' => [
+        'library' => [
           'bat_event/color',
-        ),
-      ),
+        ],
+      ],
       '#required' => TRUE,
-    );
+    ];
 
-    $form['calendar_label'] = array(
+    $form['calendar_label'] = [
       '#type' => 'textfield',
       '#title' => t('Calendar label'),
       '#size' => 10,
       '#maxlength' => 50,
       '#default_value' => $state->getCalendarLabel(),
       '#required' => TRUE,
-    );
+    ];
 
-    $form['blocking'] = array(
+    $form['blocking'] = [
       '#type' => 'checkbox',
       '#title' => t('Blocking'),
       '#default_value' => $state->getBlocking(),
-    );
+    ];
 
     if (!$state->isNew()) {
       $form['event_type']['#access'] = FALSE;

@@ -18,11 +18,11 @@ class BookingViewsData extends EntityViewsData implements EntityViewsDataInterfa
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    $data['booking']['nights']['field'] = array(
+    $data['booking']['nights']['field'] = [
       'title' => t('Nights'),
       'help' => t('Provide number of nights.'),
       'id' => 'bat_booking_handler_night_field',
-    );
+    ];
 
     return $data;
   }

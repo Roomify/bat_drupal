@@ -31,7 +31,7 @@ class BatOptionsCombined extends WidgetBase {
     $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
     $parents = $form['#parents'];
 
-    $id_prefix = implode('-', array_merge($parents, array($field_name)));
+    $id_prefix = implode('-', array_merge($parents, [$field_name]));
     $wrapper_id = Html::getUniqueId($id_prefix . '-add-more-wrapper');
 
     // Determine the number of widgets to display.
@@ -83,32 +83,32 @@ class BatOptionsCombined extends WidgetBase {
         if ($is_multiple) {
           // We name the element '_weight' to avoid clashing with elements
           // defined by widget.
-          $element['_weight'] = array(
+          $element['_weight'] = [
             '#type' => 'weight',
-            '#title' => $this->t('Weight for row @number', array('@number' => $delta + 1)),
+            '#title' => $this->t('Weight for row @number', ['@number' => $delta + 1]),
             '#title_display' => 'invisible',
             // Note: this 'delta' is the FAPI #type 'weight' element's property.
             '#delta' => $max,
             '#default_value' => $items[$delta]->_weight ?: $delta,
             '#weight' => 100,
-          );
+          ];
         }
 
         if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED && !$form_state->isProgrammed() && $field_state['items_count'] > 0) {
-          $element['remove_item'] = array(
+          $element['remove_item'] = [
             '#type' => 'submit',
             '#value' => $this->t('Remove item'),
-            '#submit' => array(array(get_class($this), 'removeItemSubmit')),
-            '#ajax' => array(
-              'callback' => array(get_class($this), 'removeItemAjax'),
+            '#submit' => [[get_class($this), 'removeItemSubmit']],
+            '#ajax' => [
+              'callback' => [get_class($this), 'removeItemAjax'],
               'wrapper' => $wrapper_id,
               'effect' => 'fade',
-            ),
-            '#name' => implode('_', array_merge($parents, array($field_name, $delta, 'remove_item'))),
-            '#attributes' => array('class' => array('field-remove-item-submit')),
-            '#limit_validation_errors' => array(array_merge($parents, array($field_name))),
+            ],
+            '#name' => implode('_', array_merge($parents, [$field_name, $delta, 'remove_item'])),
+            '#attributes' => ['class' => ['field-remove-item-submit']],
+            '#limit_validation_errors' => [array_merge($parents, [$field_name])],
             '#weight' => 100,
-          );
+          ];
         }
 
         $elements[$delta] = $element;
@@ -116,7 +116,7 @@ class BatOptionsCombined extends WidgetBase {
     }
 
     if ($elements) {
-      $elements += array(
+      $elements += [
         '#theme' => 'field_multiple_value_form',
         '#field_name' => $field_name,
         '#cardinality' => $cardinality,
@@ -125,26 +125,26 @@ class BatOptionsCombined extends WidgetBase {
         '#title' => $title,
         '#description' => $description,
         '#max_delta' => $max,
-      );
+      ];
 
       // Add 'add more' button, if not working with a programmed form.
       if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED && !$form_state->isProgrammed()) {
         $elements['#prefix'] = '<div id="' . $wrapper_id . '">';
         $elements['#suffix'] = '</div>';
 
-        $elements['add_more'] = array(
+        $elements['add_more'] = [
           '#type' => 'submit',
           '#name' => strtr($id_prefix, '-', '_') . '_add_more',
           '#value' => t('Add another item'),
-          '#attributes' => array('class' => array('field-add-more-submit')),
-          '#limit_validation_errors' => array(array_merge($parents, array($field_name))),
-          '#submit' => array(array(get_class($this), 'addMoreSubmit')),
-          '#ajax' => array(
-            'callback' => array(get_class($this), 'addMoreAjax'),
+          '#attributes' => ['class' => ['field-add-more-submit']],
+          '#limit_validation_errors' => [array_merge($parents, [$field_name])],
+          '#submit' => [[get_class($this), 'addMoreSubmit']],
+          '#ajax' => [
+            'callback' => [get_class($this), 'addMoreAjax'],
             'wrapper' => $wrapper_id,
             'effect' => 'fade',
-          ),
-        );
+          ],
+        ];
       }
     }
 
@@ -155,10 +155,10 @@ class BatOptionsCombined extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $element += array(
+    $element += [
       '#type' => 'bat_option',
-      '#value_callback' => array(get_class($this), 'value'),
-    );
+      '#value_callback' => [get_class($this), 'value'],
+    ];
 
     $element['#weight'] = $delta;
     $element['#default_value'] = $items[$delta]->getValue();
@@ -190,8 +190,8 @@ class BatOptionsCombined extends WidgetBase {
     $field_state = static::getWidgetState($field_parents, $field_name, $form_state);
 
     for ($i = $delta; $i < $field_state['items_count']; $i++) {
-      $field_values[$i] = $field_values[$i+1];
-      $field_input[$i] = $field_input[$i+1];
+      $field_values[$i] = $field_values[$i + 1];
+      $field_input[$i] = $field_input[$i + 1];
     }
     unset($field_values[$field_state['items_count']]);
     unset($field_input[$field_state['items_count']]);

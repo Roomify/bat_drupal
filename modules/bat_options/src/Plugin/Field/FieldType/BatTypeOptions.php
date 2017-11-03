@@ -26,33 +26,33 @@ class BatTypeOptions extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field) {
-    return array(
-      'columns' => array(
-       'name' => array(
+    return [
+      'columns' => [
+       'name' => [
           'type' => 'varchar',
           'length' => 255,
           'not null' => TRUE,
-        ),
-        'quantity' => array(
+        ],
+        'quantity' => [
           'type' => 'int',
           'not null' => FALSE,
-        ),
-        'operation' => array(
+        ],
+        'operation' => [
           'type' => 'varchar',
           'length' => 255,
           'not null' => FALSE,
-        ),
-        'value' => array(
+        ],
+        'value' => [
           'type' => 'float',
           'not null' => FALSE,
-        ),
-        'type' => array(
+        ],
+        'type' => [
           'type' => 'varchar',
           'length' => 255,
           'not null' => FALSE,
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
   }
 
   /**
@@ -61,7 +61,7 @@ class BatTypeOptions extends FieldItemBase {
   public function isEmpty() {
     return empty($this->get('name')->getValue()) ||
          empty($this->get('quantity')->getValue()) ||
-         !(is_numeric($this->get('quantity')->getValue()) && is_integer((int) $this->get('quantity')->getValue())) ||
+         !(is_numeric($this->get('quantity')->getValue()) && is_int((int) $this->get('quantity')->getValue())) ||
          ((empty($this->get('value')->getValue()) || !is_numeric($this->get('value')->getValue())) && $this->get('operation')->getValue() != 'no_charge') ||
          empty($this->get('operation')->getValue()) || !in_array($this->get('operation')->getValue(), array_keys(bat_options_price_options()));
   }

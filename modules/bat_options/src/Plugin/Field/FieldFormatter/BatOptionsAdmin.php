@@ -28,7 +28,7 @@ class BatOptionsAdmin extends FormatterBase {
     $element = [];
 
     foreach ($items as $delta => $item) {
-      $element[$delta] = array('#markup' => "{$item->quantity} x {$item->name} - {$item->operation} {$item->value}");
+      $element[$delta] = ['#markup' => "{$item->quantity} x {$item->name} - {$item->operation} {$item->value}"];
     }
 
     return $element;

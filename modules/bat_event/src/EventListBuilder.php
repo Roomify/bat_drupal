@@ -75,32 +75,32 @@ class EventListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header = array(
-      'id' => array(
+    $header = [
+      'id' => [
         'data' => $this->t('Event ID'),
         'field' => 'id',
         'specifier' => 'id',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'start_date' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'start_date' => [
         'data' => $this->t('Start Date'),
         'field' => 'start',
         'specifier' => 'start',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'end_date' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'end_date' => [
         'data' => $this->t('End Date'),
         'field' => 'end',
         'specifier' => 'end',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'type' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'type' => [
         'data' => $this->t('Type'),
         'field' => 'type',
         'specifier' => 'type',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-    );
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+    ];
     return $header + parent::buildHeader();
   }
 

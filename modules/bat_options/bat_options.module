@@ -16,12 +16,11 @@ define('BAT_OPTIONS_OPTIONAL', 'optional');
 define('BAT_OPTIONS_MANDATORY', 'mandatory');
 define('BAT_OPTIONS_ONREQUEST', 'on_request');
 
-
 /**
  * Returns the available price options for booking_unit options field.
  */
 function bat_options_price_options() {
-  $options = array(
+  $options = [
     BAT_OPTIONS_ADD => t('Add to price'),
     BAT_OPTIONS_ADD_DAILY => t('Add to price per night'),
     BAT_OPTIONS_SUB => t('Subtract from price'),
@@ -30,7 +29,7 @@ function bat_options_price_options() {
     BAT_OPTIONS_INCREASE => t('Increase price by % amount'),
     BAT_OPTIONS_DECREASE => t('Decrease price by % amount'),
     BAT_OPTIONS_NOCHARGE => t('No charge'),
-  );
+  ];
 
   return $options;
 }
@@ -84,56 +83,56 @@ function bat_options_get_operation_label($option) {
 
   switch ($option['operation']) {
     case 'add':
-      $label = t('+@amount@currency_symbol to price', array(
+      $label = t('+@amount@currency_symbol to price', [
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        )
+        ]
       );
       break;
 
     case 'add-daily':
-      $label = t('+@amount@currency_symbol per night to price', array(
+      $label = t('+@amount@currency_symbol per night to price', [
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        )
+        ]
       );
       break;
 
     case 'sub-daily':
-      $label = t('-@amount@currency_symbol per night from price', array(
+      $label = t('-@amount@currency_symbol per night from price', [
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        )
+        ]
       );
       break;
 
     case 'replace':
-      $label = t('Replace price with @amount@currency_symbol', array(
+      $label = t('Replace price with @amount@currency_symbol', [
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        )
+        ]
       );
       break;
 
     case 'increase':
-      $label = t('Increase price by @amount%', array(
+      $label = t('Increase price by @amount%', [
         '@amount' => $option['value'],
-        )
+        ]
       );
       break;
 
     case 'decrease':
-      $label = t('Decrease price by @amount%', array(
+      $label = t('Decrease price by @amount%', [
         '@amount' => $option['value'],
-        )
+        ]
       );
       break;
 
     case 'sub':
-      $label = t('-@amount@currency_symbol from price', array(
+      $label = t('-@amount@currency_symbol from price', [
         '@amount' => $option['value'],
         '@currency_symbol' => $currency_symbol,
-        )
+        ]
       );
       break;
 

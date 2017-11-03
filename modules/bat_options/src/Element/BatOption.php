@@ -47,63 +47,63 @@ class BatOption extends FormElement {
   public static function processBatOption(&$element, FormStateInterface $form_state, &$complete_form) {
     $parents_prefix = implode('_', $element['#parents']);
 
-    $element['name'] = array(
+    $element['name'] = [
       '#type' => 'textfield',
       '#title' => t('Name'),
       '#default_value' => isset($element['#default_value']['name']) ? $element['#default_value']['name'] : NULL,
-      '#attributes' => array(
-        'class' => array('bat_options-option--name'),
-      ),
-    );
-    $element['quantity'] = array(
+      '#attributes' => [
+        'class' => ['bat_options-option--name'],
+      ],
+    ];
+    $element['quantity'] = [
       '#type' => 'select',
       '#title' => t('Quantity'),
       '#options' => array_combine(range(1, 10, 1), range(1, 10, 1)),
       '#default_value' => isset($element['#default_value']['quantity']) ? $element['#default_value']['quantity'] : NULL,
       '#description' => t('How many of this add-on should be available'),
-      '#attributes' => array(
-        'class' => array('bat_options-option--quantity'),
-      ),
-    );
+      '#attributes' => [
+        'class' => ['bat_options-option--quantity'],
+      ],
+    ];
     $price_options = bat_options_price_options();
-    $element['operation'] = array(
+    $element['operation'] = [
       '#type' => 'select',
       '#title' => t('Operation'),
       '#options' => $price_options,
       '#default_value' => isset($element['#default_value']['operation']) ? $element['#default_value']['operation'] : NULL,
-      '#attributes' => array(
-        'class' => array('bat_options-option--operation'),
-      ),
-    );
-    $element['value'] = array(
+      '#attributes' => [
+        'class' => ['bat_options-option--operation'],
+      ],
+    ];
+    $element['value'] = [
       '#type' => 'textfield',
       '#title' => t('Value'),
       '#size' => 10,
       '#default_value' => (isset($element['#default_value']['value']) && $element['#default_value']['value'] != 0) ? $element['#default_value']['value'] : NULL,
-      '#element_validate' => array('\Drupal\Core\Render\Element\Number::validateNumber'),
-      '#attributes' => array(
-        'class' => array('bat_options-option--value'),
-      ),
-      '#states' => array(
-        'disabled' => array(
-          ':input[name="' . $element['#parents'][0] . '[' . $element['#parents'][1] . '][operation]"]' => array('value' => 'no_charge'),
-        )
-      ),
-    );
-    $type_options = array(
+      '#element_validate' => ['\Drupal\Core\Render\Element\Number::validateNumber'],
+      '#attributes' => [
+        'class' => ['bat_options-option--value'],
+      ],
+      '#states' => [
+        'disabled' => [
+          ':input[name="' . $element['#parents'][0] . '[' . $element['#parents'][1] . '][operation]"]' => ['value' => 'no_charge'],
+        ]
+      ],
+    ];
+    $type_options = [
       BAT_OPTIONS_OPTIONAL => t('Optional'),
       BAT_OPTIONS_MANDATORY => t('Mandatory'),
       BAT_OPTIONS_ONREQUEST => t('On Request'),
-    );
-    $element['type'] = array(
+    ];
+    $element['type'] = [
       '#type' => 'select',
       '#title' => t('Type'),
       '#options' => $type_options,
       '#default_value' => isset($element['#default_value']['type']) ? $element['#default_value']['type'] : 'optional',
-      '#attributes' => array(
-        'class' => array('bat_options-option--type'),
-      ),
-    );
+      '#attributes' => [
+        'class' => ['bat_options-option--type'],
+      ],
+    ];
 
     return $element;
   }

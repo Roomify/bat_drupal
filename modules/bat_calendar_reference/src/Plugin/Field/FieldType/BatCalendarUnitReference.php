@@ -27,19 +27,19 @@ class BatCalendarUnitReference extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
-    return array(
-      'columns' => array(
-        'unit_id' => array(
+    return [
+      'columns' => [
+        'unit_id' => [
           'type'     => 'int',
           'unsigned' => TRUE,
           'not null' => FALSE,
         ),
-        'event_type_id' => array(
+        'event_type_id' => [
           'type' => 'varchar_ascii',
           'length' => 255,
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
   }
 
   /**
@@ -68,10 +68,10 @@ class BatCalendarUnitReference extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function defaultFieldSettings() {
-    return array(
+    return [
       'referenceable_unit_types' => [],
       'referenceable_event_types' => [],
-    ) + parent::defaultFieldSettings();
+    ] + parent::defaultFieldSettings();
   }
 
   /**
@@ -81,23 +81,23 @@ class BatCalendarUnitReference extends FieldItemBase {
     $element = [];
     $settings = $this->getSettings();
 
-    $element['referenceable_unit_types'] = array(
+    $element['referenceable_unit_types'] = [
       '#type' => 'checkboxes',
       '#title' => t('Unit types that can be referenced'),
       '#multiple' => TRUE,
       '#default_value' => $settings['referenceable_unit_types'],
       '#options' => array_map('\Drupal\Component\Utility\Html::escape', bat_unit_types_ids()),
       '#required' => TRUE,
-    );
+    ];
 
-    $element['referenceable_event_types'] = array(
+    $element['referenceable_event_types'] = [
       '#type' => 'checkboxes',
       '#title' => t('Event types that can be referenced'),
       '#multiple' => TRUE,
       '#default_value' => $settings['referenceable_event_types'],
       '#options' => array_map('\Drupal\Component\Utility\Html::escape', bat_event_types_ids()),
       '#required' => TRUE,
-    );
+    ];
 
     return $element;
   }

@@ -72,9 +72,9 @@ class TypeGroupController extends ControllerBase implements ContainerInjectionIn
    *   A type group submission form.
    */
   public function add(TypeGroupBundleInterface $type_group_bundle) {
-    $type = $this->entityTypeManager()->getStorage('bat_type_group')->create(array(
+    $type = $this->entityTypeManager()->getStorage('bat_type_group')->create([
       'type' => $type_group_bundle->id(),
-    ));
+    ]);
 
     $form = $this->entityFormBuilder()->getForm($type);
 

@@ -17,10 +17,10 @@ function bat_booking_install() {
  * Create "Standard" booking type.
  */
 function bat_booking_create_standard_booking_type() {
-  $booking_type = bat_booking_type_create(array(
+  $booking_type = bat_booking_type_create([
     'name' => 'Standard',
     'type' => 'standard',
-  ));
+  ]);
 
   $booking_type->save();
 }

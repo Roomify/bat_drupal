@@ -52,7 +52,7 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
         $header = '<div class="calendar-title"><h2>' . implode(', ', $unit_type_names) . '</h2></div>';
 
         // Inject settings in javascript that we will use.
-        $fc_user_settings[$calendar_id] = array(
+        $fc_user_settings[$calendar_id] = [
           'unitTypes' => $unit_type_ids,
           'unitIDs' => '',
           'eventType' => $event_type,
@@ -62,7 +62,7 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
           'editable' => FALSE,
           'selectable' => FALSE,
           'background' => '1',
-        );
+        ];
 
         if ($display['type'] == 'bat_calendar_reference_month_view') {
           $fc_user_settings[$calendar_id]['defaultView'] = 'month';
@@ -95,7 +95,7 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
         $header = '<div class="calendar-title"><h2>' . implode(', ', $unit_names) . '</h2></div>';
 
         // Inject settings in javascript that we will use.
-        $fc_user_settings[$calendar_id] = array(
+        $fc_user_settings[$calendar_id] = [
           'unitTypes' => 'all',
           'unitIDs' => $unit_ids,
           'eventType' => $event_type,
@@ -105,7 +105,7 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
           'editable' => FALSE,
           'selectable' => FALSE,
           'background' => '1',
-        );
+        ];
 
         if ($display['type'] == 'bat_calendar_reference_month_view') {
           $fc_user_settings[$calendar_id]['defaultView'] = 'month';
@@ -119,25 +119,25 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
     }
 
     if (!empty($fc_user_settings)) {
-      $calendar_settings = array(
+      $calendar_settings = [
         'modal_style' => 'default',
         'calendar_id' => 'fullcalendar-scheduler',
-        'user_settings' => array('batCalendar' => $fc_user_settings),
-      );
+        'user_settings' => ['batCalendar' => $fc_user_settings],
+      ];
 
-      return array(
+      return [
         '#theme' => 'bat_fullcalendar',
         '#calendar_settings' => $calendar_settings,
-        '#attached' => array('library' => array('bat_calendar_reference/bat_calendar_reference')),
-        '#attributes' => array(
+        '#attached' => ['library' => ['bat_calendar_reference/bat_calendar_reference']],
+        '#attributes' => [
           'id' => $calendar_id,
-          'class' => array(
+          'class' => [
             'cal',
             'clearfix',
-          ),
-        ),
+          ],
+        ],
         '#prefix' => $header,
-      );
+      ];
     }
     else {
       return [];

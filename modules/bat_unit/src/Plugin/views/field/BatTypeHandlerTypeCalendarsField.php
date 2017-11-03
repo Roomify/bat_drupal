@@ -41,10 +41,10 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
 
             if (bat_event_get_types($event_type)) {
               $event_type_label = bat_event_get_types($event_type)->label();
-              $links[$event_type] = array(
+              $links[$event_type] = [
                 'title' => t('Manage ' . $event_type_label),
-                'url' => Url::fromRoute($route_name, array('unit_type' => $type->id(), 'event_type' => $event_type)),
-              );
+                'url' => Url::fromRoute($route_name, ['unit_type' => $type->id(), 'event_type' => $event_type]),
+              ];
             }
           }
         }
@@ -52,10 +52,10 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
     }
 
     if (!empty($links)) {
-      return array(
+      return [
         '#type' => 'operations',
         '#links' => $links,
-      );
+      ];
     }
     else {
       // Hide this field.

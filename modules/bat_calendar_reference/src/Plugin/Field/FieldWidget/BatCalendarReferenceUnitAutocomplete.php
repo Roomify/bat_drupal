@@ -24,7 +24,7 @@ class BatCalendarReferenceUnitAutocomplete extends WidgetBase {
     $referenceable_unit_types = array_filter($this->fieldDefinition->getSetting('referenceable_unit_types'));
     $referenceable_event_types = array_filter($this->fieldDefinition->getSetting('referenceable_event_types'));
 
-    $element['unit_id'] = array(
+    $element['unit_id'] = [
       '#title' => t('Unit'),
       '#type' => 'bat_unit_autocomplete',
       '#target_type' => 'bat_unit',
@@ -33,9 +33,9 @@ class BatCalendarReferenceUnitAutocomplete extends WidgetBase {
       '#size' => 60,
       '#maxlength' => 255,
       '#validate_reference' => FALSE,
-    );
+    ];
 
-    $element['event_type_id'] = array(
+    $element['event_type_id'] = [
       '#title' => t('Event type'),
       '#type' => 'bat_event_type_autocomplete',
       '#target_type' => 'bat_event_type',
@@ -44,7 +44,7 @@ class BatCalendarReferenceUnitAutocomplete extends WidgetBase {
       '#size' => 60,
       '#maxlength' => 255,
       '#validate_reference' => FALSE,
-    );
+    ];
 
     return $element;
   }

@@ -28,7 +28,7 @@ class BatFullcalendarController extends ControllerBase implements ContainerInjec
    * @param $end_date
    */
   public function fullcalendarEventManagement($entity_id, $event_type, $event_id, $start_date, $end_date) {
-    $modal_content = \Drupal::moduleHandler()->invokeAll('bat_fullcalendar_modal_content', array($entity_id, $event_type, $event_id, $start_date, $end_date));
+    $modal_content = \Drupal::moduleHandler()->invokeAll('bat_fullcalendar_modal_content', [$entity_id, $event_type, $event_id, $start_date, $end_date]);
     $modal_content = array_pop($modal_content);
 
     $response = new AjaxResponse();

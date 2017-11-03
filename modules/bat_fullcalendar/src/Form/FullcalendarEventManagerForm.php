@@ -41,71 +41,71 @@ class FullcalendarEventManagerForm extends FormBase {
     $form['#prefix'] = '<div id="replace_textfield_div">';
     $form['#suffix'] = '</div>';
 
-    $form['entity_id'] = array(
+    $form['entity_id'] = [
       '#type' => 'hidden',
       '#value' => $entity_id,
-    );
+    ];
 
-    $form['event_type'] = array(
+    $form['event_type'] = [
       '#type' => 'hidden',
       '#value' => $event_type->id(),
-    );
+    ];
 
-    $form['event_id'] = array(
+    $form['event_id'] = [
       '#type' => 'hidden',
       '#value' => $event_id,
-    );
+    ];
 
-    $form['bat_start_date'] = array(
+    $form['bat_start_date'] = [
       '#type' => 'hidden',
       '#value' => $start_date->format('Y-m-d H:i:s'),
-    );
+    ];
 
-    $form['bat_end_date'] = array(
+    $form['bat_end_date'] = [
       '#type' => 'hidden',
       '#value' => $end_date->format('Y-m-d H:i:s'),
-    );
+    ];
 
     $unit = entity_load($event_type->target_entity_type, $entity_id);
 
-    $form['event_title'] = array(
+    $form['event_title'] = [
       '#prefix' => '<h2>',
       '#markup' => t('@unit_name', ['@unit_name' => $unit->label()]),
       '#suffix' => '</h2>',
-    );
+    ];
 
     $date_format = \Drupal::config('bat.settings')->get('date_format') ?: 'Y-m-d H:i';
-    $form['event_details'] = array(
+    $form['event_details'] = [
       '#prefix' => '<div class="event-details">',
-      '#markup' => t('Date range selected: @startdate to @enddate', array('@startdate' => $start_date->format($date_format), '@enddate' => $end_date->format($date_format))),
+      '#markup' => t('Date range selected: @startdate to @enddate', ['@startdate' => $start_date->format($date_format), '@enddate' => $end_date->format($date_format)]),
       '#suffix' => '</div>',
-    );
+    ];
 
     if ($event_type->getFixedEventStates()) {
       $state_options = bat_unit_state_options($event_type->id());
 
-      $form['change_event_status'] = array(
+      $form['change_event_status'] = [
         '#title' => t('Change the state for this event to') . ': ',
         '#type' => 'select',
         '#options' => $state_options,
-        '#ajax' => array(
+        '#ajax' => [
           'callback' => '::ajaxEventStatusChange',
           'wrapper' => 'replace_textfield_div',
-        ),
+        ],
         '#empty_option' => t('- Select -'),
-      );
+      ];
     }
     else {
       if (isset($event_type->default_event_value_field_ids) && !empty($event_type->default_event_value_field_ids)) {
         $field_name = $event_type->default_event_value_field_ids;
 
-        $form['field_name'] = array(
+        $form['field_name'] = [
           '#type' => 'hidden',
           '#value' => $field_name,
-        );
+        ];
 
         $field_definition = \Drupal::entityManager()->getFieldDefinitions('bat_event', 'pricing')[$field_name];
-        $items = new FieldItemList($field_definition, NULL, EntityAdapter::createFromEntity(bat_event_create(array('type' => $event_type->id()))));
+        $items = new FieldItemList($field_definition, NULL, EntityAdapter::createFromEntity(bat_event_create(['type' => $event_type->id()])));
 
         $form_display = entity_get_form_display('bat_event', $event_type->id(), 'default');
         $widget = $form_display->getRenderer($field_name);
@@ -115,15 +115,15 @@ class FullcalendarEventManagerForm extends FormBase {
         $form[$field_name] = $widget->form($items, $form, $form_state);
         $form[$field_name]['#weight'] = 1;
 
-        $form['submit'] = array(
+        $form['submit'] = [
           '#type' => 'submit',
           '#value' => t('Update value'),
           '#weight' => 2,
-          '#ajax' => array(
+          '#ajax' => [
             'callback' => '::eventManagerAjaxSubmit',
             'wrapper' => 'replace_textfield_div',
-          ),
-        );
+          ],
+        ];
       }
     }
 
@@ -143,7 +143,7 @@ class FullcalendarEventManagerForm extends FormBase {
     $event_type = $values['event_type'];
     $state_id = $values['change_event_status'];
 
-    $event = bat_event_create(array('type' => $event_type));
+    $event = bat_event_create(['type' => $event_type]);
     $event->uid = \Drupal::currentUser()->id();
 
     $event->start = $start_date->getTimestamp();
@@ -163,12 +163,12 @@ class FullcalendarEventManagerForm extends FormBase {
     $event->save();
 
     $state_options = bat_unit_state_options($event_type);
-    $form['form_wrapper_bottom'] = array(
+    $form['form_wrapper_bottom'] = [
       '#prefix' => '<div>',
-      '#markup' => t('New Event state is <strong>@state</strong>.', array('@state' => $state_options[$state_id])),
+      '#markup' => t('New Event state is <strong>@state</strong>.', ['@state' => $state_options[$state_id]]),
       '#suffix' => '</div>',
       '#weight' => 9,
-    );
+    ];
 
     return $form;
   }
@@ -186,7 +186,7 @@ class FullcalendarEventManagerForm extends FormBase {
     $event_type = $values['event_type'];
     $field_name = $values['field_name'];
 
-    $event = bat_event_create(array('type' => $event_type));
+    $event = bat_event_create(['type' => $event_type]);
     $event->uid = \Drupal::currentUser()->id();
 
     $event->start = $start_date->getTimestamp();
@@ -207,14 +207,14 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $unit = entity_load($event_type_entity->target_entity_type, $entity_id);
 
-    $value = drupal_render($event->{$field_name}->view(array('label' => 'hidden')));
+    $value = drupal_render($event->{$field_name}->view(['label' => 'hidden']));
 
-    $form['form_wrapper_bottom'] = array(
+    $form['form_wrapper_bottom'] = [
       '#prefix' => '<div>',
-      '#markup' => t('Value for <b>@name</b> changed to <b>@value</b>', array('@name' => $unit->label(), '@value' => trim(strip_tags($value->__toString())))),
+      '#markup' => t('Value for <b>@name</b> changed to <b>@value</b>', ['@name' => $unit->label(), '@value' => trim(strip_tags($value->__toString()))]),
       '#suffix' => '</div>',
       '#weight' => 9,
-    );
+    ];
 
     return $form;
   }

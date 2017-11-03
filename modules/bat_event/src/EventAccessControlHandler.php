@@ -18,6 +18,7 @@ use Drupal\Core\Access\AccessResult;
  * @see \Drupal\bat_event\Entity\Event.
  */
 class EventAccessControlHandler extends EntityAccessControlHandler {
+
   /**
    * {@inheritdoc}
    */
@@ -41,7 +42,7 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $event_type = NULL) {
-    return bat_event_access(bat_event_create(array('type' => $event_type)), 'create', $account);
+    return bat_event_access(bat_event_create(['type' => $event_type]), 'create', $account);
   }
 
 }

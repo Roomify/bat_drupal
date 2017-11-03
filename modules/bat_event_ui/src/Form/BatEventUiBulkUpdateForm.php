@@ -23,17 +23,17 @@ class BatEventUiBulkUpdateForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $unit_type = 'all', $event_type = 'all') {
-    $form['bulk_update'] = array(
+    $form['bulk_update'] = [
       '#type' => 'fieldset',
       '#title' => t('Update event state'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
-    );
+    ];
 
-    $form['bulk_update']['event_type'] = array(
+    $form['bulk_update']['event_type'] = [
       '#type' => 'hidden',
       '#value' => $event_type,
-    );
+    ];
 
     if ($unit_type == 'all') {
       $types = bat_unit_get_types(NULL, TRUE);
@@ -50,33 +50,33 @@ class BatEventUiBulkUpdateForm extends FormBase {
         }
       }
 
-      $form['bulk_update']['type'] = array(
+      $form['bulk_update']['type'] = [
         '#type' => 'select',
         '#title' => t('Type'),
         '#options' => $types_options,
         '#required' => TRUE,
-      );
+      ];
     }
     else {
-      $form['bulk_update']['type'] = array(
+      $form['bulk_update']['type'] = [
         '#type' => 'hidden',
         '#value' => $unit_type,
-      );
+      ];
     }
 
     $form['bulk_update'] += bat_date_range_fields();
 
-    $form['bulk_update']['state'] = array(
+    $form['bulk_update']['state'] = [
       '#type' => 'select',
       '#title' => t('State'),
-      '#options' => bat_unit_state_options($event_type, array('blocking' => 0)),
+      '#options' => bat_unit_state_options($event_type, ['blocking' => 0]),
       '#required' => TRUE,
-    );
+    ];
 
-    $form['bulk_update']['submit'] = array(
+    $form['bulk_update']['submit'] = [
       '#type' => 'submit',
       '#value' => t('Update'),
-    );
+    ];
 
     return $form;
   }
@@ -101,15 +101,15 @@ class BatEventUiBulkUpdateForm extends FormBase {
     $event_state = $values['state'];
     $type = bat_type_load($values['type']);
 
-    $units = bat_unit_load_multiple(NULL, array('unit_type_id' => $type->id()));
+    $units = bat_unit_load_multiple(NULL, ['unit_type_id' => $type->id()]);
 
     foreach ($units as $unit) {
-      $event = bat_event_create(array(
+      $event = bat_event_create([
         'type' => $event_type->id(),
         'start' => $start_date->getTimestamp(),
         'end' => $end_date->getTimestamp(),
         'uid' => $type->uid->entity->uid->value,
-      ));
+      ]);
 
       $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
       $event->set($target_field_name, $unit->id());

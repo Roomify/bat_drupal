@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class BookingPermissions implements ContainerInjectionInterface {
 
-	use StringTranslationTrait;
+  use StringTranslationTrait;
 
   /**
    * The entity manager.
@@ -40,7 +40,7 @@ class BookingPermissions implements ContainerInjectionInterface {
     return new static($container->get('entity_type.manager'));
   }
 
-	public function permissions() {
+  public function permissions() {
     $permissions = [];
 
     return $permissions;

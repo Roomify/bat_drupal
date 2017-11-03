@@ -28,25 +28,25 @@ class BookingConfirmationForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $start_date = NULL, $end_date = NULL, $type_id = NULL) {
-    $form['start_date'] = array(
+    $form['start_date'] = [
       '#type' => 'hidden',
       '#value' => $start_date->format('Y-m-d'),
-    );
+    ];
 
-    $form['end_date'] = array(
+    $form['end_date'] = [
       '#type' => 'hidden',
       '#value' => $end_date->format('Y-m-d'),
-    );
+    ];
 
-    $form['type_id'] = array(
+    $form['type_id'] = [
       '#type' => 'hidden',
       '#value' => $type_id,
-    );
+    ];
 
-    $form['submit'] = array(
+    $form['submit'] = [
       '#type' => 'submit',
       '#value' => 'Confirm booking', 
-    );
+    ];
 
     return $form;
   }
@@ -69,7 +69,7 @@ class BookingConfirmationForm extends FormBase {
 
     $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE);
 
-    $valid_states = array_merge(array(0), array_slice($state_ids, 0, 1));
+    $valid_states = array_merge([0], array_slice($state_ids, 0, 1));
 
     $drupal_units = bat_unit_load_multiple(FALSE, ['unit_type_id' => $type_id]);
     $bat_units = [];
@@ -85,12 +85,12 @@ class BookingConfirmationForm extends FormBase {
 
       if (count($valid_unit_ids)) {
         // Create a new Event.
-        $event = bat_event_create(array(
+        $event = bat_event_create([
           'type' => $event_type,
           'start_date' => $start_date->format('Y-m-d H:i:s'),
           'end_date' => $end_date->format('Y-m-d H:i:s'),
           'uid' => \Drupal::currentUser()->id(),
-        ));
+        ]);
 
         $event->set('event_bat_unit_reference', reset($valid_unit_ids));
         $event->set('event_state_reference', end($state_ids));
@@ -98,10 +98,10 @@ class BookingConfirmationForm extends FormBase {
         $event->save();
 
         // Create a new Booking.
-        $booking = bat_booking_create(array(
+        $booking = bat_booking_create([
           'type' => 'standard',
           'label' => 'Example Booking',
-        ));
+        ]);
 
         $booking->set('booking_start_date', $start_date->format('Y-m-d H:i:s'));
         $booking->set('booking_end_date', $end_date->format('Y-m-d H:i:s'));

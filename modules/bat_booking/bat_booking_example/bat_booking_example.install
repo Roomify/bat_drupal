@@ -19,13 +19,13 @@ function bat_booking_example_uninstall() {
  * Create the "Availability Example" event type.
  */
 function bat_booking_example_create_availability_event_type() {
-  $event_type = bat_event_type_create(array(
+  $event_type = bat_event_type_create([
     'name' => 'Availability Example',
     'type' => 'availability_example',
     'fixed_event_states' => 1,
     'event_granularity' => 'bat_daily',
     'target_entity_type' => 'bat_unit',
-  ));
+  ]);
 
   bat_event_type_save($event_type);
 }
@@ -34,31 +34,31 @@ function bat_booking_example_create_availability_event_type() {
  * Creates the default event states.
  */
 function bat_booking_example_create_standard_event_states() {
-  $event_state = bat_event_create_state(array(
+  $event_state = bat_event_create_state([
     'name' => 'Available',
     'color' => '#8BA175',
     'calendar_label' => 'AV',
     'event_type' => 'availability_example',
-  ));
+  ]);
 
   bat_event_save_state($event_state);
 
-  $event_state = bat_event_create_state(array(
+  $event_state = bat_event_create_state([
     'name' => 'Not Available',
     'color' => '#CC2727',
     'calendar_label' => 'N/A',
     'event_type' => 'availability_example',
-  ));
+  ]);
 
   bat_event_save_state($event_state);
 
-  $event_state = bat_event_create_state(array(
+  $event_state = bat_event_create_state([
     'name' => 'Booked',
     'color' => '#1A1A73',
     'calendar_label' => 'Booked',
     'blocking' => 1,
     'event_type' => 'availability_example',
-  ));
+  ]);
 
   bat_event_save_state($event_state);
 }
