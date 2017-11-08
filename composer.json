@@ -11,6 +11,6 @@
     "source": "http://cgit.drupalcode.org/bat"
   },
   "require": {
-    "roomify/bat": "dev-master"
+    "roomify/bat": "~1.2"
   }
 }
