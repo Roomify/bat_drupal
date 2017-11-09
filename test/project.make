@@ -19,13 +19,6 @@ projects[services][patch][] = https://www.drupal.org/files/issues/services_unrec
 
 ; +++++ Libraries +++++
 
-; colorpicker
-libraries[colorpicker][directory_name] = colorpicker
-libraries[colorpicker][type] = library
-libraries[colorpicker][destination] = libraries
-libraries[colorpicker][download][type] = get
-libraries[colorpicker][download][url] = http://www.eyecon.ro/colorpicker/colorpicker.zip
-
 ; fullcalendar
 libraries[fullcalendar][directory_name] = fullcalendar
 libraries[fullcalendar][type] = library
