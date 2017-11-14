@@ -17,9 +17,9 @@ function bat_fullcalendar_requirements($phase) {
     return [
       'fullcalendar' => [
         'title' => t('Fullcalendar'),
-        'value' => t('FullCalendar Library Missing'),
-        'description' => t('The Fullcalendar library needs to be <a target="_blank" href="@url">downloaded</a> and extracted into the /libraries/fullcalendar folder in your Drupal installation directory.', ['@url' => 'https://fullcalendar.io/download/']),
-        'severity' => REQUIREMENT_WARNING,
+        'value' => t('FullCalendar Library loaded via CDN'),
+        'description' => t('BAT is using a CDN to load the Fullcalendar library. To use a local copy, <a target="_blank" href="@url">download</a> the library and extract it into the /libraries/fullcalendar folder in your Drupal installation directory.', ['@url' => 'https://fullcalendar.io/download/']),
+        'severity' => REQUIREMENT_INFO,
       ],
     ];
   }
@@ -27,9 +27,9 @@ function bat_fullcalendar_requirements($phase) {
     return [
       'fullcalendar' => [
         'title' => t('Fullcalendar'),
-        'value' => t('FullCalendar Scheduler Library Missing'),
-        'description' => t('The Fullcalendar Scheduler library needs to be <a target="_blank" href="@url">downloaded</a> and extracted into the /libraries/fullcalendar-scheduler folder in your Drupal installation directory.', ['@url' => 'https://fullcalendar.io/scheduler/']),
-        'severity' => REQUIREMENT_WARNING,
+        'value' => t('FullCalendar Scheduler Library loaded via CDN'),
+        'description' => t('BAT is using a CDN to load the Fullcalendar Scheduler library. To use a local copy, <a target="_blank" href="@url">download</a> the library and extract it into the /libraries/fullcalendar folder in your Drupal installation directory.', ['@url' => 'https://fullcalendar.io/scheduler/']),
+        'severity' => REQUIREMENT_INFO,
       ],
     ];
   }
