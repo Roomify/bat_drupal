@@ -5,3 +5,32 @@
  * Sets up the base table for our entity and a table to store information about
  * the entity types.
  */
+
+/**
+ * Implements hook_requirements().
+ */
+function bat_event_requirements($phase) {
+  if ($phase != 'runtime') {
+    return [];
+  }
+
+  if (!class_exists('Roomify\Bat\Unit\Unit')) {
+    return [
+      'roomify' => [
+        'title' => t('BAT'),
+        'value' => t('Roomify BAT Library Missing'),
+        'description' => t('The Roomify BAT Library is missing from your site. Please try re-running the composer update command.'),
+        'severity' => REQUIREMENT_ERROR,
+      ],
+    ];
+  }
+  else {
+    return [
+      'roomify' => [
+        'title' => t('BAT'),
+        'value' => t('The Roomify BAT Library is installed.'),
+        'severity' => REQUIREMENT_OK,
+      ],
+    ];
+  }
+}
