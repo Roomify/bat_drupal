@@ -204,7 +204,7 @@ Drupal.batCalendar.Modal = function(element, key, eid, sd, ed, $unit_id) {
   // initialize the ajax instance with the global calendar table element.
   var calendars_table = $(element.el).closest('.calendar-set').get();
 
-  var base = '/admin/bat/fullcalendar/';
+  var base = Drupal.url('admin/bat/fullcalendar/');
   // Create a drupal ajax object that points to the event form.
   var url = base + $unit_id + '/event/' + drupalSettings.batCalendar[0].eventType + '/' + eid + '/' + sd + '/' + ed;
 
@@ -243,8 +243,8 @@ function saveBatEvent(event, revertFunc, calendars, key) {
   var unit_id = event.resourceId.substring(1);
 
   // Retrieve all events for the unit and time we're dragging onto.
-  var events_url = '/bat_api/events?_format=json&target_ids=' + unit_id + '&target_entity_type=bat_unit&start_date=' + event.start.format('YYYY-MM-DD HH:mm') +
-                   '&end_date=' + event.end.format('YYYY-MM-DD HH:mm') + '&event_types=' + event.type;
+  var events_url = Drupal.url('bat_api/events?_format=json&target_ids=' + unit_id + '&target_entity_type=bat_unit&start_date=' + event.start.format('YYYY-MM-DD HH:mm') +
+                   '&end_date=' + event.end.format('YYYY-MM-DD HH:mm') + '&event_types=' + event.type);
   proceed = true;
   jQuery.ajax({
     url: events_url,
@@ -271,45 +271,50 @@ function saveBatEvent(event, revertFunc, calendars, key) {
 
   // Only save the event if we didn't find any conflicts.
   if (proceed == true) {
-    $.get(Drupal.url('rest/session/token'))
-    .done(function (data) {
-      var csrfToken = data;
+    $.get(Drupal.url('services/session/token'))
+    .done(function (token) {
 
-      var new_event = {
-        _links: {
-          type: {
-            href: 'http://bat8.dev/rest/type/bat_event/availability'
-          }
-        },
-        type: {
-          target_id: 'availability'
-        },
-        start: {
-          value: moment(event.start.format('YYYY-MM-DD HH:mm')).unix()
-        },
-        end: {
-          value: moment(event.end.format('YYYY-MM-DD HH:mm')).unix()
-        }
-      };
-
-      // Update event.
-      var events_url = '/admin/event';
+      var events_url = Drupal.url('bat_api/bat_event');
       $.ajax({
-        type: 'PATCH',
-        url: events_url + '/' + event.bat_id + '?_format=hal_json',
-        data: JSON.stringify(new_event),
+        type: 'GET',
+        url: events_url + '/' + event.bat_id + '?_format=json',
         headers: {
           'Content-Type': 'application/hal+json',
-          'X-CSRF-Token': csrfToken
+          'X-CSRF-Token': token
         },
         error: function (jqXHR, textStatus, errorThrown) {
           alert(drupalSettings.batCalendar[key].errorMessage);
           revertFunc();
         },
-        success: function (request) {
-          // Refresh calendar events.
-          $.each(calendars, function(key, value) {
-            $(value[0]).fullCalendar('refetchEvents');
+        success: function (new_event) {
+          new_event['start'][0]['value'] = moment(event.start.format('YYYY-MM-DD HH:mm')).unix();
+          new_event['end'][0]['value'] = moment(event.end.format('YYYY-MM-DD HH:mm')).unix();
+
+          new_event['_links'] = {
+            type: {
+              href: document.location.origin + Drupal.url('rest/type/bat_event/') + new_event['type'][0]['target_id']
+            }
+          };
+
+          // Update event.
+          $.ajax({
+            type: 'PUT',
+            url: events_url + '/' + event.bat_id + '?_format=json',
+            data: JSON.stringify(new_event),
+            headers: {
+              'Content-Type': 'application/hal+json',
+              'X-CSRF-Token': token
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              alert(drupalSettings.batCalendar[key].errorMessage);
+              revertFunc();
+            },
+            success: function (request) {
+              // Refresh calendar events.
+              $.each(calendars, function(key, value) {
+                $(value[0]).fullCalendar('refetchEvents');
+              });
+            }
           });
         }
       });
