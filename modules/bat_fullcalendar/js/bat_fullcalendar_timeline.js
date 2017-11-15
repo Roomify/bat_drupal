@@ -289,6 +289,7 @@ function saveBatEvent(event, revertFunc, calendars, key) {
         success: function (new_event) {
           new_event['start'][0]['value'] = moment(event.start.format('YYYY-MM-DD HH:mm')).unix();
           new_event['end'][0]['value'] = moment(event.end.format('YYYY-MM-DD HH:mm')).unix();
+          new_event['event_bat_unit_reference'][0]['target_id'] = unit_id;
 
           new_event['_links'] = {
             type: {
