@@ -7,11 +7,11 @@
  * to easily modify it.
  */
 
-define('FULLCALENDAR_JS_CDN', 'https://cdn.jsdelivr.net/npm/fullcalendar@3.6.2/dist/fullcalendar.min.js');
-define('FULLCALENDAR_LOCALE_JS_CDN', 'https://cdn.jsdelivr.net/npm/fullcalendar@3.6.2/dist/locale-all.js');
-define('FULLCALENDAR_CSS_CDN', 'https://cdn.jsdelivr.net/npm/fullcalendar@3.6.2/dist/fullcalendar.min.css');
-define('FULLCALENDAR_SCHEDULER_JS_CDN', 'https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@1.8.1/dist/scheduler.min.js');
-define('FULLCALENDAR_SCHEDULER_CSS_CDN', 'https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@1.8.1/dist/scheduler.min.css');
+define('FULLCALENDAR_JS_CDN', 'https://cdn.jsdelivr.net/npm/fullcalendar@3.7.0/dist/fullcalendar.min.js');
+define('FULLCALENDAR_LOCALE_JS_CDN', 'https://cdn.jsdelivr.net/npm/fullcalendar@3.7.0/dist/locale-all.js');
+define('FULLCALENDAR_CSS_CDN', 'https://cdn.jsdelivr.net/npm/fullcalendar@3.7.0/dist/fullcalendar.min.css');
+define('FULLCALENDAR_SCHEDULER_JS_CDN', 'https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@1.9.0/dist/scheduler.min.js');
+define('FULLCALENDAR_SCHEDULER_CSS_CDN', 'https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@1.9.0/dist/scheduler.min.css');
 define('MOMENT_JS_CDN', 'https://cdn.jsdelivr.net/npm/moment@2.19.1/moment.min.js');
 
 use Drupal\Core\Ajax\CloseModalDialogCommand;
