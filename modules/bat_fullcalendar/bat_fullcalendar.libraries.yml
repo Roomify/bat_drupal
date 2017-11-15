@@ -3,6 +3,7 @@ fullcalendar:
   js:
     /libraries/fullcalendar/lib/moment.min.js: { minified: true }
     /libraries/fullcalendar/fullcalendar.min.js: { minified: true }
+    /libraries/fullcalendar/locale-all.js: { minified: true }
   dependencies:
     - core/jquery
   css:
