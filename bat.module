@@ -581,7 +581,7 @@ function bat_type_group_delete(TypeGroup $group) {
  *   An array of group IDs.
  */
 function bat_type_group_delete_multiple(array $group_ids) {
-  $groups = Unit::loadMultiple($group_ids);
+  $groups = TypeGroup::loadMultiple($group_ids);
 
   foreach ($groups as $group) {
     $group->delete();
