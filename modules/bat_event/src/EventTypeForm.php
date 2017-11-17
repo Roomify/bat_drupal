@@ -104,7 +104,7 @@ class EventTypeForm extends BundleEntityFormBase {
         $options = [];
         foreach ($target_entity_types as $target_entity_type) {
           $target_entity_info = \Drupal::entityTypeManager()->getDefinition($target_entity_type);
-          $options[$target_entity_type] = $target_entity_info['label'];
+          $options[$target_entity_type] = $target_entity_info->getLabel();
         }
         $form['target_entity_type'] = [
           '#type' => 'select',
