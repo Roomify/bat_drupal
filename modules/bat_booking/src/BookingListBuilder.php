@@ -111,6 +111,7 @@ class BookingListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\bat\Entity\Unit */
     $row['id'] = $entity->id();
+    $row['name'] = $entity->label();
     $row['bundle'] = bat_booking_type_load($entity->bundle())->label();
     $row['status'] = ($entity->getStatus()) ? t('Published') : t('Unpublished');
     return $row + parent::buildRow($entity);

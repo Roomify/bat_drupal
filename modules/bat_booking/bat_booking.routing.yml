@@ -46,7 +46,7 @@ entity.bat_booking.edit_form:
   path: '/admin/bat/config/booking/{bat_booking}/edit'
   defaults:
     _entity_form: bat_booking.edit
-    _title: 'Edit Type'
+    _title: 'Edit Booking'
   requirements:
     _entity_access: 'bat_booking.update'
   options:

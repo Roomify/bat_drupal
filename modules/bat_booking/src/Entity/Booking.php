@@ -39,7 +39,7 @@ use Drupal\bat_booking\BookingInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",
- *     "label" = "name",
+ *     "label" = "label",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
  *   },
@@ -140,6 +140,15 @@ class Booking extends ContentEntityBase implements BookingInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
+    $fields['label'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Label'))
+      ->setDescription(t('The label of the Booking entity.'))
+      ->setSettings([
+        'max_length' => 50,
+        'text_processing' => 0,
+      ])
+      ->setDefaultValue('');
+
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Authored on'))
       ->setDescription(t('The time that the entity was created.'))
@@ -163,6 +172,23 @@ class Booking extends ContentEntityBase implements BookingInterface {
       ->setDefaultValue(TRUE);
 
     return $fields;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save() {
+    if ($this->isNew()) {
+      parent::save();
+    }
+
+    // Set default value for label.
+    if (empty($this->label())) {
+      $booking_type = bat_booking_type_load($this->bundle());
+      $this->set('label', $booking_type->label() . ' ' . $this->id());
+    }
+
+    parent::save();
   }
 
 }
