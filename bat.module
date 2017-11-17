@@ -78,7 +78,7 @@ function template_preprocess_bat_type_group_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = [
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_type_group.add_form', ['property_type' => $type->id()])),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_type_group.add_form', ['type_group_bundle' => $type->id()])),
       ];
     }
   }
