@@ -175,8 +175,6 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function save() {
-    $entity_original = entity_load_unchanged('bat_event', $this->id());
-
     $event_type = bat_event_type_load($this->bundle());
 
     // Construct target entity reference field name using this event type's target entity type.
@@ -184,32 +182,35 @@ class Event extends ContentEntityBase implements EventInterface {
 
     // We are going to be updating the event - so the first step is to remove
     // the old event.
-    if (!($this->isNew()) &&
-        ($entity_original->getStartDate() != '') &&
+    if (!($this->isNew())) {
+      $entity_original = entity_load_unchanged('bat_event', $this->id());
+
+      if (($entity_original->getStartDate() != '') &&
         ($entity_original->getEndDate() != '') &&
         ($entity_original->getTranslation('und')->get($target_field_name) !== FALSE)) {
 
-      // Get the referenced entity ID.
-      $event_target_entity_reference = $entity_original->getTranslation('und')->get($target_field_name)->getValue();
+        // Get the referenced entity ID.
+        $event_target_entity_reference = $entity_original->getTranslation('und')->get($target_field_name)->getValue();
 
-      $target_entity_id = 0;
-      if (isset($event_target_entity_reference[0]['target_id'])) {
-        $target_entity_id = $event_target_entity_reference[0]['target_id'];
-      }
+        $target_entity_id = 0;
+        if (isset($event_target_entity_reference[0]['target_id'])) {
+          $target_entity_id = $event_target_entity_reference[0]['target_id'];
+        }
 
-      // Load the referenced entity.
-      if ($target_entity = entity_load($event_type->target_entity_type, $target_entity_id)) {
-        $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
+        // Load the referenced entity.
+        if ($target_entity = entity_load($event_type->target_entity_type, $target_entity_id)) {
+          $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
 
-        $this->batStoreSave($unit,
-          $entity_original->getStartDate(),
-          $entity_original->getEndDate(),
-          $event_type->id(),
-          $event_type->getEventGranularity(),
-          $unit->getDefaultValue(),
-          $this->get('id')->value,
-          TRUE
-        );
+          $this->batStoreSave($unit,
+            $entity_original->getStartDate(),
+            $entity_original->getEndDate(),
+            $event_type->id(),
+            $event_type->getEventGranularity(),
+            $unit->getDefaultValue(),
+            $this->get('id')->value,
+            TRUE
+          );
+        }
       }
     }
 
