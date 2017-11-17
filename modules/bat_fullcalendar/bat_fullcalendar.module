@@ -120,7 +120,7 @@ function bat_fullcalendar_configure($user_settings) {
 
     $user_timezone = new DateTimeZone(drupal_get_user_timezone());
     $gmt_timezone = new DateTimeZone('GMT');
-    $timezone_offset = $user_timezone->getOffset(new DateTime(date(), $gmt_timezone));
+    $timezone_offset = $user_timezone->getOffset(new DateTime('now', $gmt_timezone));
 
     $config = [
       'schedulerLicenseKey' => $schedulerlicensekey,
