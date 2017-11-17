@@ -16,6 +16,8 @@
 
         $(this).fullCalendar({
           schedulerLicenseKey: drupalSettings.batCalendar[cal_id].schedulerLicenseKey,
+          themeSystem: drupalSettings.batCalendar[cal_id].themeSystem,
+          locale: drupalSettings.batCalendar[cal_id].locale,
           editable: drupalSettings.batCalendar[cal_id].editable,
           selectable: drupalSettings.batCalendar[cal_id].selectable,
           displayEventTime: false,
@@ -36,21 +38,36 @@
             },
             timelineSevenDay: {
               buttonText: drupalSettings.batCalendar[cal_id].viewsTimelineSevenDayButtonText,
-              duration: drupalSettings.batCalendar[cal_id].viewsTimelineSevenDaySlotDuration,
+              duration: drupalSettings.batCalendar[cal_id].viewsTimelineSevenDayDuration,
+              slotDuration: drupalSettings.batCalendar[cal_id].viewsTimelineSevenDaySlotDuration,
               type: 'timeline',
             },
             timelineTenDay: {
               buttonText: drupalSettings.batCalendar[cal_id].viewsTimelineTenDayButtonText,
-              duration: drupalSettings.batCalendar[cal_id].viewsTimelineTenDaySlotDuration,
+              duration: drupalSettings.batCalendar[cal_id].viewsTimelineTenDayDuration,
+              slotDuration: drupalSettings.batCalendar[cal_id].viewsTimelineTenDaySlotDuration,
               type: 'timeline',
             },
             timelineThirtyDay: {
               buttonText: drupalSettings.batCalendar[cal_id].viewsTimelineThirtyDayButtonText,
-              duration: drupalSettings.batCalendar[cal_id].viewsTimelineThirtyDaySlotDuration,
+              duration: drupalSettings.batCalendar[cal_id].viewsTimelineThirtyDayDuration,
+              slotDuration: drupalSettings.batCalendar[cal_id].viewsTimelineThirtyDaySlotDuration,
+              type: 'timeline',
+            },
+            timeline365Day: {
+              buttonText: drupalSettings.batCalendar[cal_id].viewsTimeline365DayButtonText,
+              duration: drupalSettings.batCalendar[cal_id].viewsTimeline365DaySlotDuration,
               type: 'timeline',
             }
           },
+          groupByResource: drupalSettings.batCalendar[cal_id].groupByResource,
+          groupByDateAndResource: drupalSettings.batCalendar[cal_id].groupByDateAndResource,
+          allDaySlot: drupalSettings.batCalendar[cal_id].allDaySlot,
+          firstDay: drupalSettings.batCalendar[cal_id].firstDay,
           customButtons: drupalSettings.batCalendar[cal_id].customButtons,
+          eventOrder: drupalSettings.batCalendar[cal_id].eventOrder,
+          titleFormat: drupalSettings.batCalendar[cal_id].titleFormat,
+          slotLabelFormat: drupalSettings.batCalendar[cal_id].slotLabelFormat,
           resourceAreaWidth: drupalSettings.batCalendar[cal_id].resourceAreaWidth,
           resourceLabelText: drupalSettings.batCalendar[cal_id].resourceLabelText,
           resources: '/bat_api/calendar-units?_format=json&types=' + drupalSettings.batCalendar[cal_id].unitTypes + '&ids=' + drupalSettings.batCalendar[cal_id].unitIDs + '&event_type=' + drupalSettings.batCalendar[cal_id].eventType,

@@ -9,6 +9,7 @@ namespace Drupal\bat_calendar_reference\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Component\Utility\Html;
 
 /**
  * @FieldFormatter(
@@ -28,6 +29,8 @@ class BatCalendarReferenceMonthView extends FormatterBase {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $field_type = $this->fieldDefinition->getFieldStorageDefinition()->getType();
 
+    $calendar_id = Html::getUniqueId($this->fieldDefinition->getFieldStorageDefinition()->getName() . '-calendar-formatter');
+
     if ($field_type == 'bat_calendar_unit_type_reference') {
       $unit_type_names = [];
       $unit_type_ids = [];
@@ -39,9 +42,9 @@ class BatCalendarReferenceMonthView extends FormatterBase {
         }
 
         if ($type = bat_event_type_load($item->event_type_id)) {
-          $event_type = $type->type;
+          $event_type = $type->id();
 
-          $event_granularity = $type->event_granularity;
+          $event_granularity = $type->getEventGranularity();
         }
       }
 
@@ -59,16 +62,13 @@ class BatCalendarReferenceMonthView extends FormatterBase {
           'editable' => FALSE,
           'selectable' => FALSE,
           'background' => '1',
+          'defaultView' => 'month',
+          'views' => 'month',
+          'background' => '0',
+          'headerLeft' => 'today',
+          'headerCenter' => 'title',
+          'headerRight' => 'prev, next',
         ];
-
-        if ($display['type'] == 'bat_calendar_reference_month_view') {
-          $fc_user_settings[$calendar_id]['defaultView'] = 'month';
-          $fc_user_settings[$calendar_id]['views'] = 'month';
-          $fc_user_settings[$calendar_id]['background'] = '0';
-          $fc_user_settings[$calendar_id]['headerLeft'] = 'today';
-          $fc_user_settings[$calendar_id]['headerCenter'] = 'title';
-          $fc_user_settings[$calendar_id]['headerRight'] = 'prev, next';
-        }
       }
     }
     elseif ($field_type == 'bat_calendar_unit_reference') {
@@ -82,9 +82,9 @@ class BatCalendarReferenceMonthView extends FormatterBase {
         }
 
         if ($type = bat_event_type_load($item->event_type_id)) {
-          $event_type = $type->type;
+          $event_type = $type->id();
 
-          $event_granularity = $type->event_granularity;
+          $event_granularity = $type->getEventGranularity();
         }
       }
 
@@ -102,16 +102,13 @@ class BatCalendarReferenceMonthView extends FormatterBase {
           'editable' => FALSE,
           'selectable' => FALSE,
           'background' => '1',
+          'defaultView' => 'month',
+          'views' => 'month',
+          'background' => '0',
+          'headerLeft' => 'today',
+          'headerCenter' => 'title',
+          'headerRight' => 'prev, next',
         ];
-
-        if ($display['type'] == 'bat_calendar_reference_month_view') {
-          $fc_user_settings[$calendar_id]['defaultView'] = 'month';
-          $fc_user_settings[$calendar_id]['views'] = 'month';
-          $fc_user_settings[$calendar_id]['background'] = '0';
-          $fc_user_settings[$calendar_id]['headerLeft'] = 'today';
-          $fc_user_settings[$calendar_id]['headerCenter'] = 'title';
-          $fc_user_settings[$calendar_id]['headerRight'] = 'prev, next';
-        }
       }
     }
 
@@ -125,8 +122,7 @@ class BatCalendarReferenceMonthView extends FormatterBase {
       return [
         '#theme' => 'bat_fullcalendar',
         '#calendar_settings' => $calendar_settings,
-        '#js_files' => [drupal_get_path('module', 'bat_calendar_reference') . '/js/bat_calendar_reference.js'],
-        '#css_files' => [drupal_get_path('module', 'bat_fullcalendar') . '/css/fullcalendar.theme.css'],
+        '#attached' => ['library' => ['bat_calendar_reference/bat_calendar_reference']],
         '#attributes' => [
           'id' => $calendar_id,
           'class' => [

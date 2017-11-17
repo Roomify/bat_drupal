@@ -63,15 +63,6 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
           'selectable' => FALSE,
           'background' => '1',
         ];
-
-        if ($display['type'] == 'bat_calendar_reference_month_view') {
-          $fc_user_settings[$calendar_id]['defaultView'] = 'month';
-          $fc_user_settings[$calendar_id]['views'] = 'month';
-          $fc_user_settings[$calendar_id]['background'] = '0';
-          $fc_user_settings[$calendar_id]['headerLeft'] = 'today';
-          $fc_user_settings[$calendar_id]['headerCenter'] = 'title';
-          $fc_user_settings[$calendar_id]['headerRight'] = 'prev, next';
-        }
       }
     }
     elseif ($field_type == 'bat_calendar_unit_reference') {
@@ -106,15 +97,6 @@ class BatCalendarReferenceTimelineView extends FormatterBase {
           'selectable' => FALSE,
           'background' => '1',
         ];
-
-        if ($display['type'] == 'bat_calendar_reference_month_view') {
-          $fc_user_settings[$calendar_id]['defaultView'] = 'month';
-          $fc_user_settings[$calendar_id]['views'] = 'month';
-          $fc_user_settings[$calendar_id]['background'] = '0';
-          $fc_user_settings[$calendar_id]['headerLeft'] = 'today';
-          $fc_user_settings[$calendar_id]['headerCenter'] = 'title';
-          $fc_user_settings[$calendar_id]['headerRight'] = 'prev, next';
-        }
       }
     }
 
