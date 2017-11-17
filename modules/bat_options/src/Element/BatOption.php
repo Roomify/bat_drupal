@@ -27,6 +27,9 @@ class BatOption extends FormElement {
     $class = get_class($this);
     return [
       '#input' => TRUE,
+      '#element_validate' => [
+        [$class, 'validateBatOption'],
+      ],
       '#process' => [
         [$class, 'processBatOption'],
       ],
@@ -80,7 +83,10 @@ class BatOption extends FormElement {
       '#title' => t('Value'),
       '#size' => 10,
       '#default_value' => (isset($element['#default_value']['value']) && $element['#default_value']['value'] != 0) ? $element['#default_value']['value'] : NULL,
-      '#element_validate' => ['\Drupal\Core\Render\Element\Number::validateNumber'],
+      '#element_validate' => [
+        '\Drupal\Core\Render\Element\Number::validateNumber',
+        '\Drupal\bat_options\Element\BatOption::validateValue',
+      ],
       '#attributes' => [
         'class' => ['bat_options-option--value'],
       ],
@@ -108,6 +114,19 @@ class BatOption extends FormElement {
     return $element;
   }
 
+  /**
+   * Set value as 0 if empty.
+   */
+  public static function validateValue(&$element, FormStateInterface $form_state, &$complete_form) {
+    $value = $element['#value'];
+    if ($value === '') {
+      $form_state->setValue($element['#parents'], 0);
+    }
+  }
+
+  /**
+   * Validate function.
+   */
   public static function validateBatOption(&$element, FormStateInterface $form_state, &$complete_form) {
   }
 
