@@ -19,17 +19,18 @@ Scenario: Type manager can access the Event Types page and create, edit and dele
   When I click "Manage fields"
   Then I should be on "admin/bat/events/event/event-types/availability/edit/fields"
   When I click "Add field"
+  Then the url should match "admin/bat/events/event/event-types/availability/edit/fields/add-field"
   When I select "text" from "new_storage_type"
   When I fill in "Label" with "Custom Label"
   Then I wait 3 seconds
   When I press the "Save and continue" button
-  Then the url should match "admin/bat/events/event/event-types/availability/edit/fields/add-field"
-  #When I press the "Save field settings" button
-  #Then the url should match "admin/bat/events/event/event-types/availability/edit/fields/bat_event.availability.field_.*$"
-  #When I press the "Save settings" button
-  #Then the url should match "admin/bat/events/event/event-types/availability/edit/fields"
-  #When I click "Edit"
-  #When I select "field_custom_label" from "event_label[default_event_label_field_name]"
-  #When I press the "Save event type" button
-  #Then I should be on "admin/bat/events/event/event-types"
-  #And I should see text matching "Availability"
+  Then the url should match "admin/bat/events/event/event-types/availability/edit/fields/bat_event.availability.field_custom_label/storage"
+  When I press the "Save field settings" button
+  Then the url should match "admin/bat/events/event/event-types/availability/edit/fields/bat_event.availability.field_custom_label"
+  When I press the "Save settings" button
+  Then the url should match "admin/bat/events/event/event-types/availability/edit/fields"
+  When I click "Edit"
+  When I select "field_custom_label" from "event_label[default_event_label_field_name]"
+  When I press the "Save event type" button
+  Then I should be on "admin/bat/events/event/event-types"
+  And I should see text matching "Availability"
