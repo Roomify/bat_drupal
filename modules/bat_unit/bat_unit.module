@@ -900,7 +900,7 @@ function bat_unit_entity_operation(EntityInterface $entity) {
   $operations = [];
   $entity_type = $entity->getEntityType();
   if ($entity_type->id() == 'bat_unit_type') {
-    if (\Drupal::currentUser()->hasPermission('administer type_bundle entities')) {
+    if (\Drupal::currentUser()->hasPermission('administer bat_type_bundle entities')) {
       $operations['units'] = [
         'title' => t('Units'),
         'weight' => 1,
