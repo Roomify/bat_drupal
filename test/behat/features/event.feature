@@ -24,6 +24,7 @@ Scenario: Type manager can access the Event Types page and create, edit and dele
   When I fill in "Label" with "Custom Label"
   Then I wait 3 seconds
   When I press the "Save and continue" button
+  Then I wait 3 seconds
   Then the url should match "admin/bat/events/event/event-types/availability/edit/fields/bat_event.availability.field_custom_label/storage"
   When I press the "Save field settings" button
   Then the url should match "admin/bat/events/event/event-types/availability/edit/fields/bat_event.availability.field_custom_label"
