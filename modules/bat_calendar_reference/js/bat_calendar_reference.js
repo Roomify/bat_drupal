@@ -70,8 +70,8 @@
           slotLabelFormat: drupalSettings.batCalendar[cal_id].slotLabelFormat,
           resourceAreaWidth: drupalSettings.batCalendar[cal_id].resourceAreaWidth,
           resourceLabelText: drupalSettings.batCalendar[cal_id].resourceLabelText,
-          resources: '/bat_api/calendar-units?_format=json&types=' + drupalSettings.batCalendar[cal_id].unitTypes + '&ids=' + drupalSettings.batCalendar[cal_id].unitIDs + '&event_type=' + drupalSettings.batCalendar[cal_id].eventType,
-          events: '/bat_api/calendar-events?_format=json&unit_types=' + drupalSettings.batCalendar[cal_id].unitTypes + '&event_types=' + drupalSettings.batCalendar[cal_id].eventType + '&unit_ids=' + drupalSettings.batCalendar[cal_id].unitIDs + '&background=' + drupalSettings.batCalendar[cal_id].background,
+          resources: Drupal.url('bat_api/calendar-units?_format=json&types=' + drupalSettings.batCalendar[cal_id].unitTypes + '&ids=' + drupalSettings.batCalendar[cal_id].unitIDs + '&event_type=' + drupalSettings.batCalendar[cal_id].eventType),
+          events: Drupal.url('bat_api/calendar-events?_format=json&unit_types=' + drupalSettings.batCalendar[cal_id].unitTypes + '&event_types=' + drupalSettings.batCalendar[cal_id].eventType + '&unit_ids=' + drupalSettings.batCalendar[cal_id].unitIDs + '&background=' + drupalSettings.batCalendar[cal_id].background),
           windowResize: function(view) {
             $(this).fullCalendar('refetchEvents');
           },
