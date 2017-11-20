@@ -13,6 +13,7 @@
         "behat/mink-extension": "2.2",
         "symfony/http-kernel": "*",
         "fabpot/goutte": "2.0.4",
+        "instaclick/php-webdriver": "1.4.5",
         "roomify/roomify-extension": "~2.0"
     },
     "minimum-stability": "dev",
