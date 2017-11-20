@@ -1,6 +1,6 @@
 {
     "require": {
-        "behat/behat": "~3.1",
+        "behat/behat": "3.4.2",
         "behat/mink": "1.7.1",
         "behat/mink-goutte-driver": "*",
         "behat/mink-selenium2-driver": "*",
@@ -10,7 +10,7 @@
         "behat/symfony2-extension": "*",
         "symfony/form": "*",
         "symfony/validator": "*",
-        "behat/mink-extension": "*",
+        "behat/mink-extension": "2.2",
         "symfony/http-kernel": "*",
         "fabpot/goutte": "2.0.4",
         "roomify/roomify-extension": "~2.0"
