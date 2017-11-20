@@ -28,7 +28,7 @@ Scenario: Type manager can access the Types page and create, edit and delete Uni
 
 @api @javascript
 Scenario: Create Type bundle, Type and Units
-  Given I am logged in as a user with the "administer bat_type_bundle entities,bypass bat_unit_type entities access,bypass bat_unit entities access,update any bat_unit_type entity,create bat_unit entities,view any bat_unit_type entity" permissions
+  Given I am logged in as a user with the "administer bat_type_bundle entities,bypass bat_unit_type entities access,bypass bat_unit entities access,update any bat_unit_type entity,create bat_unit entities,view any bat_unit_type entity,view any bat_unit entity" permissions
   When I am on "admin/bat/config/type-bundles"
   Then I should see the link "Add type bundle"
   When I click "Add type bundle"
