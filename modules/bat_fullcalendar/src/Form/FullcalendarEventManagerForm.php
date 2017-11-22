@@ -210,7 +210,8 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $unit = entity_load($event_type_entity->target_entity_type, $entity_id);
 
-    $value = drupal_render($event->{$field_name}->view(['label' => 'hidden']));
+    $elements = $event->{$field_name}->view(['label' => 'hidden']);
+    $value = drupal_render($elements);
 
     $form['form_wrapper_bottom'] = [
       '#prefix' => '<div>',

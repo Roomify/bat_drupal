@@ -40,7 +40,7 @@ class SetUnitState extends ActionBase implements ContainerFactoryPluginInterface
   protected $currentUser;
 
   /**
-   * Constructs a new DeleteUnit object.
+   * Constructs a new SetUnitState object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
