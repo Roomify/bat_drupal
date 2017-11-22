@@ -31,6 +31,11 @@ class EventForm extends ContentEntityForm {
 
     $event_type = bat_event_type_load($entity->bundle());
 
+    $form['changed'] = [
+      '#type' => 'hidden',
+      '#default_value' => $entity->getChangedTime(),
+    ];
+
     $form['langcode'] = [
       '#title' => $this->t('Language'),
       '#type' => 'language_select',
