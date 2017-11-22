@@ -241,7 +241,7 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
         elseif ($field_info->getType() == 'commerce_price') {
           return $values[0]['amount'];
         }
-        elseif ($field_info->getType() == 'text' || $field_info->getType() == 'number_integer') {
+        elseif ($field_info->getType() == 'text' || $field_info->getType() == 'string' || $field_info->getType() == 'number_integer') {
           return $values[0]['value'];
         }
       }

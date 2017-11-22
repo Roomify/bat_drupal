@@ -308,12 +308,15 @@ class Unit extends ContentEntityBase implements UnitInterface {
       ];
 
       $temp_bat_type->set($field, $price);
-      $field_view_value = \Drupal::service('renderer')->renderPlain($temp_bat_type->{$field}->view(['label' => 'hidden']));
+
+      $elements = $temp_bat_type->{$field}->view(['label' => 'hidden']);
+      $field_view_value = \Drupal::service('renderer')->renderPlain($elements);
     }
     else {
       $temp_bat_type->set($field, $value);
 
-      $field_view_value = \Drupal::service('renderer')->renderPlain($temp_bat_type->{$field}->view(['label' => 'hidden']));
+      $elements = $temp_bat_type->{$field}->view(['label' => 'hidden']);
+      $field_view_value = \Drupal::service('renderer')->renderPlain($elements);
     }
 
     return trim(strip_tags($field_view_value->__toString()));
