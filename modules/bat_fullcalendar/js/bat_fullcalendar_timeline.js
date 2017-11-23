@@ -90,7 +90,7 @@ Drupal.behaviors.bat_event = {
         slotLabelFormat: drupalSettings.batCalendar[key].slotLabelFormat,
         resourceAreaWidth: drupalSettings.batCalendar[key].resourceAreaWidth,
         resourceLabelText: drupalSettings.batCalendar[key].resourceLabelText,
-        resources: Drupal.url('bat_api/calendar-units?_format=json&types=' + drupalSettings.batCalendar[key].unitType + '&event_type=' + drupalSettings.batCalendar[key].eventType),
+        resources: Drupal.url('bat_api/calendar-units?_format=json&types=' + drupalSettings.batCalendar[key].unitType + '&ids=' + drupalSettings.batCalendar[key].unitIds + '&event_type=' + drupalSettings.batCalendar[key].eventType),
         selectOverlap: function(event) {
           // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';
