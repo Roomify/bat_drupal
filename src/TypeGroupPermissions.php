@@ -27,7 +27,7 @@ class TypeGroupPermissions implements ContainerInjectionInterface {
   protected $entityTypeManager;
 
   /**
-   * Constructs a new FilterPermissions instance.
+   * Constructs a new TypeGroupPermissions instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
