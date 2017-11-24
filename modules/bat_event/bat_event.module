@@ -765,6 +765,19 @@ function bat_event_views_pre_render(ViewExecutable $view) {
 }
 
 /**
+ * Implements hook_entity_bundle_delete().
+ */
+function bat_event_entity_bundle_delete($entity_type_id, $bundle) {
+  if ($entity_type_id == 'bat_event') {
+    $query = \Drupal::entityQuery('bat_event')
+      ->condition('type', $bundle);
+    $event_ids = $query->execute();
+
+    bat_event_delete_multiple($event_ids);
+  }
+}
+
+/**
  * Given a date range and a set of valid states it will return all units within the
  * set of valid states.
  *
