@@ -7,6 +7,7 @@
 
 namespace Drupal\bat_event\Entity\Form;
 
+use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
@@ -110,7 +111,7 @@ class EventForm extends ContentEntityForm {
       $form['end']['widget'][0]['value']['#date_increment'] = 60;
     }
 
-    if (\Drupal::request()->query->has('ajax_form')) {
+    if (\Drupal::request()->query->get(MainContentViewSubscriber::WRAPPER_FORMAT) == 'drupal_ajax') {
       $form['actions']['submit']['#attributes']['class'][] = 'use-ajax-submit';
       $form['actions']['delete']['#access'] = FALSE;
     }
