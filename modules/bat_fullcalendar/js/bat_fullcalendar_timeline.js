@@ -225,7 +225,7 @@ Drupal.batCalendar.Modal = function(element, key, eid, sd, ed, $unit_id) {
   }
   else {
     ajax.url = url;
-    ajax.options.url = url;
+    ajax.options.url = url + '?' + Drupal.ajax.WRAPPER_FORMAT + '=drupal_ajax';
     ajax.element_settings.url = url;
   }
 
