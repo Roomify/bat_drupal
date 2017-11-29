@@ -156,6 +156,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
             'eventGranularity' => $event_granularity,
             'editable' => FALSE,
             'selectable' => FALSE,
+            'eventStartEditable' => FALSE,
             'background' => '1',
           );
 
@@ -199,6 +200,7 @@ function bat_calendar_reference_field_formatter_view($entity_type, $entity, $fie
             'eventGranularity' => $event_granularity,
             'editable' => FALSE,
             'selectable' => FALSE,
+            'eventStartEditable' => FALSE,
             'background' => '1',
           );
 
