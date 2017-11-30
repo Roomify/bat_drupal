@@ -95,7 +95,7 @@ Drupal.behaviors.bat_event = {
           // Allow selections over background events, but not any other types of events.
           return event.rendering === 'background';
         },
-        events: Drupal.url('bat_api/calendar-events?_format=json&unit_types=' + drupalSettings.batCalendar[key].unitType + '&event_types=' + drupalSettings.batCalendar[key].eventType + '&background=' + drupalSettings.batCalendar[key].background),
+        events: Drupal.url('bat_api/calendar-events?_format=json&unit_types=' + drupalSettings.batCalendar[key].unitType + '&unit_ids=' + drupalSettings.batCalendar[key].unitIds + '&event_types=' + drupalSettings.batCalendar[key].eventType + '&background=' + drupalSettings.batCalendar[key].background),
         windowResize: function(view) {
           $(this).fullCalendar('refetchEvents');
         },
