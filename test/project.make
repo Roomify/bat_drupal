@@ -9,7 +9,8 @@ defaults[projects][subdir] = contrib
 ; Pull the latest version of bat_api
 projects[bat_api][type] = module
 projects[bat_api][download][type] = git
-projects[bat_api][download][url] = https://github.com/Roomify/bat_api_d8.git
+projects[bat_api][download][url] = https://github.com/Roomify/bat_api.git
+projects[bat_api][download][branch] = 8.x-1.x
 projects[bat_api][subdir] = bat
 
 ; +++++ Contrib Modules +++++
