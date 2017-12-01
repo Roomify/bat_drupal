@@ -813,7 +813,7 @@ function bat_event_get_calendar($type_id, $event_type) {
 
   $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
 
-  $drupal_units = bat_unit_load_multiple(FALSE, ['type_id' => $type_id]);
+  $drupal_units = bat_unit_load_multiple(FALSE, ['unit_type_id' => $type_id]);
   $bat_units = [];
 
   foreach ($drupal_units as $unit_id => $unit) {
@@ -826,7 +826,7 @@ function bat_event_get_calendar($type_id, $event_type) {
 }
 
 /**
- * Returns matching units based on a provided Calendar. A Calendar can be instantiated in a numder
+ * Returns matching units based on a provided Calendar. A Calendar can be instantiated in a number
  * of ways - bat_event offers bat_event_get_calendar. Using an already setup calendar multiple times
  * reduces overall load.
  *
@@ -842,7 +842,8 @@ function bat_event_get_calendar($type_id, $event_type) {
 function bat_event_get_matching_units_from_calendar($calendar, DateTime $start_date, DateTime $end_date, $valid_name_states, $intersect = FALSE, $reset = TRUE) {
   $valid_states = [];
   foreach ($valid_name_states as $name) {
-    $valid_states[] = $state['id'];
+    $state = bat_event_load_state_by_machine_name($name);
+    $valid_states[] = $state->id();
   }
 
   $constraints = [];
