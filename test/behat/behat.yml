@@ -22,6 +22,12 @@ default:
       drush_driver: 'drush'
       drush:
         root: ../..
+    Bex\Behat\ScreenshotExtension:
+      active_image_drivers: upload_pie
+      image_drivers:
+        upload_pie:
+          auth: 'mGLg7p' # can be your authentication key or and environment variable name
+          expire: '1d' # possible values: '30m', '1h', '6h', '1d', '1w'
 
 imports:
   - behat.local.yml
