@@ -82,9 +82,9 @@ before_script:
   - ln -s $TRAVIS_BUILD_DIR/test .
 
   # Make subsite link.
-  - ln -s . web/subsite
-  - ls -l .
-  - ls -l web
+  - ls -la
+  - ln -s . subsite
+  - ls -la
 
   - jdk_switcher use oraclejdk8
 
