@@ -104,7 +104,7 @@ script:
   - ./bin/behat
 
   # Re-run tests in a subdir.
-  - sed -i .bak 's/127.0.0.1:8888/127.0.0.1:8888\/subsite/' behat.yml
+  - sed -i 's/127.0.0.1:8888/127.0.0.1:8888\/subsite/' behat.yml
   - ./bin/behat
 
 after_failure:
