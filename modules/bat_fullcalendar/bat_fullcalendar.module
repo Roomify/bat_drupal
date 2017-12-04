@@ -112,11 +112,13 @@ function bat_fullcalendar_configure($user_settings) {
       $default_view = $user_setting['defaultView'];
     }
 
-    $business_hours = [
-      'start' => '00:00',
-      'end' => '24:00',
-      'dow' => [0, 1, 2, 3, 4, 5, 6],
-    ];
+    if (!isset($user_setting['businessHours'])) {
+      $business_hours = [
+        'start' => '00:00',
+        'end' => '24:00',
+        'dow' => [0, 1, 2, 3, 4, 5, 6],
+      ];
+    }
 
     $user_timezone = new DateTimeZone(drupal_get_user_timezone());
     $gmt_timezone = new DateTimeZone('GMT');
