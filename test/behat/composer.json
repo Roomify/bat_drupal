@@ -14,7 +14,11 @@
         "symfony/http-kernel": "*",
         "fabpot/goutte": "2.0.4",
         "instaclick/php-webdriver": "1.4.5",
-        "roomify/roomify-extension": "~2.0"
+        "roomify/roomify-extension": "~2.0",
+        "bex/behat-screenshot": "^1.2",
+        "bex/behat-screenshot-image-driver-img42": "^1.0",
+        "bex/behat-screenshot-image-driver-unsee": "^1.0",
+        "bex/behat-screenshot-image-driver-uploadpie": "^1.0"
     },
     "minimum-stability": "dev",
     "config": {
