@@ -81,6 +81,9 @@ before_script:
   # Link test dir into working dir.
   - ln -s $TRAVIS_BUILD_DIR/test .
 
+  # Make subsite link.
+  - ln -s . subsite
+
   - jdk_switcher use oraclejdk8
 
   - mkdir -p $HOME/.cache
@@ -98,6 +101,10 @@ script:
   - touch behat.local.yml
   # Set path to drupal root
   - export BEHAT_PARAMS="{\"extensions\":{\"Drupal\\\DrupalExtension\":{\"drupal\":{\"drupal_root\":\"$TRAVIS_BUILD_DIR/bat\"}}}}"
+  - ./bin/behat
+
+  # Re-run tests in a subdir.
+  - sed -i .bak 's/127.0.0.1:8888/127.0.0.1:8888\/subsite/' behat.yml
   - ./bin/behat
 
 after_failure:
