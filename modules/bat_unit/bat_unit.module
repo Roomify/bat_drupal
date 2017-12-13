@@ -929,7 +929,7 @@ function bat_unit_state_options($event_type = NULL, $conditions = array()) {
   foreach ($states as $event_state) {
     foreach ($conditions as $option => $value) {
       if ($event_state[$option] != $value) {
-        break 2;
+        continue 2;
       }
     }
 

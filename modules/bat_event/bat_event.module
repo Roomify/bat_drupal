@@ -2413,7 +2413,7 @@ function bat_event_get_calendar($type_id, $event_type) {
 }
 
 /**
- * Returns matching units based on a provided Calendar. A Calendar can be instantiated in a numder
+ * Returns matching units based on a provided Calendar. A Calendar can be instantiated in a number
  * of ways - bat_event offers bat_event_get_calendar. Using an already setup calendar multiple times
  * reduces overall load.
  *
