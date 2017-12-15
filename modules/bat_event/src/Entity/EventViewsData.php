@@ -28,8 +28,8 @@ class EventViewsData extends EntityViewsData implements EntityViewsDataInterface
     ];
 
     $data['event']['start_date'] = [
-      'title' => t('Start Date'),
-      'help' => t("A event's start date."),
+      'title' => $this->t('Start Date'),
+      'help' => $this->t("A event's start date."),
       'field' => [
         'float' => TRUE,
         'id' => 'bat_event_handler_date_field',
@@ -40,8 +40,8 @@ class EventViewsData extends EntityViewsData implements EntityViewsDataInterface
       ],
     ];
     $data['event']['end_date'] = [
-      'title' => t('End Date'),
-      'help' => t("A event's end date."),
+      'title' => $this->t('End Date'),
+      'help' => $this->t("A event's end date."),
       'field' => [
         'float' => TRUE,
         'id' => 'bat_event_handler_date_field',
@@ -52,15 +52,15 @@ class EventViewsData extends EntityViewsData implements EntityViewsDataInterface
       ],
     ];
     $data['event']['type']['field'] = [
-      'title' => t('Event Type'),
-      'help' => t('The event type label.'),
+      'title' => $this->t('Event Type'),
+      'help' => $this->t('The event type label.'),
       'id' => 'bat_event_handler_event_type_field',
     ];
 
     // Expose the uid as a relationship to users.
     $data['event']['uid'] = [
-      'title' => t('Uid'),
-      'help' => t("The owner's user ID."),
+      'title' => $this->t('Uid'),
+      'help' => $this->t("The owner's user ID."),
       'field' => [
         'id' => 'views_handler_field_user',
         'click sortable' => TRUE,
@@ -70,44 +70,142 @@ class EventViewsData extends EntityViewsData implements EntityViewsDataInterface
         'name field' => 'name',
       ],
       'filter' => [
-        'title' => t('Name'),
+        'title' => $this->t('Name'),
         'id' => 'views_handler_filter_user_name',
       ],
       'sort' => [
         'id' => 'views_handler_sort',
       ],
       'relationship' => [
-        'title' => t('Owner'),
-        'help' => t("Relate this event to its owner's user account"),
+        'title' => $this->t('Owner'),
+        'help' => $this->t("Relate this event to its owner's user account"),
         'id' => 'views_handler_relationship',
         'base' => 'users',
         'base field' => 'uid',
         'field' => 'uid',
-        'label' => t('Event owner'),
+        'label' => $this->t('Event owner'),
       ],
     ];
 
     $data['event']['duration'] = [
       'field' => [
-        'title' => t('Duration'),
-        'help' => t("Event's duration."),
+        'title' => $this->t('Duration'),
+        'help' => $this->t("Event's duration."),
         'id' => 'bat_event_handler_duration_field',
       ],
     ];
 
     $data['event']['event_value'] = [
-      'title' => t('Value'),
-      'help' => t("Event's value."),
+      'title' => $this->t('Value'),
+      'help' => $this->t("Event's value."),
       'field' => [
         'id' => 'bat_event_handler_value_field',
       ],
     ];
 
     $data['event']['blocking'] = [
-      'title' => t('Blocking'),
-      'help' => t("Event's blocking state."),
+      'title' => $this->t('Blocking'),
+      'help' => $this->t("Event's blocking state."),
       'filter' => [
         'id' => 'bat_event_handler_blocking_filter',
+      ],
+    ];
+
+    $data['event']['start_fulldate'] = [
+      'title' => $this->t('Start date'),
+      'help' => $this->t('Date in the form of CCYYMMDD.'),
+      'argument' => [
+        'field' => 'start',
+        'id' => 'date_fulldate',
+      ],
+    ];
+    $data['event']['start_year_month'] = [
+      'title' => $this->t('Start year + month'),
+      'help' => $this->t('Date in the form of YYYYMM.'),
+      'argument' => [
+        'field' => 'start',
+        'id' => 'date_year_month',
+      ],
+    ];
+    $data['event']['start_year'] = [
+      'title' => $this->t('Start year'),
+      'help' => $this->t('Date in the form of YYYY.'),
+      'argument' => [
+        'field' => 'start',
+        'id' => 'date_year',
+      ],
+    ];
+    $data['event']['start_month'] = [
+      'title' => $this->t('Start month'),
+      'help' => $this->t('Date in the form of MM (01 - 12).'),
+      'argument' => [
+        'field' => 'start',
+        'id' => 'date_month',
+      ],
+    ];
+    $data['event']['start_day'] = [
+      'title' => $this->t('Start day'),
+      'help' => $this->t('Date in the form of DD (01 - 31).'),
+      'argument' => [
+        'field' => 'start',
+        'id' => 'date_day',
+      ],
+    ];
+    $data['event']['start_week'] = [
+      'title' => $this->t('Start week'),
+      'help' => $this->t('Date in the form of WW (01 - 53).'),
+      'argument' => [
+        'field' => 'start',
+        'id' => 'date_week',
+      ],
+    ];
+
+    $data['event']['end_fulldate'] = [
+      'title' => $this->t('End date'),
+      'help' => $this->t('Date in the form of CCYYMMDD.'),
+      'argument' => [
+        'field' => 'end',
+        'id' => 'date_fulldate',
+      ],
+    ];
+    $data['event']['end_year_month'] = [
+      'title' => $this->t('End year + month'),
+      'help' => $this->t('Date in the form of YYYYMM.'),
+      'argument' => [
+        'field' => 'end',
+        'id' => 'date_year_month',
+      ],
+    ];
+    $data['event']['end_year'] = [
+      'title' => $this->t('End year'),
+      'help' => $this->t('Date in the form of YYYY.'),
+      'argument' => [
+        'field' => 'end',
+        'id' => 'date_year',
+      ],
+    ];
+    $data['event']['end_month'] = [
+      'title' => $this->t('End month'),
+      'help' => $this->t('Date in the form of MM (01 - 12).'),
+      'argument' => [
+        'field' => 'end',
+        'id' => 'date_month',
+      ],
+    ];
+    $data['event']['end_day'] = [
+      'title' => $this->t('End day'),
+      'help' => $this->t('Date in the form of DD (01 - 31).'),
+      'argument' => [
+        'field' => 'end',
+        'id' => 'date_day',
+      ],
+    ];
+    $data['event']['end_week'] = [
+      'title' => $this->t('End week'),
+      'help' => $this->t('Date in the form of WW (01 - 53).'),
+      'argument' => [
+        'field' => 'end',
+        'id' => 'date_week',
       ],
     ];
 
