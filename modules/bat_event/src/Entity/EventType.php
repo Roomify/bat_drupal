@@ -96,6 +96,12 @@ class EventType extends ConfigEntityBundleBase implements EventTypeInterface {
       // Create all tables necessary for this Event Type.
       bat_event_create_event_type_schema($this->id());
 
+      // Create a field of type "DateTime" for start date.
+      bat_event_type_add_start_date_field($this);
+
+      // Create a field of type "DateTime" for end date.
+      bat_event_type_add_end_date_field($this);
+
       // Create a field of type 'Entity Reference' to reference a Bat Unit.
       bat_event_type_add_target_entity_field($this);
 

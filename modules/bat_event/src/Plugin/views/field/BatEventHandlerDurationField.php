@@ -24,8 +24,7 @@ class BatEventHandlerDurationField extends FieldPluginBase {
   public function render(ResultRow $values) {
     $event = $this->getEntity($values);
 
-    $value = $event->end->value - $event->start->value;
-    $value += 60;
+    $value = $event->getEndDate()->getTimestamp() - $event->getStartDate()->getTimestamp();
 
     return $this->sanitizeValue(\Drupal::service('date.formatter')->formatInterval($value));
   }

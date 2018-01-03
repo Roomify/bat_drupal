@@ -84,13 +84,13 @@ class EventListBuilder extends EntityListBuilder {
       ],
       'start_date' => [
         'data' => $this->t('Start Date'),
-        'field' => 'start',
+        'field' => 'event_start',
         'specifier' => 'start',
         'class' => [RESPONSIVE_PRIORITY_LOW],
       ],
       'end_date' => [
         'data' => $this->t('End Date'),
-        'field' => 'end',
+        'field' => 'event_end',
         'specifier' => 'end',
         'class' => [RESPONSIVE_PRIORITY_LOW],
       ],
@@ -112,7 +112,7 @@ class EventListBuilder extends EntityListBuilder {
 
     $row['id'] = $entity->id();
     $row['start_date'] = $entity->getStartDate()->format($date_format);
-    $row['end_date'] = $entity->getEndDate()->add(new \DateInterval('PT1M'))->format($date_format);
+    $row['end_date'] = $entity->getEndDate()->format($date_format);
     $row['type'] = bat_event_type_load($entity->bundle())->label();
     return $row + parent::buildRow($entity);
   }

@@ -79,6 +79,114 @@ function bat_event_type_add_event_state_reference($entity) {
 }
 
 /**
+ * Create "Start Date" field.
+ */
+function bat_event_type_add_start_date_field($entity) {
+  $entity_info = \Drupal::entityTypeManager()->getDefinition($entity->target_entity_type);
+  $field_name = 'event_start';
+
+  $field_storage = FieldStorageConfig::loadByName('bat_event', $field_name);
+  $field = FieldConfig::loadByName('bat_event', $entity->id(), $field_name);
+
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'bat_event',
+      'type' => 'datetime',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => [
+        'datetime_type' => ($entity->getEventGranularity() == 'bat_daily') ? 'date' : 'datetime',
+      ],
+    ]);
+    $field_storage->save();
+  }
+
+  if (empty($field)) {
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'entity_type' => 'bat_event',
+      'label' => 'Start Date',
+      'bundle' => $entity->id(),
+      'required' => FALSE,
+      'settings' => [
+        'datetime_type' => ($entity->getEventGranularity() == 'bat_daily') ? 'date' : 'datetime',
+      ],
+    ]);
+    $field->save();
+
+    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('bat_event.' . $entity->id() . '.default');
+    if (!$form_display) {
+      $form_display = EntityFormDisplay::create([
+        'targetEntityType' => 'bat_event',
+        'bundle' => $entity->id(),
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
+    }
+    $form_display->setComponent($field_name, [
+      'type' => 'datetime_default',
+      'weight' => 1,
+    ]);
+    $form_display->save();
+  }
+}
+
+/**
+ * Create "End Date" field.
+ */
+function bat_event_type_add_end_date_field($entity) {
+  $entity_info = \Drupal::entityTypeManager()->getDefinition($entity->target_entity_type);
+  $field_name = 'event_end';
+
+  $field_storage = FieldStorageConfig::loadByName('bat_event', $field_name);
+  $field = FieldConfig::loadByName('bat_event', $entity->id(), $field_name);
+
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'bat_event',
+      'type' => 'datetime',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => [
+        'datetime_type' => ($entity->getEventGranularity() == 'bat_daily') ? 'date' : 'datetime',
+      ],
+    ]);
+    $field_storage->save();
+  }
+
+  if (empty($field)) {
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'entity_type' => 'bat_event',
+      'label' => 'End Date',
+      'bundle' => $entity->id(),
+      'required' => FALSE,
+      'settings' => [
+        'datetime_type' => ($entity->getEventGranularity() == 'bat_daily') ? 'date' : 'datetime',
+      ],
+    ]);
+    $field->save();
+
+    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('bat_event.' . $entity->id() . '.default');
+    if (!$form_display) {
+      $form_display = EntityFormDisplay::create([
+        'targetEntityType' => 'bat_event',
+        'bundle' => $entity->id(),
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
+    }
+    $form_display->setComponent($field_name, [
+      'type' => 'datetime_default',
+      'weight' => 2,
+    ]);
+    $form_display->save();
+  }
+}
+
+/**
  * Create fields of type 'Entity Reference' to reference the target entity.
  *
  * We need to create a field/instance for each possible target entity type.

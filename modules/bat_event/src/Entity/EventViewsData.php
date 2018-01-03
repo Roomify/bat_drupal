@@ -27,30 +27,6 @@ class EventViewsData extends EntityViewsData implements EntityViewsDataInterface
       'help' => $this->t('The Event ID.'),
     ];
 
-    $data['event']['start_date'] = [
-      'title' => $this->t('Start Date'),
-      'help' => $this->t("A event's start date."),
-      'field' => [
-        'float' => TRUE,
-        'id' => 'bat_event_handler_date_field',
-        'click sortable' => TRUE,
-      ],
-      'filter' => [
-        'id' => 'bat_event_handler_date_filter',
-      ],
-    ];
-    $data['event']['end_date'] = [
-      'title' => $this->t('End Date'),
-      'help' => $this->t("A event's end date."),
-      'field' => [
-        'float' => TRUE,
-        'id' => 'bat_event_handler_date_field',
-        'click sortable' => TRUE,
-      ],
-      'filter' => [
-        'id' => 'bat_event_handler_date_filter',
-      ],
-    ];
     $data['event']['type']['field'] = [
       'title' => $this->t('Event Type'),
       'help' => $this->t('The event type label.'),
