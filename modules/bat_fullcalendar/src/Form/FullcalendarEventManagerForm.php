@@ -149,8 +149,8 @@ class FullcalendarEventManagerForm extends FormBase {
     $event = bat_event_create(['type' => $event_type]);
     $event->uid = \Drupal::currentUser()->id();
 
-    $event->set('event_start', $start_date->format('Y-m-d'));
-    $event->set('event_end', $end_date->format('Y-m-d'));
+    $event->set('event_start', $start_date->format('Y-m-d\TH:i:00'));
+    $event->set('event_end', $end_date->format('Y-m-d\TH:i:00'));
 
     $event_type_entity = bat_event_type_load($event_type);
     // Construct target entity reference field name using this event type's target entity type.
@@ -188,8 +188,8 @@ class FullcalendarEventManagerForm extends FormBase {
     $event = bat_event_create(['type' => $event_type]);
     $event->uid = \Drupal::currentUser()->id();
 
-    $event->set('event_start', $start_date->format('Y-m-d'));
-    $event->set('event_end', $end_date->format('Y-m-d'));
+    $event->set('event_start', $start_date->format('Y-m-d\TH:i:00'));
+    $event->set('event_end', $end_date->format('Y-m-d\TH:i:00'));
 
     $event_type_entity = bat_event_type_load($event_type);
     // Construct target entity reference field name using this event type's target entity type.

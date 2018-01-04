@@ -161,14 +161,14 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function setStartDate(\DateTime $date) {
-    $this->set('event_start', $date->getTimestamp());
+    $this->set('event_start', $date->format('Y-m-d\TH:i:00'));
   }
 
   /**
    * {@inheritdoc}
    */
   public function setEndDate(\DateTime $date) {
-    $this->set('event_end', $date->getTimestamp());
+    $this->set('event_end', $date->format('Y-m-d\TH:i:00'));
   }
 
   /**

@@ -91,6 +91,21 @@ class EventForm extends ContentEntityForm {
       $form['created']['#group'] = 'author';
     }
 
+    if ($event_type->getEventGranularity() == 'bat_daily') {
+      $form['event_start']['widget'][0]['value']['#date_time_element'] = 'none';
+      $form['event_end']['widget'][0]['value']['#date_time_element'] = 'none';
+    }
+    else {
+      $form['event_start']['widget'][0]['value']['#date_increment'] = 60;
+      $form['event_end']['widget'][0]['value']['#date_increment'] = 60;
+    }
+
+    $form['event_start']['widget'][0]['value']['#date_timezone'] = 'UTC';
+    $form['event_end']['widget'][0]['value']['#date_timezone'] = 'UTC';
+
+    $form['event_start']['widget'][0]['value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
+    $form['event_end']['widget'][0]['value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
+
     if (\Drupal::request()->query->get(MainContentViewSubscriber::WRAPPER_FORMAT) == 'drupal_ajax') {
       $form['actions']['submit']['#attributes']['class'][] = 'use-ajax-submit';
       $form['actions']['delete']['#access'] = FALSE;
@@ -162,6 +177,14 @@ class EventForm extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $event = $this->entity;
     $event_type = bat_event_type_load($event->bundle());
+
+    if ($event_type->getEventGranularity() == 'bat_daily') {
+      $start_date = $event->getStartDate()->setTime(0, 0);
+      $event->setStartDate($start_date);
+
+      $end_date = $event->getEndDate()->setTime(0, 0);
+      $event->setEndDate($end_date);
+    }
 
     $status = $event->save();
 

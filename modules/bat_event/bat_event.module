@@ -96,7 +96,7 @@ function bat_event_type_add_start_date_field($entity) {
       'cardinality' => 1,
       'locked' => 1,
       'settings' => [
-        'datetime_type' => ($entity->getEventGranularity() == 'bat_daily') ? 'date' : 'datetime',
+        'datetime_type' => 'datetime',
       ],
     ]);
     $field_storage->save();
@@ -110,7 +110,7 @@ function bat_event_type_add_start_date_field($entity) {
       'bundle' => $entity->id(),
       'required' => FALSE,
       'settings' => [
-        'datetime_type' => ($entity->getEventGranularity() == 'bat_daily') ? 'date' : 'datetime',
+        'datetime_type' => 'datetime',
       ],
     ]);
     $field->save();
@@ -150,7 +150,7 @@ function bat_event_type_add_end_date_field($entity) {
       'cardinality' => 1,
       'locked' => 1,
       'settings' => [
-        'datetime_type' => ($entity->getEventGranularity() == 'bat_daily') ? 'date' : 'datetime',
+        'datetime_type' => 'datetime',
       ],
     ]);
     $field_storage->save();
@@ -164,7 +164,7 @@ function bat_event_type_add_end_date_field($entity) {
       'bundle' => $entity->id(),
       'required' => FALSE,
       'settings' => [
-        'datetime_type' => ($entity->getEventGranularity() == 'bat_daily') ? 'date' : 'datetime',
+        'datetime_type' => 'datetime',
       ],
     ]);
     $field->save();
