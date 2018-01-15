@@ -6,3 +6,4 @@ package: bat
 
 dependencies:
   - bat_unit
+  - datetime_range

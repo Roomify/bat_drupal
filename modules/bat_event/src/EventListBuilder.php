@@ -84,13 +84,13 @@ class EventListBuilder extends EntityListBuilder {
       ],
       'start_date' => [
         'data' => $this->t('Start Date'),
-        'field' => 'event_start',
+        'field' => 'event_dates',
         'specifier' => 'start',
         'class' => [RESPONSIVE_PRIORITY_LOW],
       ],
       'end_date' => [
         'data' => $this->t('End Date'),
-        'field' => 'event_end',
+        'field' => 'event_dates',
         'specifier' => 'end',
         'class' => [RESPONSIVE_PRIORITY_LOW],
       ],

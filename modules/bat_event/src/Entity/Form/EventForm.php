@@ -92,19 +92,16 @@ class EventForm extends ContentEntityForm {
     }
 
     if ($event_type->getEventGranularity() == 'bat_daily') {
-      $form['event_start']['widget'][0]['value']['#date_time_element'] = 'none';
-      $form['event_end']['widget'][0]['value']['#date_time_element'] = 'none';
+      $form['event_dates']['widget'][0]['value']['#date_time_element'] = 'none';
+      $form['event_dates']['widget'][0]['end_value']['#date_time_element'] = 'none';
     }
     else {
-      $form['event_start']['widget'][0]['value']['#date_increment'] = 60;
-      $form['event_end']['widget'][0]['value']['#date_increment'] = 60;
+      $form['event_dates']['widget'][0]['value']['#date_increment'] = 60;
+      $form['event_dates']['widget'][0]['end_value']['#date_increment'] = 60;
     }
 
-    $form['event_start']['widget'][0]['value']['#date_timezone'] = 'UTC';
-    $form['event_end']['widget'][0]['value']['#date_timezone'] = 'UTC';
-
-    $form['event_start']['widget'][0]['value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
-    $form['event_end']['widget'][0]['value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
+    $form['event_dates']['widget'][0]['value']['#date_timezone'] = 'UTC';
+    $form['event_dates']['widget'][0]['end_value']['#date_timezone'] = 'UTC';
 
     if (\Drupal::request()->query->get(MainContentViewSubscriber::WRAPPER_FORMAT) == 'drupal_ajax') {
       $form['actions']['submit']['#attributes']['class'][] = 'use-ajax-submit';
@@ -125,12 +122,12 @@ class EventForm extends ContentEntityForm {
 
     $values = $form_state->getValues();
 
-    $start_date = new \DateTime($values['event_start'][0]['value']->format('Y-m-d H:i:s'));
-    $end_date = new \DateTime($values['event_end'][0]['value']->format('Y-m-d H:i:s'));
+    $start_date = new \DateTime($values['event_dates'][0]['value']->format('Y-m-d H:i:s'));
+    $end_date = new \DateTime($values['event_dates'][0]['end_value']->format('Y-m-d H:i:s'));
 
     // The end date must be greater or equal than start date.
     if ($end_date < $start_date) {
-      $form_state->setErrorByName('event_end', t('End date must be on or after the start date.'));
+      $form_state->setErrorByName('event_dates', t('End date must be on or after the start date.'));
     }
 
     $event_type = bat_event_type_load($this->entity->bundle());

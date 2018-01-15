@@ -145,7 +145,7 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function getStartDate() {
-    $date = new \DateTime($this->get('event_start')->value);
+    $date = new \DateTime($this->get('event_dates')->value);
     return $date;
   }
 
@@ -153,7 +153,7 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function getEndDate() {
-    $date = new \DateTime($this->get('event_end')->value);
+    $date = new \DateTime($this->get('event_dates')->end_value);
     return $date;
   }
 
@@ -161,14 +161,22 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function setStartDate(\DateTime $date) {
-    $this->set('event_start', $date->format('Y-m-d\TH:i:00'));
+    $value = [
+      'value' => $date->format('Y-m-d\TH:i:00'),
+      'end_value' => $this->getEndDate()->format('Y-m-d\TH:i:00'),
+    ];
+    $this->set('event_dates', $value);
   }
 
   /**
    * {@inheritdoc}
    */
   public function setEndDate(\DateTime $date) {
-    $this->set('event_end', $date->format('Y-m-d\TH:i:00'));
+    $value = [
+      'value' => $this->getStartDate()->format('Y-m-d\TH:i:00'),
+      'end_value' => $date->format('Y-m-d\TH:i:00'),
+    ];
+    $this->set('event_dates', $value);
   }
 
   /**
