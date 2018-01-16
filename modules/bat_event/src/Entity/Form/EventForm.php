@@ -103,6 +103,13 @@ class EventForm extends ContentEntityForm {
     $form['event_dates']['widget'][0]['value']['#date_timezone'] = 'UTC';
     $form['event_dates']['widget'][0]['end_value']['#date_timezone'] = 'UTC';
 
+    if (isset($form['event_dates']['widget'][0]['value']['#default_value'])) {
+      $form['event_dates']['widget'][0]['value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
+    }
+    if (isset($form['event_dates']['widget'][0]['end_value']['#default_value'])) {
+      $form['event_dates']['widget'][0]['end_value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
+    }
+
     if (\Drupal::request()->query->get(MainContentViewSubscriber::WRAPPER_FORMAT) == 'drupal_ajax') {
       $form['actions']['submit']['#attributes']['class'][] = 'use-ajax-submit';
       $form['actions']['delete']['#access'] = FALSE;
