@@ -1,35 +1,13 @@
-fullcalendar:
-  version: VERSION
-  js:
-    /libraries/fullcalendar/lib/moment.min.js: { minified: true }
-    /libraries/fullcalendar/fullcalendar.min.js: { minified: true }
-    /libraries/fullcalendar/locale-all.js: { minified: true }
-  dependencies:
-    - core/jquery
-  css:
-    theme:
-      css/fullcalendar.theme.css: {}
-      /libraries/fullcalendar/fullcalendar.min.css: { minified: true }
-
-fullcalendar-scheduler:
-  version: VERSION
-  js:
-    /libraries/fullcalendar-scheduler/scheduler.min.js: { minified: true }
-  dependencies:
-    - bat_fullcalendar/fullcalendar
-    - core/drupalSettings
-    - core/drupal.dialog.ajax
-  css:
-    theme:
-      css/bat_fullcalendar_timeline.css: {}
-      /libraries/fullcalendar-scheduler/scheduler.min.css: { minified: true }
-
 bat-fullcalendar-scheduler:
   version: VERSION
   js:
     js/bat_fullcalendar_timeline.js: {}
   dependencies:
-    - bat_fullcalendar/fullcalendar-scheduler
+    - fullcalendar_library/fullcalendar-scheduler
+    - core/drupalSettings
+    - core/drupal.dialog.ajax
   css:
     theme:
+      css/bat_fullcalendar_timeline.css: {}
       css/bat_modal.css: {}
+      css/fullcalendar.theme.css: {}
