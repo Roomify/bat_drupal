@@ -42,7 +42,7 @@ function bat_event_requirements($phase) {
  */
 function bat_event_update_8001() {
   $events = db_select('event', 'e')
-    ->fields('e', array())
+    ->fields('e', [])
     ->condition('start', '', '<>')
     ->execute()
     ->fetchAll();
