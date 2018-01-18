@@ -6,6 +6,8 @@
  * the entity types.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_requirements().
  */
@@ -33,4 +35,38 @@ function bat_event_requirements($phase) {
       ],
     ];
   }
+}
+
+/**
+ * Migrate event's dates on the new field.
+ */
+function bat_event_update_8001() {
+  $events = db_select('event', 'e')
+    ->fields('e', array())
+    ->condition('start', '', '<>')
+    ->execute()
+    ->fetchAll();
+
+  foreach ($events as $event) {
+    $event_object = bat_event_load($event->id);
+
+    $start_date = new DateTime();
+    $start_date->setTimestamp($event->start);
+
+    $end_date = new DateTime();
+    $end_date->setTimestamp($event->end);
+
+    $event_object->setStartDate($start_date);
+    $event_object->setEndDate($end_date);
+
+    $event_object->save();
+  }
+}
+
+/**
+ * Drop old "start" and "end" columns on event table.
+ */
+function bat_event_update_8002() {
+  Database::getConnection()->schema()->dropField('event', 'start');
+  Database::getConnection()->schema()->dropField('event', 'end');
 }
