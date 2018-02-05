@@ -17,7 +17,7 @@ projects[bat_api][subdir] = bat
 
 projects[composer_manager][version] = 1.8
 
-projects[ctools][version] = 1.12
+projects[ctools][version] = 1.13
 
 projects[date][version] = 2.10
 
@@ -60,14 +60,14 @@ libraries[fullcalendar][directory_name] = fullcalendar
 libraries[fullcalendar][type] = library
 libraries[fullcalendar][destination] = libraries
 libraries[fullcalendar][download][type] = get
-libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v3.6.2/fullcalendar-3.6.2.zip
+libraries[fullcalendar][download][url] = https://github.com/arshaw/fullcalendar/releases/download/v3.8.2/fullcalendar-3.8.2.zip
 
 ; scheduler
 libraries[scheduler][directory_name] = fullcalendar-scheduler
 libraries[scheduler][type] = library
 libraries[scheduler][destination] = libraries
 libraries[scheduler][download][type] = get
-libraries[scheduler][download][url] = https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.8.1/fullcalendar-scheduler-1.8.1.zip
+libraries[scheduler][download][url] = https://github.com/fullcalendar/fullcalendar-scheduler/releases/download/v1.9.2/fullcalendar-scheduler-1.9.2.zip
 
 ; jquery.timepicker
 libraries[jquery.timepicker][directory_name] = jquery.timepicker
