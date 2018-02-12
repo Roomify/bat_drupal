@@ -93,7 +93,7 @@ class FeatureContext extends RawDrupalContext implements CustomSnippetAcceptingC
    * @AfterScenario
    */
   public function after(AfterScenarioScope $scope) {
-    foreach ($this->users as $user) {
+    foreach ($this->getUserManager()->getUsers() as $user) {
       $query2 = new EntityFieldQuery();
       $query2->entityCondition('entity_type', 'bat_event')
         ->propertyCondition('uid', $user->uid);
