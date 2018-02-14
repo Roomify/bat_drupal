@@ -1651,7 +1651,7 @@ function bat_event_state_reference_field_data_property_info($name = NULL) {
   return array(
     'state_id' => array(
       'label' => t('State ID'),
-      'type' => 'int',
+      'type' => 'integer',
       'getter callback' => 'entity_property_verbatim_get',
       'setter callback' => 'entity_property_verbatim_set',
     ),
