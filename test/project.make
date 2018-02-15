@@ -6,6 +6,12 @@ projects[drupal][version] = 8.4.4
 
 defaults[projects][subdir] = contrib
 
+; Pull fullcalendar_library
+projects[fullcalendar_library][type] = module
+projects[fullcalendar_library][download][type] = git
+projects[fullcalendar_library][download][url] = https://github.com/Roomify/fullcalendar_library.git
+projects[fullcalendar_library][download][branch] = 8.x-1.x
+
 ; Pull the latest version of bat_api
 projects[bat_api][type] = module
 projects[bat_api][download][type] = git

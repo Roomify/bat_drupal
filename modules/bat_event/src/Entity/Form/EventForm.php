@@ -91,24 +91,23 @@ class EventForm extends ContentEntityForm {
       $form['created']['#group'] = 'author';
     }
 
-    if ($entity->isNew()) {
-      $form['start']['widget'][0]['value']['#default_value'] = '';
-      $form['end']['widget'][0]['value']['#default_value'] = '';
-    }
-    else {
-      $form['end']['widget'][0]['value']['#default_value']->add(new \DateInterval('PT1M'));
-    }
-
-    unset($form['start']['widget'][0]['value']['#description']);
-    unset($form['end']['widget'][0]['value']['#description']);
-
     if ($event_type->getEventGranularity() == 'bat_daily') {
-      $form['start']['widget'][0]['value']['#date_time_element'] = 'none';
-      $form['end']['widget'][0]['value']['#date_time_element'] = 'none';
+      $form['event_dates']['widget'][0]['value']['#date_time_element'] = 'none';
+      $form['event_dates']['widget'][0]['end_value']['#date_time_element'] = 'none';
     }
     else {
-      $form['start']['widget'][0]['value']['#date_increment'] = 60;
-      $form['end']['widget'][0]['value']['#date_increment'] = 60;
+      $form['event_dates']['widget'][0]['value']['#date_increment'] = 60;
+      $form['event_dates']['widget'][0]['end_value']['#date_increment'] = 60;
+    }
+
+    $form['event_dates']['widget'][0]['value']['#date_timezone'] = 'UTC';
+    $form['event_dates']['widget'][0]['end_value']['#date_timezone'] = 'UTC';
+
+    if (isset($form['event_dates']['widget'][0]['value']['#default_value'])) {
+      $form['event_dates']['widget'][0]['value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
+    }
+    if (isset($form['event_dates']['widget'][0]['end_value']['#default_value'])) {
+      $form['event_dates']['widget'][0]['end_value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
     }
 
     if (\Drupal::request()->query->get(MainContentViewSubscriber::WRAPPER_FORMAT) == 'drupal_ajax') {
@@ -130,12 +129,12 @@ class EventForm extends ContentEntityForm {
 
     $values = $form_state->getValues();
 
-    $start_date = new \DateTime($values['start'][0]['value']->format('Y-m-d H:i:s'));
-    $end_date = new \DateTime($values['end'][0]['value']->format('Y-m-d H:i:s'));
+    $start_date = new \DateTime($values['event_dates'][0]['value']->format('Y-m-d H:i:s'));
+    $end_date = new \DateTime($values['event_dates'][0]['end_value']->format('Y-m-d H:i:s'));
 
     // The end date must be greater or equal than start date.
     if ($end_date < $start_date) {
-      $form_state->setErrorByName('end', t('End date must be on or after the start date.'));
+      $form_state->setErrorByName('event_dates', t('End date must be on or after the start date.'));
     }
 
     $event_type = bat_event_type_load($this->entity->bundle());
@@ -183,16 +182,13 @@ class EventForm extends ContentEntityForm {
     $event = $this->entity;
     $event_type = bat_event_type_load($event->bundle());
 
-    $end_date = $event->getEndDate();
     if ($event_type->getEventGranularity() == 'bat_daily') {
       $start_date = $event->getStartDate()->setTime(0, 0);
       $event->setStartDate($start_date);
 
-      $end_date->setTime(0, 0);
+      $end_date = $event->getEndDate()->setTime(0, 0);
+      $event->setEndDate($end_date);
     }
-
-    $end_date->sub(new \DateInterval('PT1M'));
-    $event->setEndDate($end_date);
 
     $status = $event->save();
 

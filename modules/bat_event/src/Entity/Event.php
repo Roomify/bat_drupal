@@ -145,30 +145,38 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function getStartDate() {
-    $date = new \DateTime();
-    return $date->setTimestamp($this->get('start')->value);
+    $date = new \DateTime($this->get('event_dates')->value);
+    return $date;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getEndDate() {
-    $date = new \DateTime();
-    return $date->setTimestamp($this->get('end')->value);
+    $date = new \DateTime($this->get('event_dates')->end_value);
+    return $date;
   }
 
   /**
    * {@inheritdoc}
    */
   public function setStartDate(\DateTime $date) {
-    $this->set('start', $date->getTimestamp());
+    $value = [
+      'value' => $date->format('Y-m-d\TH:i:00'),
+      'end_value' => $this->getEndDate()->format('Y-m-d\TH:i:00'),
+    ];
+    $this->set('event_dates', $value);
   }
 
   /**
    * {@inheritdoc}
    */
   public function setEndDate(\DateTime $date) {
-    $this->set('end', $date->getTimestamp());
+    $value = [
+      'value' => $this->getStartDate()->format('Y-m-d\TH:i:00'),
+      'end_value' => $date->format('Y-m-d\TH:i:00'),
+    ];
+    $this->set('event_dates', $value);
   }
 
   /**
@@ -203,7 +211,7 @@ class Event extends ContentEntityBase implements EventInterface {
 
           $this->batStoreSave($unit,
             $entity_original->getStartDate(),
-            $entity_original->getEndDate(),
+            $entity_original->getEndDate()->sub(new \DateInterval('PT1M')),
             $event_type->id(),
             $event_type->getEventGranularity(),
             $unit->getDefaultValue(),
@@ -250,7 +258,7 @@ class Event extends ContentEntityBase implements EventInterface {
 
         $this->batStoreSave($unit,
           $this->getStartDate(),
-          $this->getEndDate(),
+          $this->getEndDate()->sub(new \DateInterval('PT1M')),
           $event_type->id(),
           $event_type->getEventGranularity(),
           $event_value,
@@ -310,36 +318,6 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
-
-    $fields['start'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Start Date'))
-      ->setDescription(t('The time that this event starts.'))
-      ->setDisplayOptions('view', [
-        'label' => 'hidden',
-        'type' => 'timestamp',
-        'weight' => 0,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'datetime_timestamp',
-        'weight' => 0,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setRequired(TRUE);
-
-    $fields['end'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('End Date'))
-      ->setDescription(t('The time that this event ends.'))
-      ->setDisplayOptions('view', [
-        'label' => 'hidden',
-        'type' => 'timestamp',
-        'weight' => 1,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'datetime_timestamp',
-        'weight' => 1,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setRequired(TRUE);
 
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))

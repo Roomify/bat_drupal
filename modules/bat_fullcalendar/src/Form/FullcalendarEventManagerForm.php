@@ -149,12 +149,11 @@ class FullcalendarEventManagerForm extends FormBase {
     $event = bat_event_create(['type' => $event_type]);
     $event->uid = \Drupal::currentUser()->id();
 
-    $event->start = $start_date->getTimestamp();
-    // Always subtract one minute from the end time. FullCalendar provides
-    // start and end time with the assumption that the last minute is *excluded*
-    // while BAT deals with times assuming that the last minute is included.
-    $end_date->sub(new \DateInterval('PT1M'));
-    $event->end = $end_date->getTimestamp();
+    $event_dates = [
+      'value' => $start_date->format('Y-m-d\TH:i:00'),
+      'end_value' => $end_date->format('Y-m-d\TH:i:00'),
+    ];
+    $event->set('event_dates', $event_dates);
 
     $event_type_entity = bat_event_type_load($event_type);
     // Construct target entity reference field name using this event type's target entity type.
@@ -192,12 +191,11 @@ class FullcalendarEventManagerForm extends FormBase {
     $event = bat_event_create(['type' => $event_type]);
     $event->uid = \Drupal::currentUser()->id();
 
-    $event->start = $start_date->getTimestamp();
-    // Always subtract one minute from the end time. FullCalendar provides
-    // start and end time with the assumption that the last minute is *excluded*
-    // while BAT deals with times assuming that the last minute is included.
-    $end_date->sub(new \DateInterval('PT1M'));
-    $event->end = $end_date->getTimestamp();
+    $event_dates = [
+      'value' => $start_date->format('Y-m-d\TH:i:00'),
+      'end_value' => $end_date->format('Y-m-d\TH:i:00'),
+    ];
+    $event->set('event_dates', $event_dates);
 
     $event_type_entity = bat_event_type_load($event_type);
     // Construct target entity reference field name using this event type's target entity type.
