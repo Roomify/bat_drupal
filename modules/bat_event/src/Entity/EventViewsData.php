@@ -55,7 +55,7 @@ class EventViewsData extends EntityViewsData implements EntityViewsDataInterface
       'relationship' => [
         'title' => $this->t('Owner'),
         'help' => $this->t("Relate this event to its owner's user account"),
-        'id' => 'views_handler_relationship',
+        'id' => 'standard',
         'base' => 'users',
         'base field' => 'uid',
         'field' => 'uid',
