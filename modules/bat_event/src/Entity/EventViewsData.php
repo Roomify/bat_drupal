@@ -33,36 +33,6 @@ class EventViewsData extends EntityViewsData implements EntityViewsDataInterface
       'id' => 'bat_event_handler_event_type_field',
     ];
 
-    // Expose the uid as a relationship to users.
-    $data['event']['uid'] = [
-      'title' => $this->t('Uid'),
-      'help' => $this->t("The owner's user ID."),
-      'field' => [
-        'id' => 'views_handler_field_user',
-        'click sortable' => TRUE,
-      ],
-      'argument' => [
-        'id' => 'views_handler_argument_user_uid',
-        'name field' => 'name',
-      ],
-      'filter' => [
-        'title' => $this->t('Name'),
-        'id' => 'views_handler_filter_user_name',
-      ],
-      'sort' => [
-        'id' => 'views_handler_sort',
-      ],
-      'relationship' => [
-        'title' => $this->t('Owner'),
-        'help' => $this->t("Relate this event to its owner's user account"),
-        'id' => 'standard',
-        'base' => 'users',
-        'base field' => 'uid',
-        'field' => 'uid',
-        'label' => $this->t('Event owner'),
-      ],
-    ];
-
     $data['event']['duration'] = [
       'field' => [
         'title' => $this->t('Duration'),
