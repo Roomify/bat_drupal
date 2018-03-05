@@ -771,7 +771,7 @@ function bat_type_set_breadcrumb() {
     (drupal_valid_path('admin')) ? l(t('Administration'), 'admin') : '',
     (drupal_valid_path('admin/bat')) ? l(t('BAT'), 'admin/bat') : '',
     (drupal_valid_path('admin/bat/config')) ? l(t('Configuration'), 'admin/bat/config') : '',
-    (drupal_valid_path('admin/bat/config/type-types')) ? l(t('Types'), 'admin/bat/config/type-types') : '',
+    (drupal_valid_path('admin/bat/config/types')) ? l(t('Types'), 'admin/bat/config/types') : '',
   );
 
   drupal_set_breadcrumb(array_filter($breadcrumb));
