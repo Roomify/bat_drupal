@@ -85,7 +85,7 @@ class EventTypeForm extends BundleEntityFormBase {
       '#type' => 'select',
       '#title' => t('Event Granularity'),
       '#options' => ['bat_daily' => t('Daily'), 'bat_hourly' => t('Hourly')],
-      '#default_value' => isset($event_type->event_granularity) ? $event_type->event_granularity : 'bat_daily',
+      '#default_value' => !empty($event_type->getEventGranularity()) ? $event_type->getEventGranularity() : 'bat_daily',
     ];
 
     if ($event_type->isNew()) {
