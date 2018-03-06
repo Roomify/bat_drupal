@@ -97,7 +97,8 @@ class EventForm extends ContentEntityForm {
     }
     else {
       $widget_type = entity_get_form_display($entity->getEntityTypeId(), $entity->bundle(), $form_state->getStorage()['form_display']->getMode())
-                     ->getComponent('event_dates')['type'];
+        ->getComponent('event_dates')['type'];
+
       // Don't allow entering seconds with the default daterange widget.
       if ($widget_type == 'daterange_default') {
         $form['event_dates']['widget'][0]['value']['#date_increment'] = 60;
