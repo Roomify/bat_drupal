@@ -3,4 +3,5 @@ bat_calendar_reference:
   js:
     js/bat_calendar_reference.js: { }
   dependencies:
+    - fullcalendar_library/fullcalendar-scheduler
     - core/jquery
