@@ -23,7 +23,6 @@ class StateSelection extends DefaultSelection {
    */
   protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
     $config = $this->configuration;
-    \Drupal::logger('bat_event')->notice(print_r($config['handler_settings'],1));
     $query = parent::buildEntityQuery($match, $match_operator);
 
     // Limit states to those associated with the current bundle.

@@ -234,7 +234,7 @@ function bat_event_query_bat_event_access_alter(AlterableInterface $query) {
  *
  * Limit BAT state reference fields to valid states.
  */
-function bat_event_field_widget_form_alter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+function bat_event_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
   // See if this form is editing a BAT event.
   if ($entity = $form_state->getBuildInfo()['callback_object']->getEntity()) {
     if ($entity->getEntityTypeId() == 'bat_event') {
@@ -250,7 +250,7 @@ function bat_event_field_widget_form_alter(&$element, \Drupal\Core\Form\FormStat
         }
       }
       // Limit autocomplete options.
-      else if (isset($element['target_id']) && $element['target_id']['#type'] == 'entity_autocomplete' && $element['target_id']['#target_type'] == 'state') {
+      elseif (isset($element['target_id']) && $element['target_id']['#type'] == 'entity_autocomplete' && $element['target_id']['#target_type'] == 'state') {
         // Use our custom selection handler.
         $element['target_id']['#selection_handler'] = 'bat_event:state';
         // Pass the bundle id to the handler.
