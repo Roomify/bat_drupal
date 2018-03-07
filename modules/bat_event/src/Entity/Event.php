@@ -363,6 +363,11 @@ class Event extends ContentEntityBase implements EventInterface {
     $event_calendar->addEvents([$event_id_event], $granularity);
   }
 
+  /**
+   * Returns the event value
+   *
+   * @return int|FALSE
+   */
   public function getEventValue() {
     if ($field = $this->getEventValueField()) {
       $field_info = FieldStorageConfig::loadByName('bat_event', $field);
@@ -383,6 +388,31 @@ class Event extends ContentEntityBase implements EventInterface {
         return FALSE;
       }
     }
+  }
+
+  /**
+   * Returns the event label.
+   *
+   * @return string|FALSE
+   */
+  public function getEventLabel() {
+    $type_bundle = bat_event_type_load($this->bundle());
+
+    if (!empty($type_bundle->default_event_label_field_name)) {
+      $field_name = $type_bundle->default_event_label_field_name;
+      $field = $this->get($field_name);
+
+      if ($field->getFieldDefinition()->getType() == 'entity_reference') {
+        if ($entity = $field->entity) {
+          return $entity->label();
+        }
+      }
+      else {
+        return $field->value;
+      }
+    }
+
+    return FALSE;
   }
 
   /**
