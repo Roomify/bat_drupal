@@ -88,8 +88,8 @@ before_script:
   - jdk_switcher use oraclejdk8
 
   - mkdir -p $HOME/.cache
-  - wget -nc -O $HOME/.cache/selenium-server-standalone-3.7.1.jar http://selenium-release.storage.googleapis.com/3.7/selenium-server-standalone-3.7.1.jar || true
-  - java -jar $HOME/.cache/selenium-server-standalone-3.7.1.jar -port 4444 &> /tmp/selenium.log &
+  - wget -nc -O $HOME/.cache/selenium-server-standalone-3.10.0.jar http://selenium-release.storage.googleapis.com/3.10/selenium-server-standalone-3.10.0.jar || true
+  - java -jar $HOME/.cache/selenium-server-standalone-3.10.0.jar -port 4444 &> /tmp/selenium.log &
   - sleep 5
 
 script:
