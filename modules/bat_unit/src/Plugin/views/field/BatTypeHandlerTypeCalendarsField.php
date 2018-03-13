@@ -33,7 +33,10 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
     if (is_array($type_bundle->default_event_value_field_ids)) {
       foreach ($type_bundle->default_event_value_field_ids as $event_type => $field) {
         if (!empty($field)) {
-          $event_type_path = 'admin/bat/calendar/' . $type->id() . '/' . $event_type;
+          $event_type_path = Url::fromRoute('bat_event_ui.calendar', [
+            'unit_type' => $type->id(),
+            'event_type' => $event_type,
+          ])->toString();
 
           // Check if user has permission to access $event_type_path.
           if ($url_object = \Drupal::service('path.validator')->getUrlIfValid($event_type_path)) {
