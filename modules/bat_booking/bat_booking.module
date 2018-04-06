@@ -53,18 +53,22 @@ function bat_booking_type_create($values = []) {
 }
 
 /**
- * Menu argument loader; Load a booking type by string.
+ * Menu argument loader; Load a booking bundle by string.
  *
- * @param $type
- *   The machine-readable name of a booking type to load.
+ * @param $bundle
+ *   The machine-readable name of a booking bundle to load.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
  *
  * @return array|false
- *   A booking type array or FALSE if $type does not exist.
+ *   A booking bundle array or FALSE if $bundle does not exist.
  */
-function bat_booking_type_load($type, $reset = FALSE) {
-  return bat_booking_get_types($type, $reset);
+function bat_booking_type_load($bundle, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityTypeManager()->getStorage('bat_booking_bundle')->resetCache();
+  }
+
+  return BookingBundle::load($bundle);
 }
 
 /**
@@ -78,7 +82,7 @@ function bat_booking_type_load($type, $reset = FALSE) {
  * @return \Drupal\bat_booking\Entity\BookingBundle[]
  *   Depending whether $type isset, an array of booking types or a single one.
  */
-function bat_booking_get_types($type_name = NULL, $reset = FALSE) {
+function bat_booking_get_bundles($type_name = NULL, $reset = FALSE) {
   if ($reset) {
     \Drupal::entityTypeManager()->getStorage('bat_booking_bundle')->resetCache();
   }
