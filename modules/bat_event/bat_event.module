@@ -245,7 +245,7 @@ function bat_event_field_widget_form_alter(&$element, FormStateInterface $form_s
       $entity_type_bundle = $entity->bundle();
 
       // Limit options for select widgets.
-      if ($element['#key_column'] == 'target_id' && $element['#type'] == 'select') {
+      if (isset($element['#key_column']) && $element['#key_column'] == 'target_id' && $element['#type'] == 'select') {
         $valid_state_ids = array_keys(bat_event_get_states($entity_type_bundle));
         foreach ($element['#options'] as $key => $val) {
           if (!in_array($key, $valid_state_ids)) {
