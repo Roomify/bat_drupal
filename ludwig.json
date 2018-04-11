@@ -1,0 +1,8 @@
+{
+  "require": {
+    "roomify/bat": {
+      "version": "1.2.0",
+      "url": "https://github.com/Roomify/bat/archive/1.2.0.zip"
+    }
+  }
+}
