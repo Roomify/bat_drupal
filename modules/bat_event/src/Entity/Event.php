@@ -237,7 +237,7 @@ class Event extends ContentEntityBase implements EventInterface {
             $event_value = $values[0]['target_id'];
           }
           elseif ($field_info->getType() == 'commerce_price') {
-            $event_value = $values[0]['amount'];
+            $event_value = $values[0]['number'];
           }
           elseif ($field_info->getType() == 'text' || $field_info->getType() == 'string' || $field_info->getType() == 'number_integer') {
             $event_value = $values[0]['value'];
@@ -378,7 +378,7 @@ class Event extends ContentEntityBase implements EventInterface {
           return $values[0]['target_id'];
         }
         elseif ($field_info->getType() == 'commerce_price') {
-          return $values[0]['amount'];
+          return $values[0]['number'];
         }
         elseif ($field_info->getType() == 'text' || $field_info->getType() == 'string' || $field_info->getType() == 'number_integer') {
           return $values[0]['value'];

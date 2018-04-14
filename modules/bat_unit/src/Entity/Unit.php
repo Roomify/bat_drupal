@@ -288,24 +288,21 @@ class Unit extends ContentEntityBase implements UnitInterface {
 
     $field = $bat_type->getEventValueDefaultField($event_type);
     $field_info = FieldStorageConfig::loadByName('bat_unit_type', $field);
-    $field_info_instance = FieldConfig::loadByName('bat_unit_type', $bat_type->id(), $field);
+    $field_info_instance = FieldConfig::loadByName('bat_unit_type', $bat_type->bundle(), $field);
 
     $temp_bat_type = clone($bat_type);
 
     if ($field_info->getType() == 'commerce_price') {
-      if (empty($field_info_instance['widget']['settings']['currency_code']) ||
-          $field_info_instance['widget']['settings']['currency_code'] == 'default') {
-        $currency_code = NULL;
+      $currency_code = 'USD';
+
+      if ($default_value = $field_info_instance->get('default_value')) {
+        $currency_code = $default_value[0]['currency_code'];
       }
-      else {
-        $currency_code = $field_info_instance['widget']['settings']['currency_code'];
+      elseif ($available_currencies = $field_info_instance->getSetting('available_currencies')) {
+        $currency_code = reset($available_currencies);
       }
 
-      $currency_code = 'USD';
-      $price = [
-        'amount' => $value,
-        'currency_code' => $currency_code,
-      ];
+      $price = new Price($value, $currency_code);
 
       $temp_bat_type->set($field, $price);
 
