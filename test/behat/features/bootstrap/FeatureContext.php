@@ -93,13 +93,11 @@ class FeatureContext extends RawDrupalContext implements CustomSnippetAcceptingC
    * @AfterScenario
    */
   public function after(AfterScenarioScope $scope) {
-    foreach ($this->users as $user) {
-      $query2 = new EntityFieldQuery();
-      $query2->entityCondition('entity_type', 'bat_event')
-        ->propertyCondition('uid', $user->uid);
-      $result = $query2->execute();
-      if (isset($result['bat_event'])) {
-        $event_ids = array_keys($result['bat_event']);
+    foreach ($this->getUserManager()->getUsers() as $user) {
+      $query = \Drupal::entityQuery('bat_event');
+      $query->condition('uid', $user->uid);
+      $event_ids = $query->execute();
+      if ($event_ids) {
         bat_event_delete_multiple($event_ids);
       }
     }
@@ -209,12 +207,11 @@ class FeatureContext extends RawDrupalContext implements CustomSnippetAcceptingC
    * @throws RuntimeException
    */
   protected function findTypeByName($type_name) {
-    $efq = new EntityFieldQuery();
-    $efq->entityCondition('entity_type', 'bat_type')
-      ->propertyCondition('name', $type_name);
-    $results = $efq->execute();
-    if ($results && isset($results['bat_type'])) {
-      return key($results['bat_type']);
+    $query = \Drupal::entityQuery('bat_unit_type');
+    $query->condition('name', $type_name);
+    $results = $query->execute();
+    if ($results) {
+      return key($results);
     }
     else {
       throw new RuntimeException('Unable to find that type');
