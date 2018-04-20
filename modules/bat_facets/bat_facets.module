@@ -96,7 +96,7 @@ function bat_facets_search_api_query_alter(QueryInterface &$query) {
 
           // If no types are available, zero out results.
           if (empty($valid_type_ids)) {
-            $query->addCondition($info['entity keys']['id'], 1, '<');
+            $query->addCondition('id', 1, '<');
           }
           else {
             // Limit the search API query to entity ids with availability.
