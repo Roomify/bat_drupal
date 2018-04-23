@@ -54,7 +54,6 @@ function bat_facets_search_api_query_alter(QueryInterface &$query) {
           // First, we retrieve all types.
           $type_ids = bat_type_ids();
 
-          $units = [];
           foreach ($type_ids as $type_id => $name) {
             // Get the units of this type.
             $drupal_units = bat_unit_load_multiple(FALSE, ['unit_type_id' => $type_id]);
