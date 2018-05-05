@@ -49,10 +49,13 @@ function bat_facets_search_api_query_alter(QueryInterface &$query) {
 
           $valid_type_ids = [];
 
-          // We need to narrow the query to all Types with Units that have the
-          // requested state over the requested dates.
+          // We need to narrow the query to all unit types configured for this datasource
+          // with Units that have the requested state over the requested dates.
           // First, we retrieve all types.
-          $type_ids = bat_type_ids();
+          $type_ids = [];
+          foreach (array_keys($datasource->getBundles()) as $bundle) {
+            $type_ids += bat_type_ids($bundle);
+          }
 
           foreach ($type_ids as $type_id => $name) {
             // Get the units of this type.
