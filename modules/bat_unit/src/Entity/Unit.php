@@ -199,7 +199,7 @@ class Unit extends ContentEntityBase implements UnitInterface {
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', [
         'label' => 'hidden',
-        'type' => 'property',
+        'type' => 'entity_reference_label',
         'weight' => 0,
       ])
       ->setDisplayOptions('form', [
