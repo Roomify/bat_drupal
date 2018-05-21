@@ -1293,7 +1293,7 @@ class BatEventController extends EntityAPIController {
   /**
    * {@inheritdoc}
    */
-  public function save($entity) {
+  public function save($entity, DatabaseTransaction $transaction = NULL) {
     // Update start_date_object and end_date_object with the new dates.
     $entity->start_date_object = new DateTime($entity->start_date);
     $entity->end_date_object = new DateTime($entity->end_date);
@@ -1417,7 +1417,7 @@ class BatEventController extends EntityAPIController {
   /**
    * @param array $ids
    */
-  public function delete($ids) {
+  public function delete($ids, DatabaseTransaction $transaction = NULL) {
     foreach ($ids as $id) {
       $event = bat_event_load($id);
       $this->deleteEvent($event);
@@ -1502,7 +1502,7 @@ class BatEventTypeController extends EntityAPIControllerExportable {
   /**
    * @param object $entity
    */
-  public function save($entity) {
+  public function save($entity, DatabaseTransaction $transaction = NULL) {
     if (empty($entity->{$this->idKey})) {
       // Create all tables necessary for this Event Type.
       bat_event_create_event_type_schema($entity->type);
@@ -1523,7 +1523,7 @@ class BatEventTypeController extends EntityAPIControllerExportable {
   /**
    * @param array $ids
    */
-  public function delete($ids) {
+  public function delete($ids, DatabaseTransaction $transaction = NULL) {
     parent::delete($ids);
 
     foreach ($ids as $id) {

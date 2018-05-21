@@ -2032,7 +2032,7 @@ class BatTypeController extends EntityAPIController {
   /**
    * {@inheritdoc}
    */
-  public function save($entity) {
+  public function save($entity, DatabaseTransaction $transaction = NULL) {
     global $user;
 
     $entity->revision_uid = $user->uid;
