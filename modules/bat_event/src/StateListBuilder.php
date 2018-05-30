@@ -141,7 +141,7 @@ class StateListBuilder extends EntityListBuilder {
     $row['color'] = $entity->getColor();
     $row['calendar_label'] = $entity->getCalendarLabel();
     $row['blocking'] = ($entity->getBlocking()) ? t('Blocking') : t('Not blocking');
-    $row['event_type'] = $entity->getEventType()->label();
+    $row['event_type'] = ($event_type = $entity->getEventType()) ? $event_type->label() : '';
     return $row + parent::buildRow($entity);
   }
 

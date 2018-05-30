@@ -72,7 +72,7 @@ class StateForm extends ContentEntityForm {
       '#default_value' => $state->getBlocking(),
     ];
 
-    if (!$state->isNew()) {
+    if (!$state->isNew() && $this->entity->getEventType()) {
       $form['event_type']['#access'] = FALSE;
     }
 
