@@ -7,6 +7,7 @@
  */
 
 use Drupal\Core\Database\Database;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Implements hook_requirements().
@@ -69,4 +70,26 @@ function bat_event_update_8001() {
 function bat_event_update_8002() {
   Database::getConnection()->schema()->dropField('event', 'start');
   Database::getConnection()->schema()->dropField('event', 'end');
+}
+
+/**
+ * Set Event fields as required.
+ */
+function bat_event_update_8003() {
+  foreach (bat_event_get_types() as $event_type) {
+    $field_names = [
+      'event_dates',
+      'event_' . $event_type->target_entity_type . '_reference',
+    ];
+
+    if ($event_type->getFixedEventStates()) {
+      $field_names[] = 'event_state_reference';
+    }
+
+    foreach ($field_names as $field_name) {
+      $field = FieldConfig::loadByName('bat_event', $event_type->id(), $field_name);
+      $field->setRequired(TRUE);
+      $field->save();
+    }
+  }
 }

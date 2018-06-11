@@ -54,7 +54,7 @@ function bat_event_type_add_event_state_reference($entity) {
       'entity_type' => 'bat_event',
       'label' => 'State',
       'bundle' => $entity->id(),
-      'required' => FALSE,
+      'required' => TRUE,
       'settings' => [
         'handler' => 'default',
         'handler_settings' => [],
@@ -109,7 +109,7 @@ function bat_event_type_add_event_dates_field($entity) {
       'entity_type' => 'bat_event',
       'label' => 'Event Dates',
       'bundle' => $entity->id(),
-      'required' => FALSE,
+      'required' => TRUE,
       'settings' => [
         'datetime_type' => 'datetime',
       ],
@@ -165,7 +165,7 @@ function bat_event_type_add_target_entity_field($entity) {
       'entity_type' => 'bat_event',
       'label' => $entity_info->getLabel()->__toString(),
       'bundle' => $entity->id(),
-      'required' => FALSE,
+      'required' => TRUE,
       'settings' => [
         'handler' => 'default',
         'handler_settings' => [],
