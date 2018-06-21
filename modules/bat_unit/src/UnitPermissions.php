@@ -55,19 +55,19 @@ class UnitPermissions implements ContainerInjectionInterface {
     $permissions += bat_entity_access_permissions('bat_unit_type');
 
     foreach (bat_unit_get_bundles() as $bundle_name => $bundle_info) {
-      $permissions['view own unit entities of bundle ' . $bundle_name] = [
+      $permissions['view own bat_unit entities of bundle ' . $bundle_name] = [
         'title' => t('View own published %bundle @entity_bundle', ['@entity_bundle' => 'units', '%bundle' => $bundle_info->label()]),
       ];
-      $permissions['view any unit entity of bundle ' . $bundle_name] = [
+      $permissions['view any bat_unit entity of bundle ' . $bundle_name] = [
         'title' => t('View any published %bundle @entity_bundle', ['@entity_bundle' => 'unit', '%bundle' => $bundle_info->label()]),
       ];
     }
 
     foreach (bat_unit_get_type_bundles() as $bundle_name => $bundle_info) {
-      $permissions['view own unit_type entities of bundle ' . $bundle_name] = [
+      $permissions['view own bat_unit_type entities of bundle ' . $bundle_name] = [
         'title' => t('View own published %bundle @entity_bundle', ['@entity_bundle' => 'types', '%bundle' => $bundle_info->label()]),
       ];
-      $permissions['view any unit_type entity of bundle ' . $bundle_name] = [
+      $permissions['view any bat_unit_type entity of bundle ' . $bundle_name] = [
         'title' => t('View any published %bundle @entity_bundle', ['@entity_bundle' => 'type', '%bundle' => $bundle_info->label()]),
       ];
     }
