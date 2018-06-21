@@ -20,6 +20,8 @@ function bat_fullcalendar_bat_fullcalendar_modal_content($entity_id, $event_type
     $event = bat_event_load($event_id);
 
     $event_form = (new EventController())->editEvent($event);
+    $event_form['#attached']['library'][] = 'core/drupal.ajax';
+    $event_form['#attached']['library'][] = 'core/jquery.form';
     if (isset($event_form['#validated']) && $event_form['#validated']) {
       return [
         'bat_fullcalendar' => [
