@@ -57,6 +57,7 @@ function bat_facets_search_api_query_alter(QueryInterface &$query) {
             $type_ids += bat_type_ids($bundle);
           }
 
+          $available_unit_count = [];
           foreach ($type_ids as $type_id => $name) {
             // Get the units of this type.
             $drupal_units = bat_unit_load_multiple(FALSE, ['unit_type_id' => $type_id]);
@@ -82,6 +83,7 @@ function bat_facets_search_api_query_alter(QueryInterface &$query) {
               if (count($valid_unit_ids)) {
                 $valid_type_ids[] = $type_id;
               }
+              $available_unit_count[$type_id] = count($valid_unit_ids);
 
             }
           }
@@ -92,6 +94,7 @@ function bat_facets_search_api_query_alter(QueryInterface &$query) {
             'end_date' => $end_date,
             'event_type' => $event_type,
             'valid_states' => $valid_states,
+            'available_unit_count' => $available_unit_count,
           ];
 
           \Drupal::moduleHandler()->alter('bat_facets_search_results', $valid_type_ids, $context);
