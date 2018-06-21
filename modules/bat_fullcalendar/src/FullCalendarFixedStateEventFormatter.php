@@ -63,7 +63,7 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
           $calendar_label = $event_label;
         }
 
-        if (bat_event_access($bat_event, 'update', \Drupal::currentUser())) {
+        if (bat_event_access($bat_event, 'update', \Drupal::currentUser())->isAllowed()) {
           $editable = TRUE;
         }
       }

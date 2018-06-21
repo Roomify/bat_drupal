@@ -24,8 +24,7 @@ use Drupal\bat_booking\Entity\BookingBundle;
  * @param object $account
  *   The user to check for. Leave it to NULL to check for the global user.
  *
- * @return boolean
- *   Whether access is allowed or not.
+ * @return \Drupal\Core\Access\AccessResult
  */
 function bat_booking_access(EntityInterface $entity, $operation, AccountInterface $account) {
   return bat_entity_access($entity, $operation, $account);

@@ -169,8 +169,7 @@ function bat_unit_bat_event_target_entity_types() {
  * @param object $account
  *   The user to check for. Leave it to NULL to check for the global user.
  *
- * @return boolean
- *   Whether access is allowed or not.
+ * @return \Drupal\Core\Access\AccessResult
  */
 function bat_unit_access(EntityInterface $entity, $operation, AccountInterface $account) {
   return bat_entity_access($entity, $operation, $account);
@@ -188,7 +187,7 @@ function bat_unit_access_filter($operation, $units = [], $account = NULL) {
   }
 
   foreach ($units as $key => $unit) {
-    if (bat_unit_access($unit, $operation, $account)) {
+    if (bat_unit_access($unit, $operation, $account)->isAllowed()) {
       $filtered_units[$key] = $unit;
     }
   }

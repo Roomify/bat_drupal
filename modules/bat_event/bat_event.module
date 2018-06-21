@@ -201,8 +201,7 @@ function bat_event_type_add_target_entity_field($entity) {
  * @param object $account
  *   The user to check for. Leave it to NULL to check for the current user.
  *
- * @return bool
- *   Boolean indicating if the defined user has access to the event or not.
+ * @return \Drupal\Core\Access\AccessResult
  */
 function bat_event_access(EntityInterface $entity, $operation, AccountInterface $account) {
   return bat_entity_access($entity, $operation, $account);

@@ -238,7 +238,7 @@ function template_preprocess_bat_fullcalendar(&$variables) {
     }
   }
 
-  // Override default settings with ones coming form user.
+  // Override default settings with ones coming from the user.
   $settings = bat_fullcalendar_configure($variables['calendar_settings']['user_settings']);
 
   $settings['batCalendar'][0]['id'] = $attributes['id'];

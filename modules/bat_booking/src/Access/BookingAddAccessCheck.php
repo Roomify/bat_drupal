@@ -63,7 +63,7 @@ class BookingAddAccessCheck implements AccessInterface {
 
     $bundles = bat_booking_get_bundles();
     foreach ($bundles as $bundle) {
-      if (bat_booking_access(bat_booking_create(['type' => $bundle->id(), 'uid' => 0]), 'create', $account->getAccount())) {
+      if (bat_booking_access(bat_booking_create(['type' => $bundle->id(), 'uid' => 0]), 'create', $account->getAccount())->isAllowed()) {
         return AccessResult::allowed();
       }
     }

@@ -187,7 +187,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
           $bundle_name = $entity->bundle();
         }
 
-        // For the delete and delete operations, first perform the entity type and
+        // For the update and delete operations, first perform the entity type and
         // bundle-level access check for any entity.
         if ($account->hasPermission($operation . ' any ' . $entity_type . ' entity') ||
             $account->hasPermission($operation . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name)) {
