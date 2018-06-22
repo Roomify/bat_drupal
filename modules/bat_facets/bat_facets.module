@@ -76,7 +76,7 @@ function bat_facets_search_api_query_alter(QueryInterface &$query) {
                 $constraints[] = $constraint['constraint'];
               }
 
-              $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints, TRUE);
+              $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints);
               $valid_unit_ids = array_keys($response->getIncluded());
 
               // If there are available units, mark this type as valid.
