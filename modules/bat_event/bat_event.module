@@ -875,12 +875,13 @@ function bat_event_entity_bundle_delete($entity_type_id, $bundle) {
  * @param $type_id
  * @param $event_type
  * @param $intersect
+ * @param $drupal_units
  *
  * @return array|bool
  */
-function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE) {
+function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE, $drupal_units = array()) {
   // Instantiate a BAT Calendar.
-  $calendar = bat_event_get_calendar($type_id, $event_type);
+  $calendar = bat_event_get_calendar($type_id, $event_type, $drupal_units);
 
   return bat_event_get_matching_units_from_calendar($calendar, $start_date, $end_date, $valid_name_states, $intersect);
 }
@@ -894,14 +895,16 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
  *
  * @return \Roomify\Bat\Calendar\Calendar
  */
-function bat_event_get_calendar($type_id, $event_type) {
+function bat_event_get_calendar($type_id, $event_type, $drupal_units = array()) {
   $database = Database::getConnectionInfo('default');
 
   $prefix = (isset($database['default']['prefix']['default'])) ? $database['default']['prefix']['default'] : '';
 
   $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
 
-  $drupal_units = bat_unit_load_multiple(FALSE, ['unit_type_id' => $type_id]);
+  if (empty($drupal_units)) {
+    $drupal_units = bat_unit_load_multiple(FALSE, ['unit_type_id' => $type_id]);
+  }
   $bat_units = [];
 
   foreach ($drupal_units as $unit_id => $unit) {
