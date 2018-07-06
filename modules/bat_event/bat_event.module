@@ -879,7 +879,7 @@ function bat_event_entity_bundle_delete($entity_type_id, $bundle) {
  *
  * @return array|bool
  */
-function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE, $drupal_units = array()) {
+function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE, $drupal_units = []) {
   // Instantiate a BAT Calendar.
   $calendar = bat_event_get_calendar($type_id, $event_type, $drupal_units);
 
@@ -895,7 +895,7 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
  *
  * @return \Roomify\Bat\Calendar\Calendar
  */
-function bat_event_get_calendar($type_id, $event_type, $drupal_units = array()) {
+function bat_event_get_calendar($type_id, $event_type, $drupal_units = []) {
   $database = Database::getConnectionInfo('default');
 
   $prefix = (isset($database['default']['prefix']['default'])) ? $database['default']['prefix']['default'] : '';
