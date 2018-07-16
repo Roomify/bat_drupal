@@ -226,6 +226,25 @@ Drupal.behaviors.bat_event = {
             revertFunc();
           }
         },
+        eventRender: function(event, element) {
+          if (typeof element.qtip === 'function') {
+            if (event.qtip) {
+              element.qtip({
+                content: {
+                  title: event.qtip.title,
+                  text: event.qtip.text
+                },
+                style: {
+                  classes: event.qtip.style
+                },
+                position: {
+                  my: 'top center',
+                  at: 'bottom center'
+                }
+              });
+            }
+          }
+        },
         viewRender: function(view, element) {
           var calendar = $(element).parent().parent();
 

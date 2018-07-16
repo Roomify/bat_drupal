@@ -648,6 +648,10 @@ function bat_fullcalendar_set_js_files($user_js_files = array()) {
     $js_files = array(
       drupal_get_path('module', 'bat_fullcalendar') . '/js/bat_fullcalendar_timeline.js'
     );
+
+    if (module_exists('qtip_library')) {
+      libraries_load('qtip');
+    }
   }
 
   // Provide alter hook to change calendar js files.
