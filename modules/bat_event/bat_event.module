@@ -1391,9 +1391,7 @@ class BatEventController extends EntityAPIController {
    *   Set to TRUE if the event is to be removed (event_id set to zero).
    */
   public function batStoreSave(Unit $unit, \DateTime $start_date, \DateTime $end_date, $event_type, $granularity, $event_state, $event_id, $remove = FALSE) {
-    global $databases;
-
-    $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
+    $prefix = bat_get_db_prefix();
 
     $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
     $event_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_EVENT, $prefix);
@@ -2394,11 +2392,7 @@ function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, 
  * @return Roomify\Bat\Calendar\Calendar
  */
 function bat_event_get_calendar($type_id, $event_type) {
-  global $databases;
-
-  $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
-
-  $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
+  $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, bat_get_db_prefix());
 
   $drupal_units = bat_unit_load_multiple(FALSE, array('type_id' => $type_id));
   $bat_units = array();

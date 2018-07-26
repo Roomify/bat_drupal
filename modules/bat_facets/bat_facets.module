@@ -140,10 +140,6 @@ function bat_facets_availability_submit($form, &$form_state) {
  *   The search query being executed.
  */
 function bat_facets_search_api_query_alter($query) {
-  global $databases;
-
-  $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
-
   if ($query->getIndex()->getEntityType()) {
     $info = entity_get_info($query->getIndex()->getEntityType());
 
@@ -172,7 +168,7 @@ function bat_facets_search_api_query_alter($query) {
 
           $event_type = $settings->settings['event_type'];
 
-          $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, $prefix);
+          $state_store = new DrupalDBStore($event_type, DrupalDBStore::BAT_STATE, bat_get_db_prefix());
 
           $valid_states = $settings->settings['states'];
 
