@@ -740,3 +740,22 @@ function bat_date_load($date_string) {
 
   return $date;
 }
+
+/**
+ * Get the default database prefix.
+ */
+function bat_get_db_prefix() {
+  global $databases;
+
+  $prefix = '';
+  if (!empty($databases['default']['default']['prefix'])) {
+    if (is_array($databases['default']['default']['prefix'])) {
+      $prefix = $databases['default']['default']['prefix']['default'];
+    }
+    else {
+      $prefix = $databases['default']['default']['prefix'];
+    }
+  }
+
+  return $prefix;
+}

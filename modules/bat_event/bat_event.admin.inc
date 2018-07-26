@@ -434,11 +434,8 @@ function bat_event_edit_form_validate(&$form, &$form_state) {
   if ($event_type->fixed_event_states) {
     if ($form_state['values']['bat_start_date'] != '' && $form_state['values']['bat_end_date'] != '' &&
         $form_state['values'][$target_field_name][LANGUAGE_NONE][0]['target_id'] != '') {
-      global $databases;
 
-      $prefix = (isset($databases['default']['default']['prefix'])) ? $databases['default']['default']['prefix'] : '';
-
-      $event_store = new DrupalDBStore($event_type->type, DrupalDBStore::BAT_EVENT, $prefix);
+      $event_store = new DrupalDBStore($event_type->type, DrupalDBStore::BAT_EVENT, bat_get_db_prefix());
 
       $start_date = new DateTime($form_state['values']['bat_start_date']);
       $end_date = new DateTime($form_state['values']['bat_end_date']);
