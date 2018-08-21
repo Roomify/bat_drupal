@@ -23,21 +23,21 @@ class BatEventHandlerValueField extends FieldPluginBase {
   }
 
   public function render(ResultRow $values) {
-    $event = bat_event_load($this->get_value($values));
-    $event_type = bat_event_type_load($event->type);
+    $event = $this->getEntity($values);
+    $event_type = bat_event_type_load($event->bundle());
 
-    if ($event_type->fixed_event_states) {
-      $state = bat_event_load_state($event->event_state_reference['und'][0]['state_id']);
+    if ($event_type->getFixedEventStates()) {
+      $state = $event->get('event_state_reference')->entity;
 
-      return $state['label'];
+      return $state->label();
     }
     else {
-      $field_name = $event_type->default_event_value_field_ids[$event->type];
+      $field_name = $event_type->default_event_value_field_ids;
 
-      $value = $event->getTranslation('und')->get($field_name);
-      $field_view_value = field_view_value('bat_event', $event, $field_name, $value[0]);
+      $elements = $event->{$field_name}->view(['label' => 'hidden']);
+      $value = drupal_render($elements);
 
-      return $field_view_value['#markup'];
+      return $value;
     }
   }
 
