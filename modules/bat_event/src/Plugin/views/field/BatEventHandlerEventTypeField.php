@@ -21,8 +21,8 @@ class BatEventHandlerEventTypeField extends FieldPluginBase {
   }
 
   public function render(ResultRow $values) {
-    $event_type = bat_event_type_load($this->get_value($values));
-    return $event_type->label;
+    $event_type = bat_event_type_load($this->getValue($values));
+    return $event_type->label();
   }
 
 }
