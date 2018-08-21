@@ -372,7 +372,12 @@ function bat_unit_query_bat_unit_access_alter(QueryAlterableInterface $query) {
       break;
     }
   }
+}
 
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function bat_unit_query_bat_type_access_alter(QueryAlterableInterface $query) {
   // Look for an type base table to pass to the query altering function or else
   // assume we don't have the tables we need to establish order related altering
   // right now.
@@ -644,6 +649,38 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
   $conditions = db_and();
 
   if ($account->uid && user_access('view own bat_unit unpublished entities', $account)) {
+    $or = db_and()
+      ->condition($context['base_table'] . '.status', 0)
+      ->condition($context['base_table'] . '.uid', $account->uid);
+    $conditions->condition(db_or()
+      ->condition($or)
+      ->condition($context['base_table'] . '.status', 1)
+    );
+
+  }
+  else {
+    $conditions->condition($context['base_table'] . '.status', 1);
+  }
+
+  if ($old_conditions->count()) {
+    $conditions->condition($old_conditions);
+  }
+}
+
+/**
+ * Implements hook_bat_entity_access_OP_condition_ENTITY_TYPE_alter().
+ */
+function bat_unit_bat_entity_access_view_condition_bat_type_alter(&$conditions, $context) {
+  $account = $context['account'];
+
+  if (user_access('view any bat_type unpublished entity', $account)) {
+    return;
+  }
+
+  $old_conditions = $conditions;
+  $conditions = db_and();
+
+  if ($account->uid && user_access('view own bat_type unpublished entities', $account)) {
     $or = db_and()
       ->condition($context['base_table'] . '.status', 0)
       ->condition($context['base_table'] . '.uid', $account->uid);
