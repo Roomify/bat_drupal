@@ -418,14 +418,6 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   // always returns FALSE (1 = 0).
   $conditions = db_or();
 
-  // Perform bundle specific permission checks for the specified entity type.
-  // In the event that the user has permission to view every bundle of the given
-  // entity type, $really_restricted will remain FALSE, indicating that it is
-  // safe to exit this function without applying any additional conditions. If
-  // the user only had such permission for a subset of the defined bundles,
-  // conditions representing those access checks would still be added.
-  $really_restricted = FALSE;
-
   // Loop over every possible bundle for the given entity type.
   foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
     // If the user has access to operation entities of the current bundle...
