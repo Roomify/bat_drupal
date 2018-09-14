@@ -92,7 +92,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
 
   $entity_type = $entity->getEntityType()->id();
 
-  if (in_array($entity_type, ['bat_type_group', 'bat_unit', 'bat_unit_type', 'bat_event'])) {
+  if (in_array($entity_type, ['bat_type_group', 'bat_unit', 'bat_unit_type', 'bat_event', 'bat_booking'])) {
     $entity_info = \Drupal::entityTypeManager()->getDefinition($entity_type);
 
     // $entity may be either an object or a entity type. Since entity types cannot
