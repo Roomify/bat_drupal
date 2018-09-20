@@ -40,4 +40,4 @@ libraries[jquery.timepicker][directory_name] = jquery.timepicker
 libraries[jquery.timepicker][type] = library
 libraries[jquery.timepicker][destination] = libraries
 libraries[jquery.timepicker][download][type] = get
-libraries[jquery.timepicker][download][url] = https://www.fgelinas.com/code/timepicker/releases/jquery-ui-timepicker-0.3.3.zip
+libraries[jquery.timepicker][download][url] = https://github.com/fgelinas/timepicker/archive/24f88f08a9bbf80efd081e99874eea38cb79feba.zip
