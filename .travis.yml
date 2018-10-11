@@ -91,7 +91,7 @@ before_script:
 script:
   - cd $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
   # Check coding standards.
-  - phpcs --standard=Drupal --exclude=Drupal.Array.Array,Drupal.Commenting.FunctionComment,Drupal.Commenting.DocComment,Drupal.Commenting.FileComment,Drupal.NamingConventions.ValidFunctionName,Drupal.NamingConventions.ValidVariableName,Drupal.InfoFiles.AutoAddedKeys,Drupal.InfoFiles.ClassFiles --report-width=74 --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml --ignore=test $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
+  - phpcs --standard=Drupal --exclude=Drupal.Arrays.Array,Drupal.Commenting.FunctionComment,Drupal.Commenting.DocComment,Drupal.Commenting.FileComment,Drupal.NamingConventions.ValidFunctionName,Drupal.NamingConventions.ValidVariableName,Drupal.InfoFiles.AutoAddedKeys,Drupal.InfoFiles.ClassFiles --report-width=74 --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml --ignore=test $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
 
   - cd $TRAVIS_BUILD_DIR/bat/test/behat
   # behat.yml includes behat.local.yml so it must exist
