@@ -5,5 +5,5 @@ core: 8.x
 package: bat
 
 dependencies:
-  - bat_booking
-  - bat_facets
+  - bat:bat_booking
+  - bat:bat_facets

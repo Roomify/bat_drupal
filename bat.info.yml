@@ -1,5 +1,5 @@
 name: Booking and Availability Management
 type: module
-description: A generalized Booking and Availability Management Framework
+description: A generalized Booking and Availability Management Framework.
 core: 8.x
 package: bat

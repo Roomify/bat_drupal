@@ -6,5 +6,5 @@ package: bat
 
 dependencies:
   - bat_api
-  - bat_event
-  - fullcalendar_library
+  - bat:bat_event
+  - fullcalendar_library:fullcalendar_library

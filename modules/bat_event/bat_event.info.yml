@@ -5,5 +5,5 @@ core: 8.x
 package: bat
 
 dependencies:
-  - bat_unit
-  - datetime_range
+  - bat:bat_unit
+  - drupal:datetime_range

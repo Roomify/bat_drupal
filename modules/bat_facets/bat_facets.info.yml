@@ -5,6 +5,6 @@ core: 8.x
 package: bat
 
 dependencies:
-  - bat_event
-  - search_api
-  - facets
+  - bat:bat_event
+  - search_api:search_api
+  - facets:facets
