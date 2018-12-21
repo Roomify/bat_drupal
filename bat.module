@@ -361,7 +361,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
       // Add an AND condition group that grants access if the entity specified
       // by the view query matches the same bundle and belongs to the user.
       $c_and = new Condition('AND');
-      $conditions->condition(c_and()
+      $conditions->condition($c_and
         ->condition($base_table . '.' . $entity_info->getKey('bundle'), $bundle_name)
         ->condition($base_table . '.' . $entity_info->getKey('uid'), $account->id())
       );
