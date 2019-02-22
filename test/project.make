@@ -2,7 +2,7 @@
 
 api = 2
 core = 8.x
-projects[drupal][version] = 8.6.1
+projects[drupal][version] = 8.6.10
 
 defaults[projects][subdir] = contrib
 
@@ -22,6 +22,7 @@ projects[bat_api][subdir] = bat
 ; +++++ Contrib Modules +++++
 
 projects[services][version] = 4.0-beta4
+projects[services][patch][] = https://www.drupal.org/files/issues/2019-02-13/3031777-10-error-call-to-a-member-function-getdefinitions-on-null-when-clear-cache.patch
 
 ; +++++ Libraries +++++
 
