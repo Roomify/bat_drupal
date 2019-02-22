@@ -13,6 +13,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\bat_event\StateInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Defines the State entity.
@@ -83,6 +84,27 @@ class State extends ContentEntityBase implements StateInterface {
   /**
    * {@inheritdoc}
    */
+  public function getCreatedTime() {
+    return $this->get('created')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwner() {
+    return $this->get('uid')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwnerId() {
+    return $this->get('uid')->target_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getMachineName() {
     return $this->get('machine_name')->value;
   }
@@ -113,6 +135,46 @@ class State extends ContentEntityBase implements StateInterface {
    */
   public function getEventType() {
     return $this->get('event_type')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwnerId($uid) {
+    $this->set('uid', $uid);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwner(UserInterface $account) {
+    $this->set('uid', $account->id());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setColor($color) {
+    $this->set('color', $color);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCalendarLabel($calendar_label) {
+    $this->set('calendar_label', $calendar_label);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlocking($blocking) {
+    $this->set('blocking', $blocking);
+    return $this;
   }
 
   /**
