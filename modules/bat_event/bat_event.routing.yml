@@ -109,7 +109,7 @@ entity.bat_event.edit_form:
     _entity_form: 'bat_event.edit'
     _title: 'Edit Event'
   requirements:
-    _permission: 'edit event entities'
+    _entity_access: 'bat_event.update'
   options:
     _admin_route: TRUE
 
@@ -119,7 +119,7 @@ entity.bat_event.delete_form:
     _entity_form: 'bat_event.delete'
     _title: 'Delete Event'
   requirements:
-    _permission: 'delete event entities'
+    _entity_access: 'bat_event.delete'
   options:
     _admin_route: TRUE
 
