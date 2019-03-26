@@ -295,10 +295,11 @@ class Unit extends ContentEntityBase implements UnitInterface {
     if ($field_info->getType() == 'commerce_price') {
       $currency_code = 'USD';
 
-      if ($default_value = $field_info_instance->get('default_value')) {
+      if ($default_value = $field_info_instance->get('default_value') && !empty($default_value)) {
         $currency_code = $default_value[0]['currency_code'];
       }
       elseif ($available_currencies = $field_info_instance->getSetting('available_currencies')) {
+        $available_currencies = array_filter($available_currencies);
         $currency_code = reset($available_currencies);
       }
 
