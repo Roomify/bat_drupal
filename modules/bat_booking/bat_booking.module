@@ -34,7 +34,7 @@ function bat_booking_access(EntityInterface $entity, $operation, AccountInterfac
  * Access callback for the entity API.
  */
 function bat_booking_type_access($op, $unit = NULL, $account = NULL) {
-  return user_access('administer bat_booking_type entities', $account);
+  return user_access('administer bat_booking_bundle entities', $account);
 }
 
 /**

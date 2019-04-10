@@ -1,4 +1,4 @@
-administer bat_booking_type entities:
+administer bat_booking_bundle entities:
   title: 'Administer booking types'
   description: 'Allows users to add booking types and configure their fields.'
 
