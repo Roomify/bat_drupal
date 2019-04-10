@@ -141,8 +141,7 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
       ->setDescription(t('The user ID of author of the Unit type entity.'))
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
-      ->setTranslatable(TRUE)
+      ->setDefaultValueCallback(static::class . '::getCurrentUserId')
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'author',
@@ -281,6 +280,18 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
     }
 
     return FALSE;
+  }
+
+  /**
+   * Default value callback for 'uid' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return array
+   *   An array of default values.
+   */
+  public static function getCurrentUserId() {
+    return [\Drupal::currentUser()->id()];
   }
 
 }

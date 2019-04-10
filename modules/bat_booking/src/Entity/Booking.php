@@ -120,8 +120,7 @@ class Booking extends ContentEntityBase implements BookingInterface {
       ->setDescription(t('The user ID of author of the Booking entity.'))
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
-      ->setTranslatable(TRUE)
+      ->setDefaultValueCallback(static::class . '::getCurrentUserId')
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'author',
@@ -189,6 +188,18 @@ class Booking extends ContentEntityBase implements BookingInterface {
     }
 
     parent::save();
+  }
+
+  /**
+   * Default value callback for 'uid' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return array
+   *   An array of default values.
+   */
+  public static function getCurrentUserId() {
+    return [\Drupal::currentUser()->id()];
   }
 
 }

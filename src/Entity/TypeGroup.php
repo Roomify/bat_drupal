@@ -138,8 +138,7 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
       ->setDescription(t('The user ID of author of the Type Group entity.'))
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
-      ->setTranslatable(TRUE)
+      ->setDefaultValueCallback(static::class . '::getCurrentUserId')
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'author',
@@ -206,6 +205,18 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
       ->setDefaultValue(TRUE);
 
     return $fields;
+  }
+
+  /**
+   * Default value callback for 'uid' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return array
+   *   An array of default values.
+   */
+  public static function getCurrentUserId() {
+    return [\Drupal::currentUser()->id()];
   }
 
 }

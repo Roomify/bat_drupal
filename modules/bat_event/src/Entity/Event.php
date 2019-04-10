@@ -287,8 +287,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDescription(t('The user ID of author of the Event entity.'))
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
-      ->setTranslatable(TRUE)
+      ->setDefaultValueCallback(static::class . '::getCurrentUserId')
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'author',
@@ -449,6 +448,18 @@ class Event extends ContentEntityBase implements EventInterface {
     }
 
     return FALSE;
+  }
+
+  /**
+   * Default value callback for 'uid' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return array
+   *   An array of default values.
+   */
+  public static function getCurrentUserId() {
+    return [\Drupal::currentUser()->id()];
   }
 
 }
