@@ -195,7 +195,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
           return AccessResult::allowed();
         }
 
-        // Then check an authenticated user's access to delete his own entities.
+        // Then check an authenticated user's access to delete own entities.
         if ($account->id() && $entity->getOwnerId() && $entity->getOwnerId() === $account->id()) {
           if ($account->hasPermission($operation . ' own ' . $entity_type . ' entities') ||
               $account->hasPermission($operation . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
