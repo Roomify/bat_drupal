@@ -877,7 +877,7 @@ function bat_event_entity_bundle_delete($entity_type_id, $bundle) {
  * @param $intersect
  * @param $drupal_units
  *
- * @return array|bool
+ * @return array
  */
 function bat_event_get_matching_units(DateTime $start_date, DateTime $end_date, $valid_name_states, $type_id, $event_type, $intersect = FALSE, $drupal_units = []) {
   // Instantiate a BAT Calendar.
@@ -928,7 +928,7 @@ function bat_event_get_calendar($type_id, $event_type, $drupal_units = []) {
  * @param $intersect
  * @param $reset
  *
- * @return array|bool
+ * @return array
  */
 function bat_event_get_matching_units_from_calendar($calendar, DateTime $start_date, DateTime $end_date, $valid_name_states, $intersect = FALSE, $reset = TRUE) {
   $valid_states = [];
@@ -950,7 +950,7 @@ function bat_event_get_matching_units_from_calendar($calendar, DateTime $start_d
     return $valid_unit_ids;
   }
 
-  return FALSE;
+  return [];
 }
 
 /**
