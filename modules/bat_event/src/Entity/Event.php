@@ -271,6 +271,41 @@ class Event extends ContentEntityBase implements EventInterface {
   /**
    * {@inheritdoc}
    */
+  public function delete() {
+    $event_type = bat_event_type_load($this->bundle());
+
+    // Construct target entity reference field name using this event type's target entity type.
+    $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+
+    // Check if the event had a unit associated with it and if so update the
+    // availability calendar.
+    if ($this->getTranslation('und')->get($target_field_name) !== FALSE) {
+      $event_target_entity_reference = $this->getTranslation('und')->get($target_field_name);
+
+      $target_entity_id = $event_target_entity_reference->referencedEntities()[0]->id();
+
+      // Load the referenced entity.
+      if ($target_entity = entity_load($event_type->target_entity_type, $target_entity_id)) {
+        $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
+
+        $this->batStoreSave($unit,
+          $this->getStartDate(),
+          $this->getEndDate()->sub(new \DateInterval('PT1M')),
+          $event_type->id(),
+          $event_type->getEventGranularity(),
+          $unit->getDefaultValue(),
+          $this->get('id')->value,
+          TRUE
+        );
+      }
+    }
+
+    parent::delete();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
