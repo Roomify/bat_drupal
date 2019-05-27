@@ -257,7 +257,7 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
    */
   public function getEventValueFormatter($event_type) {
     if ($field = $this->getEventValueDefaultField($event_type)) {
-      $field_info_instance = FieldConfig::loadByName('bat_unit_type', $this->type, $field);
+      $field_info_instance = FieldConfig::loadByName('bat_unit_type', $this->bundle(), $field);
 
       if (isset($field_info_instance['display']['default']['type'])) {
         return $field_info_instance['display']['default']['type'];

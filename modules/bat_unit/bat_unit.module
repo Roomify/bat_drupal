@@ -256,7 +256,7 @@ function bat_unit_bundles_ids() {
 
   $bundles = bat_unit_get_bundles();
   foreach ($bundles as $bundle) {
-    $unit_bundles[$bundle->type] = $bundle->label;
+    $unit_bundles[$bundle->bundle()] = $bundle->label();
   }
 
   return $unit_bundles;
@@ -519,7 +519,7 @@ function bat_type_access_filter($operation, $types = [], $account = NULL) {
   }
 
   foreach ($types as $key => $type) {
-    if (bat_type_access($type, $op, $account)) {
+    if (bat_type_access($type, $operation, $account)) {
       $filtered_types[$key] = $type;
     }
   }
