@@ -211,8 +211,10 @@ class EventTypeForm extends BundleEntityFormBase {
     $type->set('type', trim($type->id()));
     $type->set('name', trim($type->label()));
 
-    $type->set('default_event_label_field_name', $form_state->getValues()['event_label']['default_event_label_field_name']);
-    $type->set('default_event_value_field_ids', $form_state->getValues()['events'][$type->id()]);
+    if (!$type->isNew()) {
+      $type->set('default_event_label_field_name', $form_state->getValues()['event_label']['default_event_label_field_name']);
+      $type->set('default_event_value_field_ids', $form_state->getValues()['events'][$type->id()]);
+    }
 
     $status = $type->save();
 
