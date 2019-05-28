@@ -10,7 +10,6 @@ namespace Drupal\bat_event\Entity\Form;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Language\Language;
 use Drupal\Core\Database\Database;
 use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Store\DrupalDBStore;
@@ -35,13 +34,6 @@ class EventForm extends ContentEntityForm {
     $form['changed'] = [
       '#type' => 'hidden',
       '#default_value' => $entity->getChangedTime(),
-    ];
-
-    $form['langcode'] = [
-      '#title' => $this->t('Language'),
-      '#type' => 'language_select',
-      '#default_value' => $entity->getUntranslated()->language()->getId(),
-      '#languages' => Language::STATE_ALL,
     ];
 
     $form['#theme'] = ['bat_entity_edit_form'];

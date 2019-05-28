@@ -9,7 +9,6 @@ namespace Drupal\bat_booking\Entity\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Language\Language;
 use Drupal\bat_booking\BookingInterface;
 
 /**
@@ -30,13 +29,6 @@ class BookingForm extends ContentEntityForm {
     $form['changed'] = [
       '#type' => 'hidden',
       '#default_value' => $entity->getChangedTime(),
-    ];
-
-    $form['langcode'] = [
-      '#title' => $this->t('Language'),
-      '#type' => 'language_select',
-      '#default_value' => $entity->getUntranslated()->language()->getId(),
-      '#languages' => Language::STATE_ALL,
     ];
 
     $form['#theme'] = ['bat_entity_edit_form'];

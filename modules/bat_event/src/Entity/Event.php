@@ -50,6 +50,7 @@ use Roomify\Bat\Event\Event as BatEvent;
  *     "bundle" = "type",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "langcode" = "langcode",
  *   },
  *   bundle_entity_type = "bat_event_type",
  *   field_ui_base_route = "entity.bat_event_type.edit_form",
@@ -183,6 +184,7 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function save() {
+    $langcode = $this->defaultLangcode;
     $event_type = bat_event_type_load($this->bundle());
 
     // Construct target entity reference field name using this event type's target entity type.
@@ -195,10 +197,10 @@ class Event extends ContentEntityBase implements EventInterface {
 
       if (($entity_original->getStartDate() != '') &&
         ($entity_original->getEndDate() != '') &&
-        ($entity_original->getTranslation('und')->get($target_field_name) !== FALSE)) {
+        ($entity_original->getTranslation($langcode)->get($target_field_name) !== FALSE)) {
 
         // Get the referenced entity ID.
-        $event_target_entity_reference = $entity_original->getTranslation('und')->get($target_field_name)->getValue();
+        $event_target_entity_reference = $entity_original->getTranslation($langcode)->get($target_field_name)->getValue();
 
         $target_entity_id = 0;
         if (isset($event_target_entity_reference[0]['target_id'])) {
@@ -225,12 +227,12 @@ class Event extends ContentEntityBase implements EventInterface {
     parent::save();
 
     // Now we store the new event.
-    if ($this->getTranslation('und')->get($target_field_name) !== FALSE) {
+    if ($this->getTranslation($langcode)->get($target_field_name) !== FALSE) {
 
       if (isset($event_type->default_event_value_field_ids)) {
         $field = $event_type->default_event_value_field_ids;
         $field_info = FieldStorageConfig::loadByName('bat_event', $field);
-        $values = $this->getTranslation('und')->get($field)->getValue();
+        $values = $this->getTranslation($langcode)->get($field)->getValue();
 
         if (!empty($values)) {
           if ($field_info->getType() == 'entity_reference') {
@@ -245,11 +247,11 @@ class Event extends ContentEntityBase implements EventInterface {
         }
       }
       else {
-        $event_state_reference = $this->getTranslation('und')->get('event_state_reference')->getValue();
+        $event_state_reference = $this->getTranslation($langcode)->get('event_state_reference')->getValue();
         $event_value = $event_state_reference[0]['target_id'];
       }
 
-      $event_target_entity_reference = $this->getTranslation('und')->get($target_field_name);
+      $event_target_entity_reference = $this->getTranslation($langcode)->get($target_field_name);
 
       $target_entity_id = $event_target_entity_reference->referencedEntities()[0]->id();
 
@@ -272,6 +274,7 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public function delete() {
+    $langcode = $this->defaultLangcode;
     $event_type = bat_event_type_load($this->bundle());
 
     // Construct target entity reference field name using this event type's target entity type.
@@ -279,8 +282,8 @@ class Event extends ContentEntityBase implements EventInterface {
 
     // Check if the event had a unit associated with it and if so update the
     // availability calendar.
-    if ($this->getTranslation('und')->get($target_field_name) !== FALSE) {
-      $event_target_entity_reference = $this->getTranslation('und')->get($target_field_name);
+    if ($this->getTranslation($langcode)->get($target_field_name) !== FALSE) {
+      $event_target_entity_reference = $this->getTranslation($langcode)->get($target_field_name);
 
       $target_entity_id = $event_target_entity_reference->referencedEntities()[0]->id();
 
@@ -307,6 +310,8 @@ class Event extends ContentEntityBase implements EventInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    $fields = parent::baseFieldDefinitions($entity_type);
+
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Event entity.'))
@@ -340,10 +345,6 @@ class Event extends ContentEntityBase implements EventInterface {
       ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Event entity.'));
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
@@ -403,9 +404,11 @@ class Event extends ContentEntityBase implements EventInterface {
    * @return int|FALSE
    */
   public function getEventValue() {
+    $langcode = $this->defaultLangcode;
+
     if ($field = $this->getEventValueField()) {
       $field_info = FieldStorageConfig::loadByName('bat_event', $field);
-      $values = $this->getTranslation('und')->get($field)->getValue();
+      $values = $this->getTranslation($langcode)->get($field)->getValue();
 
       if (!empty($values)) {
         if ($field_info->getType() == 'entity_reference') {

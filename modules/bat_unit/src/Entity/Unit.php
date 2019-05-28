@@ -47,6 +47,7 @@ use Drupal\commerce_price\Price;
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "langcode" = "langcode",
  *   },
  *   bundle_entity_type = "bat_unit_bundle",
  *   field_ui_base_route = "entity.bat_unit_bundle.edit_form",
@@ -157,6 +158,8 @@ class Unit extends ContentEntityBase implements UnitInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    $fields = parent::baseFieldDefinitions($entity_type);
+
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Unit entity.'))
@@ -235,10 +238,6 @@ class Unit extends ContentEntityBase implements UnitInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE)
       ->setRequired(TRUE);
-
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Unit entity.'));
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Authored on'))

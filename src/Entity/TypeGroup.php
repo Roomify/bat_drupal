@@ -43,6 +43,7 @@ use Drupal\user\UserInterface;
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "langcode" = "langcode",
  *   },
  *   bundle_entity_type = "bat_type_group_bundle",
  *   field_ui_base_route = "entity.bat_type_group_bundle.edit_form",
@@ -123,6 +124,8 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    $fields = parent::baseFieldDefinitions($entity_type);
+
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Type Group entity.'))
@@ -177,10 +180,6 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE)
       ->setRequired(TRUE);
-
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Property entity.'));
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Authored on'))

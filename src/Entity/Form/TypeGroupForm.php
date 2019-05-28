@@ -32,13 +32,6 @@ class TypeGroupForm extends ContentEntityForm {
       '#default_value' => $entity->getChangedTime(),
     ];
 
-    $form['langcode'] = [
-      '#title' => $this->t('Language'),
-      '#type' => 'language_select',
-      '#default_value' => $entity->getUntranslated()->language()->getId(),
-      '#languages' => Language::STATE_ALL,
-    ];
-
     $form['#theme'] = ['bat_entity_edit_form'];
     $form['#attached']['library'][] = 'bat/bat_ui';
 

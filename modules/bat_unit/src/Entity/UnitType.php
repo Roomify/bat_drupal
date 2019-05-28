@@ -46,6 +46,7 @@ use Drupal\field\Entity\FieldStorageConfig;
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "langcode" = "langcode",
  *   },
  *   bundle_entity_type = "bat_type_bundle",
  *   field_ui_base_route = "entity.bat_type_bundle.edit_form",
@@ -126,6 +127,8 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    $fields = parent::baseFieldDefinitions($entity_type);
+
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Unit type entity.'))
@@ -181,10 +184,6 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
       ->setDisplayConfigurable('view', TRUE)
       ->setRequired(TRUE);
 
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Unit type entity.'));
-
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Authored on'))
       ->setDescription(t('The time that the entity was created.'))
@@ -229,9 +228,11 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
    * @param $event_type
    */
   public function getEventDefaultValue($event_type) {
+    $langcode = $this->defaultLangcode;
+
     if ($field = $this->getEventValueDefaultField($event_type)) {
       $field_info = FieldStorageConfig::loadByName('bat_unit_type', $field);
-      $values = $this->getTranslation('und')->get($field)->getValue();
+      $values = $this->getTranslation($langcode)->get($field)->getValue();
 
       if (!empty($values)) {
         if ($field_info->getType() == 'entity_reference') {

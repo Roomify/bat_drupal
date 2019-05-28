@@ -9,7 +9,6 @@ namespace Drupal\bat_unit\Entity\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Language\Language;
 use Drupal\bat_unit\UnitInterface;
 
 /**
@@ -30,13 +29,6 @@ class UnitForm extends ContentEntityForm {
     $form['changed'] = [
       '#type' => 'hidden',
       '#default_value' => $entity->getChangedTime(),
-    ];
-
-    $form['langcode'] = [
-      '#title' => $this->t('Language'),
-      '#type' => 'language_select',
-      '#default_value' => $entity->getUntranslated()->language()->getId(),
-      '#languages' => Language::STATE_ALL,
     ];
 
     $form['#theme'] = ['bat_entity_edit_form'];
