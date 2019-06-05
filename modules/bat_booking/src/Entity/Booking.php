@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\UserInterface;
 use Drupal\bat_booking\BookingInterface;
+use Drupal\user\EntityOwnerTrait;
 
 /**
  * Defines the Booking entity.
@@ -42,6 +43,7 @@ use Drupal\bat_booking\BookingInterface;
  *     "label" = "label",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "owner" = "uid",
  *   },
  *   bundle_entity_type = "bat_booking_bundle",
  *   field_ui_base_route = "entity.bat_booking_bundle.edit_form",
@@ -54,7 +56,7 @@ use Drupal\bat_booking\BookingInterface;
  * )
  */
 class Booking extends ContentEntityBase implements BookingInterface {
-  use EntityChangedTrait;
+  use EntityChangedTrait, EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
@@ -106,6 +108,7 @@ class Booking extends ContentEntityBase implements BookingInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
 
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))

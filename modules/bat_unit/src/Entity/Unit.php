@@ -18,6 +18,7 @@ use Drupal\bat_unit\UnitInterface;
 use Drupal\bat_unit\UnitTypeInterface;
 use Drupal\user\UserInterface;
 use Drupal\commerce_price\Price;
+use Drupal\user\EntityOwnerTrait;
 
 /**
  * Defines the Unit entity.
@@ -47,6 +48,7 @@ use Drupal\commerce_price\Price;
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "owner" = "uid",
  *     "langcode" = "langcode",
  *   },
  *   bundle_entity_type = "bat_unit_bundle",
@@ -60,7 +62,7 @@ use Drupal\commerce_price\Price;
  * )
  */
 class Unit extends ContentEntityBase implements UnitInterface {
-  use EntityChangedTrait;
+  use EntityChangedTrait, EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
@@ -159,6 +161,7 @@ class Unit extends ContentEntityBase implements UnitInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
 
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))

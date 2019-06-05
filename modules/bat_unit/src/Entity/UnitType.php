@@ -16,6 +16,7 @@ use Drupal\bat_unit\UnitTypeInterface;
 use Drupal\user\UserInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\user\EntityOwnerTrait;
 
 /**
  * Defines the Unit type entity.
@@ -46,6 +47,7 @@ use Drupal\field\Entity\FieldStorageConfig;
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "owner" = "uid",
  *     "langcode" = "langcode",
  *   },
  *   bundle_entity_type = "bat_type_bundle",
@@ -59,7 +61,7 @@ use Drupal\field\Entity\FieldStorageConfig;
  * )
  */
 class UnitType extends ContentEntityBase implements UnitTypeInterface {
-  use EntityChangedTrait;
+  use EntityChangedTrait, EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
@@ -128,6 +130,7 @@ class UnitType extends ContentEntityBase implements UnitTypeInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
 
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))

@@ -14,6 +14,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\bat_event\StateInterface;
 use Drupal\user\UserInterface;
+use Drupal\user\EntityOwnerTrait;
 
 /**
  * Defines the State entity.
@@ -41,6 +42,7 @@ use Drupal\user\UserInterface;
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "owner" = "uid",
  *     "langcode" = "langcode",
  *   },
  *   links = {
@@ -51,7 +53,7 @@ use Drupal\user\UserInterface;
  * )
  */
 class State extends ContentEntityBase implements StateInterface {
-  use EntityChangedTrait;
+  use EntityChangedTrait, EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
@@ -183,6 +185,7 @@ class State extends ContentEntityBase implements StateInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
 
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))

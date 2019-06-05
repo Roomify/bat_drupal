@@ -14,6 +14,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\bat\TypeGroupInterface;
 use Drupal\user\UserInterface;
+use Drupal\user\EntityOwnerTrait;
 
 /**
  * Defines the Type Group entity.
@@ -43,6 +44,7 @@ use Drupal\user\UserInterface;
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "owner" = "uid",
  *     "langcode" = "langcode",
  *   },
  *   bundle_entity_type = "bat_type_group_bundle",
@@ -56,7 +58,7 @@ use Drupal\user\UserInterface;
  * )
  */
 class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
-  use EntityChangedTrait;
+  use EntityChangedTrait, EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
@@ -125,6 +127,7 @@ class TypeGroup extends ContentEntityBase implements TypeGroupInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
 
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))

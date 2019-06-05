@@ -17,6 +17,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\bat_event\EventInterface;
 use Drupal\bat_unit\UnitInterface;
 use Drupal\user\UserInterface;
+use Drupal\user\EntityOwnerTrait;
 
 use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Store\DrupalDBStore;
@@ -50,6 +51,7 @@ use Roomify\Bat\Event\Event as BatEvent;
  *     "bundle" = "type",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "owner" = "uid",
  *     "langcode" = "langcode",
  *   },
  *   bundle_entity_type = "bat_event_type",
@@ -63,7 +65,7 @@ use Roomify\Bat\Event\Event as BatEvent;
  * )
  */
 class Event extends ContentEntityBase implements EventInterface {
-  use EntityChangedTrait;
+  use EntityChangedTrait, EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
@@ -311,6 +313,7 @@ class Event extends ContentEntityBase implements EventInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
 
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
