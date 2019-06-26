@@ -65,8 +65,18 @@ class EventType extends ConfigEntityBundleBase implements EventTypeInterface {
    */
   protected $name;
 
+  /**
+   * The event granularity.
+   *
+   * @var string
+   */
   protected $event_granularity;
 
+  /**
+   * Whether event states are fixed or open.
+   *
+   * @var bool
+   */
   protected $fixed_event_states;
 
   /**
