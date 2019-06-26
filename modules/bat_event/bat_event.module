@@ -972,7 +972,7 @@ function bat_event_get_calendar_response(DateTime $start_date, DateTime $end_dat
     'excluded' => [],
   ];
 
-  $calendar = bat_event_get_calendar($start_date, $end_date, $type_id, $event_type);
+  $calendar = bat_event_get_calendar($type_id, $event_type);
 
   $response = $calendar->getMatchingUnits($start_date, $end_date, $valid_states, $constraints, $intersect);
 
