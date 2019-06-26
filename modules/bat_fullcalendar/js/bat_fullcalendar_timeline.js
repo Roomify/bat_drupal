@@ -287,8 +287,8 @@ function saveBatEvent(event, revertFunc, calendars, key) {
           revertFunc();
         },
         success: function (new_event) {
-          new_event['start'][0]['value'] = moment.utc(event.start.format('YYYY-MM-DD HH:mm')).unix() - drupalSettings.batCalendar[key].timeZoneOffset;
-          new_event['end'][0]['value'] = moment.utc(event.end.format('YYYY-MM-DD HH:mm')).unix() - drupalSettings.batCalendar[key].timeZoneOffset;
+          new_event['event_dates'][0]['value'] = event.start.utc().format();
+          new_event['event_dates'][0]['end_value'] = event.end.utc().add(1, 'minutes').format();
           new_event['event_bat_unit_reference'][0]['target_id'] = unit_id;
 
           new_event['_links'] = {
