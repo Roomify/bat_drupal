@@ -293,7 +293,7 @@ function saveBatEvent(event, revertFunc, calendars, key) {
 
           new_event['_links'] = {
             type: {
-              href: document.location.origin + Drupal.url('rest/type/bat_event/') + new_event['type'][0]['target_id']
+              href: document.location.origin + '/rest/type/bat_event/' + new_event['type'][0]['target_id']
             }
           };
 
