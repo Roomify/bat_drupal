@@ -701,7 +701,7 @@ function theme_bat_fullcalendar($vars) {
     $js_files = bat_fullcalendar_set_js_files();
   }
 
-  // Check for CSS fiels.
+  // Check for CSS files.
   if (!empty($vars['css_files'])) {
     $css_files = bat_fullcalendar_set_css_files($vars['css_files']);
   }
