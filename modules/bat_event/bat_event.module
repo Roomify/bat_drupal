@@ -1198,10 +1198,18 @@ class BatEvent extends Entity {
  */
 class BatEventType extends Entity {
 
-  // @var string
+  /**
+   * Event Type
+   *
+   * @var string
+   */
   public $type;
 
-  // @var string
+  /**
+   * Event Type Label
+   *
+   * @var string
+   */
   public $label;
 
   /**
