@@ -43,7 +43,10 @@ class BatUnitUIController extends EntityDefaultUIController {
         'page callback' => 'bat_unit_create_form_wrapper',
         'page arguments' => array($bundle->type),
         'access callback' => 'bat_unit_access',
-        'access arguments' => array('create', bat_unit_create(array('type' => $bundle->type, 'uid' => 0))),
+        'access arguments' => array(
+          'create',
+          bat_unit_create(array('type' => $bundle->type, 'uid' => 0))
+        ),
         'file' => 'bat_unit.admin.inc',
         'file path' => drupal_get_path('module', $this->entityInfo['module']),
       );
@@ -258,7 +261,10 @@ function bat_unit_edit_form($form, &$form_state, BatUnit $unit) {
     '#type' => 'textfield',
     '#title' => t('Authored on'),
     '#maxlength' => 25,
-    '#description' => t('Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC. Leave blank to use the time of form submission.', array('%time' => !empty($unit->date) ? date_format(date_create($unit->date), 'Y-m-d H:i:s O') : format_date($unit->created, 'custom', 'Y-m-d H:i:s O'), '%timezone' => !empty($unit->date) ? date_format(date_create($unit->date), 'O') : format_date($unit->created, 'custom', 'O'))),
+    '#description' => t('Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC. Leave blank to use the time of form submission.', array(
+      '%time' => !empty($unit->date) ? date_format(date_create($unit->date), 'Y-m-d H:i:s O') : format_date($unit->created, 'custom', 'Y-m-d H:i:s O'),
+      '%timezone' => !empty($unit->date) ? date_format(date_create($unit->date), 'O') : format_date($unit->created, 'custom', 'O')
+    )),
     '#default_value' => !empty($unit->date) ? $unit->date : '',
   );
   // Unit publishing options for administrators.

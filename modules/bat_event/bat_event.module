@@ -383,7 +383,13 @@ function bat_event_states_form($form, &$form_state, $event_type) {
   if ($event_type->fixed_event_states) {
     $event_states = bat_event_get_states($event_type->type);
 
-    $header = array(t('ID'), t('Machine name'), t('Label'), t('Blocking'), t('Operations'));
+    $header = array(
+      t('ID'),
+      t('Machine name'),
+      t('Label'),
+      t('Blocking'),
+      t('Operations')
+    );
 
     $default_state = 0;
 
@@ -408,7 +414,10 @@ function bat_event_states_form($form, &$form_state, $event_type) {
         $event_state['machine_name'],
         $event_state['label'],
         $event_state['blocking'],
-        theme('links', array('links' => $operations, 'attributes' => array('class' => array('links', 'inline')))),
+        theme('links', array(
+          'links' => $operations,
+          'attributes' => array('class' => array('links', 'inline'))
+        )),
       );
 
       if ($event_state['default_state']) {
@@ -1189,7 +1198,10 @@ class BatEvent extends Entity {
  */
 class BatEventType extends Entity {
 
+  /** @var string Event Type name */
   public $type;
+
+  /** @var string Event Type label */
   public $label;
 
   /**
@@ -1209,7 +1221,14 @@ class BatEventMetadataController extends EntityDefaultMetadataController {
   public function entityPropertyInfo() {
     $info = parent::entityPropertyInfo();
 
-    $properties = array('event_id', 'type', 'language', 'created', 'changed', 'uid');
+    $properties = array(
+      'event_id',
+      'type',
+      'language',
+      'created',
+      'changed',
+      'uid'
+    );
 
     foreach ($properties as $property) {
       if (isset($info['bat_event']['properties'][$property])) {

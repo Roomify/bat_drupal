@@ -41,7 +41,10 @@ class BatTypeUIController extends EntityDefaultUIController {
         'page callback' => 'bat_type_create_form_wrapper',
         'page arguments' => array($bundle->type),
         'access callback' => 'bat_type_access',
-        'access arguments' => array('create', bat_type_create(array('type' => $bundle->type, 'uid' => 0))),
+        'access arguments' => array(
+          'create',
+          bat_type_create(array('type' => $bundle->type, 'uid' => 0))
+        ),
         'file' => 'bat_type.admin.inc',
         'file path' => drupal_get_path('module', $this->entityInfo['module']),
       );
@@ -90,7 +93,11 @@ class BatTypeUIController extends EntityDefaultUIController {
 
     $items[$this->path . '/manage/' . $wildcard . '/revision/%/revert'] = array(
       'page callback' => 'drupal_get_form',
-      'page arguments' => array('bat_type_revision_revert_confirm', $id_count + 1, $id_count + 3),
+      'page arguments' => array(
+        'bat_type_revision_revert_confirm',
+        $id_count + 1,
+        $id_count + 3
+      ),
       'access callback' => 'bat_type_access_revision',
       'access arguments' => array('revert', $id_count + 1, $id_count + 3),
       'file' => 'bat_type.admin.inc',
@@ -99,7 +106,11 @@ class BatTypeUIController extends EntityDefaultUIController {
 
     $items[$this->path . '/manage/' . $wildcard . '/revision/%/delete'] = array(
       'page callback' => 'drupal_get_form',
-      'page arguments' => array('bat_type_revision_delete_confirm', $id_count + 1, $id_count + 3),
+      'page arguments' => array(
+        'bat_type_revision_delete_confirm',
+        $id_count + 1,
+        $id_count + 3
+      ),
       'access callback' => 'bat_type_access_revision',
       'access arguments' => array('delete', $id_count + 1, $id_count + 3),
       'file' => 'bat_type.admin.inc',
@@ -160,7 +171,10 @@ class BatTypeUIController extends EntityDefaultUIController {
         'page callback' => 'bat_type_add_units_form_wrapper',
         'page arguments' => array(5, 8),
         'access callback' => 'bat_unit_access',
-        'access arguments' => array('create', bat_unit_create(array('type' => $bundle->type, 'uid' => 0))),
+        'access arguments' => array(
+          'create',
+          bat_unit_create(array('type' => $bundle->type, 'uid' => 0))
+        ),
         'file' => 'bat_type.admin.inc',
         'file path' => drupal_get_path('module', $this->entityInfo['module']),
       );
@@ -225,7 +239,10 @@ class BatTypeUIController extends EntityDefaultUIController {
 
     // Add operations depending on the status.
     if (entity_has_status($this->entityType, $entity, ENTITY_FIXED)) {
-      $row[] = array('data' => l(t('clone'), $this->path . '/manage/' . $id . '/clone'), 'colspan' => $this->operationCount());
+      $row[] = array(
+        'data' => l(t('clone'), $this->path . '/manage/' . $id . '/clone'),
+        'colspan' => $this->operationCount()
+      );
     }
     else {
       $row[] = l(t('edit'), $this->path . '/manage/' . $id . '/edit');
@@ -466,7 +483,10 @@ function bat_type_edit_form($form, &$form_state, BatType $type) {
     '#type' => 'textfield',
     '#title' => t('Authored on'),
     '#maxlength' => 25,
-    '#description' => t('Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC. Leave blank to use the time of form submission.', array('%time' => !empty($type->date) ? date_format(date_create($type->date), 'Y-m-d H:i:s O') : format_date($type->created, 'custom', 'Y-m-d H:i:s O'), '%timezone' => !empty($type->date) ? date_format(date_create($type->date), 'O') : format_date($type->created, 'custom', 'O'))),
+    '#description' => t('Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC. Leave blank to use the time of form submission.', array(
+      '%time' => !empty($type->date) ? date_format(date_create($type->date), 'Y-m-d H:i:s O') : format_date($type->created, 'custom', 'Y-m-d H:i:s O'),
+      '%timezone' => !empty($type->date) ? date_format(date_create($type->date), 'O') : format_date($type->created, 'custom', 'O'))
+    ),
     '#default_value' => !empty($type->date) ? $type->date : '',
   );
 

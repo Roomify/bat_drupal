@@ -130,7 +130,15 @@ function bat_facets_availability($form, &$form_state, $elements) {
  * Submit handler.
  */
 function bat_facets_availability_submit($form, &$form_state) {
-  $form_state['redirect'] = array($_GET['q'], array('query' => array('bat_start_date' => $form_state['values']['arrival'], 'bat_end_date' => $form_state['values']['departure'])));
+  $form_state['redirect'] = array(
+    $_GET['q'],
+    array(
+      'query' => array(
+        'bat_start_date' => $form_state['values']['arrival'],
+        'bat_end_date' => $form_state['values']['departure']
+      )
+    )
+  );
 }
 
 /**

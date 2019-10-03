@@ -31,7 +31,10 @@ class BatBookingUIController extends EntityDefaultUIController {
         'page callback' => 'bat_booking_create_form_wrapper',
         'page arguments' => array($booking_type->type),
         'access callback' => 'bat_booking_access',
-        'access arguments' => array('create', bat_booking_create(array('type' => $booking_type->type, 'uid' => 0))),
+        'access arguments' => array(
+          'create',
+          bat_booking_create(array('type' => $booking_type->type, 'uid' => 0))
+        ),
         'file' => 'bat_booking.admin.inc',
         'file path' => drupal_get_path('module', $this->entityInfo['module']),
       );
@@ -96,7 +99,11 @@ class BatBookingUIController extends EntityDefaultUIController {
 
     // Add operations depending on the status.
     if (entity_has_status($this->entityType, $entity, ENTITY_FIXED)) {
-      $row[] = array('data' => l(t('clone'), $this->path . '/manage/' . $id . '/clone'), 'colspan' => $this->operationCount());
+      $row[] = array(
+        'data' => l(t('clone'),
+        $this->path . '/manage/' . $id . '/clone'),
+        'colspan' => $this->operationCount()
+      );
     }
     else {
       $row[] = l(t('edit'), $this->path . '/manage/' . $id);
@@ -245,7 +252,11 @@ function bat_booking_edit_form($form, &$form_state, $booking) {
     '#type' => 'textfield',
     '#title' => t('Authored on'),
     '#maxlength' => 25,
-    '#description' => t('Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC. Leave blank to use the time of form submission.', array('%time' => !empty($booking->date) ? date_format(date_create($booking->date), 'Y-m-d H:i:s O') : format_date($booking->created, 'custom', 'Y-m-d H:i:s O'), '%timezone' => !empty($booking->date) ? date_format(date_create($booking->date), 'O') : format_date($booking->created, 'custom', 'O'))),
+    '#description' => t('Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC. Leave blank to use the time of form submission.', array(
+      '%time' => !empty($booking->date) ? date_format(date_create($booking->date), 'Y-m-d H:i:s O') : format_date($booking->created,
+      'custom', 'Y-m-d H:i:s O'),
+      '%timezone' => !empty($booking->date) ? date_format(date_create($booking->date), 'O') : format_date($booking->created, 'custom', 'O')
+    )),
     '#default_value' => !empty($booking->date) ? $booking->date : '',
   );
 

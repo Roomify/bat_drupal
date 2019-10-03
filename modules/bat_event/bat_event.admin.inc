@@ -60,7 +60,10 @@ class BatEventUIController extends EntityDefaultUIController {
         'page callback' => 'bat_event_create_form_wrapper',
         'page arguments' => array($type->type),
         'access callback' => 'bat_event_access',
-        'access arguments' => array('create', bat_event_create(array('type' => $type->type, 'uid' => 0))),
+        'access arguments' => array(
+          'create',
+          bat_event_create(array('type' => $type->type, 'uid' => 0))
+        ),
         'file' => 'bat_event.admin.inc',
         'file path' => drupal_get_path('module', $this->entityInfo['module']),
       );

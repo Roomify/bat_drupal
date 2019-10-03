@@ -274,7 +274,15 @@ class BatBookingMetadataController extends EntityDefaultMetadataController {
   public function entityPropertyInfo() {
     $info = parent::entityPropertyInfo();
 
-    $properties = array('booking_id', 'type', 'language', 'label', 'created', 'changed', 'uid');
+    $properties = array(
+      'booking_id',
+      'type',
+      'language',
+      'label',
+      'created',
+      'changed',
+      'uid'
+    );
 
     foreach ($properties as $property) {
       if (isset($info['bat_booking']['properties'][$property])) {

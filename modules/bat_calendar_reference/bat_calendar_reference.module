@@ -91,12 +91,20 @@ function bat_calendar_reference_field_formatter_info() {
     'bat_calendar_reference_month_view' => array(
       'label' => t('Month View'),
       'description' => t('Displays event information on a calendar.'),
-      'field types' => array('bat_calendar_unit_reference', 'bat_calendar_unit_type_reference', 'entityreference'),
+      'field types' => array(
+        'bat_calendar_unit_reference',
+        'bat_calendar_unit_type_reference',
+        'entityreference'
+      ),
     ),
     'bat_calendar_reference_timeline_view' => array(
       'label' => t('Timeline View'),
       'description' => t('Displays event information on a calendar.'),
-      'field types' => array('bat_calendar_unit_reference', 'bat_calendar_unit_type_reference', 'entityreference'),
+      'field types' => array(
+        'bat_calendar_unit_reference',
+        'bat_calendar_unit_type_reference',
+        'entityreference'
+      ),
     ),
   );
 
