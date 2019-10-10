@@ -22,6 +22,12 @@ default:
       drush_driver: 'drush'
       drush:
         root: ../..
+    Bex\Behat\ScreenshotExtension:
+      screenshot_taking_mode: all_scenarios
+      active_image_drivers: local
+      image_drivers:
+        local:
+          screenshot_directory: /tmp
 
 imports:
   - behat.local.yml

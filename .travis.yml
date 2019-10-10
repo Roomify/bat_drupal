@@ -102,6 +102,9 @@ script:
   - ./bin/behat
 
 after_failure:
+  # Upload screenshots
+  - cd /tmp; for file in *.png; do convert $file -define jpeg:extent=2000kb "`basename $file .png`.jpg"; done
+  - $TRAVIS_BUILD_DIR/test/behat/scripts/uploadr-pie /tmp/*.jpg
   - echo "### DB LOG ###"
   - cd $TRAVIS_BUILD_DIR/bat
   - drush sqlq 'SELECT * FROM watchdog\G'

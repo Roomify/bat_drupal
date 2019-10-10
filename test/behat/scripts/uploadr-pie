@@ -1,0 +1,26 @@
+#!/bin/bash
+# Created by A.J.
+MAX_FILE_SIZE=3145728
+DURATION="4" # 1 day
+USER_AGENT="Mozilla/5.0 (X11; Linux x86_64; rv:26.0) Gecko/20100101 Firefox/26.0"
+SCRIPT_NAME=$(basename "$0")
+AUTH="YECxvm"
+
+
+for FILE in "$@"
+do
+  SIZE_BYTES=$(du -b "${FILE}" | cut -f1)
+  SIZE=$(du -h "${FILE}" | cut -f1)
+  EXT=$(echo "$FILE" | sed -e 's/.*\.//' | tr a-z A-Z)
+
+  if [[ "$EXT" != "PNG" && "$EXT" != "JPG" && "$EXT" != "GIF" && "$EXT" != "PDF" && "$EXT" != "TXT" ]];then
+    echo -e "The file  with extension $EXT is currently not supported by uploadpie.com.\n"
+    echo -e "The supported extensions are: png, jpg, gif, pdf y txt." && exit 1
+  elif [[ "$SIZE_BYTES" -gt "$MAX_FILE_SIZE" ]];then
+    echo -e "The file is too big, uploadpie.com supports file only up to 3 mb.\n" && exit 1
+  else
+    echo -n "${FILE}: "
+    curl -s -A "$USER_AGENT" --header "Cookie: pie_auth=${AUTH}" --form uploadedfile=@"$FILE" --form upload=1 --form MAX_FILE_SIZE="$MAX_FILE_SIZE" --form expire="$DURATION" https://uploadpie.com | grep 'id="uploaded"' | cut -d'"' -f6
+
+  fi
+done
