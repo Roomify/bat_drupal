@@ -136,6 +136,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
           $message .= "deprecated, and will be removed in a future release. ";
           $message .= "Please use the 'query_{$entity_type}_access_alter'";
           $message .= " hook instead.";
+          // phpcs:ignore
           trigger_error($message, E_USER_DEPRECATED);
         }
 
