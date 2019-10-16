@@ -49,8 +49,6 @@ before_script:
   # Install drush.
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - composer -n global require drush/drush:8.*
-  # Install drush composer extension.
-  - drush dl composer-8.x-1.x
   # Install code sniffer.
   - composer -n global require drupal/coder
   # Register Drupal coding standards.
@@ -71,7 +69,7 @@ before_script:
   - mv /tmp/bat bat/sites/all/modules/bat
 
   # Install BAT library.
-  - cd bat
+  - cd $TRAVIS_BUILD_DIR/bat
   - composer require "roomify/bat"
 
   - php -d sendmail_path=$(which true) ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://drupal:drupal@127.0.0.1/drupal --account-name=admin --account-pass=test --site-mail=webmaster@roomify.us --site-name="bat"
