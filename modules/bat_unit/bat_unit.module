@@ -44,7 +44,7 @@ function bat_unit_query_bat_unit_access_alter(AlterableInterface $query) {
 /**
  * Implements hook_query_TAG_alter().
  */
-function bat_unit_query_bat_unit_type_alter(AlterableInterface $query) {
+function bat_unit_query_bat_unit_type_access_alter(AlterableInterface $query) {
   // Look for an type base table to pass to the query altering function or else
   // assume we don't have the tables we need to establish order related altering
   // right now.

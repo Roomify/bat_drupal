@@ -125,11 +125,26 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
     if ($operation == 'view') {
       // When trying to figure out access to an entity, query the base table
       // using our access control tag.
-      if (Drupal::moduleHandler()->getImplementations('query_' . $entity_type . '_alter')) {
+      // TODO remove incorrect hook test in summer 2020.
+      if (Drupal::moduleHandler()->getImplementations('query_' . $entity_type . '_alter') ||
+          Drupal::moduleHandler()->getImplementations('query_' . $entity_type . '_access_alter')) {
+
+        // Trigger an error if the deprecated hook is implemented.
+        // TODO remove in summer 2020.
+        if (Drupal::moduleHandler()->getImplementations('query_' . $entity_type . '_alter')) {
+          $message = "The 'query_{$entity_type}_alter' hook has been ";
+          $message .= "deprecated, and will be removed in a future release. ";
+          $message .= "Please use the 'query_{$entity_type}_access_alter'";
+          $message .= " hook instead.";
+          trigger_error($message, E_USER_DEPRECATED);
+        }
+
         $query = db_select($entity_info->getBaseTable());
         $query->addExpression('1');
         $result = (bool) $query
+          // TODO remove in summer 2020.
           ->addTag($entity_type)
+          ->addTag($entity_type . '_access')
           ->addMetaData('account', $account)
           ->condition($entity_info->getKey('id'), $entity->id())
           ->range(0, 1)
