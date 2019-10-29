@@ -1,0 +1,13 @@
+# Event Series menu items definition
+entity.bat_event_series.collection:
+  title: 'Event series list'
+  route_name: entity.bat_event_series.collection
+  description: 'List Event series entities'
+  parent: bat.admin.events
+
+# Event Series Type menu items definition
+entity.bat_event_series_type.collection:
+  title: 'Event Series Type list'
+  route_name: entity.bat_event_series_type.collection
+  description: 'List Event Series Types'
+  parent: bat.admin.events

@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ * Default theme implementation to list event series types available for adding event.
+ *
+ * Available variables:
+ * - types: A list of event series types, each with the following properties:
+ *   - add_link: Link to create a piece of content of this type.
+ *   - description: Description of this type of content.
+ *
+ * @see template_preprocess_bat_type_add_list()
+ *
+ * @ingroup themeable
+ */
+#}
+{% if types is not empty %}
+  <ul class="admin-list">
+    {% for type in types %}
+      <li class="clearfix"><span class="label">{{ type.add_link }}</span></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>
+    {% set create_content = path('entity.bat_event_series_type.collection') %}
+    {% trans %}
+      You have not created any event series type yet. Go to the <a href="{{ create_content }}">event series type creation page</a> to add a new event series type.
+    {% endtrans %}
+  </p>
+{% endif %}

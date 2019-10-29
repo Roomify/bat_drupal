@@ -79,7 +79,7 @@ function bat_event_update_8003() {
   foreach (bat_event_get_types() as $event_type) {
     $field_names = [
       'event_dates',
-      'event_' . $event_type->target_entity_type . '_reference',
+      'event_' . $event_type->getTargetEntityType() . '_reference',
     ];
 
     if ($event_type->getFixedEventStates()) {

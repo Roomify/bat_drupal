@@ -136,7 +136,7 @@ class EventForm extends ContentEntityForm {
     }
 
     $event_type = bat_event_type_load($this->entity->bundle());
-    $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+    $target_field_name = 'event_' . $event_type->getTargetEntityType() . '_reference';
 
     if ($event_type->getFixedEventStates()) {
       if ($values[$target_field_name][0]['target_id'] != '') {

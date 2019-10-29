@@ -38,7 +38,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
     $build = [
       '#theme' => 'bat_event_add_list',
       '#cache' => [
-        'tags' => $this->entityTypeManager()->getDefinition('bat_type_bundle')->getListCacheTags(),
+        'tags' => $this->entityTypeManager()->getDefinition('bat_event_type')->getListCacheTags(),
       ],
     ];
 

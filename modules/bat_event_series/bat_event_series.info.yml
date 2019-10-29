@@ -1,0 +1,8 @@
+name: BAT Event Series
+type: module
+description: Create and administer series of BAT events.
+core: 8.x
+package: bat
+
+dependencies:
+  - bat:bat_event

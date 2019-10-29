@@ -190,7 +190,7 @@ class Event extends ContentEntityBase implements EventInterface {
     $event_type = bat_event_type_load($this->bundle());
 
     // Construct target entity reference field name using this event type's target entity type.
-    $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+    $target_field_name = 'event_' . $event_type->getTargetEntityType() . '_reference';
 
     // We are going to be updating the event - so the first step is to remove
     // the old event.
@@ -210,7 +210,7 @@ class Event extends ContentEntityBase implements EventInterface {
         }
 
         // Load the referenced entity.
-        if ($target_entity = entity_load($event_type->target_entity_type, $target_entity_id)) {
+        if ($target_entity = entity_load($event_type->getTargetEntityType(), $target_entity_id)) {
           $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
 
           $this->batStoreSave($unit,
@@ -257,7 +257,7 @@ class Event extends ContentEntityBase implements EventInterface {
 
       $target_entity_id = $event_target_entity_reference->referencedEntities()[0]->id();
 
-      if ($target_entity = entity_load($event_type->target_entity_type, $target_entity_id)) {
+      if ($target_entity = entity_load($event_type->getTargetEntityType(), $target_entity_id)) {
         $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
 
         $this->batStoreSave($unit,
@@ -280,7 +280,7 @@ class Event extends ContentEntityBase implements EventInterface {
     $event_type = bat_event_type_load($this->bundle());
 
     // Construct target entity reference field name using this event type's target entity type.
-    $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+    $target_field_name = 'event_' . $event_type->getTargetEntityType() . '_reference';
 
     // Check if the event had a unit associated with it and if so update the
     // availability calendar.
@@ -290,7 +290,7 @@ class Event extends ContentEntityBase implements EventInterface {
       $target_entity_id = $event_target_entity_reference->referencedEntities()[0]->id();
 
       // Load the referenced entity.
-      if ($target_entity = entity_load($event_type->target_entity_type, $target_entity_id)) {
+      if ($target_entity = entity_load($event_type->getTargetEntityType(), $target_entity_id)) {
         $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
 
         $this->batStoreSave($unit,

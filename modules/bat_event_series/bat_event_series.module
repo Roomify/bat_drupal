@@ -1,0 +1,448 @@
+<?php
+
+use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\bat_event_series\Entity\EventSeries;
+use Drupal\bat_event_series\Entity\EventSeriesType;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use RRule\RRule;
+
+/**
+ * Create a field of type 'Bat Event State Reference' to reference an Event State.
+ */
+function bat_event_series_type_add_event_state_reference($bundle) {
+  $field_name = 'event_state_reference';
+
+  $field_storage = FieldStorageConfig::loadByName('bat_event_series', $field_name);
+  $field = FieldConfig::loadByName('bat_event_series', $bundle, $field_name);
+
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'bat_event_series',
+      'type' => 'entity_reference',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => [
+        'target_type' => 'state',
+      ],
+    ]);
+    $field_storage->save();
+  }
+
+  if (empty($field)) {
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'entity_type' => 'bat_event_series',
+      'label' => 'State',
+      'bundle' => $bundle,
+      'required' => TRUE,
+      'settings' => [
+        'handler' => 'default',
+        'handler_settings' => [],
+      ],
+    ]);
+    $field->save();
+
+    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('bat_event_series.' . $bundle . '.default');
+    if (!$form_display) {
+      $form_display = EntityFormDisplay::create([
+        'targetEntityType' => 'bat_event_series',
+        'bundle' => $bundle,
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
+    }
+    $form_display->setComponent($field_name, [
+      'type' => 'entity_reference_autocomplete',
+      'weight' => 3,
+    ]);
+    $form_display->save();
+  }
+}
+
+/**
+ * Create "Event Dates" field.
+ */
+function bat_event_series_type_add_event_dates_field($bundle) {
+  $field_name = 'event_dates';
+
+  $field_storage = FieldStorageConfig::loadByName('bat_event_series', $field_name);
+  $field = FieldConfig::loadByName('bat_event_series', $bundle, $field_name);
+
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'bat_event_series',
+      'type' => 'daterange',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => [
+        'datetime_type' => 'datetime',
+      ],
+    ]);
+    $field_storage->save();
+  }
+
+  if (empty($field)) {
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'entity_type' => 'bat_event_series',
+      'label' => 'Event Dates',
+      'bundle' => $bundle,
+      'required' => TRUE,
+      'settings' => [
+        'datetime_type' => 'datetime',
+      ],
+    ]);
+    $field->save();
+
+    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('bat_event_series.' . $bundle . '.default');
+    if (!$form_display) {
+      $form_display = EntityFormDisplay::create([
+        'targetEntityType' => 'bat_event_series',
+        'bundle' => $bundle,
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
+    }
+    $form_display->setComponent($field_name, [
+      'type' => 'daterange_default',
+      'weight' => 1,
+    ]);
+    $form_display->save();
+  }
+}
+
+/**
+ * Create fields of type 'Entity Reference' to reference the target entity.
+ *
+ * We need to create a field/instance for each possible target entity type.
+ */
+function bat_event_series_type_add_target_entity_field($bundle, $target_entity_type) {
+  $entity_info = \Drupal::entityTypeManager()->getDefinition($target_entity_type);
+  $field_name = 'event_' . $target_entity_type . '_reference';
+
+  $field_storage = FieldStorageConfig::loadByName('bat_event_series', $field_name);
+  $field = FieldConfig::loadByName('bat_event_series', $bundle, $field_name);
+
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'bat_event_series',
+      'type' => 'entity_reference',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => [
+        'target_type' => $target_entity_type,
+      ],
+    ]);
+    $field_storage->save();
+  }
+
+  if (empty($field)) {
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'entity_type' => 'bat_event_series',
+      'label' => $entity_info->getLabel()->__toString(),
+      'bundle' => $bundle,
+      'required' => TRUE,
+      'settings' => [
+        'handler' => 'default',
+        'handler_settings' => [],
+      ],
+    ]);
+    $field->save();
+
+    $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('bat_event_series.' . $bundle . '.default');
+    if (!$form_display) {
+      $form_display = EntityFormDisplay::create([
+        'targetEntityType' => 'bat_event_series',
+        'bundle' => $bundle,
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
+    }
+    $form_display->setComponent($field_name, [
+      'type' => 'entity_reference_autocomplete',
+      'weight' => 3,
+    ]);
+    $form_display->save();
+  }
+}
+
+/**
+ * Checks event access for various operations.
+ *
+ * @param string $op
+ *   The operation being performed. One of 'view', 'update', 'create' or
+ *   'delete'.
+ * @param object $event
+ *   Optionally an event to check access for.
+ * @param object $account
+ *   The user to check for. Leave it to NULL to check for the current user.
+ *
+ * @return \Drupal\Core\Access\AccessResult
+ */
+function bat_event_series_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  return bat_entity_access($entity, $operation, $account);
+}
+
+/**
+ * Access callback for the entity API.
+ */
+function bat_event_series_type_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  $account->hasPermission('administer bat_event_series_type entities');
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function bat_event_series_query_bat_event_series_access_alter(AlterableInterface $query) {
+  // Look for an event base table to pass to the query altering function or
+  // else assume we don't have the tables we need to establish order related
+  // altering right now.
+  foreach ($query->getTables() as $table) {
+    if ($table['table'] === 'event_series') {
+      bat_entity_access_query_alter($query, 'bat_event_series', $table['alias']);
+      break;
+    }
+  }
+}
+
+/**
+ * Gets an array of all event series types, keyed by the type name.
+ *
+ * @param string $type_name
+ *   If set, the type with the given name is returned.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return \Drupal\bat_event_series\Entity\EventSeriesType[]
+ *   Depending whether $type isset, an array of event series types or a single one.
+ */
+function bat_event_series_get_types($type_name = NULL, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityTypeManager()->getStorage('bat_event_series_type')->resetCache();
+  }
+
+  $types = EventSeriesType::loadMultiple();
+  return isset($type_name) ? $types[$type_name] : $types;
+}
+
+/**
+ * Deletes a event.
+ *
+ * @param \Drupal\bat_event_series\Entity\EventSeries $event
+ *   The Event object that represents the event to delete
+ */
+function bat_event_series_delete(EventSeries $event) {
+  $event->delete();
+}
+
+/**
+ * Delete multiple events.
+ *
+ * @param array $event_ids
+ *   An array of event IDs.
+ */
+function bat_event_series_delete_multiple(array $event_ids) {
+  $events = EventSeries::loadMultiple($event_ids);
+
+  foreach ($events as $event) {
+    $event->delete();
+  }
+}
+
+/**
+ * Create a event object.
+ */
+function bat_event_series_create($values = []) {
+  return EventSeries::create($values);
+}
+
+/**
+ * Menu argument loader; Load a event series type by string.
+ *
+ * @param string $type
+ *   The machine-readable name of a event series type to load.
+ *
+ * @return array|false
+ *   An event series type array or FALSE if $type does not exist.
+ */
+function bat_event_series_type_load($type) {
+  return EventSeriesType::load($type);
+}
+
+/**
+ * Fetches an event object.
+ *
+ * @param int $event_id
+ *   Integer specifying the event id.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return object
+ *   A fully-loaded $event object or FALSE if it cannot be loaded.
+ *
+ * @see bat_event_series_load_multiple()
+ */
+function bat_event_series_load($event_id = NULL, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityTypeManager()->getStorage('bat_event_series')->resetCache([$nid]);
+  }
+
+  return EventSeries::load($event_id);
+}
+
+/**
+ * Load multiple events based on certain conditions.
+ *
+ * @param array $event_ids
+ *   An array of event IDs.
+ * @param array $conditions
+ *   An array of conditions to match against the {bat_events} table.
+ * @param bool $reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return array
+ *   An array of event objects, indexed by event_id.
+ *
+ * @see bat_event_series_load()
+ */
+function bat_event_series_load_multiple(array $event_ids = NULL, $reset = FALSE) {
+  if ($reset) {
+    \Drupal::entityTypeManager()->getStorage('bat_event_series')->resetCache($event_ids);
+  }
+
+  return EventSeries::loadMultiple($event_ids);
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function bat_event_series_entity_insert(EntityInterface $entity) {
+  if ($entity->bundle() == 'bat_event_type') {
+    bat_event_series_create_event_series_field($entity->id());
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bat_event_series_theme() {
+  return [
+    'bat_event_series' => [
+      'render element' => 'elements',
+      'template' => 'bat_event_series',
+    ],
+    'bat_event_series_add_list' => [
+      'variables' => ['content' => NULL],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for list of available event series types templates.
+ *
+ * Default template: bat-event-series-add-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - content: An array of event series types.
+ */
+function template_preprocess_bat_event_series_add_list(&$variables) {
+  $variables['types'] = [];
+  if (!empty($variables['content'])) {
+    foreach ($variables['content'] as $type) {
+      $variables['types'][$type->id()] = [
+        'type' => $type->id(),
+        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_event_series.add_form', ['event_series_type' => $type->id()])),
+      ];
+    }
+  }
+}
+
+/**
+ * Prepares variables for Event Series templates.
+ *
+ * Default template: bat_event_series.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the user information and any
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_bat_event_series(array &$variables) {
+  // Fetch Event series Entity Object.
+  $event_series = $variables['elements']['#bat_event_series'];
+
+  // Helpful $content variable for templates.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+
+  $start = new \DateTime($event_series->get('event_dates')->value);
+  $rrule = new RRule($event_series->getRRule(), $start);
+
+  $rrule_human_readable = ucfirst($rrule->humanReadable([
+    'date_formatter' => 'bat_event_series_rrule_date_formatter',
+  ]));
+
+  $variables['content']['rrule'] = [
+    '#markup' => '<h2>' . t('RRule') . '</h2><div>' . $rrule_human_readable . '</div>',
+  ];
+
+  $variables['content']['events_label'] = [
+    '#markup' => '<h2>' . t('Events') . '</h2>',
+  ];
+  $variables['content']['events'] = views_embed_view('event_series', 'events', $event_series->id());
+}
+
+function bat_event_series_rrule_date_formatter($date) {
+  return $date->format('Y-m-d');
+}
+
+/**
+ * Add event "Event series" field.
+ */
+function bat_event_series_create_event_series_field($bundle) {
+  $field_name = 'event_series';
+
+  $field_storage = FieldStorageConfig::loadByName('bat_event', $field_name);
+  $field = FieldConfig::loadByName('bat_event', $bundle, $field_name);
+
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'bat_event',
+      'type' => 'entity_reference',
+      'cardinality' => 1,
+      'locked' => 1,
+      'settings' => [
+        'target_type' => 'bat_event_series',
+      ],
+    ]);
+    $field_storage->save();
+  }
+
+  if (empty($field)) {
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'entity_type' => 'bat_event',
+      'label' => 'Event series',
+      'bundle' => $bundle,
+      'required' => FALSE,
+      'settings' => [
+        'handler' => 'default',
+        'handler_settings' => [],
+      ],
+    ]);
+    $field->save();
+  }
+}

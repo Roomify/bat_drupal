@@ -80,6 +80,13 @@ class EventType extends ConfigEntityBundleBase implements EventTypeInterface {
   protected $fixed_event_states;
 
   /**
+   * The target entity type.
+   *
+   * @var string
+   */
+  protected $target_entity_type;
+
+  /**
    * {@inheritdoc}
    */
   public function id() {
@@ -92,6 +99,10 @@ class EventType extends ConfigEntityBundleBase implements EventTypeInterface {
 
   public function getFixedEventStates() {
     return $this->fixed_event_states;
+  }
+
+  public function getTargetEntityType() {
+    return $this->target_entity_type;
   }
 
   /**

@@ -1,0 +1,99 @@
+entity.bat_event_series.canonical:
+  path: '/admin/bat/config/event_series/{bat_event_series}'
+  defaults:
+    _entity_view: 'bat_event_series'
+    _title: 'Event series'
+  requirements:
+    _entity_access: 'bat_event_series.view'
+  options:
+    _admin_route: TRUE
+
+entity.bat_event_series.collection:
+  path: '/admin/bat/config/event_series'
+  defaults:
+    _entity_list: 'bat_event_series'
+    _title: 'Event series list'
+  requirements:
+    _permission: 'view any bat_event_series entity'
+  options:
+    _admin_route: TRUE
+
+entity.bat_event_series.add_page:
+  path: '/admin/bat/config/event_series/add'
+  defaults:
+    _title: 'Add event series'
+    _controller: '\Drupal\bat_event_series\Controller\EventSeriesController::addPage'
+  requirements:
+    _event_series_add_access: 'bat_event_series'
+  options:
+    _admin_route: TRUE
+
+entity.bat_event_series.add_form:
+  path: '/admin/bat/config/event_series/add/{event_series_type}'
+  defaults:
+    _controller: '\Drupal\bat_event_series\Controller\EventSeriesController::add'
+    _title_callback: '\Drupal\bat_event_series\Controller\EventSeriesController::addPageTitle'
+  requirements:
+    _event_series_add_access: 'bat_event_series:{event_series_type}'
+  options:
+    _admin_route: TRUE
+    parameters:
+      event_series_type:
+        type: entity:bat_event_series_type
+        with_config_overrides: TRUE
+
+entity.bat_event_series.edit_form:
+  path: '/admin/bat/config/event_series/{bat_event_series}/edit'
+  defaults:
+    _entity_form: bat_event_series.edit
+    _title: 'Edit Event Series'
+  requirements:
+    _entity_access: 'bat_event_series.update'
+  options:
+    _admin_route: TRUE
+
+entity.bat_event_series.delete_form:
+  path: '/admin/bat/config/event_series/{bat_event_series}/delete'
+  defaults:
+    _entity_form: bat_event_series.delete
+    _title: 'Delete Event Series'
+  requirements:
+    _entity_access: 'bat_event_series.delete'
+  options:
+    _admin_route: TRUE
+
+entity.bat_event_series_type.collection:
+  path: '/admin/bat/config/event_series/event-series-types'
+  defaults:
+    _entity_list: 'bat_event_series_type'
+    _title: 'Event Series Type list'
+  requirements:
+    _permission: 'administer bat_event_series_type entities'
+  options:
+    _admin_route: TRUE
+
+entity.bat_event_series_type.type_add:
+  path: '/admin/bat/config/event_series/event-series-types/add'
+  defaults:
+    _entity_form: 'bat_event_series_type.add'
+    _title: 'Add event series type'
+  requirements:
+    _permission: 'administer bat_event_series_type entities'
+
+entity.bat_event_series_type.edit_form:
+  path: '/admin/bat/config/event_series/event-series-types/{bat_event_series_type}/edit'
+  defaults:
+    _entity_form: 'bat_event_series_type.edit'
+    _title: 'Edit Event series type'
+  requirements:
+    _permission: 'administer bat_event_series_type entities'
+  options:
+    _admin_route: TRUE
+
+entity.bat_event_series_type.delete_form:
+  path: '/admin/bat/config/event_series/event-series-types/{bat_event_series_type}/delete'
+  defaults:
+    _entity_form: 'bat_event_series_type.delete'
+    _title: 'Delete'
+  requirements:
+    _permission: 'administer bat_event_series_type entities'
