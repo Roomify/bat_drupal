@@ -118,7 +118,7 @@ class BatEventUiBulkUpdateForm extends FormBase {
       ];
       $event->set('event_dates', $event_dates);
 
-      $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+      $target_field_name = 'event_' . $event_type->getTargetEntityType() . '_reference';
       $event->set($target_field_name, $unit->id());
 
       $event->set('event_state_reference', $event_state);

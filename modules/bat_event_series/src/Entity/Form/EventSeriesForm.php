@@ -7,8 +7,13 @@
 
 namespace Drupal\bat_event_series\Entity\Form;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\PrivateTempStoreFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form controller for Event edit forms.
@@ -16,6 +21,37 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup bat
  */
 class EventSeriesForm extends ContentEntityForm {
+
+  /**
+   * The tempstore object.
+   *
+   * @var \Drupal\user\SharedTempStore
+   */
+  protected $tempStore;
+
+  /**
+   * Constructs a new DeleteUnit object.
+   *
+   * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
+   *   The tempstore factory.
+   */
+  public function __construct(PrivateTempStoreFactory $temp_store_factory, EntityRepositoryInterface $entity_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+    $this->tempStore = $temp_store_factory->get('event_series_update_confirm');
+
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('user.private_tempstore'),
+      $container->get('entity.repository'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -94,21 +130,21 @@ class EventSeriesForm extends ContentEntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
-    $status = $entity->save();
 
-    switch ($status) {
-      case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Event series.', [
-          '%label' => $entity->label(),
-        ]));
-        break;
+    if ($entity->isNew()) {
+      $entity->save();
 
-      default:
-        drupal_set_message($this->t('Saved the %label Event series.', [
-          '%label' => $entity->label(),
-        ]));
+      drupal_set_message($this->t('Created the %label Event series.', [
+        '%label' => $entity->label(),
+      ]));
+
+      $form_state->setRedirect('entity.bat_event_series.edit_form', ['bat_event_series' => $entity->id()]);
     }
-    $form_state->setRedirect('entity.bat_event_series.edit_form', ['bat_event_series' => $entity->id()]);
+    else {
+      $this->tempStore->set(\Drupal::currentUser()->id(), $entity);
+
+      $form_state->setRedirect('entity.bat_event_series.confirm_edit_form', ['bat_event_series' => $entity->id()]);
+    }
   }
 
 }

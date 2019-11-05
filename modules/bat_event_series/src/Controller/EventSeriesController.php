@@ -26,7 +26,7 @@ class EventSeriesController extends ControllerBase implements ContainerInjection
   /**
    * Displays add event links for available event series types.
    *
-   * Redirects to admin/bat/config/event_series/add[type] if only one event series type is available.
+   * Redirects to admin/bat/events/event_series/add[type] if only one event series type is available.
    *
    * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
    *   A render array for a list of the event series types that can be added; however,

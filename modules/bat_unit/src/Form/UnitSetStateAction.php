@@ -162,7 +162,7 @@ class UnitSetStateAction extends FormBase {
 
         $event_type_entity = bat_event_type_load($event_type);
         // Construct target entity reference field name using this event type's target entity type.
-        $target_field_name = 'event_' . $event_type_entity->target_entity_type . '_reference';
+        $target_field_name = 'event_' . $event_type_entity->getTargetEntityType() . '_reference';
         $event->set($target_field_name, $unit_id);
 
         $event->set('event_state_reference', $event_state);

@@ -69,7 +69,7 @@ class FullcalendarEventManagerForm extends FormBase {
       '#value' => $end_date->format('Y-m-d H:i:s'),
     ];
 
-    $unit = entity_load($event_type->target_entity_type, $entity_id);
+    $unit = entity_load($event_type->getTargetEntityType(), $entity_id);
 
     $form['event_title'] = [
       '#prefix' => '<h2>',
@@ -157,7 +157,7 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $event_type_entity = bat_event_type_load($event_type);
     // Construct target entity reference field name using this event type's target entity type.
-    $target_field_name = 'event_' . $event_type_entity->target_entity_type . '_reference';
+    $target_field_name = 'event_' . $event_type_entity->getTargetEntityType() . '_reference';
     $event->set($target_field_name, $entity_id);
 
     $event->set('event_state_reference', $state_id);
@@ -199,14 +199,14 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $event_type_entity = bat_event_type_load($event_type);
     // Construct target entity reference field name using this event type's target entity type.
-    $target_field_name = 'event_' . $event_type_entity->target_entity_type . '_reference';
+    $target_field_name = 'event_' . $event_type_entity->getTargetEntityType() . '_reference';
     $event->set($target_field_name, $entity_id);
 
     $event->set($field_name, $values[$field_name]);
 
     $event->save();
 
-    $unit = entity_load($event_type_entity->target_entity_type, $entity_id);
+    $unit = entity_load($event_type_entity->getTargetEntityType(), $entity_id);
 
     $elements = $event->{$field_name}->view(['label' => 'hidden']);
     $value = drupal_render($elements);
