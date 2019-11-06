@@ -1,0 +1,25 @@
+bat_event.event_type.*:
+  type: config_entity
+  label: 'Event type'
+  mapping:
+    name:
+      type: string
+      label: 'Name'
+    type:
+      type: string
+      label: 'Type'
+    event_granularity:
+      type: string
+      label: 'Event granularity'
+    fixed_event_states:
+      type: string
+      label: 'Fixed event states'
+    default_event_value_field_ids:
+      type: string
+      label: 'Default event value field ids'
+    default_event_label_field_name:
+      type: string
+      label: 'Default event label field name'
+    target_entity_type:
+      type: string
+      label: 'Target entity type'

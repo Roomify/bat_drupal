@@ -3,8 +3,6 @@ status: true
 dependencies:
   module:
     - bat_unit
-_core:
-  default_config_hash: Ns-TmEDnT9VQjYFf_BLUWQyXXiakNHzMqZpegZb94G4
 id: units
 label: Units
 module: views

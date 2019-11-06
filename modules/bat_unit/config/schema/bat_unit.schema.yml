@@ -1,0 +1,46 @@
+bat_unit.unit_bundle.*:
+  type: config_entity
+  label: 'Unit bundle'
+  mapping:
+    name:
+      type: string
+      label: 'Name'
+    type:
+      type: string
+      label: 'Type'
+
+bat_unit.type_bundle.*:
+  type: config_entity
+  label: 'Type bundle'
+  mapping:
+    name:
+      type: string
+      label: 'Name'
+    type:
+      type: string
+      label: 'Type'
+    default_event_value_field_ids:
+      type: sequence
+      label: 'Default event value field ids'
+      sequence:
+        type: string
+
+action.configuration.unit_delete_action:
+  type: action_configuration_default
+  label: 'Delete unit'
+
+action.configuration.unit_publish_action:
+  type: action_configuration_default
+  label: 'Publish unit'
+
+action.configuration.unit_set_state_action:
+  type: action_configuration_default
+  label: 'Assign fixed-state event to units'
+
+action.configuration.unit_unpublish_action:
+  type: action_configuration_default
+  label: 'Unpublish unit'
+
+views.field.unit_bulk_form:
+  type: views_field_bulk_form
+  label: 'BAT Unit bulk form'

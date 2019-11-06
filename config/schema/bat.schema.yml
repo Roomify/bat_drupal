@@ -1,0 +1,70 @@
+bat.type_group_bundle.*:
+  type: config_entity
+  label: 'Type Group Bundle'
+  mapping:
+    name:
+      type: string
+      label: 'Name'
+    type:
+      type: string
+      label: 'Type'
+
+bat.date_format.bat:
+  type: config_object
+  label: 'BAT Date format'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: string
+      label: 'Label'
+    status:
+      type: boolean
+      label: 'Status'
+    langcode:
+      type: string
+      label: 'Langcode'
+    locked:
+      type: boolean
+      label: 'Locked'
+    pattern:
+      type: string
+      label: 'Pattern'
+
+bat.date_format.bat_daily:
+  type: config_object
+  label: 'BAT Daily Date format'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: string
+      label: 'Label'
+    status:
+      type: boolean
+      label: 'Status'
+    langcode:
+      type: string
+      label: 'Langcode'
+    locked:
+      type: boolean
+      label: 'Locked'
+    pattern:
+      type: string
+      label: 'Pattern'
+
+bat.settings:
+  type: config_object
+  label: 'BAT Settings'
+  mapping:
+    bat_date_format:
+      type: string
+      label: 'BAT Date format'
+    bat_daily_date_format:
+      type: string
+      label: 'BAT Daily Date format'
+    bat_event_start_date:
+      type: integer
+      label: 'BAT event start date'

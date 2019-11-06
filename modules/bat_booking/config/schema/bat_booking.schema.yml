@@ -1,0 +1,10 @@
+bat_booking.booking_bundle.*:
+  type: config_entity
+  label: 'Booking bundle'
+  mapping:
+    name:
+      type: string
+      label: 'Name'
+    type:
+      type: string
+      label: 'Type'

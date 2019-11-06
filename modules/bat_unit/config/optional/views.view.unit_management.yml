@@ -5,8 +5,6 @@ dependencies:
     - system.menu.admin
   module:
     - bat_unit
-_core:
-  default_config_hash: EggXvR-s1_WJzhmL79YojfElrXeaW3Ty0Om6GfxkJJs
 id: unit_management
 label: 'Unit Management'
 module: views

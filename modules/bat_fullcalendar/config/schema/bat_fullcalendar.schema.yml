@@ -1,0 +1,10 @@
+bat_fullcalendar.settings:
+  type: config_object
+  label: 'BAT Fullcalendar settings'
+  mapping:
+    bat_open_state_default_zero_color:
+      type: string
+      label: 'BAT open state default zero color'
+    bat_open_state_default_color:
+      type: string
+      label: 'BAT open state default color'
