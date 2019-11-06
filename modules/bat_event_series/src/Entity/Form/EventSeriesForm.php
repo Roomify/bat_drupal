@@ -60,6 +60,8 @@ class EventSeriesForm extends ContentEntityForm {
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
 
+    $event_series_type = bat_event_series_type_load($entity->bundle());
+
     $form['changed'] = [
       '#type' => 'hidden',
       '#default_value' => $entity->getChangedTime(),
@@ -112,6 +114,21 @@ class EventSeriesForm extends ContentEntityForm {
       $form['created']['#group'] = 'author';
     }
 
+    if ($event_series_type->getEventGranularity() == 'bat_daily') {
+      $form['event_dates']['widget'][0]['value']['#date_time_element'] = 'none';
+      $form['event_dates']['widget'][0]['end_value']['#date_time_element'] = 'none';
+    }
+    else {
+      $widget_type = entity_get_form_display($entity->getEntityTypeId(), $entity->bundle(), $form_state->getStorage()['form_display']->getMode())
+        ->getComponent('event_dates')['type'];
+
+      // Don't allow entering seconds with the default daterange widget.
+      if ($widget_type == 'daterange_default') {
+        $form['event_dates']['widget'][0]['value']['#date_increment'] = 60;
+        $form['event_dates']['widget'][0]['end_value']['#date_increment'] = 60;
+      }
+    }
+
     $form['event_dates']['widget'][0]['value']['#date_timezone'] = 'UTC';
     $form['event_dates']['widget'][0]['end_value']['#date_timezone'] = 'UTC';
 
@@ -134,7 +151,7 @@ class EventSeriesForm extends ContentEntityForm {
     if ($entity->isNew()) {
       $entity->save();
 
-      drupal_set_message($this->t('Created the %label Event series.', [
+      \Drupal::messenger()->addMessage($this->t('Created the %label Event series.', [
         '%label' => $entity->label(),
       ]));
 

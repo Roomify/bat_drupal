@@ -133,10 +133,10 @@ class EventSeriesTypeForm extends BundleEntityFormBase {
     $t_args = ['%name' => $type->label()];
 
     if ($status == SAVED_UPDATED) {
-      drupal_set_message(t('The event series type %name has been updated.', $t_args));
+      \Drupal::messenger()->addMessage(t('The event series type %name has been updated.', $t_args));
     }
     elseif ($status == SAVED_NEW) {
-      drupal_set_message(t('The event series type %name has been added.', $t_args));
+      \Drupal::messenger()->addMessage(t('The event series type %name has been added.', $t_args));
     }
 
     $form_state->setRedirectUrl($type->urlInfo('collection'));

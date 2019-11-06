@@ -113,10 +113,10 @@ class UnitBundleForm extends BundleEntityFormBase {
     $t_args = ['%name' => $type->label()];
 
     if ($status == SAVED_UPDATED) {
-      drupal_set_message(t('The unit bundle %name has been updated.', $t_args));
+      \Drupal::messenger()->addMessage(t('The unit bundle %name has been updated.', $t_args));
     }
     elseif ($status == SAVED_NEW) {
-      drupal_set_message(t('The unit bundle %name has been added.', $t_args));
+      \Drupal::messenger()->addMessage(t('The unit bundle %name has been added.', $t_args));
     }
 
     $form_state->setRedirectUrl($type->urlInfo('collection'));

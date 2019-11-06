@@ -92,7 +92,7 @@ class EventSeriesUpdateConfirmForm extends ConfirmFormBase {
     if ($form_state->getValue('confirm')) {
       $this->bat_event_series->save();
 
-      drupal_set_message($this->t('Saved the %label Event series.', [
+      \Drupal::messenger()->addMessage($this->t('Saved the %label Event series.', [
         '%label' => $this->bat_event_series->label(),
       ]));
 

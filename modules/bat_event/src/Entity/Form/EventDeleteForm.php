@@ -45,7 +45,7 @@ class EventDeleteForm extends ContentEntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    drupal_set_message($this->t('The event has been deleted'));
+    \Drupal::messenger()->addMessage($this->t('The event has been deleted'));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

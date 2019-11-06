@@ -2,6 +2,9 @@
 
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Render\Element;
@@ -444,5 +447,27 @@ function bat_event_series_create_event_series_field($bundle) {
       ],
     ]);
     $field->save();
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID = bat_type_bundle_edit_form
+ */
+function bat_event_series_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // See if this form is editing a BAT event.
+  $form_object = $form_state->getFormObject();
+  if ($form_object instanceof EntityFormInterface) {
+    $entity = $form_object->getEntity();
+
+    if ($entity->getEntityTypeId() == 'bat_event') {
+      $event_series_id = $entity->get('event_series')->target_id;
+
+      $form['event_series'] = [
+        '#markup' => Link::createFromRoute(t('View other reservations in this series'), 'entity.bat_event_series.canonical', ['bat_event_series' => $event_series_id])->toString(),
+        '#weight' => 999,
+      ];
+    }
   }
 }

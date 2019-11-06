@@ -7,6 +7,11 @@
 
 namespace Drupal\bat_event_series\Entity;
 
+use Roomify\Bat\Calendar\Calendar;
+use Roomify\Bat\Store\DrupalDBStore;
+use Roomify\Bat\Unit\Unit;
+
+use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -115,6 +120,10 @@ class EventSeries extends ContentEntityBase implements EventSeriesInterface {
 
     $event_series_type = bat_event_series_type_load($this->bundle());
 
+    $event_granularity = $event_series_type->getEventGranularity();
+
+    $event_type = bat_event_type_load($event_series_type->getTargetEventType());
+
     $field_name = 'event_' . $event_series_type->getTargetEntityType() . '_reference';
 
     $start = new \DateTime($this->get('event_dates')->value);
@@ -124,14 +133,17 @@ class EventSeries extends ContentEntityBase implements EventSeriesInterface {
 
     foreach ($rrule as $occurrence) {
       $event = bat_event_create([
-        'type' => $event_series_type->getTargetEventType(),
+        'type' => $event_type->id(),
       ]);
 
       $start_date = clone($occurrence);
       $end_date = clone($occurrence);
 
-      if ($event_series_type->getEventGranularity() == 'bat_daily') {
+      if ($event_granularity == 'bat_daily') {
         $end_date->add($start->diff($end));
+
+        $start_date->setTime(0, 0);
+        $end_date->setTime(0, 0);
 
         $event_dates = [
           'value' => $start_date->format('Y-m-d\T00:00:00'),
@@ -150,11 +162,29 @@ class EventSeries extends ContentEntityBase implements EventSeriesInterface {
         ];
       }
 
-      $event->set('event_dates', $event_dates);
-      $event->set('event_state_reference', $this->get('event_state_reference')->entity->id());
-      $event->set($field_name, $this->get($field_name)->entity->id());
-      $event->set('event_series', $this->id());
-      $event->save();
+      $unit = $this->get($field_name)->entity;
+
+      if ($this->checkAvailability($start_date, $end_date, $event_type, $unit)) {
+        $event->set('event_dates', $event_dates);
+        $event->set('event_state_reference', $this->get('event_state_reference')->entity->id());
+        $event->set($field_name, $unit->id());
+        $event->set('event_series', $this->id());
+        $event->save();
+      }
+      else {
+        if ($event_granularity == 'bat_daily') {
+          \Drupal::messenger()->addWarning(t('Unable to create event from @start to @end, availability was not found.', [
+            '@start' => $start_date->format('M j Y'),
+            '@end' => $end_date->format('M j Y'),
+          ]));
+        }
+        else {
+          \Drupal::messenger()->addWarning(t('Unable to create event from @time on @date, availability was not found.', [
+            '@time' => $start_date->format('hA') . '-' . $end_date->format('hA'),
+            '@date' => $start_date->format('M j Y'),
+          ]));
+        }
+      }
     }
   }
 
@@ -255,6 +285,40 @@ class EventSeries extends ContentEntityBase implements EventSeriesInterface {
    */
   public static function getCurrentUserId() {
     return [\Drupal::currentUser()->id()];
+  }
+
+  private function checkAvailability($start_date, $end_date, $event_type, $unit) {
+    $target_field_name = 'event_' . $event_type->getTargetEntityType() . '_reference';
+
+    $database = Database::getConnectionInfo('default');
+
+    $prefix = (isset($database['default']['prefix']['default'])) ? $database['default']['prefix']['default'] : '';
+
+    $event_store = new DrupalDBStore($event_type->id(), DrupalDBStore::BAT_EVENT, $prefix);
+
+    $temp_end_date = clone($end_date);
+    $temp_end_date->sub(new \DateInterval('PT1M'));
+
+    $bat_units = [
+      new Unit($unit->id(), 0),
+    ];
+
+    $calendar = new Calendar($bat_units, $event_store);
+
+    $events = $calendar->getEvents($start_date, $temp_end_date);
+    foreach ($events[$unit->id()] as $event) {
+      $event_id = $event->getValue();
+
+      if ($event = bat_event_load($event_id)) {
+        $state = $event->get('event_state_reference')->entity;
+
+        if ($state->getBlocking()) {
+          return FALSE;
+        }
+      }
+    }
+
+    return TRUE;
   }
 
 }

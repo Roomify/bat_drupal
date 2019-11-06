@@ -45,7 +45,7 @@ class BookingDeleteForm extends ContentEntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    drupal_set_message($this->t('The Type @label has been deleted.', ['@label' => $this->entity->label()]));
+    \Drupal::messenger()->addMessage($this->t('The Type @label has been deleted.', ['@label' => $this->entity->label()]));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
