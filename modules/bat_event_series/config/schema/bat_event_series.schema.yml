@@ -1,0 +1,16 @@
+bat_event_series.event_series_type.*:
+  type: config_entity
+  label: 'Event series type'
+  mapping:
+    name:
+      type: string
+      label: 'Name'
+    type:
+      type: string
+      label: 'Type'
+    event_granularity:
+      type: string
+      label: 'Event granularity'
+    target_event_type:
+      type: string
+      label: 'Target event type'
