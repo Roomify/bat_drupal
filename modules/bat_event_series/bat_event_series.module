@@ -462,13 +462,14 @@ function bat_event_series_form_alter(&$form, FormStateInterface $form_state, $fo
     $entity = $form_object->getEntity();
 
     if ($entity->getEntityTypeId() == 'bat_event') {
-      if (strpos($form_id, '_edit_form') == (strlen($form_id) - 10)) {
-        $event_series_id = $entity->get('event_series')->target_id;
-
-        $form['event_series'] = [
-          '#markup' => Link::createFromRoute(t('View other reservations in this series'), 'entity.bat_event_series.canonical', ['bat_event_series' => $event_series_id])->toString(),
-          '#weight' => 999,
-        ];
+      if ($form_id == 'bat_event_' . $entity->bundle() . '_edit_form' ||
+          $form_id == 'bat_event_' . $entity->bundle() . '_form') {
+        if ($event_series_id = $entity->get('event_series')->target_id) {
+          $form['event_series'] = [
+            '#markup' => Link::createFromRoute(t('View other reservations in this series'), 'entity.bat_event_series.canonical', ['bat_event_series' => $event_series_id])->toString(),
+            '#weight' => 999,
+          ];
+        }
       }
     }
   }

@@ -180,7 +180,7 @@ class EventSeries extends ContentEntityBase implements EventSeriesInterface {
         }
         else {
           \Drupal::messenger()->addWarning(t('Unable to create event from @time on @date, availability was not found.', [
-            '@time' => $start_date->format('hA') . '-' . $end_date->format('hA'),
+            '@time' => $start_date->format('gA') . '-' . $end_date->format('gA'),
             '@date' => $start_date->format('M j Y'),
           ]));
         }
