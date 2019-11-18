@@ -8,9 +8,12 @@
 namespace Drupal\bat_event_series\Entity\Form;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Form\FormBuilder;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -30,13 +33,21 @@ class EventSeriesForm extends ContentEntityForm {
   protected $tempStore;
 
   /**
-   * Constructs a new DeleteUnit object.
+   * The form builder.
+   *
+   * @var \Drupal\Core\Form\FormBuilder
+   */
+  protected $formBuilder;
+
+  /**
+   * Constructs a new EventSeriesForm object.
    *
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
    */
-  public function __construct(PrivateTempStoreFactory $temp_store_factory, EntityRepositoryInterface $entity_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+  public function __construct(PrivateTempStoreFactory $temp_store_factory, EntityRepositoryInterface $entity_repository, FormBuilder $formBuilder, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
     $this->tempStore = $temp_store_factory->get('event_series_update_confirm');
+    $this->formBuilder = $formBuilder;
 
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
   }
@@ -48,6 +59,7 @@ class EventSeriesForm extends ContentEntityForm {
     return new static(
       $container->get('user.private_tempstore'),
       $container->get('entity.repository'),
+      $container->get('form_builder'),
       $container->get('entity_type.bundle.info'),
       $container->get('datetime.time')
     );
@@ -59,6 +71,20 @@ class EventSeriesForm extends ContentEntityForm {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
+
+    if (!$entity->isNew() && isset($form['rrule'])) {
+      $form['rrule']['edit'] = [
+        '#type' => 'button',
+        '#value' => $this->t('Edit repeating rule'),
+        '#limit_validation_errors' => [],
+        '#ajax' => [
+          'callback' => '::editRepeatingRuleFormSubmitAjax',
+          'event' => 'click',
+        ],
+        '#prefix' => '<div>',
+        '#suffix' => '</div>',
+      ];
+    }
 
     $event_series_type = bat_event_series_type_load($entity->bundle());
 
@@ -139,6 +165,8 @@ class EventSeriesForm extends ContentEntityForm {
       $form['event_dates']['widget'][0]['end_value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
     }
 
+    $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
+
     return $form;
   }
 
@@ -162,6 +190,20 @@ class EventSeriesForm extends ContentEntityForm {
 
       $form_state->setRedirect('entity.bat_event_series.confirm_edit_form', ['bat_event_series' => $entity->id()]);
     }
+  }
+
+  /**
+   * Open modal to edit repeating rule.
+   */
+  public function editRepeatingRuleFormSubmitAjax(array $form, FormStateInterface $form_state) {
+    $response = new AjaxResponse();
+
+    $modal_form = $this->formBuilder->getForm('Drupal\bat_event_series\Form\EditRepeatingRuleModalForm', $this->entity);
+    $modal_form['#attached']['library'][] = 'core/drupal.dialog.ajax';
+
+    $response->addCommand(new OpenModalDialogCommand($this->t('Edit repeating rule'), $modal_form, ['width' => 600]));
+
+    return $response;
   }
 
 }

@@ -110,3 +110,27 @@ entity.bat_event_series_type.delete_form:
     _title: 'Delete'
   requirements:
     _permission: 'administer bat_event_series_type entities'
+
+entity.bat_event_series.edit_form_modal:
+  path: '/admin/bat/events/event_series/{bat_event_series}/edit/repeating-rule'
+  defaults:
+    _form: '\Drupal\bat_event_series\Form\EditRepeatingRuleModalForm'
+    _title: 'Edit repeating rule'
+  requirements:
+    _permission: 'administer pages'
+  options:
+    parameters:
+      bat_event_series:
+        type: entity:bat_event_series
+
+entity.bat_event_series.edit_confirmation_form_modal:
+  path: '/admin/bat/events/event_series/{bat_event_series}/edit/repeating-rule-confirmation'
+  defaults:
+    _form: '\Drupal\bat_event_series\Form\EditRepeatingRuleConfirmationModalForm'
+    _title: 'Edit repeating rule'
+  requirements:
+    _permission: 'administer pages'
+  options:
+    parameters:
+      bat_event_series:
+        type: entity:bat_event_series

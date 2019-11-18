@@ -118,71 +118,73 @@ class EventSeries extends ContentEntityBase implements EventSeriesInterface {
   public function save() {
     parent::save();
 
-    $event_series_type = bat_event_series_type_load($this->bundle());
+    if ($this->isNew()) {
+      $event_series_type = bat_event_series_type_load($this->bundle());
 
-    $event_granularity = $event_series_type->getEventGranularity();
+      $event_granularity = $event_series_type->getEventGranularity();
 
-    $event_type = bat_event_type_load($event_series_type->getTargetEventType());
+      $event_type = bat_event_type_load($event_series_type->getTargetEventType());
 
-    $field_name = 'event_' . $event_series_type->getTargetEntityType() . '_reference';
+      $field_name = 'event_' . $event_series_type->getTargetEntityType() . '_reference';
 
-    $start = new \DateTime($this->get('event_dates')->value);
-    $end = new \DateTime($this->get('event_dates')->end_value);
+      $start = new \DateTime($this->get('event_dates')->value);
+      $end = new \DateTime($this->get('event_dates')->end_value);
 
-    $rrule = new RRule($this->getRRule(), $start);
+      $rrule = new RRule($this->getRRule(), $start);
 
-    foreach ($rrule as $occurrence) {
-      $event = bat_event_create([
-        'type' => $event_type->id(),
-      ]);
+      foreach ($rrule as $occurrence) {
+        $event = bat_event_create([
+          'type' => $event_type->id(),
+        ]);
 
-      $start_date = clone($occurrence);
-      $end_date = clone($occurrence);
+        $start_date = clone($occurrence);
+        $end_date = clone($occurrence);
 
-      if ($event_granularity == 'bat_daily') {
-        $end_date->add($start->diff($end));
-
-        $start_date->setTime(0, 0);
-        $end_date->setTime(0, 0);
-
-        $event_dates = [
-          'value' => $start_date->format('Y-m-d\T00:00:00'),
-          'end_value' => $end_date->format('Y-m-d\T00:00:00'),
-        ];
-      }
-      else {
-        $start_date->setTime($start->format('H'), $start->format('i'));
-        $end_date->setTime($start->format('H'), $start->format('i'));
-
-        $end_date->add($start->diff($end));
-
-        $event_dates = [
-          'value' => $start_date->format('Y-m-d\TH:i:00'),
-          'end_value' => $end_date->format('Y-m-d\TH:i:00'),
-        ];
-      }
-
-      $unit = $this->get($field_name)->entity;
-
-      if ($this->checkAvailability($start_date, $end_date, $event_type, $unit)) {
-        $event->set('event_dates', $event_dates);
-        $event->set('event_state_reference', $this->get('event_state_reference')->entity->id());
-        $event->set($field_name, $unit->id());
-        $event->set('event_series', $this->id());
-        $event->save();
-      }
-      else {
         if ($event_granularity == 'bat_daily') {
-          \Drupal::messenger()->addWarning(t('Unable to create event from @start to @end, availability was not found.', [
-            '@start' => $start_date->format('M j Y'),
-            '@end' => $end_date->format('M j Y'),
-          ]));
+          $end_date->add($start->diff($end));
+
+          $start_date->setTime(0, 0);
+          $end_date->setTime(0, 0);
+
+          $event_dates = [
+            'value' => $start_date->format('Y-m-d\T00:00:00'),
+            'end_value' => $end_date->format('Y-m-d\T00:00:00'),
+          ];
         }
         else {
-          \Drupal::messenger()->addWarning(t('Unable to create event from @time on @date, availability was not found.', [
-            '@time' => $start_date->format('gA') . '-' . $end_date->format('gA'),
-            '@date' => $start_date->format('M j Y'),
-          ]));
+          $start_date->setTime($start->format('H'), $start->format('i'));
+          $end_date->setTime($start->format('H'), $start->format('i'));
+
+          $end_date->add($start->diff($end));
+
+          $event_dates = [
+            'value' => $start_date->format('Y-m-d\TH:i:00'),
+            'end_value' => $end_date->format('Y-m-d\TH:i:00'),
+          ];
+        }
+
+        $unit = $this->get($field_name)->entity;
+
+        if ($this->checkAvailability($start_date, $end_date, $event_type, $unit)) {
+          $event->set('event_dates', $event_dates);
+          $event->set('event_state_reference', $this->get('event_state_reference')->entity->id());
+          $event->set($field_name, $unit->id());
+          $event->set('event_series', $this->id());
+          $event->save();
+        }
+        else {
+          if ($event_granularity == 'bat_daily') {
+            \Drupal::messenger()->addWarning(t('Unable to create event from @start to @end, availability was not found.', [
+              '@start' => $start_date->format('M j Y'),
+              '@end' => $end_date->format('M j Y'),
+            ]));
+          }
+          else {
+            \Drupal::messenger()->addWarning(t('Unable to create event from @time on @date, availability was not found.', [
+              '@time' => $start_date->format('gA') . '-' . $end_date->format('gA'),
+              '@date' => $start_date->format('M j Y'),
+            ]));
+          }
         }
       }
     }
@@ -223,7 +225,6 @@ class EventSeries extends ContentEntityBase implements EventSeriesInterface {
 
     $fields['rrule'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('RRule'))
-      ->setDescription(t('RRule.'))
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
         'weight' => 0,
