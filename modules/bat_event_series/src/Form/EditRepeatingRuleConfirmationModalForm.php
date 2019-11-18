@@ -23,6 +23,9 @@ use Drupal\bat_event_series\Entity\EventSeries;
 use RRule\RRule;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ *
+ */
 class EditRepeatingRuleConfirmationModalForm extends FormBase {
 
   /**
@@ -196,7 +199,8 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
         'value' => $new_values['start_date']->format('Y-m-d\T00:00:00'),
         'end_value' => $new_values['end_date']->format('Y-m-d\T00:00:00'),
       ];
-    } else {
+    }
+    else {
       $event_dates = [
         'value' => $new_values['start_date']->format('Y-m-d\TH:i:00'),
         'end_value' => $new_values['end_date']->format('Y-m-d\TH:i:00'),
@@ -385,7 +389,8 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
           'value' => $start_date->format('Y-m-d\T00:00:00'),
           'end_value' => $end_date->format('Y-m-d\T00:00:00'),
         ];
-      } else {
+      }
+      else {
         $event_dates = [
           'value' => $start_date->format('Y-m-d\TH:i:00'),
           'end_value' => $end_date->format('Y-m-d\TH:i:00'),

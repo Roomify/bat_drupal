@@ -13,6 +13,9 @@ use Drupal\Core\Url;
 use Drupal\user\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ *
+ */
 class EventSeriesUpdateConfirmForm extends ConfirmFormBase {
 
   /**

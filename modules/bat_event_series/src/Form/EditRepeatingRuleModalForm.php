@@ -22,6 +22,9 @@ use Drupal\bat_event_series\Entity\EventSeries;
 use RRule\RfcParser;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ *
+ */
 class EditRepeatingRuleModalForm extends FormBase {
 
   /**
