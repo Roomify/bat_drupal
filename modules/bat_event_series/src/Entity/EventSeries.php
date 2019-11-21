@@ -116,9 +116,11 @@ class EventSeries extends ContentEntityBase implements EventSeriesInterface {
    * {@inheritdoc}
    */
   public function save() {
+    $is_new = $this->isNew();
+
     parent::save();
 
-    if ($this->isNew()) {
+    if ($is_new) {
       $event_series_type = bat_event_series_type_load($this->bundle());
 
       $event_granularity = $event_series_type->getEventGranularity();
