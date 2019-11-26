@@ -30,7 +30,6 @@ use Drupal\user\EntityOwnerTrait;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\bat_unit\UnitTypeListBuilder",
  *     "views_data" = "Drupal\bat_unit\Entity\UnitTypeViewsData",
- *
  *     "form" = {
  *       "default" = "Drupal\bat_unit\Entity\Form\UnitTypeForm",
  *       "add" = "Drupal\bat_unit\Entity\Form\UnitTypeForm",

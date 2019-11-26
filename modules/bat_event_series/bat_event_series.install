@@ -1,0 +1,30 @@
+<?php
+
+use Drupal\field\Entity\FieldConfig;
+
+/**
+ * Implements hook_install().
+ */
+function bat_event_series_install() {
+  $types = bat_event_get_types();
+
+  foreach ($types as $type) {
+    bat_event_series_create_event_series_field($type->id());
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function bat_event_series_uninstall() {
+  $types = bat_event_get_types();
+  $entityFieldManager = Drupal::service('entity_field.manager');
+
+  foreach ($types as $type) {
+    $field = FieldConfig::loadByName('bat_event', $type->id(), 'event_series');
+
+    if ($field) {
+      $field->delete();
+    }
+  }
+}

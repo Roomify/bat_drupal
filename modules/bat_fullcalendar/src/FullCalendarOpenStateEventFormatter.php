@@ -43,7 +43,7 @@ class FullCalendarOpenStateEventFormatter extends AbstractEventFormatter {
     $editable = FALSE;
 
     // Load the target entity from Drupal.
-    $target_entity = entity_load($this->event_type->target_entity_type, $event->getUnitId());
+    $target_entity = entity_load($this->event_type->getTargetEntityType(), $event->getUnitId());
 
     // Get the target entity default value.
     $default_value = $target_entity->getEventDefaultValue($this->event_type->id());

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat_event\Entity\Event.
+ * Contains \Drupal\bat_event\Entity\EventViewsData.
  */
 
 namespace Drupal\bat_event\Entity;

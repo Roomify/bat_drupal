@@ -136,7 +136,7 @@ class EventForm extends ContentEntityForm {
     }
 
     $event_type = bat_event_type_load($this->entity->bundle());
-    $target_field_name = 'event_' . $event_type->target_entity_type . '_reference';
+    $target_field_name = 'event_' . $event_type->getTargetEntityType() . '_reference';
 
     if ($event_type->getFixedEventStates()) {
       if ($values[$target_field_name][0]['target_id'] != '') {
@@ -192,13 +192,13 @@ class EventForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Event.', [
+        \Drupal::messenger()->addMessage($this->t('Created the %label Event.', [
           '%label' => $event->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Event.', [
+        \Drupal::messenger()->addMessage($this->t('Saved the %label Event.', [
           '%label' => $event->label(),
         ]));
     }

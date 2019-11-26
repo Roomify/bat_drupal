@@ -27,7 +27,7 @@ class BookingBundleDeleteConfirm extends EntityDeleteForm {
 
     if (count(bat_booking_load_multiple([], ['type' => $type_bundle]))) {
       // This type bundle has associated types, don't allow deletion.
-      drupal_set_message(t('This Bat Booking bundle has associated Types. Please delete all Types before attempting to delete this Bat Booking bundle.'), 'error');
+      \Drupal::messenger()->addError(t('This Bat Booking bundle has associated Types. Please delete all Types before attempting to delete this Bat Booking bundle.'));
 
       return [];
     }

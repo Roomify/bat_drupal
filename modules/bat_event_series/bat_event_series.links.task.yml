@@ -1,0 +1,15 @@
+entity.bat_event_series.canonical:
+  route_name: entity.bat_event_series.canonical
+  base_route: entity.bat_event_series.canonical
+  title: 'View'
+
+entity.bat_event_series.edit_form:
+  route_name: entity.bat_event_series.edit_form
+  base_route: entity.bat_event_series.canonical
+  title: Edit
+
+entity.bat_event_series.delete_form:
+  route_name:  entity.bat_event_series.delete_form
+  base_route:  entity.bat_event_series.canonical
+  title: Delete
+  weight: 10

@@ -1,0 +1,11 @@
+entity.bat_event_series.add_page:
+  route_name: entity.bat_event_series.add_page
+  title: 'Add Event Series'
+  appears_on:
+    - entity.bat_event_series.collection
+
+entity.bat_event_series_type.type_add:
+  route_name: entity.bat_event_series_type.type_add
+  title: 'Add event series type'
+  appears_on:
+    - entity.bat_event_series_type.collection

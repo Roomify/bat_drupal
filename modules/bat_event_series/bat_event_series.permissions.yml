@@ -1,0 +1,6 @@
+administer bat_event_series_type entities:
+  title: 'Administer event series types'
+  description: 'Allows users to add event series types and configure their fields.'
+
+permission_callbacks:
+  - Drupal\bat_event_series\EventSeriesPermissions::permissions

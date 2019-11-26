@@ -112,10 +112,10 @@ class BookingConfirmationForm extends FormBase {
 
         $booking->save();
 
-        drupal_set_message(t('Booking created'));
+        \Drupal::messenger()->addMessage(t('Booking created'));
       }
       else {
-        drupal_set_message(t('No units'), 'error');
+        \Drupal::messenger()->addError(t('No units'));
       }
     }
   }

@@ -83,7 +83,6 @@ function bat_event_type_add_event_state_reference($entity) {
  * Create "Event Dates" field.
  */
 function bat_event_type_add_event_dates_field($entity) {
-  $entity_info = \Drupal::entityTypeManager()->getDefinition($entity->target_entity_type);
   $field_name = 'event_dates';
 
   $field_storage = FieldStorageConfig::loadByName('bat_event', $field_name);
@@ -139,8 +138,8 @@ function bat_event_type_add_event_dates_field($entity) {
  * We need to create a field/instance for each possible target entity type.
  */
 function bat_event_type_add_target_entity_field($entity) {
-  $entity_info = \Drupal::entityTypeManager()->getDefinition($entity->target_entity_type);
-  $field_name = 'event_' . $entity->target_entity_type . '_reference';
+  $entity_info = \Drupal::entityTypeManager()->getDefinition($entity->getTargetEntityType());
+  $field_name = 'event_' . $entity->getTargetEntityType() . '_reference';
 
   $field_storage = FieldStorageConfig::loadByName('bat_event', $field_name);
   $field = FieldConfig::loadByName('bat_event', $entity->id(), $field_name);
@@ -153,7 +152,7 @@ function bat_event_type_add_target_entity_field($entity) {
       'cardinality' => 1,
       'locked' => 1,
       'settings' => [
-        'target_type' => $entity->target_entity_type,
+        'target_type' => $entity->getTargetEntityType(),
       ],
     ]);
     $field_storage->save();

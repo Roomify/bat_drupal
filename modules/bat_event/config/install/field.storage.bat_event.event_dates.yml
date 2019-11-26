@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - bat_event
+    - datetime_range
+id: bat_event.event_dates
+field_name: event_dates
+entity_type: bat_event
+type: daterange
+settings:
+  datetime_type: datetime
+module: datetime_range
+locked: true
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
