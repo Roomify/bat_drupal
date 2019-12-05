@@ -9,7 +9,7 @@ namespace Drupal\bat\ParamConverter;
 
 use Drupal\Core\ParamConverter\ParamConverterInterface;
 use Symfony\Component\Routing\Route;
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Html;
 
 /**
  *
@@ -17,7 +17,7 @@ use Drupal\Component\Utility\SafeMarkup;
 class DateParamConverter implements ParamConverterInterface {
 
   public function convert($value, $definition, $name, array $defaults) {
-    $date_string = SafeMarkup::checkPlain($value);
+    $date_string = Html::escape($value);
 
     try {
       $date = new \DateTime($date_string);

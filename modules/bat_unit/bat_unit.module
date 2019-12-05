@@ -7,9 +7,11 @@
  */
 
 use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Render\Element;
 use Drupal\views\ViewExecutable;
@@ -85,7 +87,7 @@ function template_preprocess_bat_type_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = [
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_unit_type.add', ['type_bundle' => $type->id()])),
+        'add_link' => Link::fromTextAndUrl($type->label(), new Url('entity.bat_unit_type.add', ['type_bundle' => $type->id()])),
       ];
     }
   }
@@ -106,7 +108,7 @@ function template_preprocess_bat_unit_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = [
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_unit.add_form', ['unit_bundle' => $type->id()])),
+        'add_link' => Link::fromTextAndUrl($type->label(), new Url('entity.bat_unit.add_form', ['unit_bundle' => $type->id()])),
       ];
     }
   }
@@ -212,7 +214,7 @@ function bat_unit_bat_entity_access_view_condition_bat_unit_alter(&$conditions, 
   }
 
   $old_conditions = $conditions;
-  $conditions = db_and();
+  $conditions = new Condition('AND');
 
   if ($account->id() && $account->hasPermission('view own bat_unit unpublished entities')) {
   }
@@ -544,7 +546,7 @@ function bat_type_bat_entity_access_view_condition_bat_type_alter(&$conditions, 
   }
 
   $old_conditions = $conditions;
-  $conditions = db_and();
+  $conditions = new Condition('AND');
 
   if ($account->id() && $account->hasPermission('view own bat_type unpublished entities')) {
   }

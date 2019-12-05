@@ -9,6 +9,7 @@ namespace Drupal\bat_fullcalendar\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
 
@@ -69,7 +70,7 @@ class FullcalendarEventManagerForm extends FormBase {
       '#value' => $end_date->format('Y-m-d H:i:s'),
     ];
 
-    $unit = entity_load($event_type->getTargetEntityType(), $entity_id);
+    $unit = \Drupal::entityTypeManager()->getStorage($event_type->getTargetEntityType())->load($entity_id);
 
     $form['event_title'] = [
       '#prefix' => '<h2>',
@@ -107,10 +108,10 @@ class FullcalendarEventManagerForm extends FormBase {
           '#value' => $field_name,
         ];
 
-        $field_definition = \Drupal::entityManager()->getFieldDefinitions('bat_event', $event_type->id())[$field_name];
+        $field_definition = \Drupal::entityTypeManager()->getFieldDefinitions('bat_event', $event_type->id())[$field_name];
         $items = new FieldItemList($field_definition, NULL, EntityAdapter::createFromEntity(bat_event_create(['type' => $event_type->id()])));
 
-        $form_display = entity_get_form_display('bat_event', $event_type->id(), 'default');
+        $form_display = EntityFormDisplay::load('bat_event.' . $event_type->id() . '.default');
         $widget = $form_display->getRenderer($field_name);
 
         $form['#parents'] = [];
@@ -206,10 +207,10 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $event->save();
 
-    $unit = entity_load($event_type_entity->getTargetEntityType(), $entity_id);
+    $unit = \Drupal::entityTypeManager()->getStorage($event_type_entity->getTargetEntityType())->load($entity_id);
 
     $elements = $event->{$field_name}->view(['label' => 'hidden']);
-    $value = drupal_render($elements);
+    $value = \Drupal::service('renderer')->render($elements);
 
     $form['form_wrapper_bottom'] = [
       '#prefix' => '<div>',

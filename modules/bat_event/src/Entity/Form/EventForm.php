@@ -9,6 +9,7 @@ namespace Drupal\bat_event\Entity\Form;
 
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Database\Database;
 use Roomify\Bat\Calendar\Calendar;
@@ -45,7 +46,7 @@ class EventForm extends ContentEntityForm {
       '#weight' => 99,
     ];
 
-    $is_new = !$entity->isNew() ? format_date($entity->getChangedTime(), 'short') : t('Not saved yet');
+    $is_new = !$entity->isNew() ? \Drupal::service('date.formatter')->format($entity->getChangedTime(), 'short') : t('Not saved yet');
     $form['meta'] = [
       '#attributes' => ['class' => ['entity-meta__header']],
       '#type' => 'container',
@@ -88,7 +89,7 @@ class EventForm extends ContentEntityForm {
       $form['event_dates']['widget'][0]['end_value']['#date_time_element'] = 'none';
     }
     else {
-      $widget_type = entity_get_form_display($entity->getEntityTypeId(), $entity->bundle(), $form_state->getStorage()['form_display']->getMode())
+      $widget_type = EntityFormDisplay::load($entity->getEntityTypeId() . '.' . $entity->bundle() . '.' . $form_state->getStorage()['form_display']->getMode())
         ->getComponent('event_dates')['type'];
 
       // Don't allow entering seconds with the default daterange widget.

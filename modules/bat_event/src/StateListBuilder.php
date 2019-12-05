@@ -9,7 +9,7 @@ namespace Drupal\bat_event;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Routing\LinkGeneratorTrait;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -22,7 +22,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @ingroup bat
  */
 class StateListBuilder extends EntityListBuilder {
-  use LinkGeneratorTrait;
 
   /**
    * The entity query factory.
@@ -130,8 +129,8 @@ class StateListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['id'] = $entity->id();
-    $row['name'] = $this->l(
-      $this->getLabel($entity),
+    $row['name'] = Link::fromTextAndUrl(
+      $entity->label(),
       new Url(
         'entity.state.edit_form', [
           'state' => $entity->id(),

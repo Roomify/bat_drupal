@@ -9,7 +9,7 @@ namespace Drupal\bat_unit;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Routing\LinkGeneratorTrait;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -22,7 +22,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @ingroup bat
  */
 class UnitTypeListBuilder extends EntityListBuilder {
-  use LinkGeneratorTrait;
 
   /**
    * The entity query factory.
@@ -111,8 +110,8 @@ class UnitTypeListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\bat_unit\Entity\UnitType */
     $row['id'] = $entity->id();
-    $row['name'] = $this->l(
-      $this->getLabel($entity),
+    $row['name'] = Link::fromTextAndUrl(
+      $entity->label(),
       new Url(
         'entity.bat_unit_type.edit_form', [
           'bat_unit_type' => $entity->id(),

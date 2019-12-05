@@ -195,7 +195,7 @@ class Event extends ContentEntityBase implements EventInterface {
     // We are going to be updating the event - so the first step is to remove
     // the old event.
     if (!($this->isNew())) {
-      $entity_original = entity_load_unchanged('bat_event', $this->id());
+      $entity_original = \Drupal::entityTypeManager()->getStorage('bat_event')->loadUnchanged($this->id());
 
       if (($entity_original->getStartDate() != '') &&
         ($entity_original->getEndDate() != '') &&
@@ -210,7 +210,7 @@ class Event extends ContentEntityBase implements EventInterface {
         }
 
         // Load the referenced entity.
-        if ($target_entity = entity_load($event_type->getTargetEntityType(), $target_entity_id)) {
+        if ($target_entity = \Drupal::entityTypeManager()->getStorage($event_type->getTargetEntityType())->load($target_entity_id)) {
           $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
 
           $this->batStoreSave($unit,
@@ -257,7 +257,7 @@ class Event extends ContentEntityBase implements EventInterface {
 
       $target_entity_id = $event_target_entity_reference->referencedEntities()[0]->id();
 
-      if ($target_entity = entity_load($event_type->getTargetEntityType(), $target_entity_id)) {
+      if ($target_entity = \Drupal::entityTypeManager()->getStorage($event_type->getTargetEntityType())->load($target_entity_id)) {
         $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
 
         $this->batStoreSave($unit,
@@ -290,7 +290,7 @@ class Event extends ContentEntityBase implements EventInterface {
       $target_entity_id = $event_target_entity_reference->referencedEntities()[0]->id();
 
       // Load the referenced entity.
-      if ($target_entity = entity_load($event_type->getTargetEntityType(), $target_entity_id)) {
+      if ($target_entity = \Drupal::entityTypeManager()->getStorage($event_type->getTargetEntityType())->load($target_entity_id)) {
         $unit = new Unit($target_entity_id, $target_entity->getEventDefaultValue($event_type->id()));
 
         $this->batStoreSave($unit,

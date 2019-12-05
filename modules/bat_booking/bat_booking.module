@@ -6,6 +6,7 @@
 
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -195,7 +196,7 @@ function template_preprocess_bat_booking_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = [
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_booking.add', ['booking_bundle' => $type->id()])),
+        'add_link' => Link::fromTextAndUrl($type->label(), new Url('entity.bat_booking.add', ['booking_bundle' => $type->id()])),
       ];
     }
   }

@@ -9,7 +9,6 @@ namespace Drupal\bat_event_series;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
@@ -21,7 +20,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @ingroup bat
  */
 class EventSeriesListBuilder extends EntityListBuilder {
-  use LinkGeneratorTrait;
 
   /**
    * The entity query factory.

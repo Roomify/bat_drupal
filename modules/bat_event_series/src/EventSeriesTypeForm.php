@@ -139,7 +139,7 @@ class EventSeriesTypeForm extends BundleEntityFormBase {
       \Drupal::messenger()->addMessage(t('The event series type %name has been added.', $t_args));
     }
 
-    $form_state->setRedirectUrl($type->urlInfo('collection'));
+    $form_state->setRedirectUrl($type->toUrl('collection'));
   }
 
 }

@@ -40,7 +40,7 @@ class BookingForm extends ContentEntityForm {
       '#weight' => 99,
     ];
 
-    $is_new = !$entity->isNew() ? format_date($entity->getChangedTime(), 'short') : t('Not saved yet');
+    $is_new = !$entity->isNew() ? \Drupal::service('date.formatter')->format($entity->getChangedTime(), 'short') : t('Not saved yet');
     $form['meta'] = [
       '#attributes' => ['class' => ['entity-meta__header']],
       '#type' => 'container',

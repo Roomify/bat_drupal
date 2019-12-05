@@ -12,6 +12,7 @@ use Roomify\Bat\Unit\Unit;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Database\Database;
@@ -490,7 +491,7 @@ function bat_event_theme() {
  */
 function bat_event_delete_event_type_schema($machine_name) {
   foreach (bat_event_get_event_type_tables($machine_name) as $name) {
-    db_drop_table($name);
+    Database::getConnection()->schema()->dropTable($name);
   }
 }
 
@@ -634,7 +635,7 @@ function bat_event_create_event_type_schema($machine_name) {
   ];
 
   foreach ($schema as $name => $table) {
-    db_create_table($name, $table);
+    Database::getConnection()->schema()->createTable($name, $table);
   }
 }
 
@@ -792,7 +793,7 @@ function bat_event_form_bat_type_bundle_edit_form_alter(&$form, FormStateInterfa
 
   $fields_options = [];
 
-  $fields = \Drupal::entityManager()->getFieldDefinitions('bat_unit_type', $type_bundle->id());
+  $fields = \Drupal::entityTypeManager()->getFieldDefinitions('bat_unit_type', $type_bundle->id());
   foreach ($fields as $field) {
     if ($field instanceof FieldConfig) {
       $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';
@@ -1040,7 +1041,7 @@ function template_preprocess_bat_event_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = [
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_event.add_form', ['event_type' => $type->id()])),
+        'add_link' => Link::fromTextAndUrl($type->label(), new Url('entity.bat_event.add_form', ['event_type' => $type->id()])),
       ];
     }
   }

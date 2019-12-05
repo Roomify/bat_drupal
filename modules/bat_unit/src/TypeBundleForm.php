@@ -125,7 +125,7 @@ class TypeBundleForm extends BundleEntityFormBase {
       \Drupal::messenger()->addMessage(t('The type bundle %name has been added.', $t_args));
     }
 
-    $form_state->setRedirectUrl($type->urlInfo('collection'));
+    $form_state->setRedirectUrl($type->toUrl('collection'));
   }
 
 }

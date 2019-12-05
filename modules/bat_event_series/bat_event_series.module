@@ -365,7 +365,7 @@ function template_preprocess_bat_event_series_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = [
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_event_series.add_form', ['event_series_type' => $type->id()])),
+        'add_link' => Link::fromTextAndUrl($type->label(), new Url('entity.bat_event_series.add_form', ['event_series_type' => $type->id()])),
       ];
     }
   }

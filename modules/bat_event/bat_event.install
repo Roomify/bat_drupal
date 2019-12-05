@@ -42,7 +42,7 @@ function bat_event_requirements($phase) {
  * Migrate event's dates on the new field.
  */
 function bat_event_update_8001() {
-  $events = db_select('event', 'e')
+  $events = \Drupal::database()->select('event', 'e')
     ->fields('e', [])
     ->condition('start', '', '<>')
     ->execute()

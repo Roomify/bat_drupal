@@ -11,6 +11,7 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormBuilder;
@@ -102,7 +103,7 @@ class EventSeriesForm extends ContentEntityForm {
       '#weight' => 99,
     ];
 
-    $is_new = !$entity->isNew() ? format_date($entity->getChangedTime(), 'short') : t('Not saved yet');
+    $is_new = !$entity->isNew() ? \Drupal::service('date.formatter')->format($entity->getChangedTime(), 'short') : t('Not saved yet');
     $form['meta'] = [
       '#attributes' => ['class' => ['entity-meta__header']],
       '#type' => 'container',
@@ -145,7 +146,7 @@ class EventSeriesForm extends ContentEntityForm {
       $form['event_dates']['widget'][0]['end_value']['#date_time_element'] = 'none';
     }
     else {
-      $widget_type = entity_get_form_display($entity->getEntityTypeId(), $entity->bundle(), $form_state->getStorage()['form_display']->getMode())
+      $widget_type = EntityFormDisplay::load($entity->getEntityTypeId() . '.' . $entity->bundle() . '.' . $form_state->getStorage()['form_display']->getMode())
         ->getComponent('event_dates')['type'];
 
       // Don't allow entering seconds with the default daterange widget.
