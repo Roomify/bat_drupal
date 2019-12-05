@@ -39,6 +39,7 @@ use RRule\RRule;
  *       "add" = "Drupal\bat_event_series\Entity\Form\EventSeriesForm",
  *       "edit" = "Drupal\bat_event_series\Entity\Form\EventSeriesForm",
  *       "delete" = "Drupal\bat_event_series\Entity\Form\EventSeriesDeleteForm",
+ *       "delete_events" = "Drupal\bat_event_series\Entity\Form\EventSeriesDeleteEventsForm",
  *     },
  *     "access" = "Drupal\bat_event_series\EventSeriesAccessControlHandler",
  *   },

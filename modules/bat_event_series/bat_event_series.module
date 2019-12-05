@@ -451,9 +451,7 @@ function bat_event_series_create_event_series_field($bundle) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- *
- * FORM_ID = bat_type_bundle_edit_form
+ * Implements hook_form_alter().
  */
 function bat_event_series_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // See if this form is editing a BAT event.
@@ -466,8 +464,14 @@ function bat_event_series_form_alter(&$form, FormStateInterface $form_state, $fo
           $form_id == 'bat_event_' . $entity->bundle() . '_form') {
         if ($event_series_id = $entity->get('event_series')->target_id) {
           $form['event_series'] = [
-            '#markup' => Link::createFromRoute(t('View other reservations in this series'), 'entity.bat_event_series.canonical', ['bat_event_series' => $event_series_id])->toString(),
+            '#markup' => '<div>' . Link::createFromRoute(t('View other reservations in this series'), 'entity.bat_event_series.canonical', ['bat_event_series' => $event_series_id])->toString() . '</div>',
             '#weight' => 999,
+          ];
+
+          $form['delete_event_series'] = [
+            '#markup' => '<div>' . Link::createFromRoute(t('Delete remaining events in this series'), 'entity.bat_event_series.delete_events_form', ['bat_event_series' => $event_series_id])->toString() . '</div>',
+            '#title' => t('Delete remaining events in this series'),
+            '#weight' => 1000,
           ];
         }
       }

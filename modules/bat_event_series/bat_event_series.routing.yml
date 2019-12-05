@@ -75,6 +75,19 @@ entity.bat_event_series.delete_form:
   options:
     _admin_route: TRUE
 
+entity.bat_event_series.delete_events_form:
+  path: '/admin/bat/events/event_series/{bat_event_series}/delete-events'
+  defaults:
+    _entity_form: bat_event_series.delete_events
+    _title: 'Delete Event Series'
+  requirements:
+    _entity_access: 'bat_event_series.delete'
+  options:
+    _admin_route: TRUE
+    parameters:
+      bat_event_series:
+        type: entity:bat_event_series
+
 entity.bat_event_series_type.collection:
   path: '/admin/bat/events/event_series/event-series-types'
   defaults:

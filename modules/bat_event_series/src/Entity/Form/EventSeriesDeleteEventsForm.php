@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\bat_event_series\Entity\Form\EventSeriesDeleteForm.
+ * Contains \Drupal\bat_event_series\Entity\Form\EventSeriesDeleteEventsForm.
  */
 
 namespace Drupal\bat_event_series\Entity\Form;
@@ -16,13 +16,13 @@ use Drupal\Core\Url;
  *
  * @ingroup bat
  */
-class EventSeriesDeleteForm extends ContentEntityConfirmFormBase {
+class EventSeriesDeleteEventsForm extends ContentEntityConfirmFormBase {
 
   /**
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t('Are you sure you want to delete entity %name?', ['%name' => $this->entity->label()]);
+    return $this->t('Are you sure you want to delete events from %name?', ['%name' => $this->entity->label()]);
   }
 
   /**
@@ -58,10 +58,6 @@ class EventSeriesDeleteForm extends ContentEntityConfirmFormBase {
       ->condition('event_dates.value', date('Y-m-d\TH:i:s'), '>');
     $future_events = $query->execute();
 
-    $query = \Drupal::entityQuery('bat_event')
-      ->condition('event_series.target_id', $entity->id())
-      ->condition('event_dates.value', date('Y-m-d\TH:i:s'), '<=');
-    $past_events = $query->execute();
 
     $form['delete_events'] = [
       '#type' => 'details',
@@ -71,26 +67,7 @@ class EventSeriesDeleteForm extends ContentEntityConfirmFormBase {
 
     $date_format = \Drupal::config('bat.settings')->get('bat_date_format') ?: 'Y-m-d H:i';
 
-    if (!empty($past_events)) {
-      $form['delete_events']['past_events'] = [
-        '#theme' => 'item_list',
-        '#title' => $this->t('The following events will no longer be connected:'),
-        '#items' => [],
-      ];
-
-      foreach (bat_event_load_multiple($past_events) as $event) {
-        $form['delete_events']['past_events']['#items'][$event->id()] = t('from @start to @end', [
-          '@start' => $event->getStartDate()->format($date_format),
-          '@end' => $event->getEndDate()->format($date_format),
-        ]);
-      }
-    }
-
     if (!empty($future_events)) {
-      if (isset($form['delete_events']['past_events'])) {
-        $form['delete_events']['past_events']['#suffix'] = '<br>';
-      }
-
       $form['delete_events']['future_events'] = [
         '#theme' => 'item_list',
         '#title' => $this->t('The following events will be deleted:'),
@@ -119,13 +96,11 @@ class EventSeriesDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->entity->delete();
-
     if ($events = $form_state->getValue('events')) {
       bat_event_delete_multiple($events);
     }
 
-    \Drupal::messenger()->addMessage($this->t('The event series has been deleted'));
+    \Drupal::messenger()->addMessage($this->t('The series events have been deleted'));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

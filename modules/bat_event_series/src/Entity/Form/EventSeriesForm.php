@@ -16,6 +16,7 @@ use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormBuilder;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\user\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -164,6 +165,20 @@ class EventSeriesForm extends ContentEntityForm {
     }
     if (isset($form['event_dates']['widget'][0]['end_value']['#default_value'])) {
       $form['event_dates']['widget'][0]['end_value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
+    }
+
+    if (isset($form['actions']['delete'])) {
+      $form['actions']['delete']['#title'] = $this->t('Delete Event Series');
+
+      $form['actions']['delete_events'] = [
+        '#type' => 'link',
+        '#title' => t('Delete remaining events in this series'),
+        '#url' => Url::fromRoute('entity.bat_event_series.delete_events_form', ['bat_event_series' => $entity->id()]),
+        '#attributes' => [
+          'class' => ['button', 'button--danger'],
+        ],
+        '#weight' => 999,
+      ];
     }
 
     $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
