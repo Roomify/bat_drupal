@@ -58,7 +58,6 @@ class EventSeriesDeleteEventsForm extends ContentEntityConfirmFormBase {
       ->condition('event_dates.value', date('Y-m-d\TH:i:s'), '>');
     $future_events = $query->execute();
 
-
     $form['delete_events'] = [
       '#type' => 'details',
       '#title' => $this->t('Events'),

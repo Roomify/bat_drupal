@@ -793,7 +793,7 @@ function bat_event_form_bat_type_bundle_edit_form_alter(&$form, FormStateInterfa
 
   $fields_options = [];
 
-  $fields = \Drupal::entityTypeManager()->getFieldDefinitions('bat_unit_type', $type_bundle->id());
+  $fields = \Drupal::service('entity_field.manager')->getFieldDefinitions('bat_unit_type', $type_bundle->id());
   foreach ($fields as $field) {
     if ($field instanceof FieldConfig) {
       $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';
