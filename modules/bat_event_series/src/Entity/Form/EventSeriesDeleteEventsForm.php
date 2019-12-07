@@ -66,7 +66,15 @@ class EventSeriesDeleteEventsForm extends ContentEntityConfirmFormBase {
 
     $date_format = \Drupal::config('bat.settings')->get('bat_date_format') ?: 'Y-m-d H:i';
 
-    if (!empty($future_events)) {
+    if (empty($future_events)) {
+      $form['delete_events']['future_events'] = [
+        '#markup' => '<h3>' . $this->t('There are no upcoming events to delete!') . '</h3>',
+      ];
+
+      $form['description']['#access'] = FALSE;
+      $form['actions']['submit']['#disabled'] = TRUE;
+    }
+    else {
       $form['delete_events']['future_events'] = [
         '#theme' => 'item_list',
         '#title' => $this->t('The following events will be deleted:'),

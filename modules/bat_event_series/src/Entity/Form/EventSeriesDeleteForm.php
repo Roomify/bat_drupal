@@ -104,9 +104,14 @@ class EventSeriesDeleteForm extends ContentEntityConfirmFormBase {
         ]);
       }
 
-      $form['events'] = [
+      $form['future_events'] = [
         '#type' => 'hidden',
         '#value' => $future_events,
+      ];
+
+      $form['past_events'] = [
+        '#type' => 'hidden',
+        '#value' => $past_events,
       ];
     }
 
@@ -121,8 +126,14 @@ class EventSeriesDeleteForm extends ContentEntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    if ($events = $form_state->getValue('events')) {
-      bat_event_delete_multiple($events);
+    if ($future_events = $form_state->getValue('future_events')) {
+      bat_event_delete_multiple($future_events);
+    }
+    if ($past_events = $form_state->getValue('past_events')) {
+      foreach (bat_event_load_multiple($past_events) as $event) {
+        $event->set('event_series', []);
+        $event->save();
+      }
     }
 
     \Drupal::messenger()->addMessage($this->t('The event series has been deleted'));
