@@ -96,13 +96,13 @@ class StateForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        \Drupal::messenger()->addMessage($this->t('Created the %label State.', [
+        $this->messenger()->addMessage($this->t('Created the %label State.', [
           '%label' => $state->label(),
         ]));
         break;
 
       default:
-        \Drupal::messenger()->addMessage($this->t('Saved the %label State.', [
+        $this->messenger()->addMessage($this->t('Saved the %label State.', [
           '%label' => $state->label(),
         ]));
     }

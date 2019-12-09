@@ -44,11 +44,11 @@ class EventManagementAccessCheck implements AccessInterface {
    */
   public function access(AccountInterface $account, $entity_id, $event_type, $event_id, $start_date, $end_date) {
     if ($event_id == 0) {
-      return bat_event_access(bat_event_create(['type' => $event_type]), 'create', \Drupal::currentUser());
+      return bat_event_access(bat_event_create(['type' => $event_type]), 'create', $account);
     }
     else {
       $event = bat_event_load($event_id);
-      return bat_event_access($event, 'update', \Drupal::currentUser());
+      return bat_event_access($event, 'update', $account);
     }
   }
 

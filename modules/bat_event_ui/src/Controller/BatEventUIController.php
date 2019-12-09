@@ -37,7 +37,7 @@ class BatEventUIController extends ControllerBase {
     }
 
     // Check if user has permission to view calendar data for this event type.
-    if (!(\Drupal::currentUser()->hasPermission('view calendar data for any ' . $ev_type->id() . ' event'))) {
+    if (!($this->currentUser()->hasPermission('view calendar data for any ' . $ev_type->id() . ' event'))) {
       throw new AccessDeniedHttpException();
     }
 
@@ -73,7 +73,7 @@ class BatEventUIController extends ControllerBase {
     }
 
     $render_array = [
-      'event_type_form' => \Drupal::formBuilder()->getForm('Drupal\bat_event_ui\Form\BatEventUiEventTypeForm', $unit_type, $event_type),
+      'event_type_form' => $this->formBuilder()->getForm('Drupal\bat_event_ui\Form\BatEventUiEventTypeForm', $unit_type, $event_type),
       'bulk_update_form' => [],
       'calendar' => [
         '#theme' => 'bat_fullcalendar',
@@ -83,7 +83,7 @@ class BatEventUIController extends ControllerBase {
     ];
 
     if ($ev_type->getFixedEventStates()) {
-      $render_array['bulk_update_form'] = \Drupal::formBuilder()->getForm('Drupal\bat_event_ui\Form\BatEventUiBulkUpdateForm', $unit_type, $event_type);
+      $render_array['bulk_update_form'] = $this->formBuilder()->getForm('Drupal\bat_event_ui\Form\BatEventUiBulkUpdateForm', $unit_type, $event_type);
     }
 
     $page['calendar_page'] = [

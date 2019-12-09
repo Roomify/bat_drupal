@@ -14,12 +14,6 @@ use Drupal\views\Plugin\views\filter\BooleanOperator;
  */
 class BatEventHandlerBlockingFilter extends BooleanOperator {
 
-  public function construct() {
-    parent::construct();
-
-    $this->value_value = t('State');
-  }
-
   public function getValueOptions() {
     $options = [
       'blocking' => t('Blocking'),

@@ -22,7 +22,7 @@ class DateParamConverter implements ParamConverterInterface {
     try {
       $date = new \DateTime($date_string);
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       $date = 0;
     }
 

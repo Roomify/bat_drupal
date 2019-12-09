@@ -90,7 +90,7 @@ class SetUnitState extends ActionBase implements ContainerFactoryPluginInterface
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
-    $this->executeMultiple([$object]);
+    $this->executeMultiple([$entity]);
   }
 
   /**

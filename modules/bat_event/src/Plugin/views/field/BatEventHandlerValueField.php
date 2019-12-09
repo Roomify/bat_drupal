@@ -14,10 +14,6 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
  */
 class BatEventHandlerValueField extends FieldPluginBase {
 
-  public function construct() {
-    parent::construct();
-  }
-
   public function query() {
     $this->field_alias = 'event_id';
   }

@@ -16,10 +16,6 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
  */
 class BatEventHandlerEventTypeField extends FieldPluginBase {
 
-  public function construct() {
-    parent::construct();
-  }
-
   public function render(ResultRow $values) {
     $event_type = bat_event_type_load($this->getValue($values));
     return $event_type->label();

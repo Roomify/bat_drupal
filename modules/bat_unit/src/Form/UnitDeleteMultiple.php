@@ -7,7 +7,6 @@
 
 namespace Drupal\bat_unit\Form;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -34,23 +33,13 @@ class UnitDeleteMultiple extends ConfirmFormBase {
   protected $tempStoreFactory;
 
   /**
-   * The unit storage.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $manager;
-
-  /**
    * Constructs a DeleteMultiple form object.
    *
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $manager
-   *   The entity manager.
    */
-  public function __construct(PrivateTempStoreFactory $temp_store_factory, EntityTypeManagerInterface $manager) {
+  public function __construct(PrivateTempStoreFactory $temp_store_factory) {
     $this->tempStoreFactory = $temp_store_factory;
-    $this->storage = $manager->getStorage('bat_unit');
   }
 
   /**
@@ -58,8 +47,7 @@ class UnitDeleteMultiple extends ConfirmFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('user.private_tempstore'),
-      $container->get('entity_type.manager')
+      $container->get('user.private_tempstore')
     );
   }
 
@@ -95,7 +83,7 @@ class UnitDeleteMultiple extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $this->unitInfo = $this->tempStoreFactory->get('unit_multiple_delete_confirm')->get(\Drupal::currentUser()->id());
+    $this->unitInfo = $this->tempStoreFactory->get('unit_multiple_delete_confirm')->get($this->currentUser()->id());
 
     $form = parent::buildForm($form, $form_state);
 

@@ -7,10 +7,15 @@
 
 namespace Drupal\bat\Entity\Form;
 
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\Language;
 use Drupal\bat\TypeGroupInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form controller for Type Group edit forms.
@@ -18,6 +23,42 @@ use Drupal\bat\TypeGroupInterface;
  * @ingroup bat
  */
 class TypeGroupForm extends ContentEntityForm {
+
+  /**
+   * The date formatter service.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected $dateFormatter;
+
+  /**
+   * Constructs a TypeGroupForm object.
+   *
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository service.
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
+   *   The date service.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   */
+  public function __construct(EntityRepositoryInterface $entity_repository, DateFormatterInterface $date_formatter, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
+    $this->dateFormatter = $date_formatter;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.repository'),
+      $container->get('date.formatter'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -41,7 +82,7 @@ class TypeGroupForm extends ContentEntityForm {
       '#weight' => 99,
     ];
 
-    $is_new = !$entity->isNew() ? \Drupal::service('date.formatter')->format($entity->getChangedTime(), 'short') : t('Not saved yet');
+    $is_new = !$entity->isNew() ? $this->dateFormatter->format($entity->getChangedTime(), 'short') : t('Not saved yet');
     $form['meta'] = [
       '#attributes' => ['class' => ['entity-meta__header']],
       '#type' => 'container',
@@ -102,13 +143,13 @@ class TypeGroupForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        \Drupal::messenger()->addMessage($this->t('Created the %label Property.', [
+        $this->messenger()->addMessage($this->t('Created the %label Property.', [
           '%label' => $entity->label(),
         ]));
         break;
 
       default:
-        \Drupal::messenger()->addMessage($this->t('Saved the %label Property.', [
+        $this->messenger()->addMessage($this->t('Saved the %label Property.', [
           '%label' => $entity->label(),
         ]));
     }

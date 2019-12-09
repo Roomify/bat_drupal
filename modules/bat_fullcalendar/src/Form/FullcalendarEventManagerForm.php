@@ -12,11 +12,39 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
+use Drupal\Core\Render\RendererInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  *
  */
 class FullcalendarEventManagerForm extends FormBase {
+
+  /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
+   * Constructs a new FullcalendarEventManagerForm.
+   *
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer.
+   */
+  public function __construct(RendererInterface $renderer) {
+    $this->renderer = $renderer;
+  }
+
+  /**
+    * {@inheritdoc}
+    */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('renderer')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -148,7 +176,7 @@ class FullcalendarEventManagerForm extends FormBase {
     $state_id = $values['change_event_status'];
 
     $event = bat_event_create(['type' => $event_type]);
-    $event->uid = \Drupal::currentUser()->id();
+    $event->uid = $this->currentUser()->id();
 
     $event_dates = [
       'value' => $start_date->format('Y-m-d\TH:i:00'),
@@ -190,7 +218,7 @@ class FullcalendarEventManagerForm extends FormBase {
     $field_name = $values['field_name'];
 
     $event = bat_event_create(['type' => $event_type]);
-    $event->uid = \Drupal::currentUser()->id();
+    $event->uid = $this->currentUser()->id();
 
     $event_dates = [
       'value' => $start_date->format('Y-m-d\TH:i:00'),
@@ -210,7 +238,7 @@ class FullcalendarEventManagerForm extends FormBase {
     $unit = \Drupal::entityTypeManager()->getStorage($event_type_entity->getTargetEntityType())->load($entity_id);
 
     $elements = $event->{$field_name}->view(['label' => 'hidden']);
-    $value = \Drupal::service('renderer')->render($elements);
+    $value = $this->renderer->render($elements);
 
     $form['form_wrapper_bottom'] = [
       '#prefix' => '<div>',

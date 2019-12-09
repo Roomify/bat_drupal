@@ -10,6 +10,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Render\Element;
 use Drupal\bat\Entity\TypeGroup;
@@ -78,7 +79,7 @@ function template_preprocess_bat_type_group_add_list(&$variables) {
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()] = [
         'type' => $type->id(),
-        'add_link' => \Drupal::l($type->label(), new Url('entity.bat_type_group.add_form', ['type_group_bundle' => $type->id()])),
+        'add_link' => Link::fromTextAndUrl($type->label(), new Url('entity.bat_type_group.add_form', ['type_group_bundle' => $type->id()])),
       ];
     }
   }
@@ -140,7 +141,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
           trigger_error($message, E_USER_DEPRECATED);
         }
 
-        $query = db_select($entity_info->getBaseTable());
+        $query = \Drupal::database()->select($entity_info->getBaseTable());
         $query->addExpression('1');
         $result = (bool) $query
           // TODO remove in summer 2020.
@@ -275,7 +276,7 @@ function bat_entity_access_permissions($entity_type) {
   ];
 
   // Per-bundle create and edit permissions.
-  foreach (entity_get_bundles($entity_type) as $bundle_name => $bundle_info) {
+  foreach (\Drupal::entityTypeManager()->getBundleInfo($entity_type) as $bundle_name => $bundle_info) {
     $permissions['create ' . $entity_type . ' entities of bundle ' . $bundle_name] = [
       'title' => t('Create %bundle @entity_type', ['@entity_type' => $label, '%bundle' => $bundle_info['label']]),
     ];
@@ -365,7 +366,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   $conditions = new Condition('OR');
 
   // Loop over every possible bundle for the given entity type.
-  foreach (entity_get_bundles($entity_type) as $bundle_name => $bundle_info) {
+  foreach (\Drupal::entityTypeManager()->getBundleInfo($entity_type) as $bundle_name => $bundle_info) {
     // If the user has access to operation entities of the current bundle...
     if ($account->hasPermission($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name)) {
       // Add a condition granting access if the entity specified by the view

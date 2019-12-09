@@ -16,10 +16,6 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
  */
 class BatUnitHandlerUnitBundleField extends FieldPluginBase {
 
-  public function construct() {
-    parent::construct();
-  }
-
   public function render(ResultRow $values) {
     $unit_bundle = bat_unit_bundle_load($this->getEntity($values)->bundle());
     return $unit_bundle->label();

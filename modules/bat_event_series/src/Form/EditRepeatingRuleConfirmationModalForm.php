@@ -74,7 +74,7 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state, EventSeries $bat_event_series = NULL) {
     $this->event_series = $bat_event_series;
 
-    $values = $this->tempStore->get(\Drupal::currentUser()->id());
+    $values = $this->tempStore->get($this->currentUser()->id());
 
     $events = $this->getEvents($values['start_date'], $values['end_date'], $values['repeat_frequency'], $values['repeat_until']);
 
@@ -186,7 +186,7 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
       $this->addEvents($events['add_events']);
     }
 
-    $new_values = $this->tempStore->get(\Drupal::currentUser()->id());
+    $new_values = $this->tempStore->get($this->currentUser()->id());
 
     $rrule = new RRule([
       'FREQ' => strtoupper($new_values['repeat_frequency']),

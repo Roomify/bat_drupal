@@ -10,6 +10,7 @@ namespace Drupal\bat_event_series\Entity\Form;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\EntityRepositoryInterface;
@@ -42,13 +43,21 @@ class EventSeriesForm extends ContentEntityForm {
   protected $formBuilder;
 
   /**
+   * The date formatter service.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected $dateFormatter;
+
+  /**
    * Constructs a new EventSeriesForm object.
    *
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
    */
-  public function __construct(PrivateTempStoreFactory $temp_store_factory, EntityRepositoryInterface $entity_repository, FormBuilder $formBuilder, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+  public function __construct(PrivateTempStoreFactory $temp_store_factory, EntityRepositoryInterface $entity_repository, DateFormatterInterface $date_formatter, FormBuilder $formBuilder, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
     $this->tempStore = $temp_store_factory->get('event_series_update_confirm');
+    $this->dateFormatter = $date_formatter;
     $this->formBuilder = $formBuilder;
 
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
@@ -61,6 +70,7 @@ class EventSeriesForm extends ContentEntityForm {
     return new static(
       $container->get('user.private_tempstore'),
       $container->get('entity.repository'),
+      $container->get('date.formatter'),
       $container->get('form_builder'),
       $container->get('entity_type.bundle.info'),
       $container->get('datetime.time')
@@ -104,7 +114,7 @@ class EventSeriesForm extends ContentEntityForm {
       '#weight' => 99,
     ];
 
-    $is_new = !$entity->isNew() ? \Drupal::service('date.formatter')->format($entity->getChangedTime(), 'short') : t('Not saved yet');
+    $is_new = !$entity->isNew() ? $this->dateFormatter->format($entity->getChangedTime(), 'short') : t('Not saved yet');
     $form['meta'] = [
       '#attributes' => ['class' => ['entity-meta__header']],
       '#type' => 'container',
@@ -195,14 +205,14 @@ class EventSeriesForm extends ContentEntityForm {
     if ($entity->isNew()) {
       $entity->save();
 
-      \Drupal::messenger()->addMessage($this->t('Created the %label Event series.', [
+      $this->messenger()->addMessage($this->t('Created the %label Event series.', [
         '%label' => $entity->label(),
       ]));
 
       $form_state->setRedirect('entity.bat_event_series.edit_form', ['bat_event_series' => $entity->id()]);
     }
     else {
-      $this->tempStore->set(\Drupal::currentUser()->id(), $entity);
+      $this->tempStore->set($this->currentUser()->id(), $entity);
 
       $form_state->setRedirect('entity.bat_event_series.confirm_edit_form', ['bat_event_series' => $entity->id()]);
     }

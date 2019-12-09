@@ -61,7 +61,6 @@ class BatCalendarReferenceMonthView extends FormatterBase {
           'eventGranularity' => $event_granularity,
           'editable' => FALSE,
           'selectable' => FALSE,
-          'background' => '1',
           'defaultView' => 'month',
           'views' => 'month',
           'background' => '0',

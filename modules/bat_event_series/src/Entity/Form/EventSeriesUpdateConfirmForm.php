@@ -81,7 +81,7 @@ class EventSeriesUpdateConfirmForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $bat_event_series = NULL) {
-    $this->bat_event_series = $this->tempStoreFactory->get('event_series_update_confirm')->get(\Drupal::currentUser()->id());
+    $this->bat_event_series = $this->tempStoreFactory->get('event_series_update_confirm')->get($this->currentUser()->id());
 
     $form = parent::buildForm($form, $form_state);
 
@@ -95,7 +95,7 @@ class EventSeriesUpdateConfirmForm extends ConfirmFormBase {
     if ($form_state->getValue('confirm')) {
       $this->bat_event_series->save();
 
-      \Drupal::messenger()->addMessage($this->t('Saved the %label Event series.', [
+      $this->messenger()->addMessage($this->t('Saved the %label Event series.', [
         '%label' => $this->bat_event_series->label(),
       ]));
 

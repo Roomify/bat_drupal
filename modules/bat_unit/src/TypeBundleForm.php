@@ -119,10 +119,10 @@ class TypeBundleForm extends BundleEntityFormBase {
     $t_args = ['%name' => $type->label()];
 
     if ($status == SAVED_UPDATED) {
-      \Drupal::messenger()->addMessage(t('The type bundle %name has been updated.', $t_args));
+      $this->messenger()->addMessage(t('The type bundle %name has been updated.', $t_args));
     }
     elseif ($status == SAVED_NEW) {
-      \Drupal::messenger()->addMessage(t('The type bundle %name has been added.', $t_args));
+      $this->messenger()->addMessage(t('The type bundle %name has been added.', $t_args));
     }
 
     $form_state->setRedirectUrl($type->toUrl('collection'));

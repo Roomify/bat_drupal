@@ -45,7 +45,7 @@ class UnitDeleteForm extends ContentEntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    \Drupal::messenger()->addMessage($this->t('The unit @label has been deleted.', ['@label' => $this->entity->label()]));
+    $this->messenger()->addMessage($this->t('The unit @label has been deleted.', ['@label' => $this->entity->label()]));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

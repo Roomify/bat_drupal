@@ -13,6 +13,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Database\Database;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\bat_event\EventInterface;
 use Drupal\bat_unit\UnitInterface;
@@ -462,7 +463,7 @@ class Event extends ContentEntityBase implements EventInterface {
    */
   public function getEventValueFormatter() {
     if ($field = $this->getEventValueDefaultField()) {
-      $field_info_instance = field_info_instance('bat_event_type', $field, $this->type);
+      $field_info_instance = FieldConfig::loadByName('bat_event_type', $this->type, $field);
 
       if (isset($field_info_instance['display']['default']['type'])) {
         return $field_info_instance['display']['default']['type'];

@@ -10,10 +10,6 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
  */
 class BatBookingExampleBookThisField extends FieldPluginBase {
 
-  public function construct() {
-    parent::construct();
-  }
-
   public function query() {
   }
 

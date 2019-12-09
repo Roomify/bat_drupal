@@ -217,7 +217,7 @@ class EditRepeatingRuleModalForm extends FormBase {
       'repeat_until' => $form_state->getValue('repeat_until'),
     ];
 
-    $this->tempStore->set(\Drupal::currentUser()->id(), $values);
+    $this->tempStore->set($this->currentUser()->id(), $values);
   }
 
   public function ajaxSubmit(array &$form, FormStateInterface $form_state) {

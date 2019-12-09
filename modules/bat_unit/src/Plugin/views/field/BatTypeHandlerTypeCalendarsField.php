@@ -17,10 +17,6 @@ use Drupal\Core\Url;
  */
 class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
 
-  public function construct() {
-    parent::construct();
-  }
-
   public function query() {
   }
 

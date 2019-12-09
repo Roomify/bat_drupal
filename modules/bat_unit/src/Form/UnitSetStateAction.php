@@ -7,7 +7,6 @@
 
 namespace Drupal\bat_unit\Form;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\PrivateTempStoreFactory;
@@ -33,23 +32,13 @@ class UnitSetStateAction extends FormBase {
   protected $tempStoreFactory;
 
   /**
-   * The unit storage.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $manager;
-
-  /**
    * Constructs a UnitSetStateAction form object.
    *
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $manager
-   *   The entity manager.
    */
-  public function __construct(PrivateTempStoreFactory $temp_store_factory, EntityTypeManagerInterface $manager) {
+  public function __construct(PrivateTempStoreFactory $temp_store_factory) {
     $this->tempStoreFactory = $temp_store_factory;
-    $this->storage = $manager->getStorage('bat_unit');
   }
 
   /**
@@ -57,8 +46,7 @@ class UnitSetStateAction extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('user.private_tempstore'),
-      $container->get('entity_type.manager')
+      $container->get('user.private_tempstore')
     );
   }
 
@@ -73,7 +61,7 @@ class UnitSetStateAction extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $this->unitInfo = $this->tempStoreFactory->get('unit_set_state_action_form')->get(\Drupal::currentUser()->id());
+    $this->unitInfo = $this->tempStoreFactory->get('unit_set_state_action_form')->get($this->currentUser()->id());
 
     $values = $form_state->getValues();
 

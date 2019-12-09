@@ -92,7 +92,7 @@ class BookingConfirmationForm extends FormBase {
           'type' => $event_type,
           'start_date' => $start_date->format('Y-m-d H:i:s'),
           'end_date' => $end_date->format('Y-m-d H:i:s'),
-          'uid' => \Drupal::currentUser()->id(),
+          'uid' => $this->currentUser()->id(),
         ]);
 
         $event->set('event_bat_unit_reference', reset($valid_unit_ids));
@@ -112,10 +112,10 @@ class BookingConfirmationForm extends FormBase {
 
         $booking->save();
 
-        \Drupal::messenger()->addMessage(t('Booking created'));
+        $this->messenger()->addMessage(t('Booking created'));
       }
       else {
-        \Drupal::messenger()->addError(t('No units'));
+        $this->messenger()->addError(t('No units'));
       }
     }
   }

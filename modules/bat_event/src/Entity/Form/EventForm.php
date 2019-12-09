@@ -7,14 +7,19 @@
 
 namespace Drupal\bat_event\Entity\Form;
 
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Database\Database;
 use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form controller for Event edit forms.
@@ -22,6 +27,42 @@ use Roomify\Bat\Unit\Unit;
  * @ingroup bat
  */
 class EventForm extends ContentEntityForm {
+
+  /**
+   * The date formatter service.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected $dateFormatter;
+
+  /**
+   * Constructs a EventForm object.
+   *
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository service.
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
+   *   The date service.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   */
+  public function __construct(EntityRepositoryInterface $entity_repository, DateFormatterInterface $date_formatter, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
+    $this->dateFormatter = $date_formatter;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.repository'),
+      $container->get('date.formatter'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -46,7 +87,7 @@ class EventForm extends ContentEntityForm {
       '#weight' => 99,
     ];
 
-    $is_new = !$entity->isNew() ? \Drupal::service('date.formatter')->format($entity->getChangedTime(), 'short') : t('Not saved yet');
+    $is_new = !$entity->isNew() ? $this->dateFormatter->format($entity->getChangedTime(), 'short') : t('Not saved yet');
     $form['meta'] = [
       '#attributes' => ['class' => ['entity-meta__header']],
       '#type' => 'container',
@@ -193,13 +234,13 @@ class EventForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        \Drupal::messenger()->addMessage($this->t('Created the %label Event.', [
+        $this->messenger()->addMessage($this->t('Created the %label Event.', [
           '%label' => $event->label(),
         ]));
         break;
 
       default:
-        \Drupal::messenger()->addMessage($this->t('Saved the %label Event.', [
+        $this->messenger()->addMessage($this->t('Saved the %label Event.', [
           '%label' => $event->label(),
         ]));
     }

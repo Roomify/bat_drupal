@@ -107,7 +107,7 @@ class EventSeriesDeleteEventsForm extends ContentEntityConfirmFormBase {
       bat_event_delete_multiple($events);
     }
 
-    \Drupal::messenger()->addMessage($this->t('The series events have been deleted'));
+    $this->messenger()->addMessage($this->t('The series events have been deleted'));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

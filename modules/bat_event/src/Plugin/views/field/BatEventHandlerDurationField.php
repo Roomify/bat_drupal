@@ -14,10 +14,6 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
  */
 class BatEventHandlerDurationField extends FieldPluginBase {
 
-  public function construct() {
-    parent::construct();
-  }
-
   public function query() {
   }
 

@@ -297,7 +297,7 @@ function bat_event_series_type_load($type) {
  */
 function bat_event_series_load($event_id = NULL, $reset = FALSE) {
   if ($reset) {
-    \Drupal::entityTypeManager()->getStorage('bat_event_series')->resetCache([$nid]);
+    \Drupal::entityTypeManager()->getStorage('bat_event_series')->resetCache([$event_id]);
   }
 
   return EventSeries::load($event_id);

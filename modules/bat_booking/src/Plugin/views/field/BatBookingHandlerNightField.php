@@ -16,10 +16,6 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
  */
 class BatBookingHandlerNightField extends FieldPluginBase {
 
-  public function construct() {
-    parent::construct();
-  }
-
   public function query() {
   }
 
