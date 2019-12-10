@@ -11,6 +11,8 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\bat_event\EventInterface;
 use Drupal\bat_event\EventTypeInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Returns responses for Type routes.
@@ -18,9 +20,29 @@ use Drupal\bat_event\EventTypeInterface;
 class EventController extends ControllerBase implements ContainerInjectionInterface {
 
   /**
-   * Constructs a TypeController object.
+   * The current Request object.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
    */
-  public function __construct() {
+  protected $request;
+
+  /**
+   * Constructs a TypeController object.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
+   */
+  public function __construct(Request $request) {
+    $this->request = $request;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('request_stack')->getCurrentRequest()
+    );
   }
 
   /**
@@ -105,7 +127,7 @@ class EventController extends ControllerBase implements ContainerInjectionInterf
    *   An event edit form.
    */
   public function editEvent(EventInterface $event) {
-    $input = \Drupal::request()->request->all();
+    $input = $this->request->request->all();
     $programmed = isset($input['form_id']);
     $input['form_id'] = 'bat_event_' . $event->bundle() . '_edit_form';
 

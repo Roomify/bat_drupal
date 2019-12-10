@@ -14,6 +14,7 @@ use Roomify\Bat\Unit\Unit;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Database\Database;
+use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -43,13 +44,23 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
   protected $tempStore;
 
   /**
+   * The entity query factory.
+   *
+   * @var \Drupal\Core\Entity\Query\QueryFactory
+   */
+  protected $queryFactory;
+
+  /**
    * Constructs a new EditRepeatingRuleModalForm object.
    *
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
+   * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
+   *   The entity query factory.
    */
-  public function __construct(PrivateTempStoreFactory $temp_store_factory) {
+  public function __construct(PrivateTempStoreFactory $temp_store_factory, QueryFactory $query_factory) {
     $this->tempStore = $temp_store_factory->get('edit_repeating_rule');
+    $this->queryFactory = $query_factory;
   }
 
   /**
@@ -57,7 +68,8 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('user.private_tempstore')
+      $container->get('user.private_tempstore'),
+      $container->get('entity.query')
     );
   }
 
@@ -236,7 +248,7 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
     $field_name = 'event_' . $event_series_type->getTargetEntityType() . '_reference';
     $unit = $this->event_series->get($field_name)->entity;
 
-    $query = \Drupal::entityQuery('bat_event')
+    $query = $this->queryFactory->get('bat_event')
       ->condition('event_series.target_id', $this->event_series->id())
       ->condition('event_dates.value', date('Y-m-d\TH:i:s'), '>');
     $events = $query->execute();

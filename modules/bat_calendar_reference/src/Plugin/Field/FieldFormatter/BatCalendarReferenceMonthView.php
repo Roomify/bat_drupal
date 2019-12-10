@@ -31,7 +31,12 @@ class BatCalendarReferenceMonthView extends FormatterBase {
 
     $calendar_id = Html::getUniqueId($this->fieldDefinition->getFieldStorageDefinition()->getName() . '-calendar-formatter');
 
+    $header = '';
+
     if ($field_type == 'bat_calendar_unit_type_reference') {
+      $event_type = '';
+      $event_granularity = '';
+
       $unit_type_names = [];
       $unit_type_ids = [];
 
@@ -71,6 +76,9 @@ class BatCalendarReferenceMonthView extends FormatterBase {
       }
     }
     elseif ($field_type == 'bat_calendar_unit_reference') {
+      $event_type = '';
+      $event_granularity = '';
+
       $unit_names = [];
       $unit_ids = [];
 

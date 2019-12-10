@@ -7,6 +7,8 @@
 
 namespace Drupal\bat_fullcalendar\Form;
 
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
@@ -21,6 +23,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class FullcalendarEventManagerForm extends FormBase {
 
   /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The entity field manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
+
+  /**
    * The renderer.
    *
    * @var \Drupal\Core\Render\RendererInterface
@@ -30,18 +46,26 @@ class FullcalendarEventManagerForm extends FormBase {
   /**
    * Constructs a new FullcalendarEventManagerForm.
    *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
+   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer.
    */
-  public function __construct(RendererInterface $renderer) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, EntityFieldManagerInterface $entity_field_manager, RendererInterface $renderer) {
+    $this->entityTypeManager = $entity_manager;
+    $this->entityFieldManager = $entity_field_manager;
     $this->renderer = $renderer;
   }
 
   /**
-    * {@inheritdoc}
-    */
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('entity_type.manager'),
+      $container->get('entity_field.manager'),
       $container->get('renderer')
     );
   }
@@ -98,7 +122,7 @@ class FullcalendarEventManagerForm extends FormBase {
       '#value' => $end_date->format('Y-m-d H:i:s'),
     ];
 
-    $unit = \Drupal::entityTypeManager()->getStorage($event_type->getTargetEntityType())->load($entity_id);
+    $unit = $this->entityTypeManager->getStorage($event_type->getTargetEntityType())->load($entity_id);
 
     $form['event_title'] = [
       '#prefix' => '<h2>',
@@ -106,7 +130,7 @@ class FullcalendarEventManagerForm extends FormBase {
       '#suffix' => '</h2>',
     ];
 
-    $date_format = \Drupal::config('bat.settings')->get('date_format') ?: 'Y-m-d H:i';
+    $date_format = $this->configFactory()->get('bat.settings')->get('date_format') ?: 'Y-m-d H:i';
     $form['event_details'] = [
       '#prefix' => '<div class="event-details">',
       '#markup' => t('Date range selected: @startdate to @enddate', ['@startdate' => $start_date->format($date_format), '@enddate' => $end_date->format($date_format)]),
@@ -136,7 +160,7 @@ class FullcalendarEventManagerForm extends FormBase {
           '#value' => $field_name,
         ];
 
-        $field_definition = \Drupal::service('entity_field.manager')->getFieldDefinitions('bat_event', $event_type->id())[$field_name];
+        $field_definition = $this->entityFieldManager->getFieldDefinitions('bat_event', $event_type->id())[$field_name];
         $items = new FieldItemList($field_definition, NULL, EntityAdapter::createFromEntity(bat_event_create(['type' => $event_type->id()])));
 
         $form_display = EntityFormDisplay::load('bat_event.' . $event_type->id() . '.default');
@@ -235,7 +259,7 @@ class FullcalendarEventManagerForm extends FormBase {
 
     $event->save();
 
-    $unit = \Drupal::entityTypeManager()->getStorage($event_type_entity->getTargetEntityType())->load($entity_id);
+    $unit = $this->entityTypeManager->getStorage($event_type_entity->getTargetEntityType())->load($entity_id);
 
     $elements = $event->{$field_name}->view(['label' => 'hidden']);
     $value = $this->renderer->render($elements);

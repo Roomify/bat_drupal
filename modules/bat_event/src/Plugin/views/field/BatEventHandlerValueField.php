@@ -31,7 +31,7 @@ class BatEventHandlerValueField extends FieldPluginBase {
       $field_name = $event_type->default_event_value_field_ids;
 
       $elements = $event->{$field_name}->view(['label' => 'hidden']);
-      $value = \Drupal::service('renderer')->render($elements);
+      $value = $this->getRenderer()->render($elements);
 
       return $value;
     }

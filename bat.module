@@ -198,11 +198,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
       else {
         // Finally perform checks for the rest of operations. Begin by
         // extracting the bundle name from the entity if available.
-        $bundle_name = '';
-
-        if (isset($entity)) {
-          $bundle_name = $entity->bundle();
-        }
+        $bundle_name = $entity->bundle();
 
         // For the update and delete operations, first perform the entity type and
         // bundle-level access check for any entity.
@@ -276,7 +272,7 @@ function bat_entity_access_permissions($entity_type) {
   ];
 
   // Per-bundle create and edit permissions.
-  foreach (\Drupal::entityTypeManager()->getBundleInfo($entity_type) as $bundle_name => $bundle_info) {
+  foreach (\Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type) as $bundle_name => $bundle_info) {
     $permissions['create ' . $entity_type . ' entities of bundle ' . $bundle_name] = [
       'title' => t('Create %bundle @entity_type', ['@entity_type' => $label, '%bundle' => $bundle_info['label']]),
     ];
@@ -366,7 +362,7 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   $conditions = new Condition('OR');
 
   // Loop over every possible bundle for the given entity type.
-  foreach (\Drupal::entityTypeManager()->getBundleInfo($entity_type) as $bundle_name => $bundle_info) {
+  foreach (\Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type) as $bundle_name => $bundle_info) {
     // If the user has access to operation entities of the current bundle...
     if ($account->hasPermission($op . ' any ' . $entity_type . ' entity of bundle ' . $bundle_name)) {
       // Add a condition granting access if the entity specified by the view

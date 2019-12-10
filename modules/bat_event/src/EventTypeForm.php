@@ -9,6 +9,7 @@ namespace Drupal\bat_event;
 
 use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Entity\BundleEntityFormBase;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -27,13 +28,23 @@ class EventTypeForm extends BundleEntityFormBase {
   protected $entityTypeManager;
 
   /**
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
+
+  /**
    * Constructs the EventTypeForm object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, EntityFieldManagerInterface $entity_field_manager) {
     $this->entityTypeManager = $entity_manager;
+    $this->entityFieldManager = $entity_field_manager;
   }
 
   /**
@@ -41,7 +52,8 @@ class EventTypeForm extends BundleEntityFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('entity_field.manager')
     );
   }
 
@@ -90,7 +102,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
     if ($event_type->isNew()) {
       // Check for available Target Entity types.
-      $target_entity_types = \Drupal::moduleHandler()->invokeAll('bat_event_target_entity_types');
+      $target_entity_types = $this->moduleHandler->invokeAll('bat_event_target_entity_types');
       if (count($target_entity_types) == 1) {
         // If there's only one target entity type, we simply store the value
         // without showing it to the user.
@@ -103,7 +115,7 @@ class EventTypeForm extends BundleEntityFormBase {
         // Build option list.
         $options = [];
         foreach ($target_entity_types as $target_entity_type) {
-          $target_entity_info = \Drupal::entityTypeManager()->getDefinition($target_entity_type);
+          $target_entity_info = $this->entityTypeManager->getDefinition($target_entity_type);
           $options[$target_entity_type] = $target_entity_info->getLabel();
         }
         $form['target_entity_type'] = [
@@ -125,7 +137,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
     if (!$event_type->isNew() && $event_type->getFixedEventStates() == 0) {
       $fields_options = [];
-      $fields = \Drupal::service('entity_field.manager')->getFieldDefinitions('bat_event', $event_type->id());
+      $fields = $this->entityFieldManager->getFieldDefinitions('bat_event', $event_type->id());
       foreach ($fields as $field) {
         if ($field instanceof FieldConfig) {
           $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';
@@ -151,7 +163,7 @@ class EventTypeForm extends BundleEntityFormBase {
 
     if (!$event_type->isNew()) {
       $fields_options = [];
-      $fields = \Drupal::service('entity_field.manager')->getFieldDefinitions('bat_event', $event_type->id());
+      $fields = $this->entityFieldManager->getFieldDefinitions('bat_event', $event_type->id());
       foreach ($fields as $field) {
         if ($field instanceof FieldConfig) {
           $fields_options[$field->getName()] = $field->getLabel() . ' (' . $field->getName() . ')';

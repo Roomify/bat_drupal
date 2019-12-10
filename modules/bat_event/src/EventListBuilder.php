@@ -7,6 +7,7 @@
 
 namespace Drupal\bat_event;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -29,6 +30,13 @@ class EventListBuilder extends EntityListBuilder {
   protected $queryFactory;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Constructs a new EventListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -37,10 +45,13 @@ class EventListBuilder extends EntityListBuilder {
    *   The entity storage class.
    * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
    *   The entity query factory.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, QueryFactory $query_factory) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, QueryFactory $query_factory, ConfigFactoryInterface $config_factory) {
     parent::__construct($entity_type, $storage);
     $this->queryFactory = $query_factory;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -50,7 +61,8 @@ class EventListBuilder extends EntityListBuilder {
     return new static(
       $entity_type,
       $container->get('entity_type.manager')->getStorage($entity_type->id()),
-      $container->get('entity.query')
+      $container->get('entity.query'),
+      $container->get('config.factory')
     );
   }
 
@@ -106,7 +118,7 @@ class EventListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $date_format = \Drupal::config('bat.settings')->get('bat_date_format') ?: 'Y-m-d H:i';
+    $date_format = $this->configFactory->get('bat.settings')->get('bat_date_format') ?: 'Y-m-d H:i';
 
     $row['id'] = $entity->id();
     $row['start_date'] = $entity->getStartDate()->format($date_format);

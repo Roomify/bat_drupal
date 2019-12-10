@@ -4,30 +4,12 @@ namespace Drupal\bat_calendar_reference;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Tags;
-use Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface;
 use Drupal\Core\Entity\EntityAutocompleteMatcher;
 
 /**
  * Matcher class to get autocompletion results for entity reference.
  */
 class BatUnitAutocompleteMatcher extends EntityAutocompleteMatcher {
-
-  /**
-   * The entity reference selection handler plugin manager.
-   *
-   * @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface
-   */
-  protected $selectionManager;
-
-  /**
-   * Constructs a BatUnitAutocompleteMatcher object.
-   *
-   * @param \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $selection_manager
-   *   The entity reference selection handler plugin manager.
-   */
-  public function __construct(SelectionPluginManagerInterface $selection_manager) {
-    $this->selectionManager = $selection_manager;
-  }
 
   /**
    * {@inheritdoc}

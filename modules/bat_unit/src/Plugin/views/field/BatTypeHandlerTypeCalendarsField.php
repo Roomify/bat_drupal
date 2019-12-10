@@ -8,14 +8,52 @@
 
 namespace Drupal\bat_unit\Plugin\views\field;
 
+use Drupal\Core\Path\PathValidatorInterface;
+use Drupal\Core\Url;
 use Drupal\views\ResultRow;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
-use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @ViewsField("bat_type_handler_type_calendars_field")
  */
 class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
+
+  /**
+   * The path validator.
+   *
+   * @var \Drupal\Core\Path\PathValidatorInterface
+   */
+  protected $pathValidator;
+
+  /**
+   * Constructs a BatTypeHandlerTypeCalendarsField object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
+   *   The path validator.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, PathValidatorInterface $path_validator) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->pathValidator = $path_validator;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('path.validator')
+    );
+  }
 
   public function query() {
   }
@@ -35,7 +73,7 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
           ])->toString();
 
           // Check if user has permission to access $event_type_path.
-          if ($url_object = \Drupal::service('path.validator')->getUrlIfValid($event_type_path)) {
+          if ($url_object = $this->pathValidator->getUrlIfValid($event_type_path)) {
             $route_name = $url_object->getRouteName();
 
             if (bat_event_get_types($event_type)) {

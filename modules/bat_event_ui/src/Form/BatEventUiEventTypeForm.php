@@ -28,6 +28,8 @@ class BatEventUiEventTypeForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, $unit_type = 'all', $event_type = 'all') {
     $event_types = bat_event_get_types();
+
+    $event_types_options = [];
     foreach ($event_types as $ev_type) {
       if ($this->currentUser()->hasPermission('view calendar data for any ' . $ev_type->id() . ' event')) {
         $event_types_options[$ev_type->id()] = $ev_type->label();

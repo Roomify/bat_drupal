@@ -7,9 +7,14 @@
 
 namespace Drupal\bat_event_series\Entity\Form;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a form for deleting Event series entities.
@@ -17,6 +22,42 @@ use Drupal\Core\Url;
  * @ingroup bat
  */
 class EventSeriesDeleteForm extends ContentEntityConfirmFormBase {
+
+  /**
+   * The entity query factory.
+   *
+   * @var \Drupal\Core\Entity\Query\QueryFactory
+   */
+  protected $queryFactory;
+
+  /**
+   * Constructs a EventSeriesDeleteForm object.
+   *
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository service.
+   * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
+   *   The entity query factory.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   */
+  public function __construct(EntityRepositoryInterface $entity_repository, QueryFactory $query_factory, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
+    $this->queryFactory = $query_factory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.repository'),
+      $container->get('entity.query'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -69,7 +110,7 @@ class EventSeriesDeleteForm extends ContentEntityConfirmFormBase {
       '#open' => TRUE,
     ];
 
-    $date_format = \Drupal::config('bat.settings')->get('bat_date_format') ?: 'Y-m-d H:i';
+    $date_format = $this->configFactory()->get('bat.settings')->get('bat_date_format') ?: 'Y-m-d H:i';
 
     if (!empty($past_events)) {
       $form['delete_events']['past_events'] = [

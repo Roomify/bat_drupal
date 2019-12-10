@@ -20,6 +20,7 @@ use Roomify\Bat\Calendar\Calendar;
 use Roomify\Bat\Store\DrupalDBStore;
 use Roomify\Bat\Unit\Unit;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Form controller for Event edit forms.
@@ -36,6 +37,13 @@ class EventForm extends ContentEntityForm {
   protected $dateFormatter;
 
   /**
+   * The current Request object.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
+
+  /**
    * Constructs a EventForm object.
    *
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
@@ -46,10 +54,13 @@ class EventForm extends ContentEntityForm {
    *   The entity type bundle service.
    * @param \Drupal\Component\Datetime\TimeInterface $time
    *   The time service.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
    */
-  public function __construct(EntityRepositoryInterface $entity_repository, DateFormatterInterface $date_formatter, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+  public function __construct(EntityRepositoryInterface $entity_repository, DateFormatterInterface $date_formatter, Request $request, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
     $this->dateFormatter = $date_formatter;
+    $this->request = $request;
   }
 
   /**
@@ -59,6 +70,7 @@ class EventForm extends ContentEntityForm {
     return new static(
       $container->get('entity.repository'),
       $container->get('date.formatter'),
+      $container->get('request_stack')->getCurrentRequest(),
       $container->get('entity_type.bundle.info'),
       $container->get('datetime.time')
     );
@@ -150,7 +162,7 @@ class EventForm extends ContentEntityForm {
       $form['event_dates']['widget'][0]['end_value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
     }
 
-    if (\Drupal::request()->query->get(MainContentViewSubscriber::WRAPPER_FORMAT) == 'drupal_ajax') {
+    if ($this->request->query->get(MainContentViewSubscriber::WRAPPER_FORMAT) == 'drupal_ajax') {
       $form['actions']['submit']['#attributes']['class'][] = 'use-ajax-submit';
       $form['actions']['delete']['#access'] = FALSE;
     }
