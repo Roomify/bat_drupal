@@ -16,6 +16,8 @@ define('BAT_OPTIONS_OPTIONAL', 'optional');
 define('BAT_OPTIONS_MANDATORY', 'mandatory');
 define('BAT_OPTIONS_ONREQUEST', 'on_request');
 
+use Drupal\bat_unit\Entity\UnitType;
+
 /**
  * Returns the available price options for booking_unit options field.
  */
@@ -43,7 +45,7 @@ function bat_options_price_options() {
  * @return array
  *   The available options for the given type.
  */
-function bat_options_get_type_options($type) {
+function bat_options_get_type_options(UnitType $type) {
   $options = &drupal_static(__FUNCTION__);
 
   if (isset($options['types'][$type->id()])) {
@@ -70,7 +72,7 @@ function bat_options_get_type_options($type) {
  *   The option machine name.
  */
 function bat_options_get_machine_name($option_name, $pattern = '/[^a-z0-9_]+/', $replacement = '_') {
-  return preg_replace($pattern, $replacement, drupal_strtolower($option_name));
+  return preg_replace($pattern, $replacement, mb_strtolower($option_name));
 }
 
 /**

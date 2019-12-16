@@ -17,7 +17,7 @@ interface EntityUnitTypeInterface {
   /**
    * Returns the entity's UnitType entity.
    *
-   * @return \Drupal\bat\UnitTypeInterface
+   * @return \Drupal\bat_unit\UnitTypeInterface
    *   The UnitType entity.
    */
   public function getUnitType();
@@ -25,7 +25,7 @@ interface EntityUnitTypeInterface {
   /**
    * Sets the entity's UnitType entity.
    *
-   * @param \Drupal\bat\UnitTypeInterface $property
+   * @param \Drupal\bat_unit\UnitTypeInterface $property
    *   The UnitType entity.
    *
    * @return $this

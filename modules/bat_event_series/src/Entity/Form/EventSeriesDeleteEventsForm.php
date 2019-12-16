@@ -94,7 +94,7 @@ class EventSeriesDeleteEventsForm extends ContentEntityConfirmFormBase {
     $form = parent::buildForm($form, $form_state);
     $entity = $this->getEntity();
 
-    $query = \Drupal::entityQuery('bat_event')
+    $query = $this->queryFactory->get('bat_event')
       ->condition('event_series.target_id', $entity->id())
       ->condition('event_dates.value', date('Y-m-d\TH:i:s'), '>');
     $future_events = $query->execute();

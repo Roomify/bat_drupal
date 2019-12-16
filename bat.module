@@ -330,30 +330,6 @@ function bat_entity_access_query_alter($query, $entity_type, $base_table = NULL,
   // conditions object.
   $entity_info = \Drupal::entityTypeManager()->getDefinition($entity_type);
 
-  // If a base table wasn't specified, attempt to read it from the query if
-  // available, look for a table in the query's tables array that matches the
-  // base table of the given entity type, or just default to the first table.
-  if (!isset($base_table) && !$base_table = $query->getMetaData('base_table')) {
-    // Initialize the base table to the first table in the array. If a table can
-    // not be found that matches the entity type's base table, this will result
-    // in an invalid query if the first table is not the table we expect,
-    // forcing the caller to actually properly pass a base table in that case.
-    $tables = $query->getTables();
-    reset($tables);
-    $base_table = key($tables);
-
-    foreach ($tables as $table_info) {
-      if (!($table_info instanceof SelectQueryInterface)) {
-        // If this table matches the entity type's base table, use its table
-        // alias as the base table for the purposes of bundle and ownership
-        // access checks.
-        if ($table_info['table'] == $entity_info->getBaseTable()) {
-          $base_table = $table_info['alias'];
-        }
-      }
-    }
-  }
-
   // Prepare an OR container for conditions. Conditions will be added that seek
   // to grant access, meaning any particular type of permission check may grant
   // access even if none of the others apply. At the end of this function, if no

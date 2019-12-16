@@ -231,6 +231,7 @@ class Event extends ContentEntityBase implements EventInterface {
 
     // Now we store the new event.
     if ($this->getTranslation($langcode)->get($target_field_name) !== FALSE) {
+      $event_value = '';
 
       if (isset($event_type->default_event_value_field_ids)) {
         $field = $event_type->default_event_value_field_ids;
@@ -450,23 +451,6 @@ class Event extends ContentEntityBase implements EventInterface {
       }
       else {
         return $field->value;
-      }
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * Returns the formatter that can format the event value
-   *
-   * @return string|FALSE
-   */
-  public function getEventValueFormatter() {
-    if ($field = $this->getEventValueDefaultField()) {
-      $field_info_instance = FieldConfig::loadByName('bat_event_type', $this->type, $field);
-
-      if (isset($field_info_instance['display']['default']['type'])) {
-        return $field_info_instance['display']['default']['type'];
       }
     }
 

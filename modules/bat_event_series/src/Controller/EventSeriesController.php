@@ -9,6 +9,7 @@ namespace Drupal\bat_event_series\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\bat_event\EventInterface;
 use Drupal\bat_event_series\EventSeriesInterface;
 use Drupal\bat_event_series\EventSeriesTypeInterface;
 
@@ -93,25 +94,6 @@ class EventSeriesController extends ControllerBase implements ContainerInjection
    */
   public function addPageTitle(EventSeriesTypeInterface $event_series_type) {
     return $this->t('Create @name', ['@name' => $event_series_type->label()]);
-  }
-
-  /**
-   * Provides the event edit form.
-   *
-   * @param \Drupal\bat_event_series\EventInterface $event
-   *   The event event for edit.
-   *
-   * @return array
-   *   An event edit form.
-   */
-  public function editEvent(EventInterface $event) {
-    $input = \Drupal::request()->request->all();
-    $programmed = isset($input['form_id']);
-    $input['form_id'] = 'bat_event_series_' . $event->bundle() . '_edit_form';
-
-    $form = $this->entityFormBuilder()->getForm($event, 'default', ['programmed' => $programmed, 'input' => $input]);
-
-    return $form;
   }
 
 }

@@ -7,12 +7,37 @@
 namespace Drupal\bat_event\Plugin\views\filter;
 
 use Drupal\views\Views;
+use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\filter\BooleanOperator;
+use Drupal\views\ViewExecutable;
 
 /**
  * @ViewsFilter("bat_event_handler_blocking_filter")
  */
 class BatEventHandlerBlockingFilter extends BooleanOperator {
+
+  /**
+   * Stores the available options.
+   *
+   * @var array
+   */
+  protected $valueOptions;
+
+  /**
+   * Value title.
+   *
+   * @var string
+   */
+  protected $value_value;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
+    parent::init($view, $display, $options);
+
+    $this->value_value = $this->t('State');
+  }
 
   public function getValueOptions() {
     $options = [

@@ -291,6 +291,13 @@ class EventSeries extends ContentEntityBase implements EventSeriesInterface {
     return [\Drupal::currentUser()->id()];
   }
 
+  /**
+   * @param $start_date
+   * @param $end_date
+   * @param $event_type
+   * @param $unit
+   * @return bool
+   */
   private function checkAvailability($start_date, $end_date, $event_type, $unit) {
     $target_field_name = 'event_' . $event_type->getTargetEntityType() . '_reference';
 

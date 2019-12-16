@@ -7,6 +7,7 @@
 
 namespace Drupal\bat_facets\Plugin\facets\widget;
 
+use Drupal\Core\Form\FormBuilder;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\facets\Plugin\facets\widget\LinksWidget;
 use Drupal\facets\FacetInterface;
@@ -21,19 +22,17 @@ use Drupal\facets\FacetInterface;
 class BatStateWidget extends LinksWidget {
 
   /**
-   * The facet the widget is being built for.
+   * The form builder.
    *
-   * @var \Drupal\facets\FacetInterface
+   * @var \Drupal\Core\Form\FormBuilder
    */
-  protected $facet;
+  protected $formBuilder;
 
   /**
    * {@inheritdoc}
    */
   public function build(FacetInterface $facet) {
-    $this->facet = $facet;
-
-    $build = \Drupal::formBuilder()->getForm('Drupal\bat_facets\Form\FacetsAvailabilityForm');
+    $build = $this->formBuilder->getForm('Drupal\bat_facets\Form\FacetsAvailabilityForm');
 
     return $build;
   }

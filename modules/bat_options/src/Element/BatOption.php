@@ -44,7 +44,7 @@ class BatOption extends FormElement {
    * {@inheritdoc}
    */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
-    return $return;
+    return '';
   }
 
   public static function processBatOption(&$element, FormStateInterface $form_state, &$complete_form) {
