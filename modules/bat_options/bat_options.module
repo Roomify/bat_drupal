@@ -39,7 +39,7 @@ function bat_options_price_options() {
 /**
  * Returns available options given a Bat type.
  *
- * @param UnitType $type
+ * @param \Drupal\bat_unit\Entity\UnitType $type
  *   The type from which to retrieve options.
  *
  * @return array

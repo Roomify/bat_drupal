@@ -20,11 +20,15 @@ use Roomify\Bat\EventFormatter\AbstractEventFormatter;
 class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
 
   /**
-   * @var EventTypeInterface
+   * The event type.
+   *
+   * @var \Drupal\bat_event\EventTypeInterface
    */
   protected $eventType;
 
   /**
+   * Print as background event.
+   *
    * @var bool
    */
   protected $background;
@@ -56,7 +60,7 @@ class FullCalendarFixedStateEventFormatter extends AbstractEventFormatter {
   }
 
   /**
-   * @param EventTypeInterface $event_type
+   * @param \Drupal\bat_event\EventTypeInterface $event_type
    *   The event type.
    */
   public function setEventType(EventTypeInterface $event_type) {
