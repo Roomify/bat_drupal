@@ -203,7 +203,6 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
     $rrule = new RRule([
       'FREQ' => strtoupper($new_values['repeat_frequency']),
       'UNTIL' => $new_values['repeat_until'] . 'T235959Z',
-      'DTSTART' => $start,
     ]);
 
     if ($event_granularity == 'bat_daily') {
