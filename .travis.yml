@@ -71,6 +71,8 @@ before_script:
   # Install BAT library.
   - cd $TRAVIS_BUILD_DIR/bat
   - composer require "roomify/bat"
+  # Install RRULE library.
+  - composer require "rlanvin/php-rrule"
 
   - php -d sendmail_path=$(which true) ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://drupal:drupal@127.0.0.1/drupal --account-name=admin --account-pass=test --site-mail=webmaster@roomify.us --site-name="bat"
   # Following step with -y should also run composer install.
@@ -92,7 +94,14 @@ before_script:
   - sleep 5
 
 script:
-  - cd $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
+  - if [ "${TRAVIS_PHP_VERSION}" == '7.3' ]; then composer global require mglaman/drupal-check; fi;
+
+  # Run drupal-check
+  - cd $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat/bat
+  - if [ "${TRAVIS_PHP_VERSION}" == '7.3' ]; then drupal-check -ad bat.module; fi;
+  - if [ "${TRAVIS_PHP_VERSION}" == '7.3' ]; then drupal-check -ad src; fi;
+  - if [ "${TRAVIS_PHP_VERSION}" == '7.3' ]; then drupal-check -ad modules; fi;
+
   # Check coding standards.
   - phpcs --standard=Drupal --exclude=Drupal.Arrays.Array,Drupal.Commenting.FunctionComment,Drupal.Commenting.DocComment,Drupal.Commenting.FileComment,Drupal.NamingConventions.ValidFunctionName,Drupal.NamingConventions.ValidVariableName,Drupal.InfoFiles.AutoAddedKeys,Drupal.InfoFiles.ClassFiles --report-width=74 --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml --ignore=test $TRAVIS_BUILD_DIR/bat/sites/all/modules/bat
 
