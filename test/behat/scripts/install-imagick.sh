@@ -14,7 +14,7 @@ fi
 install_imagemagick() {
   mkdir /tmp/img
   cd /tmp/img
-	curl -O "https://www.imagemagick.org/download/releases/ImageMagick-$IMAGEMAGICK_VERSION.tar.xz" -f
+	curl -O "https://imagemagick.org/download/releases/ImageMagick-$IMAGEMAGICK_VERSION.tar.xz" -f
 	tar xf "ImageMagick-$IMAGEMAGICK_VERSION.tar.xz"
 	rm "ImageMagick-$IMAGEMAGICK_VERSION.tar.xz"
 	cd "ImageMagick-$IMAGEMAGICK_VERSION"
