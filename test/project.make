@@ -21,6 +21,7 @@ projects[bat_api][subdir] = bat
 
 ; +++++ Contrib Modules +++++
 
+projects[commerce][version] = 2.16
 projects[services][version] = 4.0-beta5
 
 ; +++++ Libraries +++++
