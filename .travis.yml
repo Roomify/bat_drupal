@@ -73,6 +73,10 @@ before_script:
   - composer require "roomify/bat"
   # Install RRULE library.
   - composer require "rlanvin/php-rrule"
+  # Install Commerce libraries.
+  - composer require "ext-bcmath"
+  - composer require "commerceguys/addressing"
+  - composer require "commerceguys/intl"
 
   - php -d sendmail_path=$(which true) ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://drupal:drupal@127.0.0.1/drupal --account-name=admin --account-pass=test --site-mail=webmaster@roomify.us --site-name="bat"
   # Following step with -y should also run composer install.
