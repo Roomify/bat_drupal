@@ -55,7 +55,7 @@ class BatCalendarUnitReference extends FieldItemBase {
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties['unit_id'] = DataReferenceTargetDefinition::create('integer')
-      ->setLabel(t('Uni id'))
+      ->setLabel(t('Unit id'))
       ->setSetting('unsigned', TRUE);
 
     $properties['event_type_id'] = DataReferenceTargetDefinition::create('string')
