@@ -64,7 +64,7 @@ class BatTypeHandlerTypeCalendarsField extends FieldPluginBase {
     $type = $this->getEntity($values);
     $type_bundle = bat_type_bundle_load($type->bundle());
 
-    if (is_array($type_bundle->default_event_value_field_ids)) {
+    if (is_array($type_bundle->default_event_value_field_ids) && $this->getModuleHandler()->moduleExists('bat_event_ui')) {
       foreach ($type_bundle->default_event_value_field_ids as $event_type => $field) {
         if (!empty($field)) {
           $event_type_path = Url::fromRoute('bat_event_ui.calendar', [
