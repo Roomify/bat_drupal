@@ -2,7 +2,7 @@
 
 api = 2
 core = 8.x
-projects[drupal][version] = 8.8.0
+projects[drupal][version] = 8.9.1
 
 defaults[projects][subdir] = contrib
 
@@ -21,7 +21,7 @@ projects[bat_api][subdir] = bat
 
 ; +++++ Contrib Modules +++++
 
-projects[commerce][version] = 2.16
+projects[commerce][version] = 2.19
 projects[services][version] = 4.0-beta5
 
 ; +++++ Libraries +++++
