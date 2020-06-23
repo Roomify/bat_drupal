@@ -14,7 +14,7 @@ use Roomify\Bat\Unit\Unit;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Database\Database;
-use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -44,23 +44,23 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
   protected $tempStore;
 
   /**
-   * The entity query factory.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\Query\QueryFactory
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $queryFactory;
+  protected $entityTypeManager;
 
   /**
    * Constructs a new EditRepeatingRuleModalForm object.
    *
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
-   * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
-   *   The entity query factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(PrivateTempStoreFactory $temp_store_factory, QueryFactory $query_factory) {
+  public function __construct(PrivateTempStoreFactory $temp_store_factory, EntityTypeManagerInterface $entity_type_manager) {
     $this->tempStore = $temp_store_factory->get('edit_repeating_rule');
-    $this->queryFactory = $query_factory;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -69,7 +69,7 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('user.private_tempstore'),
-      $container->get('entity.query')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -88,7 +88,7 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
 
     $values = $this->tempStore->get($this->currentUser()->id());
 
-    $events = $this->getEvents($values['start_date'], $values['end_date'], $values['repeat_frequency'], $values['repeat_until']);
+    $events = $this->getEvents(new \DateTime($values['start_date']), new \DateTime($values['end_date']), $values['repeat_frequency'], $values['repeat_until']);
 
     if (!empty($events['delete_events'])) {
       $form['delete_events'] = [
@@ -247,7 +247,9 @@ class EditRepeatingRuleConfirmationModalForm extends FormBase {
     $field_name = 'event_' . $event_series_type->getTargetEntityType() . '_reference';
     $unit = $this->event_series->get($field_name)->entity;
 
-    $query = $this->queryFactory->get('bat_event')
+    $query = $this->entityTypeManager
+      ->getStorage('bat_event')
+      ->getQuery()
       ->condition('event_series.target_id', $this->event_series->id())
       ->condition('event_dates.value', date('Y-m-d\TH:i:s'), '>');
     $events = $query->execute();
