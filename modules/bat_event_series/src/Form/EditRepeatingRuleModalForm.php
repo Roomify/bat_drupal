@@ -16,8 +16,8 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormBuilder;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Url;
-use Drupal\user\PrivateTempStoreFactory;
 use Drupal\bat_event_series\Entity\EventSeries;
 use RRule\RfcParser;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -58,7 +58,7 @@ class EditRepeatingRuleModalForm extends FormBase {
   /**
    * Constructs a new EditRepeatingRuleModalForm object.
    *
-   * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
+   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
    */
   public function __construct(PrivateTempStoreFactory $temp_store_factory, FormBuilder $formBuilder) {
