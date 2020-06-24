@@ -2,6 +2,7 @@ name: BAT Unit
 type: module
 description: Create and manage units (e.g. rooms).
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: bat
 
 dependencies:

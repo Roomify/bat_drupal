@@ -2,6 +2,7 @@ name: BAT Event Series
 type: module
 description: Create and administer series of BAT events.
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: bat
 
 dependencies:
