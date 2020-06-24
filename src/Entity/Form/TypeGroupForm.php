@@ -154,6 +154,8 @@ class TypeGroupForm extends ContentEntityForm {
         ]));
     }
     $form_state->setRedirect('entity.bat_type_group.edit_form', ['bat_type_group' => $entity->id()]);
+
+    return $status;
   }
 
   /**

@@ -44,8 +44,8 @@ class EventAddAccessCheck implements AccessInterface {
    *   (optional) The event type. If not specified, access is allowed if there
    *   exists at least one event type for which the user may create a event.
    *
-   * @return string
-   *   A \Drupal\Core\Access\AccessInterface constant value.
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
    */
   public function access(AccountInterface $account, EventTypeInterface $event_type = NULL) {
     $access_control_handler = $this->entityTypeManager->getAccessControlHandler('bat_event');

@@ -44,8 +44,8 @@ class BookingAddAccessCheck implements AccessInterface {
    *   (optional) The unit bundle. If not specified, access is allowed if there
    *   exists at least one unit bundle for which the user may create a unit.
    *
-   * @return string
-   *   A \Drupal\Core\Access\AccessInterface constant value.
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
    */
   public function access(AccountInterface $account, BookingBundleInterface $booking_bundle = NULL) {
     $access_control_handler = $this->entityTypeManager->getAccessControlHandler('bat_booking');

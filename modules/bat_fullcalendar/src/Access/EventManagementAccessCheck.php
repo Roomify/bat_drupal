@@ -39,8 +39,8 @@ class EventManagementAccessCheck implements AccessInterface {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The currently logged in account.
    *
-   * @return string
-   *   A \Drupal\Core\Access\AccessInterface constant value.
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
    */
   public function access(AccountInterface $account, $entity_id, $event_type, $event_id, $start_date, $end_date) {
     if ($event_id == 0) {

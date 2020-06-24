@@ -44,8 +44,8 @@ class TypeGroupAddAccessCheck implements AccessInterface {
    *   (optional) The type group bundle. If not specified, access is allowed if there
    *   exists at least one type group bundle for which the user may create a type group.
    *
-   * @return string
-   *   A \Drupal\Core\Access\AccessInterface constant value.
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
    */
   public function access(AccountInterface $account, TypeGroupBundleInterface $type_group_bundle = NULL) {
     $access_control_handler = $this->entityTypeManager->getAccessControlHandler('bat_type_group');

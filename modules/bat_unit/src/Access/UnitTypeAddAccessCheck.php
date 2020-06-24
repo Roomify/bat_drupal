@@ -44,8 +44,8 @@ class UnitTypeAddAccessCheck implements AccessInterface {
    *   (optional) The type bundle. If not specified, access is allowed if there
    *   exists at least one type bundle for which the user may create a unit type.
    *
-   * @return string
-   *   A \Drupal\Core\Access\AccessInterface constant value.
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
    */
   public function access(AccountInterface $account, TypeBundleInterface $type_bundle = NULL) {
     $access_control_handler = $this->entityTypeManager->getAccessControlHandler('bat_unit_type');

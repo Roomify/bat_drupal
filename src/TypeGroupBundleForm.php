@@ -120,6 +120,8 @@ class TypeGroupBundleForm extends BundleEntityFormBase {
     }
 
     $form_state->setRedirectUrl($type->toUrl('collection'));
+
+    return $status;
   }
 
 }

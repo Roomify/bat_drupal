@@ -192,16 +192,6 @@ function bat_event_type_add_target_entity_field($entity) {
 
 /**
  * Checks event access for various operations.
- *
- * @param string $op
- *   The operation being performed. One of 'view', 'update', 'create' or
- *   'delete'.
- * @param object $event
- *   Optionally an event to check access for.
- * @param object $account
- *   The user to check for. Leave it to NULL to check for the current user.
- *
- * @return \Drupal\Core\Access\AccessResult
  */
 function bat_event_access(EntityInterface $entity, $operation, AccountInterface $account) {
   return bat_entity_access($entity, $operation, $account);
@@ -264,21 +254,21 @@ function bat_event_field_widget_form_alter(&$element, FormStateInterface $form_s
 }
 
 /**
- * @param $state_id
+ * @param int $state_id
  */
 function bat_event_load_state($state_id) {
   return State::load($state_id);
 }
 
 /**
- * @param $values
+ * @param array $values
  */
 function bat_event_create_state($values = []) {
   return State::create($values);
 }
 
 /**
- * @param $state
+ * @param State $state
  */
 function bat_event_save_state(State $state) {
   return $state->save();
@@ -327,8 +317,8 @@ function bat_event_get_types($type_name = NULL, $reset = FALSE) {
  * @param string $type
  *   The machine-readable name of a event type to load.
  *
- * @return array|false
- *   An event type array or FALSE if $type does not exist.
+ * @return \Drupal\bat_event\Entity\EventType|null
+ *   An event type array or NULL if $type does not exist.
  */
 function bat_event_type_load($type) {
   return EventType::load($type);
@@ -360,8 +350,6 @@ function bat_event_load($event_id = NULL, $reset = FALSE) {
  *
  * @param array $event_ids
  *   An array of event IDs.
- * @param array $conditions
- *   An array of conditions to match against the {bat_events} table.
  * @param bool $reset
  *   A boolean indicating that the internal cache should be reset.
  *
@@ -487,7 +475,7 @@ function bat_event_theme() {
 /**
  * Given an event machine name drop all the tables that store event data for that event.
  *
- * @param $machine_name
+ * @param string $machine_name
  */
 function bat_event_delete_event_type_schema($machine_name) {
   foreach (bat_event_get_event_type_tables($machine_name) as $name) {
@@ -499,7 +487,7 @@ function bat_event_delete_event_type_schema($machine_name) {
  * Utility function to return the table names
  * required to start an event using BAT conventions.
  *
- * @param $machine_name
+ * @param string $machine_name
  */
 function bat_event_get_event_type_tables($machine_name) {
   return [
@@ -515,7 +503,7 @@ function bat_event_get_event_type_tables($machine_name) {
 /**
  * Create 6 tables for store events of type $machine_name.
  *
- * @param $machine_name
+ * @param string $machine_name
  */
 function bat_event_create_event_type_schema($machine_name) {
   $schema = [];
@@ -1059,8 +1047,8 @@ function template_preprocess_bat_event_add_list(&$variables) {
 }
 
 /**
- * @param $event_type
- * @param $conditions
+ * @param string|null $event_type
+ * @param array $conditions
  *
  * @return array|false
  */
@@ -1104,7 +1092,7 @@ function template_preprocess_bat_event(array &$variables) {
 }
 
 /**
- * @param $machine_name
+ * @param string $machine_name
  */
 function bat_event_load_state_by_machine_name($machine_name) {
   return State::loadbyMachineName($machine_name);

@@ -161,17 +161,6 @@ function bat_unit_bat_event_target_entity_types() {
 
 /**
  * Determines whether the given user has access to a unit.
- *
- * @param string $op
- *   The operation being performed. One of 'view', 'update', 'create', 'delete'
- *   or just 'edit' (being the same as 'create' or 'update').
- * @param \Drupal\bat_unit\Entity\Unit $unit
- *   Optionally a unit or a unit bundle to check access for. If nothing is
- *   given, access for all units is determined.
- * @param object $account
- *   The user to check for. Leave it to NULL to check for the global user.
- *
- * @return \Drupal\Core\Access\AccessResult
  */
 function bat_unit_access(EntityInterface $entity, $operation, AccountInterface $account) {
   return bat_entity_access($entity, $operation, $account);
@@ -284,12 +273,12 @@ function bat_unit_types_ids() {
 /**
  * Menu argument loader; Load a unit bundle by string.
  *
- * @param $bundle
+ * @param string $bundle
  *   The machine-readable name of a unit bundle to load.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
  *
- * @return array|false
+ * @return \Drupal\bat_unit\Entity\UnitBundle|null
  *   A unit bundle array or FALSE if $bundle does not exist.
  */
 function bat_unit_bundle_load($bundle, $reset = FALSE) {
@@ -307,8 +296,8 @@ function bat_unit_bundle_load($bundle, $reset = FALSE) {
  *   Integer specifying the unit id.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
- * @return \Drupal\bat_unit\Entity\Unit|false
- *   A fully-loaded $unit object or FALSE if it cannot be loaded.
+ * @return \Drupal\bat_unit\Entity\Unit|null
+ *   A fully-loaded $unit object or NULL if it cannot be loaded.
  *
  * @see bat_unit_load_multiple()
  */
@@ -462,8 +451,8 @@ function bat_unit_ids($bundle = '') {
 /**
  * Helper function to generate a list of available unit states for select lists.
  *
- * @param $event_type
- * @param $conditions
+ * @param string|null $event_type
+ * @param array $conditions
  *
  * @return array
  *   Array of available unit states keyed by id.
@@ -492,18 +481,6 @@ function bat_unit_state_options($event_type = NULL, $conditions = []) {
 
 /**
  * Determines whether the given user has access to a type.
- *
- * @param string $op
- *   The operation being performed. One of 'view', 'update', 'create', 'delete'
- *   or just 'edit' (being the same as 'create' or 'update').
- * @param \Drupal\bat_unit\Entity\UnitType $type
- *   Optionally a type or a type bundle to check access for. If nothing is
- *   given, access for all types is determined.
- * @param object $account
- *   The user to check for. Leave it to NULL to check for the global user.
- *
- * @return boolean
- *   Whether access is allowed or not.
  */
 function bat_type_access(EntityInterface $entity, $operation, AccountInterface $account) {
   return bat_entity_access($entity, $operation, $account);
@@ -604,12 +581,12 @@ function bat_type_bundles_ids() {
 /**
  * Menu argument loader; Load a Bat Type bundle by string.
  *
- * @param $bundle
+ * @param string $bundle
  *   The machine-readable name of a type bundle to load.
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
  *
- * @return array|false
+ * @return \Drupal\bat_unit\Entity\TypeBundle
  *   A type bundle array or FALSE if $bundle does not exist.
  */
 function bat_type_bundle_load($bundle, $reset = FALSE) {
@@ -628,8 +605,8 @@ function bat_type_bundle_load($bundle, $reset = FALSE) {
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
  *
- * @return \Drupal\bat_unit\Entity\UnitType|false
- *   A fully-loaded $type object or FALSE if it cannot be loaded.
+ * @return \Drupal\bat_unit\Entity\UnitType|null
+ *   A fully-loaded $type object or NULL if it cannot be loaded.
  *
  * @see bat_type_load_multiple()
  */

@@ -44,8 +44,8 @@ class EventSeriesAddAccessCheck implements AccessInterface {
    *   (optional) The event series type. If not specified, access is allowed if there
    *   exists at least one event series type for which the user may create a event.
    *
-   * @return string
-   *   A \Drupal\Core\Access\AccessInterface constant value.
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
    */
   public function access(AccountInterface $account, EventSeriesTypeInterface $event_series_type = NULL) {
     $access_control_handler = $this->entityTypeManager->getAccessControlHandler('bat_event_series');
