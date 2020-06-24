@@ -1,7 +1,7 @@
 services:
   access_check.bat_fullcalendar.event_management_access:
     class: Drupal\bat_fullcalendar\Access\EventManagementAccessCheck
-    arguments: ['@entity.manager']
+    arguments: ['@entity_type.manager']
     tags:
       - { name: access_check, applies_to: _event_management_access }
 
@@ -11,4 +11,4 @@ services:
 
   bat_fullcalendar.open_state_event_formatter:
     class: Drupal\bat_fullcalendar\FullCalendarOpenStateEventFormatter
-    arguments: ['@current_user', '@config.factory', '@module_handler', '@entity.manager']
+    arguments: ['@current_user', '@config.factory', '@module_handler', '@entity_type.manager']

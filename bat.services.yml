@@ -5,6 +5,6 @@ services:
       - { name: paramconverter }
   access_check.bat_type_group.add:
     class: Drupal\bat\Access\TypeGroupAddAccessCheck
-    arguments: ['@entity.manager']
+    arguments: ['@entity_type.manager']
     tags:
       - { name: access_check, applies_to: _group_type_add_access }
