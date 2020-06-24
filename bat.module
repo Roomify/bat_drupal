@@ -96,9 +96,7 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
   if (in_array($entity_type, ['bat_type_group', 'bat_unit', 'bat_unit_type', 'bat_event', 'bat_event_series', 'bat_booking'])) {
     $entity_info = \Drupal::entityTypeManager()->getDefinition($entity_type);
 
-    // $entity may be either an object or a entity type. Since entity types cannot
-    // be an integer, use either nid or type as the static cache id.
-    $cid = is_object($entity) ? $entity->id() : $entity;
+    $cid = $entity->id();
 
     // If we are creating a new entity make sure we set the type
     // so permissions get applied.
@@ -209,11 +207,13 @@ function bat_entity_access(EntityInterface $entity, $operation, AccountInterface
         }
 
         // Then check an authenticated user's access to delete own entities.
-        if ($account->id() && $entity->getOwnerId() && $entity->getOwnerId() === $account->id()) {
-          if ($account->hasPermission($operation . ' own ' . $entity_type . ' entities') ||
-              $account->hasPermission($operation . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
-            $rights[$account->id()][$cid][$operation] = TRUE;
-            return AccessResult::allowed();
+        if (method_exists($entity, 'getOwnerId')) {
+          if ($account->id() && $entity->getOwnerId() && $entity->getOwnerId() === $account->id()) {
+            if ($account->hasPermission($operation . ' own ' . $entity_type . ' entities') ||
+                $account->hasPermission($operation . ' own ' . $entity_type . ' entities of bundle ' . $bundle_name)) {
+              $rights[$account->id()][$cid][$operation] = TRUE;
+              return AccessResult::allowed();
+            }
           }
         }
       }
@@ -487,7 +487,7 @@ function template_preprocess_bat_type_group(array &$variables) {
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
  *
- * @return \Drupal\bat\Entity\TypeGroup|false
+ * @return \Drupal\bat\Entity\TypeGroup
  *   A fully-loaded $type_group object or FALSE if it cannot be loaded.
  *
  * @see bat_type_group_load_multiple()
@@ -607,7 +607,7 @@ function bat_type_group_create($values = []) {
  * @param bool $reset
  *   A boolean indicating whether the internal cache should be reset.
  *
- * @return array|false
+ * @return \Drupal\bat\Entity\TypeGroupBundle
  *   A type group bundle array or FALSE if $bundle does not exist.
  */
 function bat_type_group_bundle_load($bundle, $reset = FALSE) {
