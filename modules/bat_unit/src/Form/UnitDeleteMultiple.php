@@ -47,7 +47,7 @@ class UnitDeleteMultiple extends ConfirmFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('user.private_tempstore')
+      $container->get('tempstore.private')
     );
   }
 

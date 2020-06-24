@@ -68,7 +68,7 @@ class SetUnitState extends ActionBase implements ContainerFactoryPluginInterface
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('user.private_tempstore'),
+      $container->get('tempstore.private'),
       $container->get('current_user')
     );
   }

@@ -68,7 +68,7 @@ class EventSeriesForm extends ContentEntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('user.private_tempstore'),
+      $container->get('tempstore.private'),
       $container->get('entity.repository'),
       $container->get('date.formatter'),
       $container->get('form_builder'),
