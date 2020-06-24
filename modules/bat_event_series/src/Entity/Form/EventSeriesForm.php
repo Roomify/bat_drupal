@@ -128,7 +128,7 @@ class EventSeriesForm extends ContentEntityForm {
       'author' => [
         '#type' => 'item',
         '#wrapper_attributes' => ['class' => ['author', 'container-inline']],
-        '#markup' => '<h4 class="label inline">' . t('Author') . '</h4> ' . $entity->getOwner()->getUsername(),
+        '#markup' => '<h4 class="label inline">' . t('Author') . '</h4> ' . $entity->getOwner()->getDisplayName(),
       ],
     ];
 
