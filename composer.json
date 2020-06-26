@@ -12,6 +12,6 @@
   },
   "require": {
     "rlanvin/php-rrule": "^2.2",
-    "roomify/bat": "~1.2"
+    "roomify/bat": "~1.3"
   }
 }
