@@ -30,6 +30,11 @@ use Drupal\bat_event\Entity\State;
  * Create a field of type 'Bat Event State Reference' to reference an Event State.
  */
 function bat_event_type_add_event_state_reference($entity) {
+  // Prevent interruption of config sync.
+  if (Drupal::isConfigSyncing()) {
+    return;
+  }
+
   $field_name = 'event_state_reference';
 
   $field_storage = FieldStorageConfig::loadByName('bat_event', $field_name);
@@ -84,6 +89,11 @@ function bat_event_type_add_event_state_reference($entity) {
  * Create "Event Dates" field.
  */
 function bat_event_type_add_event_dates_field($entity) {
+  // Prevent interruption of config sync.
+  if (Drupal::isConfigSyncing()) {
+    return;
+  }
+
   $field_name = 'event_dates';
 
   $field_storage = FieldStorageConfig::loadByName('bat_event', $field_name);
@@ -139,6 +149,11 @@ function bat_event_type_add_event_dates_field($entity) {
  * We need to create a field/instance for each possible target entity type.
  */
 function bat_event_type_add_target_entity_field($entity) {
+  // Prevent interruption of config sync.
+  if (Drupal::isConfigSyncing()) {
+    return;
+  }
+
   $entity_info = \Drupal::entityTypeManager()->getDefinition($entity->getTargetEntityType());
   $field_name = 'event_' . $entity->getTargetEntityType() . '_reference';
 
