@@ -2,7 +2,7 @@
 
 api = 2
 core = 7.x
-projects[drupal][version] = 7.68
+projects[drupal][version] = 7.73
 
 defaults[projects][subdir] = contrib
 
@@ -29,21 +29,21 @@ projects[facetapi][version] = 1.6
 
 projects[jquery_update][version] = 3.0-alpha5
 
-projects[libraries][version] = 2.4
+projects[libraries][version] = 2.5
 
 projects[search_api][version] = 1.26
 
-projects[services][version] = 3.20
+projects[services][version] = 3.27
 
 projects[variable][version] = 2.5
 
-projects[views][version] = 3.23
+projects[views][version] = 3.24
 
-projects[views_bulk_operations][version] = 3.5
+projects[views_bulk_operations][version] = 3.6
 
 projects[views_megarow][version] = 1.7
 
-projects[xautoload][version] = 5.7
+projects[xautoload][version] = 5.8
 
 
 ; +++++ Libraries +++++
