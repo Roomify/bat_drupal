@@ -45,7 +45,7 @@ class bat_type_handler_type_revision_operations_field extends views_handler_fiel
 
       if (bat_type_access_revision('view', $type, $revision_id)) {
         $links[] = array(
-          'href'  => 'admin/bat/config/types/manage/' . $type_id . '/revision/' . $revision_id . '/view',
+          'href'  => 'admin/bat/config/types/' . $type_id . '/revision/' . $revision_id . '/view',
           'title' => t('View'),
         );
 
@@ -53,21 +53,21 @@ class bat_type_handler_type_revision_operations_field extends views_handler_fiel
         $current_revision_id = $current_revision->revision_id;
 
         $links[] = array(
-          'href'  => 'admin/bat/config/types/manage/' . $type_id . '/revisions/view/' . $revision_id . '/' . $current_revision_id,
+          'href'  => 'admin/bat/config/types/' . $type_id . '/revisions/view/' . $revision_id . '/' . $current_revision_id,
           'title' => t('Compare'),
         );
       }
 
       if (bat_type_access_revision('revert', $type, $revision_id)) {
         $links[] = array(
-          'href'  => 'admin/bat/config/types/manage/' . $type_id . '/revision/' . $revision_id . '/revert',
+          'href'  => 'admin/bat/config/types/' . $type_id . '/revision/' . $revision_id . '/revert',
           'title' => t('Revert'),
         );
       }
 
       if (bat_type_access_revision('delete', $type, $revision_id)) {
         $links[] = array(
-          'href'  => 'admin/bat/config/types/manage/' . $type_id . '/revision/' . $revision_id . '/delete',
+          'href'  => 'admin/bat/config/types/' . $type_id . '/revision/' . $revision_id . '/delete',
           'title' => t('Delete'),
         );
       }

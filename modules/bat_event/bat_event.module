@@ -2366,11 +2366,13 @@ function bat_event_form_bat_type_bundle_form_alter(&$form, &$form_state) {
  * Submit callback for bat_event_form_bat_type_bundle_form form.
  */
 function bat_event_form_bat_type_bundle_form_submit($form, &$form_state) {
-  foreach ($form_state['values']['events'] as $event => $field) {
-    $form_state['bat_type_bundle']->default_event_value_field_ids[$event] = $field;
-  }
+  if (isset($form_state['values']['events'])) {
+    foreach ($form_state['values']['events'] as $event => $field) {
+      $form_state['bat_type_bundle']->default_event_value_field_ids[$event] = $field;
+    }
 
-  $form_state['bat_type_bundle']->save();
+    $form_state['bat_type_bundle']->save();
+  }
 }
 
 /**

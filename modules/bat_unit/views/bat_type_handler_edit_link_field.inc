@@ -39,7 +39,7 @@ class bat_type_handler_edit_link_field extends bat_type_handler_link_field {
       $options = array('query' => drupal_get_destination());
     }
 
-    return l($text, 'admin/bat/config/types/manage/' . $type_id . '/edit', $options);
+    return l($text, 'admin/bat/config/types/' . $type_id . '/edit', $options);
   }
 
 }

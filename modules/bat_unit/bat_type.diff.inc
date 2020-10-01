@@ -32,11 +32,11 @@ function bat_type_compare_revisions($type, $old_revision_id, $new_revision_id) {
 
   // Generate table header (date, username, log message).
   $old_header = t('!date by !username', array(
-    '!date' => l(format_date($old_type->revision_timestamp), "admin/bat/config/types/manage/$type->type_id/revision/$old_type->revision_id/view", array('absolute' => 1)),
+    '!date' => l(format_date($old_type->revision_timestamp), "admin/bat/config/types/$type->type_id/revision/$old_type->revision_id/view", array('absolute' => 1)),
     '!username' => theme('username', array('account' => $old_account)),
   ));
   $new_header = t('!date by !username', array(
-    '!date' => l(format_date($new_type->revision_timestamp), "admin/bat/config/types/manage/$type->type_id/revision/$new_type->revision_id/view", array('absolute' => 1)),
+    '!date' => l(format_date($new_type->revision_timestamp), "admin/bat/config/types/$type->type_id/revision/$new_type->revision_id/view", array('absolute' => 1)),
     '!username' => theme('username', array('account' => $new_account)),
   ));
 
@@ -46,14 +46,14 @@ function bat_type_compare_revisions($type, $old_revision_id, $new_revision_id) {
   // Generate previous diff/next diff links.
   $next_vid = bat_type_diff_get_next_vid($type_revisions, $new_revision_id);
   if ($next_vid) {
-    $next_link = l(t('Next difference >'), 'admin/bat/config/types/manage/' . $type->type_id . '/revisions/view/' . $new_revision_id . '/' . $next_vid, array('absolute' => 1));
+    $next_link = l(t('Next difference >'), 'admin/bat/config/types/' . $type->type_id . '/revisions/view/' . $new_revision_id . '/' . $next_vid, array('absolute' => 1));
   }
   else {
     $next_link = '';
   }
   $prev_vid = bat_type_diff_get_previous_vid($type_revisions, $old_revision_id);
   if ($prev_vid) {
-    $prev_link = l(t('< Previous difference'), 'admin/bat/config/types/manage/' . $type->type_id . '/revisions/view/' . $prev_vid . '/' . $old_revision_id, array('absolute' => 1));
+    $prev_link = l(t('< Previous difference'), 'admin/bat/config/types/' . $type->type_id . '/revisions/view/' . $prev_vid . '/' . $old_revision_id, array('absolute' => 1));
   }
   else {
     $prev_link = '';

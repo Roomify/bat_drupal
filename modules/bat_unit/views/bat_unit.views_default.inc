@@ -213,7 +213,7 @@ function bat_unit_views_default_views() {
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
-  $handler->display->display_options['path'] = 'admin/bat/config/types/manage/%bat_type/units';
+  $handler->display->display_options['path'] = 'admin/bat/config/types/%bat_type/units';
   $handler->display->display_options['menu']['type'] = 'tab';
   $handler->display->display_options['menu']['title'] = 'Units';
   $handler->display->display_options['menu']['description'] = 'View & Edit Units of this Type';
@@ -353,7 +353,7 @@ function bat_unit_views_default_views() {
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
-  $handler->display->display_options['path'] = 'admin/bat/config/types/manage/%/revisions';
+  $handler->display->display_options['path'] = 'admin/bat/config/types/%/revisions';
   $handler->display->display_options['menu']['type'] = 'tab';
   $handler->display->display_options['menu']['title'] = 'Revisions';
   $handler->display->display_options['menu']['weight'] = '0';
