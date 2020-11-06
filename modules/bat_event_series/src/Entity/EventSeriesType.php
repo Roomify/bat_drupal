@@ -93,9 +93,11 @@ class EventSeriesType extends ConfigEntityBundleBase implements EventSeriesTypeI
   }
 
   public function getTargetEntityType() {
-    $event_type = EventType::load($this->target_event_type);
+    if ($event_type = EventType::load($this->target_event_type)) {
+      return $event_type->getTargetEntityType();
+    }
 
-    return $event_type->getTargetEntityType();
+    return null;
   }
 
   /**
@@ -110,8 +112,10 @@ class EventSeriesType extends ConfigEntityBundleBase implements EventSeriesTypeI
       // Create a field of type "Date range" for event dates.
       bat_event_series_type_add_event_dates_field($this->id());
 
-      // Create a field of type 'Entity Reference' to reference a Bat Unit.
-      bat_event_series_type_add_target_entity_field($this->id(), $this->getTargetEntityType());
+      if ($targetEntityType = $this->getTargetEntityType()) {
+        // Create a field of type 'Entity Reference' to reference a Bat Unit.
+        bat_event_series_type_add_target_entity_field($this->id(), $targetEntityType);
+      }
 
       // Create a field of type 'Bat Event State Reference' to reference an Event State.
       bat_event_series_type_add_event_state_reference($this->id());
