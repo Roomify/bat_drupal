@@ -130,6 +130,22 @@ class BookingForm extends ContentEntityForm {
 
     $form['#entity_builders']['update_status'] = [$this, 'updateStatus'];
 
+    if (isset($form['booking_start_date'])) {
+      $form['booking_start_date']['widget'][0]['value']['#date_timezone'] = 'UTC';
+
+      if (isset($form['booking_start_date']['widget'][0]['value']['#default_value'])) {
+        $form['booking_start_date']['widget'][0]['value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
+      }
+    }
+
+    if (isset($form['booking_end_date'])) {
+      $form['booking_end_date']['widget'][0]['value']['#date_timezone'] = 'UTC';
+
+      if (isset($form['booking_end_date']['widget'][0]['value']['#default_value'])) {
+        $form['booking_end_date']['widget'][0]['value']['#default_value']->setTimezone(new \DateTimeZone('UTC'));
+      }
+    }
+
     return $form;
   }
 
